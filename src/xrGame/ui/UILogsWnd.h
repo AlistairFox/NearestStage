@@ -25,6 +25,7 @@ class CUICharacterInfo;
 class CUIScrollView;
 class CUI3tButton;
 class CUICheckButton;
+class CUIEditBox;
 struct GAME_NEWS_DATA;
 class CUINewsItemWnd;
 
@@ -32,6 +33,8 @@ class CUILogsWnd : public CUIWindow, public CUIWndCallback
 {
 private:
 	typedef CUIWindow	inherited;
+
+	CUIEditBox* text_box;
 
 	CUIFrameWindow*		m_background;
 	CUIFrameWindow*		m_center_background;
@@ -41,6 +44,7 @@ private:
 
 	CUICheckButton*		m_filter_news;
 	CUICheckButton*		m_filter_talk;
+	CUI3tButton* m_butn;
 	
 //	CUITextWnd*			m_date_caption;
 //	CUITextWnd*			m_date;
@@ -91,6 +95,7 @@ protected:
 			void xr_stdcall	UpdateChecks	( CUIWindow* w, void* d);
 			void xr_stdcall	PrevPeriod		( CUIWindow* w, void* d);
 			void xr_stdcall	NextPeriod		( CUIWindow* w, void* d);
+			void xr_stdcall ClBut(CUIWindow* w, void* d);
 	
 			void 		on_scroll_keys		( int dik );
 

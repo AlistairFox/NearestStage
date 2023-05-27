@@ -19,6 +19,8 @@
 #include "UIHelper.h"
 #include "UICharacterInfo.h"
 #include "UIInventoryUtilities.h"
+#include "UIEditBox.h"
+#include "../xrEngine/xr_ioconsole.h"
 
 #include "../actor.h"
 #include "../game_news.h"
@@ -96,6 +98,16 @@ void CUILogsWnd::Init()
 
 	CUIXmlInit::InitWindow( m_uiXml, "main_wnd", 0, this );
 
+	text_box = xr_new<CUIEditBox>();
+	text_box->SetAutoDelete(true);
+	AttachChild(text_box);
+	CUIXmlInit::InitEditBox(m_uiXml, "text_box", 0, text_box);
+
+	m_butn = xr_new<CUI3tButton>();
+	m_butn->SetAutoDelete(true);
+	AttachChild(m_butn);
+	CUIXmlInit::Init3tButton(m_uiXml, "text_box_butn", 0, m_butn);
+
 //	m_background		= UIHelper::CreateFrameLine( m_uiXml, "background", this );
 	m_background				= UIHelper::CreateFrameWindow(m_uiXml, "background", this);
 	m_center_background			= UIHelper::CreateFrameWindow(m_uiXml, "center_background", this);
@@ -139,7 +151,9 @@ void CUILogsWnd::Init()
 	Register( m_filter_talk );
 	Register( m_prev_period );
 	Register( m_next_period );
+	Register(m_butn);
 
+	AddCallback(m_butn, BUTTON_CLICKED, CUIWndCallback::void_function(this, &CUILogsWnd::ClBut));
 	AddCallback( m_filter_news, BUTTON_CLICKED, CUIWndCallback::void_function( this, &CUILogsWnd::UpdateChecks ) );
 	AddCallback( m_filter_talk, BUTTON_CLICKED, CUIWndCallback::void_function( this, &CUILogsWnd::UpdateChecks ) );
 	AddCallback( m_prev_period, BUTTON_CLICKED, CUIWndCallback::void_function( this, &CUILogsWnd::PrevPeriod ) );
@@ -288,6 +302,17 @@ void CUILogsWnd::PrevPeriod( CUIWindow* w, void* d )
 	}
 	if(current_period != m_selected_period)
 		m_need_reload = true;
+}
+
+void CUILogsWnd::ClBut(CUIWindow* w, void* d)
+{
+	if (text_box && text_box->GetText() != "")
+	{
+		string256 send;
+		sprintf(send, "transfer_money %s", text_box->GetText());
+
+		Console->Execute(send);
+	}
 }
 
 void CUILogsWnd::NextPeriod( CUIWindow* w, void* d )
