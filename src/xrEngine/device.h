@@ -319,6 +319,9 @@ extern		ENGINE_API		CRenderDevice		Device;
 #endif
 
 
+extern ENGINE_API float refresh_rate;
+
+
 extern		ENGINE_API		bool				g_bBenchmark;
 
 typedef fastdelegate::FastDelegate0<bool>		LOADING_EVENT;

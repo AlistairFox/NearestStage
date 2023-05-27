@@ -36,6 +36,12 @@ ENGINE_API CRenderDevice Device;
 ENGINE_API CLoadScreenRenderer load_screen_renderer;
 
 
+std::chrono::high_resolution_clock::time_point tlastf = std::chrono::high_resolution_clock::now(), tcurrentf = std::
+chrono::high_resolution_clock::now();
+std::chrono::duration<float> time_span;
+ENGINE_API float refresh_rate = 0;
+
+
 ENGINE_API BOOL g_bRendering = FALSE; 
 
 BOOL		g_bLoaded = FALSE;
@@ -241,7 +247,26 @@ void CRenderDevice::PreCache	(u32 amount, bool b_draw_loadscreen, bool b_wait_us
 
 int g_svDedicateServerUpdateReate = 100;
 
+extern bool IsMainMenuActive(); //ECO_RENDER add
+
 ENGINE_API xr_list<LOADING_EVENT>			g_loading_events;
+
+float GetMonitorRefresh()
+{
+	DEVMODE lpDevMode;
+	memset(&lpDevMode, 0, sizeof(DEVMODE));
+	lpDevMode.dmSize = sizeof(DEVMODE);
+	lpDevMode.dmDriverExtra = 0;
+
+	if (EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &lpDevMode) == 0)
+	{
+		return 1.f / 60.f;
+	}
+	else
+		return 1.f / lpDevMode.dmDisplayFrequency;
+}
+
+extern int ps_framelimiter;
 
 void ImGui_NewFrame()
 {
@@ -286,6 +311,28 @@ void CRenderDevice::on_idle		()
 		Sleep	(100);
 		return;
 	}
+
+	if (Device.Paused() || IsMainMenuActive() || ps_framelimiter)
+	{
+		if (refresh_rate == 0)
+			refresh_rate = GetMonitorRefresh();
+
+		float rr;
+
+		if (ps_framelimiter)
+			rr = 1.f / ps_framelimiter;
+		else
+			rr = refresh_rate;
+
+		time_span = std::chrono::duration_cast<std::chrono::duration<float>>(tcurrentf - tlastf);
+		while (time_span.count() < rr)
+		{
+			tcurrentf = std::chrono::high_resolution_clock::now();
+			time_span = std::chrono::duration_cast<std::chrono::duration<float>>(tcurrentf - tlastf);
+		}
+		tlastf = std::chrono::high_resolution_clock::now();
+}
+
 
 #ifdef DEDICATED_SERVER
 	u32 FrameStartTime = TimerGlobal.GetElapsed_ms();

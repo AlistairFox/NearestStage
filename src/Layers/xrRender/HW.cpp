@@ -37,7 +37,8 @@ CHW::CHW() :
 	pDevice(NULL),
 	pBaseRT(NULL),
 	pBaseZB(NULL),
-	m_move_window(true)
+	m_move_window(true),
+	maxRefreshRate(265)
 {
 	;
 }
@@ -507,22 +508,28 @@ u32 CHW::selectGPU ()
 
 u32 CHW::selectRefresh(u32 dwWidth, u32 dwHeight, D3DFORMAT fmt)
 {
-	if (psDeviceFlags.is(rsRefresh60hz))	return D3DPRESENT_RATE_DEFAULT;
-	else
+	if (psDeviceFlags.is(rsRefresh60hz) || strstr(Core.Params, "-60hz"))
 	{
-		u32 selected	= D3DPRESENT_RATE_DEFAULT;
-		u32 count		= pD3D->GetAdapterModeCount(DevAdapter,fmt);
-		for (u32 I=0; I<count; I++)
-		{
-			D3DDISPLAYMODE	Mode;
-			pD3D->EnumAdapterModes(DevAdapter,fmt,I,&Mode);
-			if (Mode.Width==dwWidth && Mode.Height==dwHeight)
-			{
-				if (Mode.RefreshRate>selected) selected = Mode.RefreshRate;
-			}
-		}
-		return selected;
+		refresh_rate = 1.f / 60.f;
+		return D3DPRESENT_RATE_DEFAULT;
 	}
+		
+	u32 selected = D3DPRESENT_RATE_DEFAULT;
+	u32 count = pD3D->GetAdapterModeCount(DevAdapter, fmt);
+	for (u32 I = 0; I < count; I++)
+	{
+		D3DDISPLAYMODE Mode;
+		pD3D->EnumAdapterModes(DevAdapter, fmt, I, &Mode);
+		if (Mode.Width == dwWidth && Mode.Height == dwHeight && Mode.RefreshRate > selected)
+			selected = Mode.RefreshRate;
+	}
+
+	if (selected > 0)
+		refresh_rate = 1.f / selected;
+	else
+		refresh_rate = 1.f / 60.f;
+
+	return selected;
 }
 
 BOOL	CHW::support	(D3DFORMAT fmt, DWORD type, DWORD usage)

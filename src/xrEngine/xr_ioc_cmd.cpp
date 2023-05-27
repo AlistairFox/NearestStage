@@ -685,6 +685,9 @@ extern int			g_ErrorLineCount;
 
 ENGINE_API int			ps_r__Supersample			= 1;
 ENGINE_API int			ps_r__WallmarksOnSkeleton = 1;
+
+int ps_framelimiter = 0;
+
 void CCC_Register()
 {
 	// General
@@ -826,6 +829,8 @@ void CCC_Register()
 	CMD4(CCC_Integer, "sv_dedicated_server_update_rate", &g_svDedicateServerUpdateReate, 1, 1000);
 
 	CMD1(CCC_HideConsole,		"hide");
+
+	CMD4(CCC_Integer, "FPS_limit", &ps_framelimiter, 0, 500);
 
 #ifdef	DEBUG
 	extern BOOL debug_destroy;

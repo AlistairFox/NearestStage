@@ -20,6 +20,7 @@ class  CHW
 {
 //	Functions section
 public:
+	int maxRefreshRate;
 	CHW();
 	~CHW();
 
