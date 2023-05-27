@@ -1,0 +1,16 @@
+# Opus codec reference implementation pkg-config file
+
+prefix=C:/Users/Dexp/Documents/gits/NearestStage_MP/bins/SDK/sources/opus-1.3.1/out/install/x64-Debug
+exec_prefix=C:/Users/Dexp/Documents/gits/NearestStage_MP/bins/SDK/sources/opus-1.3.1/out/install/x64-Debug
+libdir=C:/Users/Dexp/Documents/gits/NearestStage_MP/bins/SDK/sources/opus-1.3.1/out/install/x64-Debug/lib
+includedir=C:/Users/Dexp/Documents/gits/NearestStage_MP/bins/SDK/sources/opus-1.3.1/out/install/x64-Debug/include
+
+Name: Opus
+Description: Opus IETF audio codec ( build)
+URL: https://opus-codec.org/
+Version: 0.8.0
+Requires:
+Conflicts:
+Libs: -LC:/Users/Dexp/Documents/gits/NearestStage_MP/bins/SDK/sources/opus-1.3.1/out/install/x64-Debug/lib -lopus
+Libs.private: 
+Cflags: -IC:/Users/Dexp/Documents/gits/NearestStage_MP/bins/SDK/sources/opus-1.3.1/out/install/x64-Debug/include/opus
