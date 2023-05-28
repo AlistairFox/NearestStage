@@ -163,6 +163,12 @@ extern ECORE_API float			ps_r3_dyn_wet_surf_near;	// 10.0f
 extern ECORE_API float			ps_r3_dyn_wet_surf_far;		// 30.0f
 extern ECORE_API int			ps_r3_dyn_wet_surf_sm_res;	// 256
 
+//ogse sunshafts
+
+extern ECORE_API float			ps_r2_ss_sunshafts_length;
+extern ECORE_API float			ps_r2_ss_sunshafts_radius;
+extern u32						ps_sunshafts_mode;
+
 extern ECORE_API float			ps_r2_rain_drops_intensity;
 extern ECORE_API float			ps_r2_rain_drops_speed;
 
@@ -248,6 +254,16 @@ enum
 	R2FLAGEXT_SUN_OLD				= (1<<9),
 	R2FLAGEXT_SSAO_SSDO = (1 << 10),
 };
+
+//ogse sunshafts
+enum
+{
+	R2SS_VOLUMETRIC,
+	R2SS_SCREEN_SPACE,
+	R2SS_COMBINE_SUNSHAFTS,
+};
+//end ogse sunshafts
+
 
 extern ECORE_API Flags32 ps_actor_shadow_flags;
 

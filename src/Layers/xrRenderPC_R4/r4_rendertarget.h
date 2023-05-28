@@ -55,6 +55,7 @@ public:
 	IBlender*					b_hud_satiety;
 	IBlender*					b_hud_thirst;
 	IBlender* b_lfx;
+	IBlender* b_sunshafts;
 
     // compute shader for hdao
     IBlender*                   b_hdao_cs;
@@ -83,6 +84,8 @@ public:
 	// 
 	ref_rt						rt_Accumulator;		// 64bit		(r,g,b,specular)
 	ref_rt						rt_Accumulator_temp;// only for HW which doesn't feature fp16 blend
+	ref_rt						rt_sunshafts_0;		// ss0
+	ref_rt						rt_sunshafts_1;		// ss1
 	ref_rt						rt_Generic_0;		// 32bit		(r,g,b,a)				// post-process, intermidiate results, etc.
 	ref_rt						rt_Generic_1;		// 32bit		(r,g,b,a)				// post-process, intermidiate results, etc.
 
@@ -128,6 +131,8 @@ private:
 	// OCCq
 
 	ref_shader					s_occq;
+
+	ref_shader					s_sunshafts;
 
 	//Hud Blood
 	ref_shader					s_hud_blood;
@@ -294,6 +299,7 @@ public:
 	void						phase_hud_thirst();
 	void						phase_lfx(int i);
 
+	void						phase_sunshafts();
 	void						phase_scene_prepare		();
 	void						phase_scene_begin		();
 	void						phase_scene_end			();

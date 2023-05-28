@@ -17,6 +17,7 @@
 #include "blender_hud_mask.h"
 #include "blender_hud_satiety.h"
 #include "blender_hud_thirst.h"
+#include "blender_ss_sunshafts.h"
 
 #include "../xrRender/dxRenderDeviceRender.h"
 
@@ -216,6 +217,7 @@ CRenderTarget::CRenderTarget		()
 	b_ssao							= xr_new<CBlender_SSAO>					();
 	b_luminance						= xr_new<CBlender_luminance>			();
 	b_combine						= xr_new<CBlender_combine>				();
+	b_sunshafts = new CBlender_sunshafts();
 
 	//HUD BLOOD
 	b_hud_blood = xr_new<CBlender_Hud_Blood>();
@@ -268,6 +270,11 @@ CRenderTarget::CRenderTarget		()
 		rt_Generic_0.create			(r2_RT_generic0,w,h,D3DFMT_A8R8G8B8		);
 		rt_Generic_1.create			(r2_RT_generic1,w,h,D3DFMT_A8R8G8B8		);
 		rt_secondVP.create(r2_RT_secondVP, w, h, D3DFMT_A8R8G8B8); //--#SM+#-- +SecondVP+
+				//ogse sunshafts
+		// RT - KD
+		rt_sunshafts_0.create(r2_RT_sunshafts0, w, h, D3DFMT_A8R8G8B8);
+		rt_sunshafts_1.create(r2_RT_sunshafts1, w, h, D3DFMT_A8R8G8B8);
+
 
 		//	Igor: for volumetric lights
 		//rt_Generic_2.create			(r2_RT_generic2,w,h,D3DFMT_A8R8G8B8		);
@@ -276,6 +283,7 @@ CRenderTarget::CRenderTarget		()
 			rt_Generic_2.create			(r2_RT_generic2,w,h,D3DFMT_A16B16G16R16F);
 	}
 
+	s_sunshafts.create(b_sunshafts, "r2\\sunshafts");
 
 	// OCCLUSION
 	s_occq.create					(b_occq,		"r2\\occq");
@@ -453,6 +461,11 @@ CRenderTarget::CRenderTarget		()
 
 		u32 fvf_aa_AA				= D3DFVF_XYZRHW|D3DFVF_TEX7|D3DFVF_TEXCOORDSIZE2(0)|D3DFVF_TEXCOORDSIZE2(1)|D3DFVF_TEXCOORDSIZE2(2)|D3DFVF_TEXCOORDSIZE2(3)|D3DFVF_TEXCOORDSIZE2(4)|D3DFVF_TEXCOORDSIZE4(5)|D3DFVF_TEXCOORDSIZE4(6);
 		g_aa_AA.create				(fvf_aa_AA,		RCache.Vertex.Buffer(), RCache.QuadIB);
+
+		//ogse sunshafts
+		u32 fvf_KD = D3DFVF_XYZRHW | D3DFVF_TEX1 | D3DFVF_TEXCOORDSIZE2(0);
+		g_KD.create(fvf_KD, RCache.Vertex.Buffer(), RCache.QuadIB);
+		//end ogse sunshafts
 
 
 		t_envmap_0.create			(r2_T_envs0);
@@ -686,6 +699,7 @@ CRenderTarget::~CRenderTarget	()
 	xr_delete					(b_hud_mask				); //Hud Mask
 	xr_delete					(b_hud_satiety			); //hud satiety
 	xr_delete					(b_hud_thirst			); //hud thirst
+	xr_delete(b_sunshafts);
 }
 
 void CRenderTarget::reset_light_marker( bool bResetStencil)

@@ -754,6 +754,7 @@
     <ClInclude Include="..\xrRenderDX10\imgui_impl_dx11.h">
       <Filter>imgui_render</Filter>
     </ClInclude>
+    <ClInclude Include="blender_ss_sunshafts.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1373,5 +1374,7 @@
     <ClCompile Include="..\xrRenderDX10\imgui_impl_dx11.cpp">
       <Filter>imgui_render</Filter>
     </ClCompile>
+    <ClCompile Include="blender_ss_sunshafts.cpp" />
+    <ClCompile Include="r4_rendertarget_phase_ss_sunshafts.cpp" />
   </ItemGroup>
 </Project>

@@ -64,6 +64,16 @@ xr_token							qsun_shafts_token							[ ]={
 	{ 0,							0												}
 };
 
+//ogse sunshafts
+u32 ps_sunshafts_mode = 0;
+xr_token sunshafts_mode_token[] = {
+	{ "volumetric", 0 },
+	{ "screen_space", 1 },
+	{ "combine_sunshafts", 2 },
+	{ NULL, 0 }
+};
+
+
 u32			ps_r_ssao				=	3;
 xr_token							qssao_token									[ ]={
 	{ "st_opt_off",					0												},
@@ -308,6 +318,10 @@ float ps_current_detail_height = 1.0f;
 float		droplets_power_debug = 0.f;
 float		ps_r2_rain_drops_intensity = 0.00025f;
 float		ps_r2_rain_drops_speed = 1.25f;
+
+//ogse sunshafts
+float		ps_r2_ss_sunshafts_length = 1.f;
+float		ps_r2_ss_sunshafts_radius = 1.f;
 
 //Pseudopbr
 float ps_r3_pbr_intensity = 25.0f;
@@ -1055,6 +1069,11 @@ void		xrRender_initconsole	()
 //	float		ps_r2_dof_near			= 0.f;					// 0.f
 //	float		ps_r2_dof_focus			= 1.4f;					// 1.4f
 
+		//ogse sunshafts
+	CMD3(CCC_Token, "r2_sunshafts_mode", &ps_sunshafts_mode, sunshafts_mode_token);
+	CMD4(CCC_Float, "r2_ss_sunshafts_length", &ps_r2_ss_sunshafts_length, .2f, 1.5f);
+	CMD4(CCC_Float, "r2_ss_sunshafts_radius", &ps_r2_ss_sunshafts_radius, .5f, 2.f);
+	//end ogse sunshafts 
 
 	// PseudoPBR
 	CMD4(CCC_Float, "r3_pbr_intensity", &ps_r3_pbr_intensity, .5f, 25.f);

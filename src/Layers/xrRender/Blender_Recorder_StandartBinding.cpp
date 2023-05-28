@@ -394,6 +394,21 @@ static class cl_screen_res : public R_constant_setup
 	}
 }	binder_screen_res;
 
+//ogse sunshafts
+
+static class cl_screen_params : public R_constant_setup
+{
+	Fvector4	result;
+	virtual void setup(R_constant* C)
+	{
+		float fov = float(Device.fFOV);
+		float aspect = float(Device.fASPECT);
+		result.set(fov, aspect, tan(deg2rad(fov) / 2), g_pGamePersistent->Environment().CurrentEnv->far_plane * 0.75f);
+		RCache.set_c(C, result);
+	}
+};
+static cl_screen_params binder_screen_params;
+
 // Screen Space Shaders Stuff
 extern Fvector4 ps_ssfx_wpn_dof_1;
 extern float ps_ssfx_wpn_dof_2;
@@ -443,6 +458,9 @@ static class ssfx_wpn_dof_2 : public R_constant_setup
 // Standart constant-binding
 void	CBlender_Compile::SetMapping	()
 {
+
+	//ogse sunshafts
+	r_Constant("ogse_c_screen", &binder_screen_params);
 
 	r_Constant("rain_params", &binder_rain_params);
 

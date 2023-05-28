@@ -10,8 +10,19 @@
 #include "common_cbuffers.h"
 #include "common_functions.h"
 
+float3x4 m_sunmask;	// ortho-projection
+
 // #define USE_SUPER_SPECULAR
 //#define USE_SUNMASK
+
+float4 proj_to_screen(float4 proj) 
+{ 
+	float4 screen = proj; 
+	screen.x = (proj.x + proj.w); 
+	screen.y = (proj.w - proj.y); 
+	screen.xy *= 0.5; 
+	return screen; 
+}
 
 
 #ifdef        USE_R2_STATIC_SUN

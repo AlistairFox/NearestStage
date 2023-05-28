@@ -53,6 +53,7 @@ uniform half4                L_material;                            // 0,0,0,mid
 uniform half4                Ldynamic_color;                      // dynamic light color (rgb1)        - spot/point
 uniform half4                Ldynamic_pos;                       // dynamic light pos+1/range(w) - spot/point
 uniform half4                Ldynamic_dir;                        // dynamic light direction         - sun
+uniform float4				 screen_res;
 
 uniform half4                J_direct        [6];
 uniform half4                J_spot                [6];

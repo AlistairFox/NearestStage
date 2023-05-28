@@ -466,4 +466,34 @@ struct        v_detail
         int4        misc        : TEXCOORD0;        // (u(Q),v(Q),frac,matrix-id)
 };
 
+// Screen space sunshafts
+
+struct	v_ssss
+{
+	float4 P : POSITIONT;
+	float2 tc0	: TEXCOORD0;
+};
+
+struct	v2p_ssss
+{
+	float2 tc0 : TEXCOORD0;
+	float4 HPos : SV_Position;	// Clip-space position 	(for rasterization)
+};
+
+struct p_screen
+{
+        float4          hpos 	: SV_Position;
+        float2          tc0		: TEXCOORD0;        // Texture coordinates         (for sampling maps)
+};
+
+struct	v2p_screen
+{
+	float2 tc0 : TEXCOORD0;
+#ifdef SM_2_0
+	float4 HPos : POSITION;	// Clip-space position 	(for rasterization)
+#else
+	float4 HPos : POSITIONT;  	// Clip-space position 	(for rasterization)
+#endif
+};
+
 #endif	//	common_iostructs_h_included

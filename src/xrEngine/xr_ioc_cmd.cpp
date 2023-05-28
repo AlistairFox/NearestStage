@@ -437,6 +437,7 @@ public :
 	}
 
 };
+
 //-----------------------------------------------------------------------
 class CCC_SND_Restart : public IConsole_Command
 {

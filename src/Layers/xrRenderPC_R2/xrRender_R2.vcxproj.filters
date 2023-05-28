@@ -179,6 +179,8 @@
     <ClCompile Include="..\xrRenderDX9\imgui_impl_dx9.cpp">
       <Filter>imgui_render</Filter>
     </ClCompile>
+    <ClCompile Include="blender_ss_sunshafts.cpp" />
+    <ClCompile Include="r2_rendertarget_phase_ss_sunshafts.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Include\xrRender\animation_blend.h" />
@@ -348,6 +350,7 @@
     <ClInclude Include="..\xrRenderDX9\imgui_impl_dx9.h">
       <Filter>imgui_render</Filter>
     </ClInclude>
+    <ClInclude Include="blender_ss_sunshafts.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="todo.txt" />

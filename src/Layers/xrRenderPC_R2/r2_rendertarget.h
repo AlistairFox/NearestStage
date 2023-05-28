@@ -37,6 +37,7 @@ public:
 	IBlender*					b_hud_mask;
 	IBlender*					b_hud_satiety;
 	IBlender*					b_hud_thirst;
+	IBlender* b_sunshafts;
 #ifdef DEBUG
 	struct		dbg_line_t		{
 		Fvector	P0,P1;
@@ -56,6 +57,12 @@ public:
 	// 
 	ref_rt						rt_Accumulator;		// 64bit		(r,g,b,specular)
 	ref_rt						rt_Accumulator_temp;// only for HW which doesn't feature fp16 blend
+
+		//ogse sunshafts
+	ref_rt rt_sunshafts_0;		// ss0
+	ref_rt rt_sunshafts_1;		// ss1
+	//end ogse sunshafts
+
 
 	ref_rt						rt_Generic_0;		// 32bit		(r,g,b,a)				// post-process, intermidiate results, etc.
 	ref_rt						rt_Generic_1;		// 32bit		(r,g,b,a)				// post-process, intermidiate results, etc.
@@ -95,6 +102,8 @@ public:
 private:
 	// OCCq
 	ref_shader					s_occq;
+
+	ref_shader					s_sunshafts;
 
 	//Hud Blood
 	ref_shader					s_hud_blood;
@@ -160,6 +169,7 @@ private:
 	float						f_luminance_adapt;
 
 	// Combine
+	ref_geom					g_KD;
 	ref_geom					g_combine;
 	ref_geom					g_combine_VP;		// xy=p,zw=tc
 	ref_geom					g_combine_2UV;
@@ -227,6 +237,7 @@ public:
 	BOOL						u_DBT_enable			(float zMin, float zMax);
 	void						u_DBT_disable			();
 
+	void						phase_sunshafts();
 	void						phase_ssao();
 	void						phase_downsamp			();
 	void						phase_scene_prepare		();

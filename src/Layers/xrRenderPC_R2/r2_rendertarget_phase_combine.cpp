@@ -253,6 +253,14 @@ void	CRenderTarget::phase_combine	()
 			phase_hud_thirst();
 	}
 
+	//ogse ss
+	if (!_menu_pp)
+	{
+		if (ps_r_sun_shafts > 0 && (ps_sunshafts_mode == R2SS_SCREEN_SPACE || ps_sunshafts_mode == R2SS_COMBINE_SUNSHAFTS))
+			phase_sunshafts();
+	}
+
+
 	// PP enabled ?
 	//	Render to RT texture to be able to copy RT even in windowed mode.
 	BOOL	PP_Complex		= u_need_PP	() | (BOOL)RImplementation.m_bMakeAsyncSS;
