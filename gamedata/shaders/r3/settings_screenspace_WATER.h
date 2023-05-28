@@ -2,7 +2,7 @@
 
 #define G_SSR_WATER_QUALITY				2		// Quality of the water. ( 0 = low | 1 = medium | 2 = high | 3 = Very High | 4 = Ultra )
 
-#define G_SSR_WATER_WAVES				3.0f	// Water waves intensity
+#define G_SSR_WATER_WAVES				6.0f	// Water waves intensity
 #define G_SSR_WATER_REFLECTION			1.0f	// Reflection intensity. ( 1.0f = 100% )
 #define G_SSR_WATER_REFRACTION			0.05f	// Intensity of refraction distortion
 
@@ -22,6 +22,6 @@
 #define G_SSR_WATER_CAUSTICS			0.25f	// Caustics intensity
 #define G_SSR_WATER_CAUSTICS_SCALE		1.0f	// Caustics Size
 
-#define G_SSR_WATER_SOFTBORDER			0.1f	// Soft border factor. ( 0.0f = hard edge )
+#define G_SSR_WATER_SOFTBORDER			0.3f	// Soft border factor. ( 0.0f = hard edge )
 
 #define G_SSR_WATER_CHEAPFRESNEL				// Uncomment/comment this if you want to use a faster/accurate fresnel calc

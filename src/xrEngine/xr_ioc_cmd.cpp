@@ -520,6 +520,9 @@ public:
 ENGINE_API BOOL r2_sun_static = TRUE;
 ENGINE_API BOOL r2_advanced_pp = FALSE;	//	advanced post process and effects
 
+ENGINE_API float ps_r2_sun_shafts_min = 0.f;
+ENGINE_API float ps_r2_sun_shafts_value = 1.f;
+
 u32	renderer_value	= 3;
 //void fill_render_mode_list();
 //void free_render_mode_list();
@@ -736,6 +739,9 @@ void CCC_Register()
 
 	// Render device states
 	CMD4(CCC_Integer,	"r__supersample",		&ps_r__Supersample,			1,		4		);
+
+	CMD4(CCC_Float, "r2_sunshafts_min", &ps_r2_sun_shafts_min, 0.0, 0.5);
+	CMD4(CCC_Float, "r2_sunshafts_value", &ps_r2_sun_shafts_value, 0.5, 2.0);
 	//Bloodmarks on Skeleton
 	CMD4(CCC_Integer, "r__wallmarks_on_skeleton", &ps_r__WallmarksOnSkeleton, 0, 1);
 

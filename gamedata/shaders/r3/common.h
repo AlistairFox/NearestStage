@@ -11,7 +11,7 @@
 #include "common_functions.h"
 
 // #define USE_SUPER_SPECULAR
-#define USE_SUNMASK
+//#define USE_SUNMASK
 
 
 #ifdef        USE_R2_STATIC_SUN

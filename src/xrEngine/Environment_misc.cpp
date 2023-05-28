@@ -12,6 +12,8 @@
 
 #include "securom_api.h"
 
+extern float ps_r2_sun_shafts_min;
+extern float ps_r2_sun_shafts_value;
 
 void CEnvModifier::load	(IReader* fs, u32 version)
 {
@@ -482,6 +484,8 @@ void CEnvDescriptorMixer::lerp	(CEnvironment* env, CEnvDescriptor& A, CEnvDescri
 	wind_velocity			=	fi*A.wind_velocity + f*B.wind_velocity;
 	wind_direction			=	fi*A.wind_direction + f*B.wind_direction;
 
+	m_fSunShaftsIntensity *= 1.0f - ps_r2_sun_shafts_min;
+	m_fSunShaftsIntensity += ps_r2_sun_shafts_min;
 	m_fSunShaftsIntensity = fi * A.m_fSunShaftsIntensity + f * B.m_fSunShaftsIntensity;
 	m_fWaterIntensity		=	fi*A.m_fWaterIntensity + f*B.m_fWaterIntensity;
 
