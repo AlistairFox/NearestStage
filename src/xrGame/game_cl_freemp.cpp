@@ -250,6 +250,12 @@ void game_cl_freemp::OnChatMessage(NET_Packet* P)
 	LPCSTR Anonim = "Единая Сталкерская Сеть";
 	GAME_NEWS_DATA				news_data;
 
+
+	if (g_dedicated_server)
+	{
+		Msg("%s: %s  : Team = %d", Nameofplayer, Message, team - 1);
+	}
+
 	if (team != 0)
 	{
 		news_data.m_type = (GAME_NEWS_DATA::eNewsType)0;
