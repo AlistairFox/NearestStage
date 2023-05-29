@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "player_hud.h"
 #include "HudItem.h"
 #include "ui_base.h"
@@ -12,26 +12,26 @@ player_hud* g_player_hud = NULL;
 Fvector _ancor_pos;
 Fvector _wpn_root_pos;
 
-#define PITCH_OFFSET_R		   0.0f//0.017f    Насколько сильно ствол смещается вбок (влево) при вертикальных поворотах камеры	--#SM+#--
-#define PITCH_OFFSET_N		   0.0f//0.012f    Насколько сильно ствол поднимается\опускается при вертикальных поворотах камеры	--#SM+#--
-#define PITCH_OFFSET_D		   0.02f    // Насколько сильно ствол приближается\отдаляется при вертикальных поворотах камеры --#SM+#--
-#define PITCH_LOW_LIMIT		   -PI      // Минимальное значение pitch при использовании совместно с PITCH_OFFSET_N			--#SM+#--
-#define TENDTO_SPEED           5.0f     // Модификатор силы инерции (больше - чувствительней)
-#define TENDTO_SPEED_AIM       0.01f     // (Для прицеливания)
-#define TENDTO_SPEED_RET       10.0f     // Модификатор силы отката инерции (больше - быстрее)
-#define TENDTO_SPEED_RET_AIM   200.0f     // (Для прицеливания)
-#define INERT_MIN_ANGLE        0.2f     // Минимальная сила наклона, необходимая для старта инерции
-#define INERT_MIN_ANGLE_AIM    0.0f     // (Для прицеливания)
+#define PITCH_OFFSET_R		   0.0f//0.017f    РќР°СЃРєРѕР»СЊРєРѕ СЃРёР»СЊРЅРѕ СЃС‚РІРѕР» СЃРјРµС‰Р°РµС‚СЃСЏ РІР±РѕРє (РІР»РµРІРѕ) РїСЂРё РІРµСЂС‚РёРєР°Р»СЊРЅС‹С… РїРѕРІРѕСЂРѕС‚Р°С… РєР°РјРµСЂС‹	--#SM+#--
+#define PITCH_OFFSET_N		   0.0f//0.012f    РќР°СЃРєРѕР»СЊРєРѕ СЃРёР»СЊРЅРѕ СЃС‚РІРѕР» РїРѕРґРЅРёРјР°РµС‚СЃСЏ\РѕРїСѓСЃРєР°РµС‚СЃСЏ РїСЂРё РІРµСЂС‚РёРєР°Р»СЊРЅС‹С… РїРѕРІРѕСЂРѕС‚Р°С… РєР°РјРµСЂС‹	--#SM+#--
+#define PITCH_OFFSET_D		   0.02f    // РќР°СЃРєРѕР»СЊРєРѕ СЃРёР»СЊРЅРѕ СЃС‚РІРѕР» РїСЂРёР±Р»РёР¶Р°РµС‚СЃСЏ\РѕС‚РґР°Р»СЏРµС‚СЃСЏ РїСЂРё РІРµСЂС‚РёРєР°Р»СЊРЅС‹С… РїРѕРІРѕСЂРѕС‚Р°С… РєР°РјРµСЂС‹ --#SM+#--
+#define PITCH_LOW_LIMIT		   -PI      // РњРёРЅРёРјР°Р»СЊРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ pitch РїСЂРё РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРё СЃРѕРІРјРµСЃС‚РЅРѕ СЃ PITCH_OFFSET_N			--#SM+#--
+#define TENDTO_SPEED           5.0f     // РњРѕРґРёС„РёРєР°С‚РѕСЂ СЃРёР»С‹ РёРЅРµСЂС†РёРё (Р±РѕР»СЊС€Рµ - С‡СѓРІСЃС‚РІРёС‚РµР»СЊРЅРµР№)
+#define TENDTO_SPEED_AIM       0.01f     // (Р”Р»СЏ РїСЂРёС†РµР»РёРІР°РЅРёСЏ)
+#define TENDTO_SPEED_RET       10.0f     // РњРѕРґРёС„РёРєР°С‚РѕСЂ СЃРёР»С‹ РѕС‚РєР°С‚Р° РёРЅРµСЂС†РёРё (Р±РѕР»СЊС€Рµ - Р±С‹СЃС‚СЂРµРµ)
+#define TENDTO_SPEED_RET_AIM   200.0f     // (Р”Р»СЏ РїСЂРёС†РµР»РёРІР°РЅРёСЏ)
+#define INERT_MIN_ANGLE        0.2f     // РњРёРЅРёРјР°Р»СЊРЅР°СЏ СЃРёР»Р° РЅР°РєР»РѕРЅР°, РЅРµРѕР±С…РѕРґРёРјР°СЏ РґР»СЏ СЃС‚Р°СЂС‚Р° РёРЅРµСЂС†РёРё
+#define INERT_MIN_ANGLE_AIM    0.0f     // (Р”Р»СЏ РїСЂРёС†РµР»РёРІР°РЅРёСЏ)
 
-// Пределы смещения при инерции (лево / право / верх / низ)
+// РџСЂРµРґРµР»С‹ СЃРјРµС‰РµРЅРёСЏ РїСЂРё РёРЅРµСЂС†РёРё (Р»РµРІРѕ / РїСЂР°РІРѕ / РІРµСЂС… / РЅРёР·)
 #define ORIGIN_OFFSET          0.2f,  0.2f,  0.2f, 0.2f 
 #define ORIGIN_OFFSET_AIM      0.995f, 0.995f, 0.995f, 0.995f   
 
 // Outdated - old inertion
-#define TENDTO_SPEED_OLD       5.f      // Скорость нормализации положения ствола
-#define TENDTO_SPEED_AIM_OLD   8.f      // (Для прицеливания)
-#define ORIGIN_OFFSET_OLD     -0.05f    // Фактор влияния инерции на положение ствола (чем меньше, тем маштабней инерция)
-#define ORIGIN_OFFSET_AIM_OLD -0.03f    // (Для прицеливания)
+#define TENDTO_SPEED_OLD       5.f      // РЎРєРѕСЂРѕСЃС‚СЊ РЅРѕСЂРјР°Р»РёР·Р°С†РёРё РїРѕР»РѕР¶РµРЅРёСЏ СЃС‚РІРѕР»Р°
+#define TENDTO_SPEED_AIM_OLD   8.f      // (Р”Р»СЏ РїСЂРёС†РµР»РёРІР°РЅРёСЏ)
+#define ORIGIN_OFFSET_OLD     -0.05f    // Р¤Р°РєС‚РѕСЂ РІР»РёСЏРЅРёСЏ РёРЅРµСЂС†РёРё РЅР° РїРѕР»РѕР¶РµРЅРёРµ СЃС‚РІРѕР»Р° (С‡РµРј РјРµРЅСЊС€Рµ, С‚РµРј РјР°С€С‚Р°Р±РЅРµР№ РёРЅРµСЂС†РёСЏ)
+#define ORIGIN_OFFSET_AIM_OLD -0.03f    // (Р”Р»СЏ РїСЂРёС†РµР»РёРІР°РЅРёСЏ)
 
 float CalcMotionSpeed(const shared_str& anim_name)
 {
@@ -340,7 +340,7 @@ void hud_item_measures::load(const shared_str& sect_name, IKinematics* K)
 
 	m_prop_flags.set(e_16x9_mode_now,is_16x9);
 
-	//Загрузка параметров инерции --#SM+# Begin--
+	//Р—Р°РіСЂСѓР·РєР° РїР°СЂР°РјРµС‚СЂРѕРІ РёРЅРµСЂС†РёРё --#SM+# Begin--
 	m_inertion_params.m_pitch_offset_r = READ_IF_EXISTS(pSettings, r_float, sect_name, "pitch_offset_right", PITCH_OFFSET_R);
 	m_inertion_params.m_pitch_offset_n = READ_IF_EXISTS(pSettings, r_float, sect_name, "pitch_offset_up", PITCH_OFFSET_N);
 	m_inertion_params.m_pitch_offset_d = READ_IF_EXISTS(pSettings, r_float, sect_name, "pitch_offset_forward", PITCH_OFFSET_D);
@@ -693,7 +693,7 @@ void player_hud::update_inertion(Fmatrix& trans)
 		// load params
 		hud_item_measures::inertion_params inertion_data;
 		if (pMainHud != NULL)
-		{ // Загружаем параметры инерции из основного худа
+		{ // Р—Р°РіСЂСѓР¶Р°РµРј РїР°СЂР°РјРµС‚СЂС‹ РёРЅРµСЂС†РёРё РёР· РѕСЃРЅРѕРІРЅРѕРіРѕ С…СѓРґР°
 			inertion_data.m_pitch_offset_r = pMainHud->m_measures.m_inertion_params.m_pitch_offset_r;
 			inertion_data.m_pitch_offset_n = pMainHud->m_measures.m_inertion_params.m_pitch_offset_n;
 			inertion_data.m_pitch_offset_d = pMainHud->m_measures.m_inertion_params.m_pitch_offset_d;
@@ -710,7 +710,7 @@ void player_hud::update_inertion(Fmatrix& trans)
 			inertion_data.m_min_angle_aim = pMainHud->m_measures.m_inertion_params.m_min_angle_aim;
 		}
 		else
-		{ // Загружаем дефолтные параметры инерции
+		{ // Р—Р°РіСЂСѓР¶Р°РµРј РґРµС„РѕР»С‚РЅС‹Рµ РїР°СЂР°РјРµС‚СЂС‹ РёРЅРµСЂС†РёРё
 			inertion_data.m_pitch_offset_r = PITCH_OFFSET_R;
 			inertion_data.m_pitch_offset_n = PITCH_OFFSET_N;
 			inertion_data.m_pitch_offset_d = PITCH_OFFSET_D;
@@ -747,19 +747,19 @@ void player_hud::update_inertion(Fmatrix& trans)
 		// tend to forward
 		float _tendto_speed, _origin_offset;
 		if (pMainHud != NULL && pMainHud->m_parent_hud_item->GetCurrentHudOffsetIdx() > 0)
-		{ // Худ в режиме "Прицеливание"
+		{ // РҐСѓРґ РІ СЂРµР¶РёРјРµ "РџСЂРёС†РµР»РёРІР°РЅРёРµ"
 			float factor = pMainHud->m_parent_hud_item->GetInertionFactor();
 			_tendto_speed = inertion_data.m_tendto_speed_aim - (inertion_data.m_tendto_speed_aim - inertion_data.m_tendto_speed) * factor;
 			_origin_offset =
 				inertion_data.m_origin_offset_aim - (inertion_data.m_origin_offset_aim - inertion_data.m_origin_offset) * factor;
 		}
 		else
-		{ // Худ в режиме "От бедра"
+		{ // РҐСѓРґ РІ СЂРµР¶РёРјРµ "РћС‚ Р±РµРґСЂР°"
 			_tendto_speed = inertion_data.m_tendto_speed;
 			_origin_offset = inertion_data.m_origin_offset;
 		}
 
-		// Фактор силы инерции
+		// Р¤Р°РєС‚РѕСЂ СЃРёР»С‹ РёРЅРµСЂС†РёРё
 		if (pMainHud != NULL)
 		{
 			float power_factor = pMainHud->m_parent_hud_item->GetInertionPowerFactor();
@@ -776,13 +776,13 @@ void player_hud::update_inertion(Fmatrix& trans)
 		if (pMainHud != NULL)
 			pitch *= pMainHud->m_parent_hud_item->GetInertionFactor();
 
-		// Отдаление\приближение
+		// РћС‚РґР°Р»РµРЅРёРµ\РїСЂРёР±Р»РёР¶РµРЅРёРµ
 		origin.mad(xform.k, -pitch * inertion_data.m_pitch_offset_d);
 
-		// Сдвиг в противоположную часть экрана
+		// РЎРґРІРёРі РІ РїСЂРѕС‚РёРІРѕРїРѕР»РѕР¶РЅСѓСЋ С‡Р°СЃС‚СЊ СЌРєСЂР°РЅР°
 		origin.mad(xform.i, -pitch * inertion_data.m_pitch_offset_r);
 
-		// Подьём\опускание
+		// РџРѕРґСЊС‘Рј\РѕРїСѓСЃРєР°РЅРёРµ
 		clamp(pitch, inertion_data.m_pitch_low_limit, PI);
 		origin.mad(xform.j, -pitch * inertion_data.m_pitch_offset_n);
 	}
