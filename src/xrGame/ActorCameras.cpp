@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "Actor.h"
 #include "../xrEngine/CameraBase.h"
 #ifdef DEBUG
@@ -379,7 +379,7 @@ void CActor::cam_Update(float dt, float fFOV)
 	fCurAVelocity			= vPrevCamDir.sub(cameras[eacFirstEye]->vDirection).magnitude()/Device.fTimeDelta;
 	vPrevCamDir				= cameras[eacFirstEye]->vDirection;
 
-//	// Âûñ÷èòûâàåì ðàçíèöó ìåæäó ïðåäûäóùèì è òåêóùèì Yaw \ Pitch îò 1-ãî ëèöà //--#SM+ Begin#--
+//	// Ð’Ñ‹ÑÑ‡Ð¸Ñ‚Ñ‹Ð²Ð°ÐµÐ¼ Ñ€Ð°Ð·Ð½Ð¸Ñ†Ñƒ Ð¼ÐµÐ¶Ð´Ñƒ Ð¿Ñ€ÐµÐ´Ñ‹Ð´ÑƒÑ‰Ð¸Ð¼ Ð¸ Ñ‚ÐµÐºÑƒÑ‰Ð¸Ð¼ Yaw \ Pitch Ð¾Ñ‚ 1-Ð³Ð¾ Ð»Ð¸Ñ†Ð° //--#SM+ Begin#--
 //	float& cam_yaw_cur = cameras[eacFirstEye]->yaw;
 //	static float cam_yaw_prev = cam_yaw_cur;
 //
