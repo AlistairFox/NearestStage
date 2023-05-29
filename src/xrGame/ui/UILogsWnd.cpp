@@ -103,6 +103,11 @@ void CUILogsWnd::Init()
 	AttachChild(text_box);
 	CUIXmlInit::InitEditBox(m_uiXml, "text_box", 0, text_box);
 
+	summ_box = xr_new<CUIEditBox>();
+	summ_box->SetAutoDelete(true);
+	AttachChild(summ_box);
+	CUIXmlInit::InitEditBox(m_uiXml, "transf_summ_box", 0, summ_box);
+
 	m_butn = xr_new<CUI3tButton>();
 	m_butn->SetAutoDelete(true);
 	AttachChild(m_butn);
@@ -306,12 +311,15 @@ void CUILogsWnd::PrevPeriod( CUIWindow* w, void* d )
 
 void CUILogsWnd::ClBut(CUIWindow* w, void* d)
 {
-	if (text_box && text_box->GetText() != "")
+	if (text_box && text_box->GetText() != "" && summ_box && summ_box->GetText() != "")
 	{
 		string256 send;
-		sprintf(send, "transfer_money %s", text_box->GetText());
+		sprintf(send, "transfer_money %s %s", summ_box->GetText(), text_box->GetText());
 
 		Console->Execute(send);
+
+		summ_box->ClearText();
+		text_box->ClearText();
 	}
 }
 

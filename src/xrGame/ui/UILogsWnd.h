@@ -35,6 +35,7 @@ private:
 	typedef CUIWindow	inherited;
 
 	CUIEditBox* text_box;
+	CUIEditBox* summ_box;
 
 	CUIFrameWindow*		m_background;
 	CUIFrameWindow*		m_center_background;
