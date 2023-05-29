@@ -486,7 +486,7 @@ void CEnvDescriptorMixer::lerp	(CEnvironment* env, CEnvDescriptor& A, CEnvDescri
 
 	m_fSunShaftsIntensity *= 1.0f - ps_r2_sun_shafts_min;
 	m_fSunShaftsIntensity += ps_r2_sun_shafts_min;
-	m_fSunShaftsIntensity *= ps_r2_sun_shafts_value;
+	m_fSunShaftsIntensity = fi * A.m_fSunShaftsIntensity + f * B.m_fSunShaftsIntensity;
 	m_fWaterIntensity		=	fi*A.m_fWaterIntensity + f*B.m_fWaterIntensity;
 
 #ifdef TREE_WIND_EFFECT
