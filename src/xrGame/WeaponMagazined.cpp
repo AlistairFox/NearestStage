@@ -1,4 +1,4 @@
-#include "pch_script.h"
+п»ї#include "pch_script.h"
 
 #include "WeaponMagazined.h"
 #include "actor.h"
@@ -55,6 +55,7 @@ CWeaponMagazined::CWeaponMagazined(ESoundTypes eSoundType) : CWeapon()
 	m_fOldBulletSpeed			= 0;
 	m_iQueueSize				= WEAPON_ININITE_QUEUE;
 	m_bLockType					= false;
+	m_bAutoreloadEnabled = false;
 }
 
 CWeaponMagazined::~CWeaponMagazined()
@@ -79,10 +80,11 @@ void CWeaponMagazined::Load	(LPCSTR section)
 	m_sounds.LoadSound(section,"snd_shoot", "sndShot"		, false, m_eSoundShot		);
 	m_sounds.LoadSound(section,"snd_empty", "sndEmptyClick"	, false, m_eSoundEmptyClick	);
 	m_sounds.LoadSound(section,"snd_reload", "sndReload"		, true, m_eSoundReload		);
+	m_sounds.LoadSound(section, "snd_reload_empty", "sndReloadEmpty", true, m_eSoundReloadEmpty);
 	
 	m_sSndShotCurrent = "sndShot";
 		
-	//звуки и партиклы глушителя, еслит такой есть
+	//Р·РІСѓРєРё Рё РїР°СЂС‚РёРєР»С‹ РіР»СѓС€РёС‚РµР»СЏ, РµСЃР»РёС‚ С‚Р°РєРѕР№ РµСЃС‚СЊ
 	if ( m_eSilencerStatus == ALife::eAddonAttachable || m_eSilencerStatus == ALife::eAddonPermanent )
 	{
 		if(pSettings->line_exist(section, "silencer_flame_particles"))
@@ -168,9 +170,12 @@ void CWeaponMagazined::FireEnd()
 {
 	inherited::FireEnd();
 
-	CActor	*actor = smart_cast<CActor*>(H_Parent());
-	if(m_pInventory && !iAmmoElapsed && actor && GetState()!=eReload) 
-		Reload();
+	if (m_bAutoreloadEnabled)
+	{
+		CActor* actor = smart_cast<CActor*>(H_Parent());
+		if (m_pInventory && !iAmmoElapsed && actor && GetState() != eReload)
+			Reload();
+	}
 }
 
 void CWeaponMagazined::Reload() 
@@ -192,28 +197,25 @@ bool CWeaponMagazined::TryReload()
 
 		m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny( m_ammoTypes[m_ammoType].c_str() ));
 		
-		if(IsMisfire() && iAmmoElapsed)
+		if ((IsMisfire() && iAmmoElapsed) || m_pCurrentAmmo || unlimited_ammo())
 		{
 			SetPending			(TRUE);
 			SwitchState			(eReload); 
 			return				true;
 		}
 
-		if(m_pCurrentAmmo || unlimited_ammo())  
-		{
-			SetPending			(TRUE);
-			SwitchState			(eReload); 
-			return				true;
-		} 
 		else for(u8 i = 0; i < u8(m_ammoTypes.size()); ++i) 
 		{
-			m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny( m_ammoTypes[i].c_str() ));
-			if(m_pCurrentAmmo) 
-			{ 
-				m_ammoType			= i; 
-				SetPending			(TRUE);
-				SwitchState			(eReload);
-				return				true;
+			for (u32 i = 0; i < m_ammoTypes.size(); ++i)
+			{
+				m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(*m_ammoTypes[i]));
+				if (m_pCurrentAmmo)
+				{
+					m_ammoType = i;
+					SetPending(TRUE);
+					SwitchState(eReload);
+					return				true;
+				}
 			}
 		}
 
@@ -228,12 +230,16 @@ bool CWeaponMagazined::TryReload()
 bool CWeaponMagazined::IsAmmoAvailable()
 {
 	if (smart_cast<CWeaponAmmo*>(m_pInventory->GetAny( m_ammoTypes[m_ammoType].c_str() )))
-		return	(true);
+		return true;
 	else
-		for(u32 i = 0; i < m_ammoTypes.size(); ++i)
+	{
+		for (u32 i = 0; i < m_ammoTypes.size(); ++i)
+		{
 			if (smart_cast<CWeaponAmmo*>(m_pInventory->GetAny( m_ammoTypes[i].c_str() )))
-				return	(true);
-	return		(false);
+				return true;
+		}
+	}
+	return false;
 }
 
 void CWeaponMagazined::OnMagazineEmpty() 
@@ -337,7 +343,7 @@ void CWeaponMagazined::ReloadMagazine()
 {
 	m_BriefInfo_CalcFrame = 0;	
 
-	//устранить осечку при перезарядке
+	//СѓСЃС‚СЂР°РЅРёС‚СЊ РѕСЃРµС‡РєСѓ РїСЂРё РїРµСЂРµР·Р°СЂСЏРґРєРµ
 	if(IsMisfire())	bMisfire = false;
 	
 	if (!m_bLockType)
@@ -363,14 +369,14 @@ void CWeaponMagazined::ReloadMagazine()
 		if (!tmp_sect_name)
 			return;
 
-		//попытаться найти в инвентаре патроны текущего типа 
+		//РїРѕРїС‹С‚Р°С‚СЊСЃСЏ РЅР°Р№С‚Рё РІ РёРЅРІРµРЅС‚Р°СЂРµ РїР°С‚СЂРѕРЅС‹ С‚РµРєСѓС‰РµРіРѕ С‚РёРїР° 
 		m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(tmp_sect_name));
 		
 		if(!m_pCurrentAmmo && !m_bLockType) 
 		{
 			for(u8 i = 0; i < u8(m_ammoTypes.size()); ++i) 
 			{
-				//проверить патроны всех подходящих типов
+				//РїСЂРѕРІРµСЂРёС‚СЊ РїР°С‚СЂРѕРЅС‹ РІСЃРµС… РїРѕРґС…РѕРґСЏС‰РёС… С‚РёРїРѕРІ
 				m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny( m_ammoTypes[i].c_str() ));
 				if(m_pCurrentAmmo) 
 				{ 
@@ -383,10 +389,10 @@ void CWeaponMagazined::ReloadMagazine()
 
 
 
-	//нет патронов для перезарядки
+	//РЅРµС‚ РїР°С‚СЂРѕРЅРѕРІ РґР»СЏ РїРµСЂРµР·Р°СЂСЏРґРєРё
 	if(!m_pCurrentAmmo && !unlimited_ammo() ) return;
 
-	//разрядить магазин, если загружаем патронами другого типа
+	//СЂР°Р·СЂСЏРґРёС‚СЊ РјР°РіР°Р·РёРЅ, РµСЃР»Рё Р·Р°РіСЂСѓР¶Р°РµРј РїР°С‚СЂРѕРЅР°РјРё РґСЂСѓРіРѕРіРѕ С‚РёРїР°
 	if(!m_bLockType && !m_magazine.empty() && 
 		(!m_pCurrentAmmo || xr_strcmp(m_pCurrentAmmo->cNameSect(), 
 					 *m_magazine.back().m_ammoSect)))
@@ -410,7 +416,7 @@ void CWeaponMagazined::ReloadMagazine()
 
 	VERIFY((u32)iAmmoElapsed == m_magazine.size());
 
-	//выкинуть коробку патронов, если она пустая
+	//РІС‹РєРёРЅСѓС‚СЊ РєРѕСЂРѕР±РєСѓ РїР°С‚СЂРѕРЅРѕРІ, РµСЃР»Рё РѕРЅР° РїСѓСЃС‚Р°СЏ
 	if(m_pCurrentAmmo && !m_pCurrentAmmo->m_boxCurr && OnServer()) 
 		m_pCurrentAmmo->SetDropManual(TRUE);
 
@@ -484,8 +490,8 @@ void CWeaponMagazined::UpdateCL			()
 	}
 	*/
 
-	//когда происходит апдейт состояния оружия
-	//ничего другого не делать
+	//РєРѕРіРґР° РїСЂРѕРёСЃС…РѕРґРёС‚ Р°РїРґРµР№С‚ СЃРѕСЃС‚РѕСЏРЅРёСЏ РѕСЂСѓР¶РёСЏ
+	//РЅРёС‡РµРіРѕ РґСЂСѓРіРѕРіРѕ РЅРµ РґРµР»Р°С‚СЊ
 	if(GetNextState() == GetState())
 	{
 		switch (GetState())
@@ -523,6 +529,7 @@ void CWeaponMagazined::UpdateSounds	()
 	m_sounds.SetPosition("sndHide", P);
 //. nah	m_sounds.SetPosition("sndShot", P);
 	m_sounds.SetPosition("sndReload", P);
+	m_sounds.SetPosition("sndReloadEmpty", P);
 //. nah	m_sounds.SetPosition("sndEmptyClick", P);
 }
 
@@ -672,10 +679,10 @@ void CWeaponMagazined::OnShot()
 	PHGetLinearVell				(vel);
 	OnShellDrop					(get_LastSP(), vel);
 	
-	// Огонь из ствола
+	// РћРіРѕРЅСЊ РёР· СЃС‚РІРѕР»Р°
 	StartFlameParticles			();
 
-	//дым из ствола
+	//РґС‹Рј РёР· СЃС‚РІРѕР»Р°
 	ForceUpdateFireParticles	();
 	StartSmokeParticles			(get_LastFP(), vel);
 }
@@ -761,9 +768,16 @@ void CWeaponMagazined::switch2_Empty()
 {
 	OnZoomOut();
 	
-	if(!TryReload())
+	if (m_bAutoreloadEnabled)
 	{
-		OnEmptyClick();
+		if (!TryReload())
+		{
+			OnEmptyClick();
+		}
+		else
+		{
+			OnEmptyClick();
+		}
 	}
 	else
 	{
@@ -772,8 +786,11 @@ void CWeaponMagazined::switch2_Empty()
 }
 void CWeaponMagazined::PlayReloadSound()
 {
-	if(m_sounds_enabled)
-		PlaySound	("sndReload",get_LastFP());
+	if (m_sounds_enabled)
+		if (iAmmoElapsed == 0 && pSettings->line_exist(hud_sect, "anm_reload_empty"))
+			PlaySound("sndReloadEmpty", get_LastFP());
+		else
+			PlaySound("sndReload", get_LastFP());
 }
 
 void CWeaponMagazined::switch2_Reload()
@@ -818,7 +835,7 @@ bool CWeaponMagazined::Action(u16 cmd, u32 flags)
 {
 	if(inherited::Action(cmd, flags)) return true;
 	
-	//если оружие чем-то занято, то ничего не делать
+	//РµСЃР»Рё РѕСЂСѓР¶РёРµ С‡РµРј-С‚Рѕ Р·Р°РЅСЏС‚Рѕ, С‚Рѕ РЅРёС‡РµРіРѕ РЅРµ РґРµР»Р°С‚СЊ
 	if(IsPending()) return false;
 	
 	switch(cmd) 
@@ -977,7 +994,7 @@ bool CWeaponMagazined::Attach(PIItem pIItem, bool b_send_event)
 	{
 		if (b_send_event && OnServer())
 		{
-			//уничтожить подсоединенную вещь из инвентаря
+			//СѓРЅРёС‡С‚РѕР¶РёС‚СЊ РїРѕРґСЃРѕРµРґРёРЅРµРЅРЅСѓСЋ РІРµС‰СЊ РёР· РёРЅРІРµРЅС‚Р°СЂСЏ
 //.			pIItem->Drop					();
 			pIItem->object().DestroyObject	();
 		};
@@ -1135,7 +1152,7 @@ void CWeaponMagazined::InitAddons()
 		m_sSmokeParticlesCurrent	= m_sSilencerSmokeParticles;
 		m_sSndShotCurrent			= "sndSilencerShot";
 
-		//подсветка от выстрела
+		//РїРѕРґСЃРІРµС‚РєР° РѕС‚ РІС‹СЃС‚СЂРµР»Р°
 		LoadLights					(*cNameSect(), "silencer_");
 		ApplySilencerKoeffs			();
 	}
@@ -1145,7 +1162,7 @@ void CWeaponMagazined::InitAddons()
 		m_sSmokeParticlesCurrent	= m_sSmokeParticles;
 		m_sSndShotCurrent			= "sndShot";
 
-		//подсветка от выстрела
+		//РїРѕРґСЃРІРµС‚РєР° РѕС‚ РІС‹СЃС‚СЂРµР»Р°
 		LoadLights		(*cNameSect(), "");
 		ResetSilencerKoeffs();
 	}
@@ -1199,7 +1216,14 @@ void CWeaponMagazined::PlayAnimHide()
 void CWeaponMagazined::PlayAnimReload()
 {
 	VERIFY(GetState()==eReload);
-	PlayHUDMotion("anm_reload", TRUE, this, GetState());
+	if (iAmmoElapsed == 0 && pSettings->line_exist(hud_sect, "anm_reload_empty"))
+	{
+		PlayHUDMotion("anm_reload_empty", TRUE, this, GetState());
+	}
+	else
+	{
+		PlayHUDMotion("anm_reload", TRUE, this, GetState());
+	}
 }
 
 void CWeaponMagazined::PlayAnimAim()
@@ -1261,7 +1285,7 @@ void CWeaponMagazined::OnZoomOut		()
 
 }
 
-//переключение режимов стрельбы одиночными и очередями
+//РїРµСЂРµРєР»СЋС‡РµРЅРёРµ СЂРµР¶РёРјРѕРІ СЃС‚СЂРµР»СЊР±С‹ РѕРґРёРЅРѕС‡РЅС‹РјРё Рё РѕС‡РµСЂРµРґСЏРјРё
 bool CWeaponMagazined::SwitchMode			()
 {
 	if(eIdle != GetState() || IsPending()) return false;
@@ -1495,6 +1519,11 @@ bool CWeaponMagazined::install_upgrade_impl( LPCSTR section, bool test )
 	if ( result2 && !test ) { m_sounds.LoadSound( section, "snd_reload"	, "sndReload"		, true, m_eSoundReload	);	}
 	result |= result2;
 
+	result2 = process_if_exists_set(section, "snd_reload_empty", &CInifile::r_string, str, test);
+	if (result2 && !test) { m_sounds.LoadSound(section, "snd_reload_empty", "sndReloadEmpty", true, m_eSoundReloadEmpty); }
+	result |= result2;
+
+
 	//snd_shoot1     = weapons\ak74u_shot_1 ??
 	//snd_shoot2     = weapons\ak74u_shot_2 ??
 	//snd_shoot3     = weapons\ak74u_shot_3 ??
@@ -1529,7 +1558,7 @@ bool CWeaponMagazined::install_upgrade_impl( LPCSTR section, bool test )
 
 	return result;
 }
-//текущая дисперсия (в радианах) оружия с учетом используемого патрона и недисперсионных пуль
+//С‚РµРєСѓС‰Р°СЏ РґРёСЃРїРµСЂСЃРёСЏ (РІ СЂР°РґРёР°РЅР°С…) РѕСЂСѓР¶РёСЏ СЃ СѓС‡РµС‚РѕРј РёСЃРїРѕР»СЊР·СѓРµРјРѕРіРѕ РїР°С‚СЂРѕРЅР° Рё РЅРµРґРёСЃРїРµСЂСЃРёРѕРЅРЅС‹С… РїСѓР»СЊ
 float CWeaponMagazined::GetFireDispersion(float cartridge_k, bool for_crosshair) 
 {
 	float fire_disp = GetBaseDispersion(cartridge_k);
