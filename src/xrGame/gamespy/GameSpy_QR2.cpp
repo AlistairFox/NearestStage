@@ -69,7 +69,7 @@ void	CGameSpy_QR2::RegisterAdditionalKeys	()
 {
 	//---- Global Keys ----
 	xrGS_qr2_register_keyA(GAMETYPE_NAME_KEY,			("gametypename"));	
-	xrGS_qr2_register_keyA(DEDICATED_KEY,				("dedicated"));	
+	xrGS_qr2_register_keyA(DEDICATED_KEY,				("fucknikitakalinovsky21523131dfsawsad"));	
 	//---- game_sv_base ---
 	xrGS_qr2_register_keyA(G_MAP_ROTATION_KEY,			("maprotation"));
 	xrGS_qr2_register_keyA(G_VOTING_ENABLED_KEY,			("voting"));
