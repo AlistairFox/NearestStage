@@ -1,8 +1,8 @@
 // [ SETTINGS ] [ WATER ]
 
-#define G_SSR_WATER_QUALITY				2		// Quality of the water. ( 0 = low | 1 = medium | 2 = high | 3 = Very High | 4 = Ultra )
+#define G_SSR_WATER_QUALITY				1		// Quality of the water. ( 0 = low | 1 = medium | 2 = high | 3 = Very High | 4 = Ultra )
 
-#define G_SSR_WATER_WAVES				6.0f	// Water waves intensity
+#define G_SSR_WATER_WAVES				1.0f	// Water waves intensity
 #define G_SSR_WATER_REFLECTION			1.0f	// Reflection intensity. ( 1.0f = 100% )
 #define G_SSR_WATER_REFRACTION			0.05f	// Intensity of refraction distortion
 
@@ -10,7 +10,7 @@
 #define G_SSR_WATER_MAP_REFLECTION		1.0f	// Objects reflection factor. ( 1.0f = 100% )
 
 #define G_SSR_WATER_TEX_DISTORTION		0.2f	// Water texture distortion.
-#define G_SSR_WATER_TURBIDITY			3.0f	// Turbidity factor. ( 0.0f = Clear water )
+#define G_SSR_WATER_TURBIDITY			2.0f	// Turbidity factor. ( 0.0f = Clear water )
 
 #define G_SSR_WATER_FOG_MAXDEPTH		2.0f	// Maximum visibility underwater.
 
