@@ -1664,8 +1664,7 @@ __forceinline void _mm_store_fvector( Fvector& v , const __m128 R1 )
 
 
 struct TES_PARAMS {
-	u32 p_from;
-	u32 p_to;
+	u32 p_count;
 	ParticleEffect* effect;
 	pVector offset;
 	float age;
@@ -1693,8 +1692,6 @@ void PATurbulenceExecuteStream( LPVOID lpvParams )
 
 	TES_PARAMS* pParams = (TES_PARAMS *) lpvParams;
 
-	u32 p_from = pParams->p_from;
-	u32 p_to = pParams->p_to;
 	ParticleEffect* effect = pParams->effect;
 	pVector offset = pParams->offset;
 	float age = pParams->age;
@@ -1703,7 +1700,7 @@ void PATurbulenceExecuteStream( LPVOID lpvParams )
 	int octaves = pParams->octaves;
 	float magnitude = pParams->magnitude;
 
-    for(u32 i = p_from; i < p_to; i++)
+    for(u32 i = 0; i < pParams->p_count; i++)
     {
         Particle &m = effect->particles[i];
 
@@ -1755,9 +1752,9 @@ void PATurbulenceExecuteStream( LPVOID lpvParams )
 
 }
 
-
 void PATurbulence::Execute(ParticleEffect *effect, const float dt, float& tm_max)
 {
+
 	#ifdef _GPA_ENABLED	
 		TAL_SCOPED_TASK_NAMED( "PATurbulence::Execute()" );
 	#endif // _GPA_ENABLED
@@ -1774,39 +1771,18 @@ void PATurbulence::Execute(ParticleEffect *effect, const float dt, float& tm_max
 	if ( ! p_cnt )
 		return;
 
-	u32 nWorkers = ttapi_GetWorkersCount();
+	TES_PARAMS tesParams;
 
-	if ( p_cnt < nWorkers * 20 )
-		nWorkers = 1;
+	tesParams.p_count = p_cnt;
+	tesParams.effect = effect;
+	tesParams.offset = offset;
+	tesParams.age = age;
+	tesParams.epsilon = epsilon;
+	tesParams.frequency = frequency;
+	tesParams.octaves = octaves;
+	tesParams.magnitude = magnitude;
 
-	TES_PARAMS* tesParams = (TES_PARAMS*) _alloca( sizeof(TES_PARAMS) * nWorkers );
-
-	// Give ~1% more for the last worker
-	// to minimize wait in final spin
-	u32 nSlice = p_cnt / 128; 
-
-	u32 nStep = ( ( p_cnt - nSlice ) / nWorkers );
-	//u32 nStep = ( p_cnt / nWorkers );
-
-	//Msg( "Trb: %u" , nStep );
-
-	for ( u32 i = 0 ; i < nWorkers ; ++i ) {
-		tesParams[i].p_from = i * nStep;
-		tesParams[i].p_to = ( i == ( nWorkers - 1 ) ) ? p_cnt : ( tesParams[i].p_from + nStep );
-
-		tesParams[i].effect = effect;
-		tesParams[i].offset = offset;
-		tesParams[i].age = age;
-		tesParams[i].epsilon = epsilon;
-		tesParams[i].frequency = frequency;
-		tesParams[i].octaves = octaves;
-		tesParams[i].magnitude = magnitude;
-
-		ttapi_AddWorker( PATurbulenceExecuteStream , (LPVOID) &tesParams[i] );
-	}
-
-	ttapi_RunAllWorkers();
-
+	PATurbulenceExecuteStream(&tesParams);
 }
 
 #else
