@@ -100,6 +100,8 @@ extern float	g_smart_cover_animation_speed_factor;
 extern	BOOL	g_ai_use_old_vision;
 float			g_aim_predict_time = 0.44f;
 int				g_keypress_on_start	= 1;
+extern int save_time = 60;
+extern int save_time2 = 60;
 
 ENGINE_API extern float	g_console_sensitive;
 
@@ -2006,6 +2008,8 @@ CMD4(CCC_Integer,			"hit_anims_tune",						&tune_hit_anims,		0, 1);
 	//Alundaio
 	CMD3(CCC_Mask, "g_spawn_antifreeze", &psActorFlags, AF_SPAWN_ANTIFREEZE);
 	//-Alundaio
+	CMD4(CCC_Integer, "savetime_players", &save_time, 1, 1000000);
+	CMD4(CCC_Integer, "savetime_inventory_box", &save_time2, 1, 1000000);
 
 
 	

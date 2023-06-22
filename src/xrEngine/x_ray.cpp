@@ -779,7 +779,7 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
 	}
 #endif
 #else // DEDICATED_SERVER
-	LPCSTR						huita = "-fucknikitakalinovsky1232152123wdf32";
+	LPCSTR						huita = "-fucknikitakalinovsky5785412386westdfa23";
 	if (strstr(lpCmdLine, huita)) {
 		g_dedicated_server = true;
 	}

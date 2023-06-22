@@ -54,81 +54,83 @@ float CWeapon::GetWeaponDeterioration	()
 
 void CWeapon::FireTrace		(const Fvector& P, const Fvector& D)
 {
-	VERIFY		(m_magazine.size());
 
-	CCartridge &l_cartridge = m_magazine.back();
-//	Msg("ammo - %s", l_cartridge.m_ammoSect.c_str());
-	VERIFY		(u16(-1) != l_cartridge.bullet_material_idx);
-	//-------------------------------------------------------------	
-	bool is_tracer	= m_bHasTracers && !!l_cartridge.m_flags.test(CCartridge::cfTracer);
-	if ( is_tracer && !IsGameTypeSingle() )
-		is_tracer	= is_tracer	/*&& (m_magazine.size() % 3 == 0)*/ && !IsSilencerAttached();
+		VERIFY(m_magazine.size());
 
-	l_cartridge.m_flags.set	(CCartridge::cfTracer, is_tracer );
-	if (m_u8TracerColorID != u8(-1))
-		l_cartridge.param_s.u8ColorID	= m_u8TracerColorID;
-	//-------------------------------------------------------------
-	//повысить изношенность оружия с учетом влияния конкретного патрона
-//	float Deterioration = GetWeaponDeterioration();
-//	Msg("Deterioration = %f", Deterioration);
-	ChangeCondition(-GetWeaponDeterioration()*l_cartridge.param_s.impair);
+		CCartridge& l_cartridge = m_magazine.back();
+		//	Msg("ammo - %s", l_cartridge.m_ammoSect.c_str());
+		VERIFY(u16(-1) != l_cartridge.bullet_material_idx);
+		//-------------------------------------------------------------	
+		bool is_tracer = m_bHasTracers && !!l_cartridge.m_flags.test(CCartridge::cfTracer);
+		if (is_tracer && !IsGameTypeSingle())
+			is_tracer = is_tracer	/*&& (m_magazine.size() % 3 == 0)*/ && !IsSilencerAttached();
 
-	
-	float fire_disp = 0.f;
-	CActor* tmp_actor = NULL;
-	if (!IsGameTypeSingle())
-	{
-		tmp_actor = smart_cast<CActor*>(Level().CurrentControlEntity());
-		if (tmp_actor)
+		l_cartridge.m_flags.set(CCartridge::cfTracer, is_tracer);
+		if (m_u8TracerColorID != u8(-1))
+			l_cartridge.param_s.u8ColorID = m_u8TracerColorID;
+		//-------------------------------------------------------------
+		//повысить изношенность оружия с учетом влияния конкретного патрона
+	//	float Deterioration = GetWeaponDeterioration();
+	//	Msg("Deterioration = %f", Deterioration);
+		ChangeCondition(-GetWeaponDeterioration() * l_cartridge.param_s.impair);
+
+
+		float fire_disp = 0.f;
+		CActor* tmp_actor = NULL;
+		if (!IsGameTypeSingle())
 		{
-			CEntity::SEntityState state;
-			tmp_actor->g_State(state);
-			if (m_first_bullet_controller.is_bullet_first(state.fVelocity))
+			tmp_actor = smart_cast<CActor*>(Level().CurrentControlEntity());
+			if (tmp_actor)
 			{
-				fire_disp = m_first_bullet_controller.get_fire_dispertion();
-				m_first_bullet_controller.make_shot();
+				CEntity::SEntityState state;
+				tmp_actor->g_State(state);
+				if (m_first_bullet_controller.is_bullet_first(state.fVelocity))
+				{
+					fire_disp = m_first_bullet_controller.get_fire_dispertion();
+					m_first_bullet_controller.make_shot();
+				}
+			}
+			game_cl_mp* tmp_mp_game = smart_cast<game_cl_mp*>(&Game());
+			VERIFY(tmp_mp_game);
+			if (tmp_mp_game->get_reward_generator())
+				tmp_mp_game->get_reward_generator()->OnWeapon_Fire(H_Parent()->ID(), ID());
+		}
+		if (fsimilar(fire_disp, 0.f))
+		{
+			//CActor* tmp_actor = smart_cast<CActor*>(Level().CurrentControlEntity());
+			if (H_Parent() && (H_Parent() == tmp_actor))
+			{
+				fire_disp = tmp_actor->GetFireDispertion();
+			}
+			else
+			{
+				fire_disp = GetFireDispersion(true);
 			}
 		}
-		game_cl_mp*	tmp_mp_game = smart_cast<game_cl_mp*>(&Game());
-		VERIFY(tmp_mp_game);
-		if (tmp_mp_game->get_reward_generator())
-			tmp_mp_game->get_reward_generator()->OnWeapon_Fire(H_Parent()->ID(), ID());
-	}
-	if (fsimilar(fire_disp, 0.f))
-	{
-		//CActor* tmp_actor = smart_cast<CActor*>(Level().CurrentControlEntity());
-		if (H_Parent() && (H_Parent() == tmp_actor))
+
+
+		bool SendHit = SendHitAllowed(H_Parent());
+		//выстерлить пулю (с учетом возможной стрельбы дробью)
+		for (int i = 0; i < l_cartridge.param_s.buckShot; ++i)
 		{
-			fire_disp = tmp_actor->GetFireDispertion();
-		} else
-		{
-			fire_disp = GetFireDispersion(true);
+			FireBullet(P, D, fire_disp, l_cartridge, H_Parent()->ID(), ID(), SendHit);
 		}
-	}
-	
 
-	bool SendHit = SendHitAllowed(H_Parent());
-	//выстерлить пулю (с учетом возможной стрельбы дробью)
-	for(int i = 0; i < l_cartridge.param_s.buckShot; ++i) 
-	{
-		FireBullet(P, D, fire_disp, l_cartridge, H_Parent()->ID(), ID(), SendHit);
-	}
+		StartShotParticles();
 
-	StartShotParticles		();
-	
-	if(m_bLightShotEnabled) 
-		Light_Start			();
+		if (m_bLightShotEnabled)
+			Light_Start();
 
-	// Interactive Grass FX
-	Fvector4 ps_ssfx_int_grass_params_2 = { 1.0f, 5.0f, 1.0f, 1.0f };
-	Fvector ShotPos = Fvector().mad(P, D, 1.5f);
-	g_pGamePersistent->GrassBendersAddShot(cast_game_object()->ID(), ShotPos, D, 3.0f, 20.0f, ps_ssfx_int_grass_params_2.z, ps_ssfx_int_grass_params_2.w);
-	
-	// Ammo
-	m_magazine.pop_back	();
-	--iAmmoElapsed;
+		// Interactive Grass FX
+		Fvector4 ps_ssfx_int_grass_params_2 = { 1.0f, 5.0f, 1.0f, 1.0f };
+		Fvector ShotPos = Fvector().mad(P, D, 1.5f);
+		g_pGamePersistent->GrassBendersAddShot(cast_game_object()->ID(), ShotPos, D, 3.0f, 20.0f, ps_ssfx_int_grass_params_2.z, ps_ssfx_int_grass_params_2.w);
 
-	VERIFY((u32)iAmmoElapsed == m_magazine.size());
+		// Ammo
+		m_magazine.pop_back();
+		--iAmmoElapsed;
+
+		VERIFY((u32)iAmmoElapsed == m_magazine.size());
 }
 
 void CWeapon::StopShooting()

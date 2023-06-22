@@ -297,6 +297,7 @@ void CActor::SelectScriptAnimation()
 		}
 	}
 
+
 	//Msg("Selected [%d] UI_SEL [%d]", oldAnim, ANIM_SELECTED);
 
 	u32 selectedAnimation = oldAnim;
@@ -441,6 +442,14 @@ void CActor::StopAllSNDs()
 void CActor::StartExit()
 {
 	OutPlay = true;
+	CanChange = true;
+	NEED_EXIT = false;
+	ANIM_SELECTED = 0;
+	StopAnims();
+}
+
+void CActor::FastExit()
+{
 	CanChange = true;
 	NEED_EXIT = false;
 	ANIM_SELECTED = 0;

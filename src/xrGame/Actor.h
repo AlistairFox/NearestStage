@@ -103,6 +103,7 @@ protected:
 	void					StopAllSNDs();
 	void					StopAnims();
 	void					StartExit();
+	void					FastExit();
 	void					ReciveSoundPlay(NET_Packet packet);
 	void					ReciveAnimationPacket(NET_Packet& packet);
 	void					ReciveActivateItem(NET_Packet& packet);

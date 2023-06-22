@@ -1838,6 +1838,8 @@ float _lerp(const float& _val_a, const float& _val_b, const float& _factor)
 	return (_val_a * (1.0 - _factor)) + (_val_b * _factor);
 }
 
+extern int fireblock;
+
 void CWeapon::UpdateHudAdditonal(Fmatrix& trans)
 {
 	CActor* pActor = smart_cast<CActor*>(H_Parent());
@@ -1994,6 +1996,12 @@ void CWeapon::UpdateHudAdditonal(Fmatrix& trans)
 		clamp(m_sFactor, 0.f, 1.f);
 	}
 
+	if (m_fFactor > 0.2)
+	{
+		fireblock = true;
+	}
+	else
+		fireblock = false;
 		
 	
 	//============= Подготавливаем общие переменные =============//

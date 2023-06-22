@@ -129,7 +129,6 @@ bool CWeaponMagazined::UseScopeTexture()
 
 void CWeaponMagazined::FireStart		()
 {
-
 		if (!IsMisfire())
 		{
 			if (IsValid())
@@ -506,7 +505,7 @@ void CWeaponMagazined::UpdateCL			()
 			}break;
 		case eFire:			
 			{
-				state_Fire		(dt);
+				state_Fire(dt);
 			}break;
 		case eMisfire:		state_Misfire	(dt);	break;
 		case eMagEmpty:		state_MagEmpty	(dt);	break;
@@ -535,112 +534,109 @@ void CWeaponMagazined::UpdateSounds	()
 
 void CWeaponMagazined::state_Fire(float dt)
 {
-	if (H_Parent())
-	{
-		CActor* a = smart_cast<CActor*>(H_Parent());
-		if (a && !a->is_alive())
+		if (H_Parent())
 		{
+			CActor* a = smart_cast<CActor*>(H_Parent());
+			if (a && !a->is_alive())
+			{
 				if (GetState() == eFire)
 				{
 					SetState(eIdle);
 				}
+			}
 		}
-	}
-	if(iAmmoElapsed > 0)
-	{
-		VERIFY(fOneShotTime>0.f);
-
-		Fvector					p1, d; 
-		p1.set(get_LastFP());
-		d.set(get_LastFD());
-
-		if (!H_Parent()) return;
-		if (smart_cast<CMPPlayersBag*>(H_Parent()) != NULL)
+		if (iAmmoElapsed > 0)
 		{
-			Msg("! WARNING: state_Fire of object [%d][%s] while parent is CMPPlayerBag...", ID(), cNameSect().c_str());
-			return;
-		}
+			VERIFY(fOneShotTime > 0.f);
 
-		CInventoryOwner* io		= smart_cast<CInventoryOwner*>(H_Parent());
-		if(NULL == io->inventory().ActiveItem())
-		{
-				Log("current_state", GetState() );
-				Log("next_state", GetNextState());
-				Log("item_sect", cNameSect().c_str());
-				Log("H_Parent", H_Parent()->cNameSect().c_str());
-		}
+			Fvector					p1, d;
+			p1.set(get_LastFP());
+			d.set(get_LastFD());
 
-		CEntity* E = smart_cast<CEntity*>(H_Parent());
-		E->g_fireParams	(this, p1,d);
-
-		if( !E->g_stateFire() )
-			StopShooting();
-
-		if (m_iShotNum == 0)
-		{
-			m_vStartPos = p1;
-			m_vStartDir = d;
-		};
-		
-		VERIFY(!m_magazine.empty());
-
-		while (	!m_magazine.empty() && 
-				fShotTimeCounter<0 && 
-				(IsWorking() || m_bFireSingleShot) && 
-				(m_iQueueSize<0 || m_iShotNum<m_iQueueSize)
-			   )
-		{
-			if( CheckForMisfire() )
+			if (!H_Parent()) return;
+			if (smart_cast<CMPPlayersBag*>(H_Parent()) != NULL)
 			{
-				StopShooting();
+				Msg("! WARNING: state_Fire of object [%d][%s] while parent is CMPPlayerBag...", ID(), cNameSect().c_str());
 				return;
 			}
 
-			m_bFireSingleShot		= false;
+			CInventoryOwner* io = smart_cast<CInventoryOwner*>(H_Parent());
+			if (NULL == io->inventory().ActiveItem())
+			{
+				Log("current_state", GetState());
+				Log("next_state", GetNextState());
+				Log("item_sect", cNameSect().c_str());
+				Log("H_Parent", H_Parent()->cNameSect().c_str());
+			}
 
-			fShotTimeCounter		+=	fOneShotTime;
-			
-			++m_iShotNum;
-			
-			OnShot					();
+			CEntity* E = smart_cast<CEntity*>(H_Parent());
+			E->g_fireParams(this, p1, d);
 
-			if (m_iShotNum>m_iBaseDispersionedBulletsCount)
-				FireTrace		(p1,d);
-			else
-				FireTrace		(m_vStartPos, m_vStartDir);
+			if (!E->g_stateFire())
+				StopShooting();
+
+			if (m_iShotNum == 0)
+			{
+				m_vStartPos = p1;
+				m_vStartDir = d;
+			};
+
+			VERIFY(!m_magazine.empty());
+
+			while (!m_magazine.empty() &&
+				fShotTimeCounter < 0 &&
+				(IsWorking() || m_bFireSingleShot) &&
+				(m_iQueueSize < 0 || m_iShotNum < m_iQueueSize)
+				)
+			{
+				if (CheckForMisfire())
+				{
+					StopShooting();
+					return;
+				}
+
+				m_bFireSingleShot = false;
+
+				fShotTimeCounter += fOneShotTime;
+
+				++m_iShotNum;
+
+				OnShot();
+
+				if (m_iShotNum > m_iBaseDispersionedBulletsCount)
+					FireTrace(p1, d);
+				else
+					FireTrace(m_vStartPos, m_vStartDir);
+			}
+
+			if (m_iShotNum == m_iQueueSize)
+				m_bStopedAfterQueueFired = true;
+
+			UpdateSounds();
 		}
-	
-		if(m_iShotNum == m_iQueueSize)
-			m_bStopedAfterQueueFired = true;
 
-		UpdateSounds			();
-	}
-
-	if(fShotTimeCounter<0)
-	{
-/*
-		if(bDebug && H_Parent() && (H_Parent()->ID() != Actor()->ID()))
+		if (fShotTimeCounter < 0)
 		{
-			Msg("stop shooting w=[%s] magsize=[%d] sshot=[%s] qsize=[%d] shotnum=[%d]",
-					IsWorking()?"true":"false", 
-					m_magazine.size(),
-					m_bFireSingleShot?"true":"false",
-					m_iQueueSize,
-					m_iShotNum);
+			/*
+					if(bDebug && H_Parent() && (H_Parent()->ID() != Actor()->ID()))
+					{
+						Msg("stop shooting w=[%s] magsize=[%d] sshot=[%s] qsize=[%d] shotnum=[%d]",
+								IsWorking()?"true":"false",
+								m_magazine.size(),
+								m_bFireSingleShot?"true":"false",
+								m_iQueueSize,
+								m_iShotNum);
+					}
+			*/
+			if (iAmmoElapsed == 0)
+				OnMagazineEmpty();
+
+			StopShooting();
 		}
-*/
-		if(iAmmoElapsed == 0)
-			OnMagazineEmpty();
-
-		StopShooting();
-	}
-	else
-	{
-		fShotTimeCounter			-=	dt;
-	}
-
-	if (m_fFactor > 0)
-		StopShooting();
+		else
+		{
+			fShotTimeCounter -= dt;
+		}
 }
 
 void CWeaponMagazined::state_Misfire	(float dt)

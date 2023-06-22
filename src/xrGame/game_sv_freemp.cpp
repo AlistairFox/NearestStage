@@ -290,7 +290,8 @@ void game_sv_freemp::OnEvent(NET_Packet &P, u16 type, u32 time, ClientID sender)
 }
 
 #include "Actor.h"
-
+extern int save_time;
+extern int save_time2;
 void game_sv_freemp::Update()
 {
 	inherited::Update();
@@ -303,7 +304,11 @@ void game_sv_freemp::Update()
 	if (!g_pGameLevel)
 		return;
 
-	if (Level().game && Device.dwFrame % 60 == 0)
+
+	//CTimer timers;
+	//timers.Start();
+
+	if (Level().game && Device.dwFrame % save_time == 0)
 	{
 		for (auto player : Level().game->players)
 		{
@@ -332,10 +337,10 @@ void game_sv_freemp::Update()
 				xr_delete(file);
 			}
 		}
-
 	}
 
-	if (Level().game && Device.dwTimeGlobal - oldTime > 15 * 1000) {
+		if (Level().game && Device.dwFrame % save_time2 == 0)
+		{
 		for (int i = 0; i != server().GetEntitiesNum(); i++)
 		{
 			CSE_Abstract* abs = server().GetEntity(i);
@@ -381,6 +386,10 @@ void game_sv_freemp::Update()
 		oldTime = Device.dwTimeGlobal;
 	}
 
+	//if (timers.GetElapsed_ms() > 5)
+	//{
+	//	Msg("save %d", timers.GetElapsed_ms());
+	//}
 }
 
 BOOL game_sv_freemp::OnTouch(u16 eid_who, u16 eid_what, BOOL bForced)

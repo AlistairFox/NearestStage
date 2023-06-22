@@ -44,10 +44,6 @@ void CActor::IR_OnKeyboardPress(int cmd)
 {
 	if (m_blocked_actions.find((EGameActions)cmd) != m_blocked_actions.end()) return; // Real Wolf. 14.10.2014
 
-	if (MpAnimationMODE())
-	{
-		StartExit();
-	}
 	if(hud_adj_mode && pInput->iGetAsyncKeyState(DIK_LSHIFT))	return;
 
 	if (Remote())		return;
@@ -59,16 +55,16 @@ void CActor::IR_OnKeyboardPress(int cmd)
 	{
 	case kWPN_FIRE:
 		{
-			if( (mstate_wishful & mcLookout) && CheckGameFlag(F_DISABLE_WEAPON_FIRE_WHEN_LOOKOUT)) return;
+			if ((mstate_wishful & mcLookout) && CheckGameFlag(F_DISABLE_WEAPON_FIRE_WHEN_LOOKOUT)) return;
 
 			u16 slot = inventory().GetActiveSlot();
-			if(inventory().ActiveItem() && (slot==INV_SLOT_3 || slot==INV_SLOT_2) )
-				mstate_wishful &=~mcSprint;
+			if (inventory().ActiveItem() && (slot == INV_SLOT_3 || slot == INV_SLOT_2))
+				mstate_wishful &= ~mcSprint;
 			//-----------------------------
 			if (OnServer())
 			{
 				NET_Packet P;
-				P.w_begin(M_PLAYER_FIRE); 
+				P.w_begin(M_PLAYER_FIRE);
 				P.w_u16(ID());
 				u_EventSend(P);
 			}
@@ -355,13 +351,48 @@ void CActor::IR_OnKeyboardHold(int cmd)
 	case kRIGHT:
 		if (eacFreeLook!=cam_active) cam_Active()->Move(cmd, 0, LookFactor);	break;
 
-	case kACCEL:	mstate_wishful |= mcAccel;									break;
-	case kL_STRAFE:	mstate_wishful |= mcLStrafe;								break;
-	case kR_STRAFE:	mstate_wishful |= mcRStrafe;								break;
+	case kACCEL:
+	{mstate_wishful |= mcAccel;									
+	}break;
+
+	case kL_STRAFE:
+	{
+		if (MpAnimationMODE())
+		{
+			FastExit();
+		}
+		mstate_wishful |= mcLStrafe;								
+	}break;
+
+	case kR_STRAFE:
+	{
+		if (MpAnimationMODE())
+		{
+			FastExit();
+		}
+		mstate_wishful |= mcRStrafe;								
+	}break;
+
 	case kL_LOOKOUT:mstate_wishful |= mcLLookout;								break;
 	case kR_LOOKOUT:mstate_wishful |= mcRLookout;								break;
-	case kFWD:		mstate_wishful |= mcFwd;									break;
-	case kBACK:		mstate_wishful |= mcBack;									break;
+	case kFWD:
+	{
+		if (MpAnimationMODE())
+		{
+			FastExit();
+		}
+		mstate_wishful |= mcFwd;
+	}break;
+
+	case kBACK:
+	{
+		if (MpAnimationMODE())
+		{
+			FastExit();
+		}
+		mstate_wishful |= mcBack;									
+	}break;
+
 	case kCROUCH:
 		{
 			if( !psActorFlags.test(AF_CROUCH_TOGGLE) )

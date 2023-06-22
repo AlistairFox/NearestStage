@@ -235,7 +235,6 @@ protected:
 		CNightVisionEffector*	m_pNight_vision;
 
 	} m_zoom_params;
-	
 		float			m_fFactor;
 		float			m_sFactor;
 		float			m_fRTZoomFactor; //run-time zoom factor

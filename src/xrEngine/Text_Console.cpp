@@ -221,6 +221,8 @@ void CTextConsole::OnPaint()
 	EndPaint( m_hLogWnd, &ps );
 }
 
+u32 FPS_min = 1000;
+
 void CTextConsole::DrawLog( HDC hDC, RECT* pRect )
 {
 	TEXTMETRIC tm;
@@ -304,6 +306,7 @@ void CTextConsole::DrawLog( HDC hDC, RECT* pRect )
 	if ( g_pGameLevel && ( Device.dwTimeGlobal - m_last_time > 500 ) )
 	{
 		m_last_time = Device.dwTimeGlobal;
+		FPS_min = 1000;
 
 		m_server_info.ResetData();
 		g_pGameLevel->GetLevelInfo( &m_server_info );
@@ -325,6 +328,17 @@ void CTextConsole::DrawLog( HDC hDC, RECT* pRect )
 	sprintf(tmp, "FPS:%.0f", 1.f / Device.fTimeDelta);
 	SetTextColor(hDC, RGB(255,255,255));
 	TextOut(hDC, 10, ypos, tmp, xr_strlen(tmp));
+	
+	int FPS = int(1.0f / Device.fTimeDelta);
+	if (FPS_min > FPS)
+	{
+		FPS_min = FPS;
+	}
+
+
+	sprintf(tmp, "FPS_min:%d", FPS_min);
+	SetTextColor(hDC, RGB(255, 255, 255));
+	TextOut(hDC, 10, ypos+40, tmp, xr_strlen(tmp));
 }
 /*
 void CTextConsole::IR_OnKeyboardPress( int dik ) !!!!!!!!!!!!!!!!!!!!!
