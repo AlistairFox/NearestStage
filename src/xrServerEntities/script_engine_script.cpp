@@ -108,6 +108,60 @@ void prefetch_module(LPCSTR file_name)
 	ai().script_engine().process_file(file_name);
 }
 
+class CAuthForm
+{
+public:
+	bool loaded = false;
+	LPCSTR name;
+	LPCSTR pass;
+	LPCSTR ip;
+	LPCSTR port;
+
+	LPCSTR get_name() { return name; }
+	LPCSTR get_pass() { return pass; }
+	LPCSTR get_ip() { return ip; }
+	LPCSTR get_port() { return port; }
+	bool get_loaded() { return loaded; }
+
+	CAuthForm() {};
+	~CAuthForm() {};
+};
+
+void SetLoginAuth(LPCSTR login, LPCSTR pass, LPCSTR ip, LPCSTR port)
+{
+	string_path p;
+	FS.update_path(p, "$mp_saves$", "loginsave.ltx");
+	CInifile* file = xr_new<CInifile>(p,false,false);
+	if (file)
+	{
+		file->w_string("auth_form", "login", login);
+		file->w_string("auth_form", "pass", pass);
+		file->w_string("auth_form", "ip", ip);
+		file->w_string("auth_form", "port", port);
+	}
+
+	file->save_as(p);
+}
+
+CAuthForm GetLoginAuth()
+{
+	CAuthForm form;
+
+	string_path p;
+	FS.update_path(p, "$mp_saves$", "loginsave.ltx");
+	CInifile* file = xr_new<CInifile>(p);
+	if (file && file->section_exist("auth_form"))
+	{
+		form.loaded = true;
+		form.name = file->r_string("auth_form", "login");
+		form.pass = file->r_string("auth_form", "pass");
+		form.ip = file->r_string("auth_form", "ip");
+		form.port = file->r_string("auth_form", "port");
+	}
+
+	return form;
+}
+
 struct profile_timer_script {
 	u64							m_start_cpu_tick_count;
 	u64							m_accumulator;
@@ -237,4 +291,17 @@ void CScriptEngine::script_register(lua_State *L)
 	function	(L,	"device",							get_device);
 	function	(L,	"is_enough_address_space_available",is_enough_address_space_available_impl);
 #endif // #ifdef XRGAME_EXPORTS
+	module(L)
+		[
+			class_<CAuthForm>("auth_form")
+			.def(constructor<>())
+		.def("loaded", &CAuthForm::get_loaded)
+		.def("name", &CAuthForm::get_name)
+		.def("pass", &CAuthForm::get_pass)
+		.def("ip", &CAuthForm::get_ip)
+		.def("port", &CAuthForm::get_port)
+		];
+
+	function(L, "save_auth", SetLoginAuth);
+	function(L, "load_auth", GetLoginAuth);
 }
