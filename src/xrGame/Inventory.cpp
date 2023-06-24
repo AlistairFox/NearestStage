@@ -632,6 +632,7 @@ void CInventory::SendActionEvent(u16 cmd, u32 flags)
 	pActor->u_EventSend		(P, net_flags(TRUE, TRUE, FALSE, TRUE));
 };
 
+extern float m_fFactor;
 bool CInventory::Action(u16 cmd, u32 flags) 
 {
 	CActor *pActor = smart_cast<CActor*>(m_pOwner);
@@ -640,51 +641,51 @@ bool CInventory::Action(u16 cmd, u32 flags)
 	{
 		switch(cmd)
 		{
-			case kWPN_FIRE:
-			{
+
+		case kWPN_FIRE:
+		{
 				pActor->SetShotRndSeed();
-			}break;
-			case kWPN_ZOOM : 
-			{
-				pActor->SetZoomRndSeed();
-			}break;
+		}break;
+		case kWPN_ZOOM:
+		{
+			pActor->SetZoomRndSeed();
+		}break;
 		};
 	};
-
-	if (g_pGameLevel && OnClient() && pActor) 
-	{
-		switch(cmd)
+		if (g_pGameLevel && OnClient() && pActor)
 		{
-		case kUSE:		break;
-		
-		case kDROP:		
-			{
-				if ((flags & CMD_STOP) && !IsGameTypeSingle())
+				switch (cmd)
 				{
-					PIItem tmp_item = ActiveItem();
-					if (tmp_item)
-					{
-						tmp_item->DenyTrade();
-					}
-				}
-				SendActionEvent	(cmd, flags);
-				return			true;
-			}break;
+				case kUSE:		break;
 
-		case kWPN_NEXT:
-		case kWPN_RELOAD:
-		case kWPN_FIRE:
-		case kWPN_FUNC:
-		case kWPN_FIREMODE_NEXT:
-		case kWPN_FIREMODE_PREV:
-		case kWPN_ZOOM	 : 
-		case kTORCH:
-		case kNIGHT_VISION:
-			{
-				SendActionEvent(cmd, flags);
-			}break;
+				case kDROP:
+				{
+					if ((flags & CMD_STOP) && !IsGameTypeSingle())
+					{
+						PIItem tmp_item = ActiveItem();
+						if (tmp_item)
+						{
+							tmp_item->DenyTrade();
+						}
+					}
+					SendActionEvent(cmd, flags);
+					return			true;
+				}break;
+
+				case kWPN_NEXT:
+				case kWPN_RELOAD:
+				case kWPN_FIRE:
+				case kWPN_FUNC:
+				case kWPN_FIREMODE_NEXT:
+				case kWPN_FIREMODE_PREV:
+				case kWPN_ZOOM:
+				case kTORCH:
+				case kNIGHT_VISION:
+				{
+					SendActionEvent(cmd, flags);
+				}break;
+				}
 		}
-	}
 
 
 	if (	ActiveItem() && 

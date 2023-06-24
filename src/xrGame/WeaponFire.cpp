@@ -52,9 +52,9 @@ float CWeapon::GetWeaponDeterioration	()
 	return conditionDecreasePerShot;
 };
 
+extern float m_fFactor;
 void CWeapon::FireTrace		(const Fvector& P, const Fvector& D)
 {
-
 		VERIFY(m_magazine.size());
 
 		CCartridge& l_cartridge = m_magazine.back();
@@ -131,6 +131,7 @@ void CWeapon::FireTrace		(const Fvector& P, const Fvector& D)
 		--iAmmoElapsed;
 
 		VERIFY((u32)iAmmoElapsed == m_magazine.size());
+	
 }
 
 void CWeapon::StopShooting()

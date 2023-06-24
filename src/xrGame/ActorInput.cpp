@@ -39,6 +39,7 @@
 #include"Weapon.h"
 
 extern u32 hud_adj_mode;
+extern float m_fFactor;
 
 void CActor::IR_OnKeyboardPress(int cmd)
 {
@@ -51,12 +52,12 @@ void CActor::IR_OnKeyboardPress(int cmd)
 	if (IsTalking())	return;
 	if (m_input_external_handler && !m_input_external_handler->authorized(cmd))	return;
 	
+
 	switch (cmd)
 	{
 	case kWPN_FIRE:
 		{
 			if ((mstate_wishful & mcLookout) && CheckGameFlag(F_DISABLE_WEAPON_FIRE_WHEN_LOOKOUT)) return;
-
 			u16 slot = inventory().GetActiveSlot();
 			if (inventory().ActiveItem() && (slot == INV_SLOT_3 || slot == INV_SLOT_2))
 				mstate_wishful &= ~mcSprint;
@@ -73,6 +74,10 @@ void CActor::IR_OnKeyboardPress(int cmd)
 
 	case kSafeMode:
 	{
+		if (MpAnimationMODE() && !OutAnim)
+		{
+			FastExit();
+		}
 		if (OnClient())
 		{
 			game_PlayerState* ps = Game().GetPlayerByGameID(ID());
@@ -357,19 +362,11 @@ void CActor::IR_OnKeyboardHold(int cmd)
 
 	case kL_STRAFE:
 	{
-		if (MpAnimationMODE())
-		{
-			FastExit();
-		}
 		mstate_wishful |= mcLStrafe;								
 	}break;
 
 	case kR_STRAFE:
 	{
-		if (MpAnimationMODE())
-		{
-			FastExit();
-		}
 		mstate_wishful |= mcRStrafe;								
 	}break;
 
@@ -377,19 +374,11 @@ void CActor::IR_OnKeyboardHold(int cmd)
 	case kR_LOOKOUT:mstate_wishful |= mcRLookout;								break;
 	case kFWD:
 	{
-		if (MpAnimationMODE())
-		{
-			FastExit();
-		}
 		mstate_wishful |= mcFwd;
 	}break;
 
 	case kBACK:
 	{
-		if (MpAnimationMODE())
-		{
-			FastExit();
-		}
 		mstate_wishful |= mcBack;									
 	}break;
 

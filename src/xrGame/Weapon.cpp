@@ -35,6 +35,7 @@ BOOL	b_hud_collision = TRUE;
 BOOL	b_hud_rotate = TRUE;
 BOOL safemode_rot = FALSE;
 extern CUIXml*	pWpnScopeXml;
+float m_fFactor;
 
 CWeapon::CWeapon()
 {
@@ -1838,7 +1839,7 @@ float _lerp(const float& _val_a, const float& _val_b, const float& _factor)
 	return (_val_a * (1.0 - _factor)) + (_val_b * _factor);
 }
 
-extern int fireblock;
+
 
 void CWeapon::UpdateHudAdditonal(Fmatrix& trans)
 {
@@ -1995,14 +1996,6 @@ void CWeapon::UpdateHudAdditonal(Fmatrix& trans)
 
 		clamp(m_sFactor, 0.f, 1.f);
 	}
-
-	if (m_fFactor > 0.2)
-	{
-		fireblock = true;
-	}
-	else
-		fireblock = false;
-		
 	
 	//============= Подготавливаем общие переменные =============//
 

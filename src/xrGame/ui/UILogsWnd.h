@@ -36,16 +36,25 @@ private:
 
 	CUIEditBox* text_box;
 	CUIEditBox* summ_box;
+	CUIEditBox* text_chat;
 
 	CUIFrameWindow*		m_background;
 	CUIFrameWindow*		m_center_background;
 
 	CUITextWnd*			m_center_caption;
 //	CUICharacterInfo*	m_actor_ch_info;
+	CUITextWnd* m_trans_caption1;
+	CUITextWnd* m_trans_caption2;
+	CUITextWnd* m_trans_caption3;
+	CUITextWnd* m_chat;
+
 
 	CUICheckButton*		m_filter_news;
 	CUICheckButton*		m_filter_talk;
+	CUICheckButton* m_chat_all;
+	CUICheckButton* anonim_chat;
 	CUI3tButton* m_butn;
+	CUI3tButton* m_butn_chat;
 	
 //	CUITextWnd*			m_date_caption;
 //	CUITextWnd*			m_date;
@@ -97,6 +106,9 @@ protected:
 			void xr_stdcall	PrevPeriod		( CUIWindow* w, void* d);
 			void xr_stdcall	NextPeriod		( CUIWindow* w, void* d);
 			void xr_stdcall ClBut(CUIWindow* w, void* d);
+			void xr_stdcall ClButchat(CUIWindow* w, void* d);
+			void xr_stdcall ChatAllCheck(CUIWindow* w, void* d);
+			void xr_stdcall AnonimChatCheck(CUIWindow* w, void* d);
 	
 			void 		on_scroll_keys		( int dik );
 

@@ -31,6 +31,7 @@
 #include "../xrEngine/xr_object.h"
 
 #include <locale.h>
+#include "Inventory.h"
 
 EGameIDs	ParseStringToGameType	(LPCSTR str);
 LPCSTR		GameTypeToString		(EGameIDs gt, bool bShort);
@@ -2366,6 +2367,13 @@ public:
 
 	virtual void	Execute(LPCSTR args)
 	{
+		CInventoryOwner* pInvOwner = smart_cast<CInventoryOwner*>(Level().CurrentEntity());
+		if (!pInvOwner)
+			return;
+
+		CActor* pAC = smart_cast<CActor*>(pInvOwner);
+		if (!pAC)
+			return;
 		string4096 buff;
 		xr_strcpy(buff, args);
 
@@ -2379,67 +2387,77 @@ public:
 		if (g_dedicated_server) return;
 		if (!(&Level())) return;
 		if (!(&Game())) return;
-		
+
 		if (!Game().local_player)
 			return;
 
 		if (Game().local_player && Game().local_player->testFlag(GAME_PLAYER_FLAG_VERY_VERY_DEAD))
 			return;
 
-		CActor *pActor = smart_cast<CActor*>(Level().CurrentControlEntity());
+		CActor* pActor = smart_cast<CActor*>(Level().CurrentControlEntity());
 		if (!pActor || !pActor->is_alive())
 			return;
-		
+
 		string128 name;
 		s32 money;
 
-		if (sscanf_s(args, "%d %s", &money, &name, sizeof(name)) != 2)
+		if (pAC->inventory().m_slots[PDA_SLOT].m_pIItem)
 		{
-			Msg("! Transfer money to player. Format: \"transfer_money <money> <player name>\"");
-			return;
-		}
-		if (Game().local_player->money_for_round < money)
-		{
-			Msg("! You don't have enough money!");
-			return;
-		}
-		
-		_strlwr_l(_Trim(name), current_locale);
 
-		bool wasSent = false;
-
-		for (auto &player : Game().players)
-		{
-			game_PlayerState *ps = player.second;
-			if (ps->GameID == Game().local_player->GameID)
+			if (sscanf_s(args, "%d %s", &money, &name, sizeof(name)) != 2)
 			{
-				continue;
+				Msg("! Transfer money to player. Format: \"transfer_money <money> <player name>\"");
+				return;
+			}
+			if (Game().local_player->money_for_round < money)
+			{
+				Msg("! You don't have enough money!");
+				return;
 			}
 
-			string128 player_name;
-			xr_strcpy(player_name, ps->getName());
-			_strlwr_l(player_name, current_locale);
+			_strlwr_l(_Trim(name), current_locale);
 
-			if (xr_strcmp(player_name, name) == 0)
+			bool wasSent = false;
+
+			for (auto& player : Game().players)
 			{
-				NET_Packet					P;
-				Game().u_EventGen(P, GE_GAME_EVENT, pActor->ID());
-				P.w_u16(GAME_EVENT_TRANSFER_MONEY);
-				P.w_clientID(player.first); // to
-				P.w_s32(money); // money
-				Game().u_EventSend(P);
-				wasSent = true;
-				break;
-			}
-		}
+				game_PlayerState* ps = player.second;
+				if (ps->GameID == Game().local_player->GameID)
+				{
+					continue;
+				}
 
-		if (wasSent)
-		{
-			Msg("- The money was transferred successfully!");
+				string128 player_name;
+				xr_strcpy(player_name, ps->getName());
+				_strlwr_l(player_name, current_locale);
+
+				if (xr_strcmp(player_name, name) == 0)
+				{
+					NET_Packet					P;
+					Game().u_EventGen(P, GE_GAME_EVENT, pActor->ID());
+					P.w_u16(GAME_EVENT_TRANSFER_MONEY);
+					P.w_clientID(player.first); // to
+					P.w_s32(money); // money
+					Game().u_EventSend(P);
+					wasSent = true;
+					break;
+				}
+			}
+
+			if (wasSent)
+			{
+				Msg("- The money was transferred successfully!");
+			}
+			else
+			{
+				Msg("! Failed to send money to player with name: \"%s\".", name);
+			}
+
 		}
 		else
 		{
-			Msg("! Failed to send money to player with name: \"%s\".", name);
+			Msg("! You don't have PDA");
+			return;
 		}
 	}
 };

@@ -37,6 +37,7 @@ extern u64	generate_time	(u32 years, u32 months, u32 days, u32 hours, u32 minute
 extern void	split_time		(u64 time, u32 &years, u32 &months, u32 &days, u32 &hours, u32 &minutes, u32 &seconds, u32 &milliseconds);
 
 u64 const day2ms			= u64( 24 * 60 * 60 * 1000 );
+extern bool sendNextMessageToAll = false;
 
 CUILogsWnd::CUILogsWnd()
 {
@@ -98,6 +99,11 @@ void CUILogsWnd::Init()
 
 	CUIXmlInit::InitWindow( m_uiXml, "main_wnd", 0, this );
 
+	text_chat = xr_new<CUIEditBox>();
+	text_chat->SetAutoDelete(true);
+	AttachChild(text_chat);
+	CUIXmlInit::InitEditBox(m_uiXml, "text_chat", 0, text_chat);
+
 	text_box = xr_new<CUIEditBox>();
 	text_box->SetAutoDelete(true);
 	AttachChild(text_box);
@@ -112,6 +118,11 @@ void CUILogsWnd::Init()
 	m_butn->SetAutoDelete(true);
 	AttachChild(m_butn);
 	CUIXmlInit::Init3tButton(m_uiXml, "text_box_butn", 0, m_butn);
+
+	m_butn_chat = xr_new<CUI3tButton>();
+	m_butn_chat->SetAutoDelete(true);
+	AttachChild(m_butn_chat);
+	CUIXmlInit::Init3tButton(m_uiXml, "m_butn_chat", 0, m_butn_chat);
 
 //	m_background		= UIHelper::CreateFrameLine( m_uiXml, "background", this );
 	m_background				= UIHelper::CreateFrameWindow(m_uiXml, "background", this);
@@ -130,6 +141,32 @@ void CUILogsWnd::Init()
 	xr_strcat( buf, sizeof(buf), CStringTable().translate("ui_logs_center_caption").c_str() );
 	m_center_caption->SetText( buf );
 
+
+
+	m_trans_caption1 = UIHelper::CreateTextWnd(m_uiXml, "m_trans_caption1", this);
+	string256 buf2;
+	xr_strcpy(buf2, sizeof(buf2), m_trans_caption1->GetText());
+	xr_strcat(buf2, sizeof(buf2), CStringTable().translate("ui_logs_trans_caption1").c_str());
+	m_trans_caption1->SetText(buf2);
+
+	m_trans_caption2 = UIHelper::CreateTextWnd(m_uiXml, "m_trans_caption2", this);
+	string256 buf3;
+	xr_strcpy(buf3, sizeof(buf3), m_trans_caption2->GetText());
+	xr_strcat(buf3, sizeof(buf3), CStringTable().translate("ui_logs_trans_caption2").c_str());
+	m_trans_caption2->SetText(buf3);
+
+	m_trans_caption3 = UIHelper::CreateTextWnd(m_uiXml, "m_trans_caption3", this);
+	string256 buf4;
+	xr_strcpy(buf4, sizeof(buf4), m_trans_caption3->GetText());
+	xr_strcat(buf4, sizeof(buf4), CStringTable().translate("ui_logs_trans_caption3").c_str());
+	m_trans_caption3->SetText(buf4);
+
+		m_chat = UIHelper::CreateTextWnd(m_uiXml, "m_chat", this);
+		string256 buf5;
+		xr_strcpy(buf5, sizeof(buf5), m_chat->GetText());
+		xr_strcat(buf5, sizeof(buf5), CStringTable().translate("ui_logs_m_chat").c_str());
+		m_chat->SetText(buf5);
+
 	CUIFixedScrollBar* tmp_scroll = xr_new<CUIFixedScrollBar>();
 	m_list = xr_new<CUIScrollView>(tmp_scroll);
 	m_list->SetAutoDelete( true );
@@ -143,6 +180,12 @@ void CUILogsWnd::Init()
 	m_filter_news->SetCheck( true );
 	m_filter_talk->SetCheck( true );
 
+	m_chat_all = UIHelper::CreateCheck(m_uiXml, "chat_all", this);
+	m_chat_all->SetCheck(true);
+
+	anonim_chat = UIHelper::CreateCheck(m_uiXml, "anonim_chat", this);
+	anonim_chat->SetCheck(true);
+
 //	m_date_caption = UIHelper::CreateTextWnd( m_uiXml, "date_caption", this );
 //	m_date         = UIHelper::CreateTextWnd( m_uiXml, "date", this );
 
@@ -154,10 +197,16 @@ void CUILogsWnd::Init()
 
 	Register( m_filter_news );
 	Register( m_filter_talk );
+	Register(anonim_chat);
+	Register(m_chat_all);
 	Register( m_prev_period );
 	Register( m_next_period );
 	Register(m_butn);
+	Register(m_butn_chat);
 
+	AddCallback(anonim_chat, BUTTON_CLICKED, CUIWndCallback::void_function(this, &CUILogsWnd::AnonimChatCheck));
+	AddCallback(m_chat_all, BUTTON_CLICKED, CUIWndCallback::void_function(this, &CUILogsWnd::ChatAllCheck));
+	AddCallback(m_butn_chat, BUTTON_CLICKED, CUIWndCallback::void_function(this, &CUILogsWnd::ClButchat));
 	AddCallback(m_butn, BUTTON_CLICKED, CUIWndCallback::void_function(this, &CUILogsWnd::ClBut));
 	AddCallback( m_filter_news, BUTTON_CLICKED, CUIWndCallback::void_function( this, &CUILogsWnd::UpdateChecks ) );
 	AddCallback( m_filter_talk, BUTTON_CLICKED, CUIWndCallback::void_function( this, &CUILogsWnd::UpdateChecks ) );
@@ -322,6 +371,45 @@ void CUILogsWnd::ClBut(CUIWindow* w, void* d)
 		text_box->ClearText();
 	}
 }
+
+void CUILogsWnd::ClButchat(CUIWindow* w, void* d)
+{
+	if (text_chat && text_chat->GetText() != "")
+	{
+		Game().ChatSay(text_chat->GetText(), sendNextMessageToAll);
+		text_chat->ClearText();
+	}
+}
+
+void CUILogsWnd::ChatAllCheck(CUIWindow* w, void* d)
+{
+	if (m_chat_all->GetCheck())
+	{
+		sendNextMessageToAll = true;
+		Msg("Send ALL");
+	}
+	else
+	{
+		sendNextMessageToAll = false;
+		Msg("Send Team");
+	}
+}
+
+bool anonim = false;
+void CUILogsWnd::AnonimChatCheck(CUIWindow* w, void* d)
+{
+	if (anonim_chat->GetCheck())
+	{
+		anonim = true;
+		Msg("anonim on");
+	}
+	else
+	{
+		anonim = false;
+		Msg("anonim off");
+	}
+}
+
 
 void CUILogsWnd::NextPeriod( CUIWindow* w, void* d )
 {

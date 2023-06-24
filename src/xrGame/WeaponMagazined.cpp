@@ -28,6 +28,7 @@
 ENGINE_API	bool	g_dedicated_server;
 
 CUIXml*				pWpnScopeXml = NULL;
+extern float m_fFactor;
 
 void createWpnScopeXML()
 {
@@ -439,7 +440,7 @@ void CWeaponMagazined::OnStateSwitch	(u32 S)
 			switch2_Idle();
 			break;
 		case eFire:
-			switch2_Fire();
+				switch2_Fire();
 			break;
 		case eMisfire:
 			if (smart_cast<CActor*>(this->H_Parent()) && (Level().CurrentViewEntity() == H_Parent()))
@@ -468,7 +469,6 @@ void CWeaponMagazined::OnStateSwitch	(u32 S)
 			break;
 		}
 }
-
 
 void CWeaponMagazined::UpdateCL			()
 {
@@ -503,10 +503,10 @@ void CWeaponMagazined::UpdateCL			()
 				fShotTimeCounter	-=	dt;
 				clamp				(fShotTimeCounter, 0.0f, flt_max);
 			}break;
-		case eFire:			
-			{
-				state_Fire(dt);
-			}break;
+		case eFire:
+		{
+			state_Fire(dt);
+		}break;
 		case eMisfire:		state_Misfire	(dt);	break;
 		case eMagEmpty:		state_MagEmpty	(dt);	break;
 		case eHidden:		break;
@@ -637,6 +637,8 @@ void CWeaponMagazined::state_Fire(float dt)
 		{
 			fShotTimeCounter -= dt;
 		}
+		if (m_fFactor > 0.2)
+			return;
 }
 
 void CWeaponMagazined::state_Misfire	(float dt)

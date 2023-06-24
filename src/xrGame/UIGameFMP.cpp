@@ -16,6 +16,7 @@
 #include "ui/UITalkWnd.h"
 #include "ui/UIMessageBox.h"
 #include "UI_AnimMode.h"
+#include "Inventory.h"
 
 BOOL g_cl_draw_mp_statistic = FALSE;
 
@@ -166,8 +167,11 @@ bool CUIGameFMP::IR_UIOnKeyboardPress(int dik)
 	{
 	case kACTIVE_JOBS:
 	{
-		if (!pActor->inventory_disabled())
-			ShowPdaMenu();
+		if (pActor->inventory().m_slots[PDA_SLOT].m_pIItem)
+		{
+			if (!pActor->inventory_disabled())
+				ShowPdaMenu();
+		}
 	} break;
 	case kINVENTORY:
 	{

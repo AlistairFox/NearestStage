@@ -450,6 +450,7 @@ void CActor::StartExit()
 
 void CActor::FastExit()
 {
+	OutPlay = true;
 	CanChange = true;
 	NEED_EXIT = false;
 	ANIM_SELECTED = 0;

@@ -7,6 +7,7 @@
 #include "VoiceChat.h"
 #include "ui/UIMainIngameWnd.h"
 #include "game_news.h"
+#include "Inventory.h"
 
 game_cl_freemp::game_cl_freemp()
 {
@@ -236,6 +237,14 @@ void game_cl_freemp::OnVoiceMessage(NET_Packet* P)
 
 void game_cl_freemp::OnChatMessage(NET_Packet* P)
 {
+	CInventoryOwner* pInvOwner = smart_cast<CInventoryOwner*>(Level().CurrentEntity());
+	if (!pInvOwner)
+		return;
+
+	CActor* pActor = smart_cast<CActor*>(pInvOwner);
+	if (!pActor)
+		return;
+
 	shared_str PlayerName;
 	shared_str ChatMsg;
 	s16 team;
@@ -293,9 +302,11 @@ void game_cl_freemp::OnChatMessage(NET_Packet* P)
 
 
 		news_data.texture_name = PlayerTex;
-		Actor()->AddGameNews(news_data);
 
-
+			if (pActor->inventory().m_slots[PDA_SLOT].m_pIItem && !g_dedicated_server)
+			{
+				Actor()->AddGameNews(news_data);
+			}
 	}
 	else
 	{
@@ -308,6 +319,7 @@ void game_cl_freemp::OnChatMessage(NET_Packet* P)
 
 		news_data.texture_name = "ui_inGame2_Radiopomehi";
 
+		if (pActor->inventory().m_slots[PDA_SLOT].m_pIItem)
 		Actor()->AddGameNews(news_data);
 	}
 }

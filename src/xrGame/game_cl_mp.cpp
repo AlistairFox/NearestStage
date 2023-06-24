@@ -45,6 +45,7 @@
 #include "game_news.h"
 
 #include "xrServer_info.h" //for enum_server_info_type
+#include "Inventory.h"
 
 #define KILLEVENT_ICONS "ui\\ui_hud_mp_icon_death"
 #define RADIATION_ICONS "ui\\ui_mn_radiations_hard"
@@ -54,6 +55,7 @@
 #define KILLEVENT_GRID_WIDTH	64
 #define KILLEVENT_GRID_HEIGHT	64
 
+BOOL chat_on = false;
 
 BOOL g_draw_downloads = FALSE;
 
@@ -179,18 +181,23 @@ bool game_cl_mp::OnKeyboardPress(int key)
 	{
 		switch (key)
 		{
+
 		case kCHAT:
 		case kCHAT_TEAM:
 			{
-				CUIChatWnd* pChatWnd		= m_game_ui_custom->m_pMessagesWnd->GetChatWnd();
-				R_ASSERT					(!pChatWnd->IsShown());
+			if (chat_on)
+			{
+				CUIChatWnd* pChatWnd = m_game_ui_custom->m_pMessagesWnd->GetChatWnd();
+				R_ASSERT(!pChatWnd->IsShown());
 				string512					prefix;
-				xr_sprintf(prefix, "%s> ", st.translate((kCHAT_TEAM==key)?"st_mp_say_to_team":"st_mp_say_to_all").c_str());
-				pChatWnd->ChatToAll			(kCHAT==key);
-				pChatWnd->SetEditBoxPrefix	(prefix);
-				pChatWnd->ShowDialog		(false);
+				xr_sprintf(prefix, "%s> ", st.translate((kCHAT_TEAM == key) ? "st_mp_say_to_team" : "st_mp_say_to_all").c_str());
+				pChatWnd->ChatToAll(kCHAT == key);
+				pChatWnd->SetEditBoxPrefix(prefix);
+				pChatWnd->ShowDialog(false);
 				return						false;
+			}
 			}break;
+
 		case kSHOW_ADMIN_MENU:
 			{
 				if(!m_pAdminMenuWindow)
@@ -420,18 +427,33 @@ void game_cl_mp::TranslateGameMessage	(u32 msg, NET_Packet& P)
 
 
 //////////////////////////////////////////////////////////////////////////
-
+extern bool anonim;
 void game_cl_mp::ChatSay(LPCSTR	phrase, bool bAll)
 {
-	s16 team = ModifyTeam(local_player->team)+1;
+	if (!anonim)
+	{
+		s16 team = ModifyTeam(local_player->team) + 1;
 
-	NET_Packet		P;	
-	P.w_begin		(M_CHAT_MESSAGE);
-	P.w_s16			((bAll)?-1:local_player->team); // -1 = all, 0 = green, 1 = blue
-	P.w_stringZ		(local_player->getName());
-	P.w_stringZ		(phrase);
-	P.w_s16			(team);
-	u_EventSend		(P);
+		NET_Packet		P;
+		P.w_begin(M_CHAT_MESSAGE);
+		P.w_s16((bAll) ? -1 : local_player->team); // -1 = all, 0 = green, 1 = blue
+		P.w_stringZ(local_player->getName());
+		P.w_stringZ(phrase);
+		P.w_s16(team);
+		u_EventSend(P);
+	}
+	else
+	{
+		s16 team = ModifyTeam(local_player->team) + 1;
+
+		NET_Packet		P;
+		P.w_begin(M_CHAT_MESSAGE);
+		P.w_s16((bAll) ? -1 : local_player->team); // -1 = all, 0 = green, 1 = blue
+		P.w_stringZ("Anon");
+		P.w_stringZ(phrase);
+		P.w_s16(50);
+		u_EventSend(P);
+	}
 }
 
 void game_cl_mp::OnWarnMessage(NET_Packet* P)
@@ -464,6 +486,14 @@ void game_cl_mp::OnWarnMessage(NET_Packet* P)
 
 void game_cl_mp::OnChatMessage(NET_Packet* P)
 {
+	CInventoryOwner* pInvOwner = smart_cast<CInventoryOwner*>(Level().CurrentEntity());
+	if (!pInvOwner)
+		return;
+
+	CActor* pActor = smart_cast<CActor*>(pInvOwner);
+	if (!pActor)
+		return;
+
 	shared_str PlayerName;
 	shared_str ChatMsg;
 	s16 team;
@@ -493,6 +523,7 @@ void game_cl_mp::OnChatMessage(NET_Packet* P)
 
 		news_data.texture_name = "ui_inGame2_Hero";
 
+		if (pActor->inventory().m_slots[PDA_SLOT].m_pIItem)
 		Actor()->AddGameNews(news_data);
 	}
 	else
@@ -506,6 +537,7 @@ void game_cl_mp::OnChatMessage(NET_Packet* P)
 
 		news_data.texture_name = "ui_inGame2_Hero";
 
+		if (pActor->inventory().m_slots[PDA_SLOT].m_pIItem)
 		Actor()->AddGameNews(news_data);
 	}
 
