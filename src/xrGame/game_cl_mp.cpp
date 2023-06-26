@@ -427,10 +427,12 @@ void game_cl_mp::TranslateGameMessage	(u32 msg, NET_Packet& P)
 
 
 //////////////////////////////////////////////////////////////////////////
+extern bool privatemessage;
 extern bool anonim;
+extern LPCSTR nameofprivate;
 void game_cl_mp::ChatSay(LPCSTR	phrase, bool bAll)
 {
-	if (!anonim)
+	if (!anonim && !privatemessage)
 	{
 		s16 team = ModifyTeam(local_player->team) + 1;
 
@@ -442,17 +444,47 @@ void game_cl_mp::ChatSay(LPCSTR	phrase, bool bAll)
 		P.w_s16(team);
 		u_EventSend(P);
 	}
-	else
+
+	if(!privatemessage && anonim)
 	{
 		s16 team = ModifyTeam(local_player->team) + 1;
 
 		NET_Packet		P;
 		P.w_begin(M_CHAT_MESSAGE);
 		P.w_s16((bAll) ? -1 : local_player->team); // -1 = all, 0 = green, 1 = blue
-		P.w_stringZ("Anon");
+		P.w_stringZ("Unknown user");
 		P.w_stringZ(phrase);
 		P.w_s16(50);
 		u_EventSend(P);
+	}
+
+	if (privatemessage)
+	{
+		s16 team = ModifyTeam(local_player->team) + 1;
+		LPCSTR privatename = nameofprivate;
+		NET_Packet		P;
+		P.w_begin(M_CHAT_MESSAGE);
+		P.w_s16((bAll) ? -1 : local_player->team); // -1 = all, 0 = green, 1 = blue
+		P.w_stringZ(local_player->getName());
+		P.w_stringZ(phrase);
+		P.w_s16(160);
+		P.w_stringZ(privatename);
+		u_EventSend(P);
+
+
+		string256 str;
+		sprintf(str, "%s -> %s (private)",local_player->getName(), nameofprivate);
+		GAME_NEWS_DATA				news_data;
+		news_data.m_type = (GAME_NEWS_DATA::eNewsType)0;
+		news_data.news_caption = str;
+		news_data.news_text = phrase;
+		news_data.show_time = 3000;// override default
+
+
+
+		news_data.texture_name = "ui_inGame2_PD_Torgovets_informatsiey";
+
+			Actor()->AddGameNews(news_data);
 	}
 }
 
@@ -497,15 +529,19 @@ void game_cl_mp::OnChatMessage(NET_Packet* P)
 	shared_str PlayerName;
 	shared_str ChatMsg;
 	s16 team;
+	shared_str PrivatedName;
 
 	P->r_s16();
 	P->r_stringZ(PlayerName);
 	P->r_stringZ(ChatMsg);
 	P->r_s16(team);
+	P->r_stringZ(PrivatedName);
+	
 
 	LPCSTR Nameofplayer = PlayerName.c_str();
 	LPCSTR Message = ChatMsg.c_str();
 	LPCSTR Anonim = "Anonim";
+	LPCSTR lastName = local_player->getName();
 	GAME_NEWS_DATA				news_data;
 
 	if (team != -1)

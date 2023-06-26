@@ -248,24 +248,21 @@ void game_cl_freemp::OnChatMessage(NET_Packet* P)
 	shared_str PlayerName;
 	shared_str ChatMsg;
 	s16 team;
+	shared_str PrivatedName;
 
 	P->r_s16();
 	P->r_stringZ(PlayerName);
 	P->r_stringZ(ChatMsg);
 	P->r_s16(team);
+	P->r_stringZ(PrivatedName);
 
 	LPCSTR Nameofplayer = PlayerName.c_str();
 	LPCSTR Message = ChatMsg.c_str();
 	LPCSTR Anonim = "Единая Сталкерская Сеть";
+	LPCSTR lastName = local_player->getName();
 	GAME_NEWS_DATA				news_data;
 
-
-	if (g_dedicated_server)
-	{
-		Msg("%s: %s  : Team = %d", Nameofplayer, Message, team - 1);
-	}
-
-	if (team != 0)
+	if (team != 0 && team !=160)
 	{
 		news_data.m_type = (GAME_NEWS_DATA::eNewsType)0;
 		news_data.news_caption = Nameofplayer;
@@ -299,6 +296,8 @@ void game_cl_freemp::OnChatMessage(NET_Packet* P)
 
 		else if (team == 9)
 			PlayerTex = "ui_inGame2_neutral_2_mask";
+		else if (team == 50)
+			PlayerTex = "ui_inGame2_V_poiskah_Soroki";
 
 
 		news_data.texture_name = PlayerTex;
@@ -308,7 +307,23 @@ void game_cl_freemp::OnChatMessage(NET_Packet* P)
 				Actor()->AddGameNews(news_data);
 			}
 	}
-	else
+	else if (team == 160 && lastName == PrivatedName)
+	{
+		string256 str;
+		sprintf(str, "%s -> %s (private)", Nameofplayer, lastName);
+			news_data.m_type = (GAME_NEWS_DATA::eNewsType)0;
+			news_data.news_caption = str;
+			news_data.news_text = Message;
+			news_data.show_time = 3000;// override default
+
+			news_data.texture_name = "ui_inGame2_PD_Torgovets_informatsiey";
+
+			if (pActor->inventory().m_slots[PDA_SLOT].m_pIItem && !g_dedicated_server)
+			{
+				Actor()->AddGameNews(news_data);
+			}
+	}
+	else if(team == 0)
 	{
 		news_data.m_type = (GAME_NEWS_DATA::eNewsType)0;
 		news_data.news_caption = Anonim;

@@ -37,6 +37,7 @@ private:
 	CUIEditBox* text_box;
 	CUIEditBox* summ_box;
 	CUIEditBox* text_chat;
+	CUIEditBox* private_box;
 
 	CUIFrameWindow*		m_background;
 	CUIFrameWindow*		m_center_background;
@@ -53,6 +54,7 @@ private:
 	CUICheckButton*		m_filter_talk;
 	CUICheckButton* m_chat_all;
 	CUICheckButton* anonim_chat;
+	CUICheckButton* private_msg;
 	CUI3tButton* m_butn;
 	CUI3tButton* m_butn_chat;
 	
@@ -109,6 +111,7 @@ protected:
 			void xr_stdcall ClButchat(CUIWindow* w, void* d);
 			void xr_stdcall ChatAllCheck(CUIWindow* w, void* d);
 			void xr_stdcall AnonimChatCheck(CUIWindow* w, void* d);
+			void xr_stdcall PrivateChat(CUIWindow* w, void* d);
 	
 			void 		on_scroll_keys		( int dik );
 

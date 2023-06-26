@@ -124,6 +124,11 @@ void CUILogsWnd::Init()
 	AttachChild(m_butn_chat);
 	CUIXmlInit::Init3tButton(m_uiXml, "m_butn_chat", 0, m_butn_chat);
 
+	private_box = xr_new<CUIEditBox>();
+	private_box->SetAutoDelete(true);
+	AttachChild(private_box);
+	CUIXmlInit::InitEditBox(m_uiXml, "private_box", 0, private_box);
+
 //	m_background		= UIHelper::CreateFrameLine( m_uiXml, "background", this );
 	m_background				= UIHelper::CreateFrameWindow(m_uiXml, "background", this);
 	m_center_background			= UIHelper::CreateFrameWindow(m_uiXml, "center_background", this);
@@ -181,10 +186,13 @@ void CUILogsWnd::Init()
 	m_filter_talk->SetCheck( true );
 
 	m_chat_all = UIHelper::CreateCheck(m_uiXml, "chat_all", this);
-	m_chat_all->SetCheck(true);
+	m_chat_all->SetCheck(false);
 
 	anonim_chat = UIHelper::CreateCheck(m_uiXml, "anonim_chat", this);
-	anonim_chat->SetCheck(true);
+	anonim_chat->SetCheck(false);
+
+	private_msg = UIHelper::CreateCheck(m_uiXml, "private_msg", this);
+	private_msg->SetCheck(false);
 
 //	m_date_caption = UIHelper::CreateTextWnd( m_uiXml, "date_caption", this );
 //	m_date         = UIHelper::CreateTextWnd( m_uiXml, "date", this );
@@ -203,7 +211,9 @@ void CUILogsWnd::Init()
 	Register( m_next_period );
 	Register(m_butn);
 	Register(m_butn_chat);
+	Register(private_msg);
 
+	AddCallback(private_msg, BUTTON_CLICKED, CUIWndCallback::void_function(this, &CUILogsWnd::PrivateChat));
 	AddCallback(anonim_chat, BUTTON_CLICKED, CUIWndCallback::void_function(this, &CUILogsWnd::AnonimChatCheck));
 	AddCallback(m_chat_all, BUTTON_CLICKED, CUIWndCallback::void_function(this, &CUILogsWnd::ChatAllCheck));
 	AddCallback(m_butn_chat, BUTTON_CLICKED, CUIWndCallback::void_function(this, &CUILogsWnd::ClButchat));
@@ -372,13 +382,37 @@ void CUILogsWnd::ClBut(CUIWindow* w, void* d)
 	}
 }
 
+bool anonim = false;
+bool privatemessage = false;
+LPCSTR nameofprivate;
+
 void CUILogsWnd::ClButchat(CUIWindow* w, void* d)
 {
-	if (text_chat && text_chat->GetText() != "")
+	if (text_chat && text_chat->GetText() != "" && !privatemessage)
 	{
 		Game().ChatSay(text_chat->GetText(), sendNextMessageToAll);
 		text_chat->ClearText();
 	}
+	else if (text_chat && text_chat->GetText() != "" && privatemessage)
+	{
+		nameofprivate = private_box->GetText();
+		Game().ChatSay(text_chat->GetText(), sendNextMessageToAll);
+		text_chat->ClearText();
+		private_box->ClearText();
+	}
+}
+
+void CUILogsWnd::PrivateChat(CUIWindow* w, void* d)
+{
+	if (private_msg->GetCheck())
+	{
+		privatemessage = true;
+	}
+	else
+	{
+		privatemessage = false;
+	}
+
 }
 
 void CUILogsWnd::ChatAllCheck(CUIWindow* w, void* d)
@@ -395,7 +429,6 @@ void CUILogsWnd::ChatAllCheck(CUIWindow* w, void* d)
 	}
 }
 
-bool anonim = false;
 void CUILogsWnd::AnonimChatCheck(CUIWindow* w, void* d)
 {
 	if (anonim_chat->GetCheck())
