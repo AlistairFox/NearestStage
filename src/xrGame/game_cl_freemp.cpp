@@ -310,7 +310,7 @@ void game_cl_freemp::OnChatMessage(NET_Packet* P)
 	else if (team == 160 && lastName == PrivatedName)
 	{
 		string256 str;
-		sprintf(str, "%s -> %s (private)", Nameofplayer, lastName);
+		sprintf(str, "Принято [%s -> %s (private)]", Nameofplayer, lastName);
 			news_data.m_type = (GAME_NEWS_DATA::eNewsType)0;
 			news_data.news_caption = str;
 			news_data.news_text = Message;

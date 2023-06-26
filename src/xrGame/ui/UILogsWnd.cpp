@@ -398,7 +398,6 @@ void CUILogsWnd::ClButchat(CUIWindow* w, void* d)
 		nameofprivate = private_box->GetText();
 		Game().ChatSay(text_chat->GetText(), sendNextMessageToAll);
 		text_chat->ClearText();
-		private_box->ClearText();
 	}
 }
 

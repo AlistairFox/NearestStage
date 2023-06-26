@@ -473,7 +473,7 @@ void game_cl_mp::ChatSay(LPCSTR	phrase, bool bAll)
 
 
 		string256 str;
-		sprintf(str, "%s -> %s (private)",local_player->getName(), nameofprivate);
+		sprintf(str, "Отправленно [%s -> %s (private)]",local_player->getName(), nameofprivate);
 		GAME_NEWS_DATA				news_data;
 		news_data.m_type = (GAME_NEWS_DATA::eNewsType)0;
 		news_data.news_caption = str;

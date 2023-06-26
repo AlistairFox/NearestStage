@@ -1348,6 +1348,7 @@ void CActor::shedule_Update	(u32 DT)
 		mstate_wishful &=~mcRLookout;
 		mstate_wishful &=~mcFwd;
 		mstate_wishful &=~mcBack;
+		mstate_wishful &= ~mcSprint;
 		if( !psActorFlags.test(AF_CROUCH_TOGGLE) )
 			mstate_wishful &=~mcCrouch;
 		}

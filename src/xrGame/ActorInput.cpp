@@ -159,10 +159,6 @@ void CActor::IR_OnKeyboardPress(int cmd)
 		{
 			mstate_wishful |= mcJump;
 		}break;
-	case kSPRINT_TOGGLE:	
-		{
-			mstate_wishful ^= mcSprint;
-		}break;
 	case kCROUCH:	
 		{
 		if( psActorFlags.test(AF_CROUCH_TOGGLE) )
@@ -388,6 +384,11 @@ void CActor::IR_OnKeyboardHold(int cmd)
 					mstate_wishful |= mcCrouch;
 
 		}break;
+
+	case kSPRINT_TOGGLE:
+	{
+		mstate_wishful |= mcSprint;
+	}break;
 	}
 }
 
