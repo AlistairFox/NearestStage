@@ -1296,17 +1296,6 @@ int CWeapon::GetAmmoCount_forType( shared_str const& ammo_type ) const
 			res += pAmmo->m_boxCurr;
 		}
 	}
-
-	itb = m_pInventory->m_ruck.begin();
-	ite = m_pInventory->m_ruck.end();
-	for ( ; itb != ite; ++itb ) 
-	{
-		CWeaponAmmo*	pAmmo = smart_cast<CWeaponAmmo*>( *itb );
-		if ( pAmmo && (pAmmo->cNameSect() == ammo_type) )
-		{
-			res += pAmmo->m_boxCurr;
-		}
-	}
 	return res;
 }
 

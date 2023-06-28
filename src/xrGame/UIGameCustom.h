@@ -125,6 +125,7 @@ public:
 			void		ShowMessagesWindow		();
 			void		HideMessagesWindow		();
 
+
 	void				ShowGameIndicators		(bool b)			{m_bShowGameIndicators	= b;};
 	bool				GameIndicatorsShown		()					{return m_bShowGameIndicators;};
 	void				ShowCrosshair			(bool b)			{psHUD_Flags.set			(HUD_CROSSHAIR_RT, b);}

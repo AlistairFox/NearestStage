@@ -193,19 +193,20 @@ extern CUISequencer* g_tutorial2;
 
 bool CUIGameCustom::ShowActorMenu()
 {
-	if ( m_ActorMenu->IsShown() )
-	{
-		m_ActorMenu->HideDialog();
-	}else
-	{
-		HidePdaMenu();
-		CInventoryOwner* pIOActor	= smart_cast<CInventoryOwner*>( Level().CurrentViewEntity() );
-		VERIFY						(pIOActor);
-		m_ActorMenu->SetActor		(pIOActor);
-		m_ActorMenu->SetMenuMode	(mmInventory);
-		m_ActorMenu->ShowDialog		(true);
-	}
-	return true;
+		if (m_ActorMenu->IsShown())
+		{
+			m_ActorMenu->HideDialog();
+		}
+		else
+		{
+			HidePdaMenu();
+			CInventoryOwner* pIOActor = smart_cast<CInventoryOwner*>(Level().CurrentViewEntity());
+			VERIFY(pIOActor);
+			m_ActorMenu->SetActor(pIOActor);
+			m_ActorMenu->SetMenuMode(mmInventory);
+			m_ActorMenu->ShowDialog(true);
+		}
+		return true;
 }
 
 void CUIGameCustom::HideActorMenu()

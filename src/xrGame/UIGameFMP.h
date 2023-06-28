@@ -18,6 +18,8 @@ protected:
 public:
 	SDrawStaticStruct* m_game_objective;
 
+	u32 old_timer = 0;
+	bool need_activate_inventory = false;
 				CUIGameFMP();
 	virtual		~CUIGameFMP();
 

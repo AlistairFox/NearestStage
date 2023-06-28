@@ -460,6 +460,7 @@ public:
 	u8						m_cur_scope;
 
 	CWeaponAmmo*			m_pCurrentAmmo;
+	CWeaponAmmo* m_pCurrentAmmoOnBelt;
 	u8						m_ammoType;
 //-	shared_str				m_ammoName; <== deleted
 	bool					m_bHasTracers;

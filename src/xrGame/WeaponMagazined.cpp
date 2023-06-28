@@ -195,7 +195,7 @@ bool CWeaponMagazined::TryReload()
 			Actor()->callback(GameObject::eWeaponNoAmmoAvailable)(lua_game_object(), AC);
 		}
 
-		m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny( m_ammoTypes[m_ammoType].c_str() ));
+		m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->Get( m_ammoTypes[m_ammoType].c_str(), false ));
 		
 		if ((IsMisfire() && iAmmoElapsed) || m_pCurrentAmmo || unlimited_ammo())
 		{
@@ -208,7 +208,7 @@ bool CWeaponMagazined::TryReload()
 		{
 			for (u32 i = 0; i < m_ammoTypes.size(); ++i)
 			{
-				m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(*m_ammoTypes[i]));
+				m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->Get(*m_ammoTypes[i], false));
 				if (m_pCurrentAmmo)
 				{
 					m_ammoType = i;
@@ -295,7 +295,7 @@ void CWeaponMagazined::UnloadMagazine(bool spawn_ammo)
 		{
 			if (m_pInventory)
 			{
-				const TIItemContainer& list = m_pInventory->m_ruck;
+				const TIItemContainer& list = m_pInventory->m_belt;
 				for (TIItemContainer::const_iterator it = list.begin(); list.end() != it; ++it)
 				{
 					PIItem pIItem = *it;
@@ -370,14 +370,14 @@ void CWeaponMagazined::ReloadMagazine()
 			return;
 
 		//попытаться найти в инвентаре патроны текущего типа 
-		m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(tmp_sect_name));
+		m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->Get(tmp_sect_name, false));
 		
 		if(!m_pCurrentAmmo && !m_bLockType) 
 		{
 			for(u8 i = 0; i < u8(m_ammoTypes.size()); ++i) 
 			{
 				//проверить патроны всех подходящих типов
-				m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny( m_ammoTypes[i].c_str() ));
+				m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->Get( m_ammoTypes[i].c_str(), false ));
 				if(m_pCurrentAmmo) 
 				{ 
 					m_ammoType = i;

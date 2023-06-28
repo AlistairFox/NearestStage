@@ -366,19 +366,21 @@ void CAI_Stalker::PH_B_CrPr()
 		}
 		else
 		{
-			auto N_A = NET_A.back();
-			NET_A_Last = N_A;
-
-			if (!N_A.State.enabled)
+			if (!NET_A.empty())
 			{
-				pSyncObj->set_State(N_A.State);
+				auto N_A = NET_A.back();
+				NET_A_Last = N_A;
+				if (!N_A.State.enabled)
+				{
+					pSyncObj->set_State(N_A.State);
+				}
+				else
+				{
+					PHUnFreeze();
+					pSyncObj->set_State(N_A.State);
+					Position().set(IStart.Pos);
+				};
 			}
-			else
-			{
-				PHUnFreeze();
-				pSyncObj->set_State(N_A.State);
-				Position().set(IStart.Pos);
-			};
 		};
 	}
 	else

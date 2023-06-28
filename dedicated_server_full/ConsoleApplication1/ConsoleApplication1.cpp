@@ -1,22 +1,31 @@
-﻿
-#include <iostream>
+﻿#include <iostream>
 #include "resource.h"
 
-void main()
-{
-	int incode;
 
-	std::cout << "input password";
-	std::cin >> incode;
-	
-	if (incode == 4202)
+	void main()
 	{
-		system("start ..\\_dedicated_\\xrEngine.exe -fucknikitakalinovsky1232152123wdf32 -i -fsltx ..\\fsgame_dedicated.ltx -start server(nearestmap/fmp/timelimit=60) client(localhost)");
 	}
-	else
+
+	class A
 	{
-		std::cout << "poshel nahui";
-		std::cin >> incode;
-	}
-}
+	protected:
+		void starter()
+		{
+			int incode;
+			std::cout << "input password";
+			std::cin >> incode;
+
+			if (incode == 4202)
+			{
+				system("start ..\\_dedicated_\\xrEngine.exe -fucknikitakalinovsky5785412386westdfa23 -i -fsltx ..\\fsgame_dedicated.ltx -start server(nearestmap/fmp/timelimit=60) client(localhost)");
+			}
+			else
+			{
+				std::cout << "poshel nahui";
+				std::cin >> incode;
+			}
+		}
+	};
+
+
 

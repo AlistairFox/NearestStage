@@ -23,7 +23,7 @@ CCustomOutfit::CCustomOutfit()
 		m_HitTypeProtection[i] = 1.0f;
 
 	m_boneProtection = xr_new<SBoneProtections>();
-	m_artefact_count = 0;
+	m_artefact_count = 2;
 	m_BonesProtectionSect = NULL;
 
 	m_b_HasGlass = false;
@@ -124,8 +124,8 @@ void CCustomOutfit::Load(LPCSTR section)
 
 
 	m_full_icon_name		= pSettings->r_string( section, "full_icon_name" );
-	m_artefact_count 		= READ_IF_EXISTS( pSettings, r_u32, section, "artefact_count", 0 );
-	clamp( m_artefact_count, (u32)0, (u32)5 );
+	m_artefact_count 		= READ_IF_EXISTS( pSettings, r_u32, section, "artefact_count", 2 );
+	clamp( m_artefact_count, (u32)2, (u32)10 );
 
 	m_BonesProtectionSect	= READ_IF_EXISTS(pSettings, r_string, section, "bones_koeff_protection",  "" );
 	bIsHelmetAvaliable		= !!READ_IF_EXISTS(pSettings, r_bool, section, "helmet_avaliable", true);
@@ -363,7 +363,7 @@ bool CCustomOutfit::install_upgrade_impl( LPCSTR section, bool test )
 	clamp( m_fPowerLoss, 0.0f, 1.0f );
 
 	result |= process_if_exists( section, "artefact_count", &CInifile::r_u32, m_artefact_count, test );
-	clamp( m_artefact_count, (u32)0, (u32)5 );
+	clamp( m_artefact_count, (u32)2, (u32)10 );
 
 	return result;
 }

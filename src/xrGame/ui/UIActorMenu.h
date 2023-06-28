@@ -106,7 +106,7 @@ protected:
 	CUIDragDropListEx*			m_pTrashList;
 	CUIDragDropListEx*			m_pInventoryBackpackList;
 
-	enum						{e_af_count = 5};
+	enum						{e_af_count = 10};
 	CUIStatic*					m_belt_list_over[e_af_count];
 	CUIStatic*					m_HelmetOver;
 

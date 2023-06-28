@@ -78,8 +78,21 @@ void CUIGameFMP::HideShownDialogs()
 
 void _BCL CUIGameFMP::OnFrame()
 {
+
 	inherited::OnFrame();
 
+	if (need_activate_inventory && old_timer < Device.dwTimeGlobal)
+	{
+		CInventoryOwner* pInvOwner = smart_cast<CInventoryOwner*>(Level().CurrentEntity());
+		CActor* pActor = smart_cast<CActor*>(pInvOwner);
+		if (pInvOwner && pActor && pActor->g_Alive())
+
+		if (!pActor->inventory_disabled())
+			ShowActorMenu();
+
+		old_timer = 0;
+		need_activate_inventory = false;
+	}
 
 
 
@@ -175,8 +188,8 @@ bool CUIGameFMP::IR_UIOnKeyboardPress(int dik)
 	} break;
 	case kINVENTORY:
 	{
-		if (!pActor->inventory_disabled())
-			ShowActorMenu();
+		old_timer = Device.dwTimeGlobal + 800;
+			need_activate_inventory = true;
 	} break;
 
 		case kAnimationMode:

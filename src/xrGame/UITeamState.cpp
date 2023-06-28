@@ -14,7 +14,7 @@
 
 UITeamState::UITeamState()
 {
-	m_artefact_count = 0;
+	m_artefact_count = 2;
 }
 UITeamState::UITeamState(ETeam teamId, UITeamPanels *teamPanels)
 {
