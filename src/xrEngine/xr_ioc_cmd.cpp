@@ -523,6 +523,7 @@ ENGINE_API BOOL r2_advanced_pp = FALSE;	//	advanced post process and effects
 
 ENGINE_API float ps_r2_sun_shafts_min = 0.f;
 ENGINE_API float ps_r2_sun_shafts_value = 1.f;
+int updatecl_frames = 10;
 
 u32	renderer_value	= 3;
 //void fill_render_mode_list();
@@ -745,6 +746,7 @@ void CCC_Register()
 	CMD4(CCC_Float, "r2_sunshafts_value", &ps_r2_sun_shafts_value, 0.5, 2.0);
 	//Bloodmarks on Skeleton
 	CMD4(CCC_Integer, "r__wallmarks_on_skeleton", &ps_r__WallmarksOnSkeleton, 0, 1);
+	CMD4(CCC_Integer, "updateCL_frames", &updatecl_frames, 1, 10000);
 
 
 	CMD3(CCC_Mask,		"rs_v_sync",			&psDeviceFlags,		rsVSync				);

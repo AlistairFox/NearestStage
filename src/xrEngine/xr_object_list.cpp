@@ -90,6 +90,7 @@ void	CObjectList::o_sleep		( CObject*		O		)
 	O->MakeMeCrow				();
 }
 
+extern int updatecl_frames;
 void	CObjectList::SingleUpdate	(CObject* O)
 {
 	if (Device.dwFrame == O->dwFrame_UpdateCL)
@@ -101,18 +102,16 @@ void	CObjectList::SingleUpdate	(CObject* O)
 	if (O->H_Parent())
 		SingleUpdate(O->H_Parent());
 
-
-	O->dwFrame_UpdateCL = Device.dwFrame;
-
 	if (O->dw_last_time < Device.dwTimeGlobal)
 	{
 		O->update_check();    // LOCK UPDATE CL IF DIST > MAX
 	}
 
-	if (O->need_update)
+	if (O->need_update || (g_dedicated_server && O->dwFrame_UpdateCL + updatecl_frames < Device.dwFrame)	)
 	{
 		O->UpdateCL();
 		Device.Statistic->UpdateClient_updated++;
+		O->dwFrame_UpdateCL = Device.dwFrame;
 	}
 
 	VERIFY3(O->dbg_update_cl == Device.dwFrame, "Broken sequence of calls to 'UpdateCL'", *O->cName());
