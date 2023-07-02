@@ -278,7 +278,7 @@ float ps_r2_tnmp_gamma = .25f; // r2-only
 float ps_r2_tnmp_onoff = .0f; // r2-only
 
 // Screen Space Shaders Stuff
-Fvector3 ps_ssfx_shadow_cascades = { 20, 60, 160 };
+Fvector3 ps_ssfx_shadow_cascades = { 20, 80, 250 };
 Fvector4 ps_ssfx_grass_shadows = { .0f, .35f, 30.0f, .0f };
 
 Fvector4 ps_ssfx_grass_interactive = { .0f, .0f, 2000.0f, 1.0f };

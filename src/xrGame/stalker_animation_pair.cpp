@@ -153,6 +153,9 @@ void CStalkerAnimationPair::play			(IKinematicsAnimated *skeleton_animated, Play
 		play_global_animation	(skeleton_animated,callback,bone_part,use_animation_movement_control, local_animation, mix_animations);
 #endif
 	m_actual				= true;
+	NET_Packet packet;
+	Game().u_EventGen(packet, GE_ANIMATION_UPDATE,m_object->ID());
+	Game().u_EventSend(packet);
 
 	if (m_step_dependence)
 		m_object->CStepManager::on_animation_start(animation(),blend());

@@ -27,6 +27,7 @@ public:
 	virtual		bool				UseSKin() const { return false; }
 
 	virtual		LPCSTR				type_name() const { return "freemp"; };
+	void		ChangeGameTime(u32 day, u32 hour, u32 minute);
 	void __stdcall		net_Relcase(CObject* O) {};
 
 	// helper functions
@@ -45,6 +46,8 @@ public:
 	virtual		void				Update();
 	virtual		ALife::_TIME_ID		GetStartGameTime();
 	virtual		ALife::_TIME_ID		GetGameTime();
+
+	virtual		ALife::_TIME_ID GetEnvironmentGameTime();
 
 	virtual		BOOL				OnTouch(u16 eid_who, u16 eid_what, BOOL bForced = FALSE);
 

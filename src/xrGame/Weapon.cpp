@@ -26,6 +26,7 @@
 #include "Torch.h"
 #include "HUDManager.h"
 #include "Actor.h"
+#include "ai/stalker/ai_stalker.h"
 
 #define WEAPON_REMOVE_TIME		60000
 #define ROTATION_TIME			0.25f
@@ -1296,6 +1297,25 @@ int CWeapon::GetAmmoCount_forType( shared_str const& ammo_type ) const
 			res += pAmmo->m_boxCurr;
 		}
 	}
+
+	if (H_Parent())
+	{
+		CAI_Stalker* pSt = smart_cast<CAI_Stalker*>(Level().Objects.net_Find(H_Parent()->ID()));
+		if (pSt)
+		{
+			itb = m_pInventory->m_ruck.begin();
+			ite = m_pInventory->m_ruck.end();
+			for (; itb != ite; ++itb)
+			{
+				CWeaponAmmo* pAmmo = smart_cast<CWeaponAmmo*>(*itb);
+				if (pAmmo && (pAmmo->cNameSect() == ammo_type))
+				{
+					res += pAmmo->m_boxCurr;
+				}
+			}
+		}
+	}
+
 	return res;
 }
 

@@ -86,6 +86,13 @@ void CAI_Stalker::OnEvent		(NET_Packet& P, u16 type)
 
 			break;
 		}
+		case GE_ANIMATION_UPDATE:
+		{
+		//u_last_torso_motion_idx = 0;
+		//u_last_legs_motion_idx = 0;
+		//u_last_head_motion_idx = 0;
+		u_last_script_motion_idx = u16(-1);
+		}break;
 	}
 }
 

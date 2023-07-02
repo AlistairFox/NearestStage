@@ -911,6 +911,13 @@ void CScriptGameObject::enable_attachable_item	(bool value)
 		ai().script_engine().script_log		(ScriptStorage::eLuaMessageTypeError,"CAttachableItem : cannot access class member enable_attachable_item!");
 		return;
 	}
+	if (OnServer())
+	{
+		NET_Packet packet;
+		Level().Server->game->u_EventGen(packet, GE_ATTACHED_ITEM, attachable_item->item().object_id());
+		packet.w_u8(value);
+		Level().Server->SendBroadcast(Level().Server->GetServerClient()->ID, packet, net_flags(true, true));
+	}
 	attachable_item->enable					(value);
 }
 

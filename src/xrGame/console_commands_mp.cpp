@@ -32,6 +32,7 @@
 
 #include <locale.h>
 #include "Inventory.h"
+#include "game_sv_freemp.h"
 
 EGameIDs	ParseStringToGameType	(LPCSTR str);
 LPCSTR		GameTypeToString		(EGameIDs gt, bool bShort);
@@ -1710,9 +1711,19 @@ public:
 		if (!Level().Server->game)
 			return;
 
-		float eFactor = Level().Server->game->GetEnvironmentGameTimeFactor();
-		Level().Server->game->SetEnvironmentGameTimeFactor(NewTime,eFactor);
-		Level().Server->game->SetGameTimeFactor(NewTime,g_fTimeFactor);
+		game_sv_freemp* freemp = smart_cast<game_sv_freemp*>(Level().Server->game);
+
+		if (freemp)
+		{
+			freemp->ChangeGameTime(0, hours, mins);
+			GamePersistent().Environment().Invalidate();
+		}
+		else
+		{
+			float eFactor = Level().Server->game->GetEnvironmentGameTimeFactor();
+			Level().Server->game->SetEnvironmentGameTimeFactor(NewTime, eFactor);
+			Level().Server->game->SetGameTimeFactor(NewTime, g_fTimeFactor);
+		}
 	}
 };
 
@@ -2939,6 +2950,26 @@ public:
 	}
 };
 
+class CCC_WeatherSync : public IConsole_Command {
+public:
+	CCC_WeatherSync(LPCSTR N) : IConsole_Command(N) {
+	}
+
+
+	virtual void Execute(LPCSTR weather_name) 
+	{
+
+		if (!g_pGamePersistent)
+			return;
+
+		if (&g_pGamePersistent->Environment())
+		{
+			g_pGamePersistent->Environment().Invalidate();
+		}
+	}
+
+};
+
 
 //extern float speed_ROCKET;
 
@@ -2953,6 +2984,8 @@ void register_mp_console_commands()
 	CMD1(CCC_GSpawnToInventorySelf,	"g_spawn_to_self"	);
 	CMD1(CCC_GSpawnToInventory,		"g_spawn_to_target"		);
 	CMD1(CCC_GSpawnToInventorySelfx100, "g_spawn_to_self10");
+
+	CMD1(CCC_WeatherSync, "weather_invalidate");
 
 	CMD1(CCC_SetNoClipForPlayer,	"sv_set_no_clip"		);
 	CMD1(CCC_SetInvisForPlayer,		"sv_set_invis"			);

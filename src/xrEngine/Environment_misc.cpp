@@ -444,7 +444,6 @@ void CEnvDescriptorMixer::lerp	(CEnvironment* env, CEnvDescriptor& A, CEnvDescri
 {
 	if (IsWeatherEditor)
 		return;
-
 	float	modif_power		=	1.f/(modifier_power+1);	// the environment itself
 	float	fi				=	1-f;
 

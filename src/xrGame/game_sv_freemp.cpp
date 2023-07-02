@@ -92,6 +92,18 @@ void game_sv_freemp::OnPlayerConnectFinished(ClientID id_who)
 	};
 }
 
+void game_sv_freemp::ChangeGameTime(u32 day, u32 hour, u32 minute)
+{
+	if (ai().get_alife())
+	{
+		u32 value = day * 86400 + hour * 3600 + minute * 60;
+		float fValue = static_cast<float> (value);
+		value *= 1000;//msec
+		g_pGamePersistent->Environment().ChangeGameTime(fValue);
+		alife().time_manager().change_game_time(value);
+	}
+}
+
 void game_sv_freemp::AddMoneyToPlayer(game_PlayerState * ps, s32 amount)
 {
 	if (!ps) return;
@@ -427,6 +439,14 @@ ALife::_TIME_ID game_sv_freemp::GetGameTime()
 {
 	if (ai().get_alife() && ai().alife().initialized())
 		return(ai().alife().time_manager().game_time());
+	else
+		return(inherited::GetGameTime());
+}
+
+ALife::_TIME_ID game_sv_freemp::GetEnvironmentGameTime()
+{
+	if (ai().get_alife() && ai().alife().initialized())
+		return(alife().time_manager().game_time());
 	else
 		return(inherited::GetGameTime());
 }
