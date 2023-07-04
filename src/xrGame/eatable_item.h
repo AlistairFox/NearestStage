@@ -30,6 +30,7 @@ public:
 
 protected:
 	int						m_iPortionsNum;
+	LPCSTR m_iCamEffector;
 
 
 };

@@ -18,6 +18,9 @@
 #include "script_engine.h"
 #include "UIGameCustom.h"
 #include "Inventory.h"
+#include "static_cast_checked.hpp"
+#include "CameraEffector.h"
+#include "ActorEffector.h"
 
 
 CEatableItem::CEatableItem()
@@ -41,6 +44,7 @@ void CEatableItem::Load(LPCSTR section)
 	inherited::Load(section);
 
 	m_iPortionsNum = pSettings->r_s32(section, "eat_portions_num");
+	m_iCamEffector = pSettings->r_string(section, "camera_effector");
 	VERIFY						(m_iPortionsNum<10000);
 }
 
@@ -85,6 +89,29 @@ void CEatableItem::OnH_B_Independent(bool just_before_destroy)
 
 bool CEatableItem::UseBy(CEntityAlive* entity_alive)
 {
+	CActor* current_actor = static_cast_checked<CActor*>(Level().CurrentControlEntity());
+	if (current_actor && !g_dedicated_server)
+	{
+		CEffectorCam* ec = current_actor->Cameras().GetCamEffector(eCEWeaponAction);
+		if (NULL == ec)
+		{
+			string_path			ce_path;
+			string_path			eff_name;
+			xr_sprintf(eff_name, sizeof(eff_name), "%s.anm", m_iCamEffector);
+			string_path			anm_name;
+			strconcat(sizeof(anm_name), anm_name, "camera_effects\\items\\", eff_name);
+			if (FS.exist(ce_path, "$game_anims$", anm_name))
+			{
+				CAnimatorCamEffector* e = xr_new<CAnimatorCamEffector>();
+				e->SetType(eCEWeaponAction);
+				e->SetHudAffect(false);
+				e->SetCyclic(false);
+				e->Start(anm_name);
+				current_actor->Cameras().AddCamEffector(e);
+			}
+		}
+	}
+
 	CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
 	if (pActor)
 	{
