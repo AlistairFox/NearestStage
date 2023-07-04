@@ -277,8 +277,9 @@ enum
 	R4_FLAG_SSR_USE = (1<<0),
 };
 
-extern ECORE_API Flags32 ps_r4_ssr_flags;
 
+
+extern ECORE_API Flags32 ps_r4_ssr_flags;
 
 extern ECORE_API Flags32 ps_r2_rain_drops_flags;
 
