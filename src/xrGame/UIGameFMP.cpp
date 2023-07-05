@@ -17,6 +17,9 @@
 #include "ui/UIMessageBox.h"
 #include "UI_AnimMode.h"
 #include "Inventory.h"
+#include "static_cast_checked.hpp"
+#include "CameraEffector.h"
+#include "ActorEffector.h"
 
 BOOL g_cl_draw_mp_statistic = FALSE;
 
@@ -188,6 +191,25 @@ bool CUIGameFMP::IR_UIOnKeyboardPress(int dik)
 	} break;
 	case kINVENTORY:
 	{
+		CActor* current_actor = static_cast_checked<CActor*>(Level().CurrentControlEntity());
+		if (current_actor && !g_dedicated_server)
+		{
+			CEffectorCam* ec = current_actor->Cameras().GetCamEffector(eCEWeaponAction);
+			if (NULL == ec)
+			{
+				string_path			ce_path;
+				string_path			anm_name = "itemuse_anm_effects\\backpack_open.anm";
+				if (FS.exist(ce_path, "$game_anims$", anm_name))
+				{
+					CAnimatorCamEffector* e = xr_new<CAnimatorCamEffector>();
+					e->SetType(eCEWeaponAction);
+					e->SetHudAffect(false);
+					e->SetCyclic(false);
+					e->Start(anm_name);
+					current_actor->Cameras().AddCamEffector(e);
+				}
+			}
+		}
 		old_timer = Device.dwTimeGlobal + 800;
 			need_activate_inventory = true;
 	} break;

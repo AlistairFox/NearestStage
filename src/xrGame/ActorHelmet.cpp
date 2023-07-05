@@ -6,6 +6,9 @@
 #include "BoneProtections.h"
 #include "../Include/xrRender/Kinematics.h"
 #include "DynamicHudGlass.h"
+#include "static_cast_checked.hpp"
+#include "CameraEffector.h"
+#include "ActorEffector.h"
 //#include "CustomOutfit.h"
 
 CHelmet::CHelmet()
@@ -122,6 +125,25 @@ void CHelmet::UpdateCL()
 void CHelmet::OnMoveToSlot(const SInvItemPlace& previous_place)
 {
 	inherited::OnMoveToSlot		(previous_place);
+	CActor* current_actor = static_cast_checked<CActor*>(Level().CurrentControlEntity());
+	if (current_actor && !g_dedicated_server)
+	{
+		CEffectorCam* ec = current_actor->Cameras().GetCamEffector(eCEWeaponAction);
+		if (NULL == ec)
+		{
+			string_path			ce_path;
+			string_path			anm_name = "itemuse_anm_effects\\gasmask.anm";
+			if (FS.exist(ce_path, "$game_anims$", anm_name))
+			{
+				CAnimatorCamEffector* e = xr_new<CAnimatorCamEffector>();
+				e->SetType(eCEWeaponAction);
+				e->SetHudAffect(false);
+				e->SetCyclic(false);
+				e->Start(anm_name);
+				current_actor->Cameras().AddCamEffector(e);
+			}
+		}
+	}
 	if (m_pInventory && (previous_place.type==eItemPlaceSlot))
 	{
 		CActor* pActor = smart_cast<CActor*> (H_Parent());
@@ -139,6 +161,26 @@ void CHelmet::OnMoveToRuck(const SInvItemPlace& previous_place)
 	inherited::OnMoveToRuck		(previous_place);
 	if (m_pInventory && (previous_place.type==eItemPlaceSlot))
 	{
+		CActor* current_actor = static_cast_checked<CActor*>(Level().CurrentControlEntity());
+		if (current_actor && !g_dedicated_server)
+		{
+			CEffectorCam* ec = current_actor->Cameras().GetCamEffector(eCEWeaponAction);
+			if (NULL == ec)
+			{
+				string_path			ce_path;
+				string_path			anm_name = "itemuse_anm_effects\\gasmask.anm";
+				if (FS.exist(ce_path, "$game_anims$", anm_name))
+				{
+					CAnimatorCamEffector* e = xr_new<CAnimatorCamEffector>();
+					e->SetType(eCEWeaponAction);
+					e->SetHudAffect(false);
+					e->SetCyclic(false);
+					e->Start(anm_name);
+					current_actor->Cameras().AddCamEffector(e);
+				}
+			}
+		}
+
 		CActor* pActor = smart_cast<CActor*> (H_Parent());
 		if (pActor)
 		{

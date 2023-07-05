@@ -12,6 +12,9 @@
 #include "player_hud.h"
 #include "ActorHelmet.h"
 #include "DynamicHudGlass.h"
+#include "static_cast_checked.hpp"
+#include "CameraEffector.h"
+#include "ActorEffector.h"
 
 
 CCustomOutfit::CCustomOutfit()
@@ -228,6 +231,25 @@ BOOL	CCustomOutfit::BonePassBullet					(int boneID)
 #include "torch.h"
 void	CCustomOutfit::OnMoveToSlot		(const SInvItemPlace& prev)
 {
+	CActor* current_actor = static_cast_checked<CActor*>(Level().CurrentControlEntity());
+	if (current_actor && !g_dedicated_server)
+	{
+		CEffectorCam* ec = current_actor->Cameras().GetCamEffector(eCEWeaponAction);
+		if (NULL == ec)
+		{
+			string_path			ce_path;
+			string_path			anm_name = "itemuse_anm_effects\\gasmask.anm";
+			if (FS.exist(ce_path, "$game_anims$", anm_name))
+			{
+				CAnimatorCamEffector* e = xr_new<CAnimatorCamEffector>();
+				e->SetType(eCEWeaponAction);
+				e->SetHudAffect(false);
+				e->SetCyclic(false);
+				e->Start(anm_name);
+				current_actor->Cameras().AddCamEffector(e);
+			}
+		}
+	}
 	if ( m_pInventory )
 	{
 		CActor* pActor = smart_cast<CActor*>( H_Parent() );
@@ -296,6 +318,25 @@ void CCustomOutfit::ApplySkinModel(CActor* pActor, bool bDress, bool bHUDOnly)
 
 void	CCustomOutfit::OnMoveToRuck		(const SInvItemPlace& prev)
 {
+	CActor* current_actor = static_cast_checked<CActor*>(Level().CurrentControlEntity());
+	if (current_actor && !g_dedicated_server)
+	{
+		CEffectorCam* ec = current_actor->Cameras().GetCamEffector(eCEWeaponAction);
+		if (NULL == ec)
+		{
+			string_path			ce_path;
+			string_path			anm_name = "itemuse_anm_effects\\gasmask.anm";
+			if (FS.exist(ce_path, "$game_anims$", anm_name))
+			{
+				CAnimatorCamEffector* e = xr_new<CAnimatorCamEffector>();
+				e->SetType(eCEWeaponAction);
+				e->SetHudAffect(false);
+				e->SetCyclic(false);
+				e->Start(anm_name);
+				current_actor->Cameras().AddCamEffector(e);
+			}
+		}
+	}
 	if(m_pInventory && prev.type==eItemPlaceSlot)
 	{
 		CActor* pActor = smart_cast<CActor*> (H_Parent());

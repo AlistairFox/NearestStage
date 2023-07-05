@@ -283,26 +283,35 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector &vControlAccel, float &Ju
 	{
 	LPCSTR state_anm				= NULL;
 
-	if(mstate_real&mcSprint && !(mstate_old&mcSprint) )
-		state_anm					= "sprint";
+	if (mstate_real & mcSprint && !(mstate_old & mcSprint))
+		state_anm = "sprint_crp";
 	else
-	if(mstate_real&mcLStrafe && !(mstate_old&mcLStrafe) )
-		state_anm					= "strafe_left";
+		if (mstate_real & mcLStrafe && !(mstate_old & mcLStrafe))
+			state_anm = "lean_left_crp";
 	else
-	if(mstate_real&mcRStrafe && !(mstate_old&mcRStrafe) )
-		state_anm					= "strafe_right";
+		if (mstate_real & mcRStrafe && !(mstate_old & mcRStrafe))
+		state_anm = "lean_right_crp";
 	else
-	if(mstate_real&mcFwd && !(mstate_old&mcFwd) )
-		state_anm = "go_front";
+		if (mstate_real & mcFwd && !(mstate_old & mcFwd))
+		state_anm = "move_crp";
 	else
-	if(mstate_real&mcBack && !(mstate_old&mcBack) )
-		state_anm = "go_back";
+		if (mstate_real & mcBack && !(mstate_old & mcBack))
+		state_anm = "stand_crp";
 	else
 		if (mstate_real & mcJump && !(mstate_old & mcJump))
-			state_anm = "jump";
+		state_anm = "jump_crp";
 	else
 		if (mstate_real & mcFall && !(mstate_old & mcFall))
-			state_anm = "down";
+		state_anm = "down";
+	else
+		if (mstate_real & mcLanding && !(mstate_old & mcLanding))
+		state_anm = "landing_crp1";
+	else
+		if (mstate_real & mcLanding2 && !(mstate_old & mcLanding2))
+		state_anm = "landing_crp2";
+	else
+		if (mstate_real & mcCrouch && !(mstate_old & mcCrouch))
+			state_anm = "crouch_crp";
 
 	if (state_anm)
 	{
@@ -312,8 +321,6 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector &vControlAccel, float &Ju
 		{
 			R_ASSERT2(control_entity, "current control entity is NULL");
 			CEffectorCam* ec = control_entity->Cameras().GetCamEffector(eCEActorMoving);
-			if (NULL == ec)
-			{
 				string_path			eff_name;
 				xr_sprintf(eff_name, sizeof(eff_name), "%s.anm", state_anm);
 				string_path			ce_path;
@@ -322,8 +329,8 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector &vControlAccel, float &Ju
 				if (FS.exist(ce_path, "$game_anims$", anm_name))
 				{
 					CAnimatorCamLerpEffectorConst* e = xr_new<CAnimatorCamLerpEffectorConst>();
-					float max_scale = 140.0f;
-					float factor = cam_eff_factor / max_scale;
+					float max_scale = 30.0f;
+					float factor = cam_eff_factor * 1.5;
 					e->SetFactor(factor);
 					e->SetType(eCEActorMoving);
 					e->SetHudAffect(false);
@@ -331,7 +338,6 @@ void CActor::g_cl_CheckControls(u32 mstate_wf, Fvector &vControlAccel, float &Ju
 					e->Start(anm_name);
 					control_entity->Cameras().AddCamEffector(e);
 				}
-			}
 		}
 	}
 	}
