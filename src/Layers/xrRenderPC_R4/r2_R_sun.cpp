@@ -1044,6 +1044,10 @@ void CRender::render_sun_cascades ( )
 
 	if ( b_need_to_render_sunshafts )
 		m_sun_cascades[m_sun_cascades.size()-1].reset_chain = last_cascade_chain_mode;
+//	if (o.dx10_msaa && o.dx10_msaa_opt)
+//	{
+//		Target->mark_msaa_edges();//хуйня ебаная (так делать нельзя)
+//	}
 }
 
 void CRender::render_sun_cascade ( u32 cascade_ind )
