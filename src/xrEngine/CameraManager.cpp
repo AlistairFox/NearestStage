@@ -146,8 +146,6 @@ CCameraManager::CCameraManager(bool bApplyOnUpdate)
 
 	m_bAutoApply					= bApplyOnUpdate;
 
-	fFovSecond = 0.0f;
-
 	pp_identity.blur				= 0;
 	pp_identity.gray				= 0;
 	pp_identity.duality.h			= 0; 
@@ -315,25 +313,6 @@ void CCameraManager::Update(const Fvector& P, const Fvector& D, const Fvector& N
 	m_cam_info.fAspect			= m_cam_info.fAspect*dst	+ (fASPECT_Dest*aspect)*src;
 	m_cam_info.dont_apply			= false;
 
-	if (Device.m_SecondViewport.IsSVPActive())
-	{
-		float fov = g_pGamePersistent->m_pGShaderConstants->hud_params.y;  //-V595
-
-		//      ,        
-		if (fis_zero(fFovSecond))
-		{
-			fFovSecond = fov;
-		}
-		else
-		{
-			fFovSecond = fFovSecond * dst + fov * src;
-		}
-	}
-	else
-	{
-		fFovSecond = 0;
-	}
-
 	UpdateCamEffectors			();
 
 	UpdatePPEffectors			();
@@ -439,23 +418,7 @@ void CCameraManager::ApplyDevice (float _viewport_near)
 	// projection
 	Device.fFOV					= m_cam_info.fFov;
 	Device.fASPECT				= m_cam_info.fAspect;
-	//Device.mProject.build_projection(deg2rad(m_cam_info.fFov), m_cam_info.fAspect, _viewport_near, m_cam_info.fFar);
-
-	//--#SM+# Begin-- +SecondVP+
-	//  FOV    [Recalculate scene FOV for SecondVP frame]
-	if (Device.m_SecondViewport.IsSVPFrame())
-	{
-		//    FOV  
-		Device.fFOV = fFovSecond;
-
-		//      
-		Device.m_SecondViewport.isCamReady = true;
-	}
-	else
-		Device.m_SecondViewport.isCamReady = false;
-
-	Device.mProject.build_projection(deg2rad(Device.fFOV), m_cam_info.fAspect, _viewport_near, m_cam_info.fFar);
-	//--#SM+# End--
+	Device.mProject.build_projection(deg2rad(m_cam_info.fFov), m_cam_info.fAspect, _viewport_near, m_cam_info.fFar);
 
 	if( g_pGamePersistent && g_pGamePersistent->m_pMainMenu->IsActive() )
 		ResetPP					();

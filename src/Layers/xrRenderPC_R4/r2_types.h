@@ -62,8 +62,6 @@
 #define		r2_RT_blur_h_8	"$user$blur_h_8"
 #define		r2_RT_blur_8	"$user$blur_8"
 
-#define		r2_RT_secondVP		"$user$viewport2"		// --#SM+#-- +SecondVP+  
-
 #define		JITTER(a) r2_jitter #a
 
 const		float				SMAP_near_plane		= .1f	;

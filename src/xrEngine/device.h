@@ -111,28 +111,6 @@ public:
 // refs
 class ENGINE_API CRenderDevice: public CRenderDeviceBase
 {
-public:
-	class ENGINE_API CSecondVPParams //--#SM+#-- +SecondVP+
-	{
-		bool isActive; //      
-		u8 frameDelay;  //             
-						  //(    2 -   ,      FPS   )
-
-	public:
-		bool isCamReady; //    (FOV, ,  .)    
-
-		IC bool IsSVPActive() { return isActive; }
-		IC void SetSVPActive(bool bState);
-		bool    IsSVPFrame();
-
-		IC u8 GetSVPFrameDelay() { return frameDelay; }
-		void  SetSVPFrameDelay(u8 iDelay)
-		{
-			frameDelay = iDelay;
-			clamp<u8>(frameDelay, 2, u8(-1));
-		}
-	};
-
 private:
     // Main objects used for creating and rendering the 3D scene
     u32										m_dwWindowStyle;
@@ -185,10 +163,10 @@ public:
 	void									DumpResourcesMemoryUsage() { m_pRender->ResourcesDumpMemoryUsage();}
 public:
 	// Registrators
+
 	CRegistrator	<pureFrame			>			seqFrameMT;
 	CRegistrator	<pureDeviceReset	>			seqDeviceReset;
 	xr_vector		<fastdelegate::FastDelegate0<> >	seqParallel;
-	CSecondVPParams m_SecondViewport;	//--#SM+#-- +SecondVP+
 
 	// Dependent classes
 
@@ -216,10 +194,6 @@ public:
 		b_is_Ready			= FALSE;
 		Timer.Start			();
 		m_bNearer			= FALSE;
-		//--#SM+#-- +SecondVP+
-		m_SecondViewport.SetSVPActive(false);
-		m_SecondViewport.SetSVPFrameDelay(2);
-		m_SecondViewport.isCamReady = false;
 	};
 
 	void	Pause							(BOOL bOn, BOOL bTimer, BOOL bSound, LPCSTR reason);
