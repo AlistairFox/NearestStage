@@ -231,10 +231,10 @@ BOOL	CCustomOutfit::BonePassBullet					(int boneID)
 #include "torch.h"
 void	CCustomOutfit::OnMoveToSlot		(const SInvItemPlace& prev)
 {
-	CActor* current_actor = static_cast_checked<CActor*>(Level().CurrentControlEntity());
-	if (current_actor && !g_dedicated_server)
+	CActor* pActor = smart_cast<CActor*>(H_Parent());
+	if (pActor && !g_dedicated_server)
 	{
-		CEffectorCam* ec = current_actor->Cameras().GetCamEffector(eCEWeaponAction);
+		CEffectorCam* ec = pActor->Cameras().GetCamEffector(eCEWeaponAction);
 		if (NULL == ec)
 		{
 			string_path			ce_path;
@@ -246,13 +246,12 @@ void	CCustomOutfit::OnMoveToSlot		(const SInvItemPlace& prev)
 				e->SetHudAffect(false);
 				e->SetCyclic(false);
 				e->Start(anm_name);
-				current_actor->Cameras().AddCamEffector(e);
+				pActor->Cameras().AddCamEffector(e);
 			}
 		}
 	}
 	if ( m_pInventory )
 	{
-		CActor* pActor = smart_cast<CActor*>( H_Parent() );
 		if ( pActor )
 		{
 			ApplySkinModel(pActor, true, false);
@@ -318,10 +317,10 @@ void CCustomOutfit::ApplySkinModel(CActor* pActor, bool bDress, bool bHUDOnly)
 
 void	CCustomOutfit::OnMoveToRuck		(const SInvItemPlace& prev)
 {
-	CActor* current_actor = static_cast_checked<CActor*>(Level().CurrentControlEntity());
-	if (current_actor && !g_dedicated_server)
+	CActor* pActor = smart_cast<CActor*> (H_Parent());
+	if (pActor && !g_dedicated_server)
 	{
-		CEffectorCam* ec = current_actor->Cameras().GetCamEffector(eCEWeaponAction);
+		CEffectorCam* ec = pActor->Cameras().GetCamEffector(eCEWeaponAction);
 		if (NULL == ec)
 		{
 			string_path			ce_path;
@@ -333,13 +332,12 @@ void	CCustomOutfit::OnMoveToRuck		(const SInvItemPlace& prev)
 				e->SetHudAffect(false);
 				e->SetCyclic(false);
 				e->Start(anm_name);
-				current_actor->Cameras().AddCamEffector(e);
+				pActor->Cameras().AddCamEffector(e);
 			}
 		}
 	}
 	if(m_pInventory && prev.type==eItemPlaceSlot)
 	{
-		CActor* pActor = smart_cast<CActor*> (H_Parent());
 		if (pActor)
 		{
 			ApplySkinModel(pActor, false, false);

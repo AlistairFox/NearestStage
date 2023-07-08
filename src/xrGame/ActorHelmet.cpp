@@ -125,10 +125,10 @@ void CHelmet::UpdateCL()
 void CHelmet::OnMoveToSlot(const SInvItemPlace& previous_place)
 {
 	inherited::OnMoveToSlot		(previous_place);
-	CActor* current_actor = static_cast_checked<CActor*>(Level().CurrentControlEntity());
-	if (current_actor && !g_dedicated_server)
+	CActor* pActor = smart_cast<CActor*> (H_Parent());
+	if (pActor && !g_dedicated_server)
 	{
-		CEffectorCam* ec = current_actor->Cameras().GetCamEffector(eCEWeaponAction);
+		CEffectorCam* ec = pActor->Cameras().GetCamEffector(eCEWeaponAction);
 		if (NULL == ec)
 		{
 			string_path			ce_path;
@@ -140,13 +140,12 @@ void CHelmet::OnMoveToSlot(const SInvItemPlace& previous_place)
 				e->SetHudAffect(false);
 				e->SetCyclic(false);
 				e->Start(anm_name);
-				current_actor->Cameras().AddCamEffector(e);
+				pActor->Cameras().AddCamEffector(e);
 			}
 		}
 	}
 	if (m_pInventory && (previous_place.type==eItemPlaceSlot))
 	{
-		CActor* pActor = smart_cast<CActor*> (H_Parent());
 		if (pActor)
 		{
 			CTorch* pTorch = smart_cast<CTorch*>(pActor->inventory().ItemFromSlot(TORCH_SLOT));
@@ -161,10 +160,10 @@ void CHelmet::OnMoveToRuck(const SInvItemPlace& previous_place)
 	inherited::OnMoveToRuck		(previous_place);
 	if (m_pInventory && (previous_place.type==eItemPlaceSlot))
 	{
-		CActor* current_actor = static_cast_checked<CActor*>(Level().CurrentControlEntity());
-		if (current_actor && !g_dedicated_server)
+		CActor* pActor = smart_cast<CActor*> (H_Parent());
+		if (pActor && !g_dedicated_server)
 		{
-			CEffectorCam* ec = current_actor->Cameras().GetCamEffector(eCEWeaponAction);
+			CEffectorCam* ec = pActor->Cameras().GetCamEffector(eCEWeaponAction);
 			if (NULL == ec)
 			{
 				string_path			ce_path;
@@ -176,12 +175,11 @@ void CHelmet::OnMoveToRuck(const SInvItemPlace& previous_place)
 					e->SetHudAffect(false);
 					e->SetCyclic(false);
 					e->Start(anm_name);
-					current_actor->Cameras().AddCamEffector(e);
+					pActor->Cameras().AddCamEffector(e);
 				}
 			}
 		}
 
-		CActor* pActor = smart_cast<CActor*> (H_Parent());
 		if (pActor)
 		{
 			CTorch* pTorch = smart_cast<CTorch*>(pActor->inventory().ItemFromSlot(TORCH_SLOT));
