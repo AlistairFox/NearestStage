@@ -306,7 +306,7 @@ void CEnvDescriptor::load	(CEnvironment& environment, CInifile& config)
 	fog_color				= config.r_fvector3	(m_identifier.c_str(),"fog_color");
 	fog_density				= config.r_float	(m_identifier.c_str(),"fog_density");
 	fog_distance			= config.r_float	(m_identifier.c_str(),"fog_distance");
-	rain_density			= config.r_float	(m_identifier.c_str(),"rain_density");		clamp(rain_density,0.f,1.f);
+	rain_density			= config.r_float	(m_identifier.c_str(),"rain_density");		clamp(rain_density,0.f,10.f);
 	rain_color				= config.r_fvector3	(m_identifier.c_str(),"rain_color");            
 	wind_velocity			= config.r_float	(m_identifier.c_str(),"wind_velocity");
 	wind_direction			= deg2rad(config.r_float(m_identifier.c_str(),"wind_direction"));
