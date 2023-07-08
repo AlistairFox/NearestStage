@@ -42,6 +42,7 @@ xr_token							qpreset_token							[ ]={
 	{ "Default",					2											},
 	{ "High",						3											},
 	{ "Extreme",					4											},
+	{"Ultra_SSR",					5											},
 	{ 0,							0											}
 };
 
@@ -298,7 +299,7 @@ float		ps_r3_dyn_wet_surf_near		= 10.f;				// 10.0f
 float		ps_r3_dyn_wet_surf_far		= 30.f;				// 30.0f
 int			ps_r3_dyn_wet_surf_sm_res	= 256;				// 256
 
-int			ps_r__detail_radius = 49;
+int			ps_r__detail_radius = 100;
 #ifdef DETAIL_RADIUS // управление радиусом отрисовки травы
 u32 dm_size = 24;
 u32 dm_cache1_line = 12; //dm_size*2/dm_cache1_count
@@ -311,8 +312,8 @@ u32 dm_current_cache_line = 49; //dm_current_size+1+dm_current_size
 u32 dm_current_cache_size = 2401; //dm_current_cache_line*dm_current_cache_line
 float dm_current_fade = 47.5; //float(2*dm_current_size)-.5f;
 #endif
-float ps_current_detail_density = 0.6f;
-float ps_current_detail_height = 1.0f;
+float ps_current_detail_density = 1.f;
+float ps_current_detail_height = 1.2f;
 
 //raindrops
 float		droplets_power_debug = 0.f;
@@ -615,6 +616,7 @@ public:
 			case 2:		xr_strcpy(_cfg, "rspec_default.ltx");	break;
 			case 3:		xr_strcpy(_cfg, "rspec_high.ltx");		break;
 			case 4:		xr_strcpy(_cfg, "rspec_extreme.ltx");	break;
+			case 5:		xr_strcpy(_cfg, "rspec_ultra_ssr.ltx"); break;
 		}
 		FS.update_path			(_cfg,"$game_config$",_cfg);
 		strconcat				(sizeof(cmd),cmd,"cfg_load", " ", _cfg);
@@ -884,12 +886,12 @@ void		xrRender_initconsole	()
 
 	Fvector	tw_min,tw_max;
 	
-	CMD4(CCC_Float, "r__geometry_lod", &ps_r__LOD, 0.1f, 3.f); //AVO: extended from 1.2f to 3.f
+	CMD4(CCC_Float, "r__geometry_lod", &ps_r__LOD, 0.1f, 1.5f); //AVO: extended from 1.2f to 3.f
 //.	CMD4(CCC_Float,		"r__geometry_lod_pow",	&ps_r__LOD_Power,			0,		2		);
 
 //.	CMD4(CCC_Float,		"r__detail_density",	&ps_r__Detail_density,		.05f,	0.99f	);
-	CMD4(CCC_Float, "r__detail_density", &ps_current_detail_density, 0.01f, 1.5f);
-	CMD4(CCC_Float, "r__detail_scale", &ps_current_detail_height, 0.2f, 3.0f);
+	CMD4(CCC_Float, "r__detail_density", &ps_current_detail_density, 1.f, 1.f);
+	CMD4(CCC_Float, "r__detail_scale", &ps_current_detail_height, 1.2f, 1.2f);
 
 
 	CMD4(CCC_Float,		"r__detail_l_ambient",	&ps_r__Detail_l_ambient,	.5f,	.95f	);
@@ -1123,7 +1125,7 @@ void		xrRender_initconsole	()
 	//CMD3(CCC_Mask,		"r3_msaa_alphatest",			&ps_r2_ls_flags,			(u32)R3FLAG_MSAA_ALPHATEST);
 	CMD3(CCC_Token,		"r3_msaa_alphatest",			&ps_r3_msaa_atest,			qmsaa__atest_token);
 	CMD3(CCC_Token,		"r3_minmax_sm",					&ps_r3_minmax_sm,			qminmax_sm_token);
-	CMD4(CCC_detail_radius, "r__detail_radius", &ps_r__detail_radius, 49, 300);
+	CMD4(CCC_detail_radius, "r__detail_radius", &ps_r__detail_radius, 49, 100);
 	CMD3(CCC_Mask, "r__enable_grass_shadow", &psDeviceFlags2, rsGrassShadow); //Alundaio
 	CMD3(CCC_Mask, "r__no_scale_on_fade", &psDeviceFlags2, rsNoScale); //Alundaio
 
