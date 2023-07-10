@@ -684,6 +684,11 @@ CRenderTarget::CRenderTarget		()
 	}
 
 	// HBAO
+	if (RImplementation.o.hbao_plus)
+	{
+		s_ssao.create(b_ssao, "r2\\ssao");
+	}
+	else
 	if (RImplementation.o.ssao_opt_data)
 	{
 		u32		w = 0;
@@ -723,6 +728,13 @@ CRenderTarget::CRenderTarget		()
 	//}
 
 	// HDAO
+	if (RImplementation.o.hbao_plus)
+	{
+		u32		w = Device.dwWidth, h = Device.dwHeight;
+		rt_ssao_temp.create(r2_RT_ssao_temp, w, h, D3DFMT_R16F, 1, false);
+		rt_HBAO_plus_normal.create(r2_RT_HBAO_plus_normal, w, h, D3DFMT_Q8W8V8U8, 1, false);
+	}
+	else
 	if( RImplementation.o.ssao_hdao && RImplementation.o.ssao_ultra)
 	{
 		u32		w = Device.dwWidth, h = Device.dwHeight;

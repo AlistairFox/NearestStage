@@ -147,7 +147,6 @@ CMainMenu::~CMainMenu	()
 	xr_delete						(m_demo_info_loader);
 	delete_data						(m_pMB_ErrDlgs);
 
-	g_discord.SetStatus();
 }
 
 void CMainMenu::ReadTextureInfo()

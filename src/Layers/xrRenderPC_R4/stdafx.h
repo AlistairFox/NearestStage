@@ -17,6 +17,7 @@
 #include <D3D11.h>
 #include <D3Dx11core.h>
 #include <D3DCompiler.h>
+#include "GFSDK_SSAO.h"
 
 #include "../xrRender/xrD3DDefs.h"
 

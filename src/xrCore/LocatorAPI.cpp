@@ -30,7 +30,7 @@ CLocatorAPI*		xr_FS = NULL;
 #ifdef _EDITOR
 #	define FSLTX	"fs.ltx"
 #else
-#	define FSLTX	"fsgame.ltx"
+#	define FSLTX	"..//fsgame.ltx"
 #endif
 
 struct _open_file
@@ -708,6 +708,7 @@ void CLocatorAPI::_initialize	(u32 flags, LPCSTR target_folder, LPCSTR fs_name)
 	// append application path
 	if (m_Flags.is(flScanAppRoot))
 		append_path	("$app_root$",Core.ApplicationPath,0,FALSE);
+	Msg("Folder: %s", Core.ApplicationName);
 
 
 	//-----------------------------------------------------------

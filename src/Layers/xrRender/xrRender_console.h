@@ -181,6 +181,7 @@ extern ECORE_API int			ps_r2_lfx;
 extern ECORE_API Flags32 ps_r3_pbr_flags;
 extern ECORE_API Flags32 ps_r2_static_flags;
 
+
 enum
 {
 	R_FLAG_PSEUDOPBR = (1 << 0),
@@ -252,7 +253,7 @@ enum
 	R_FLAGEXT_HOM_DEPTH_DRAW		= (1<<7),
 	R2FLAGEXT_SUN_ZCULLING			= (1<<8),
 	R2FLAGEXT_SUN_OLD				= (1<<9),
-	R2FLAGEXT_SSAO_SSDO = (1 << 10),
+	R2FLAGEXT_HBAO_PLUS = (1 << 10)
 };
 
 //ogse sunshafts
@@ -277,11 +278,17 @@ enum
 	R4_FLAG_SSR_USE = (1<<0),
 };
 
+enum
+{
+	R4_USE_FULL_PARALLAX = (1<<0),
+};
 
 
 extern ECORE_API Flags32 ps_r4_ssr_flags;
 
 extern ECORE_API Flags32 ps_r2_rain_drops_flags;
+
+extern ECORE_API Flags32 ps_r4_parallax_flags;
 
 enum
 {

@@ -62,6 +62,9 @@
 #define		r2_RT_blur_h_8	"$user$blur_h_8"
 #define		r2_RT_blur_8	"$user$blur_8"
 
+//HBAO
+#define		r2_RT_HBAO_plus_normal		"$user$ssao_normal"	// DX11 only
+
 #define		JITTER(a) r2_jitter #a
 
 const		float				SMAP_near_plane		= .1f	;

@@ -744,17 +744,36 @@
     <ClInclude Include="..\xrRender\dxPixEventWrapper.h">
       <Filter>Debug</Filter>
     </ClInclude>
-    <ClInclude Include="blender_hud_blood.h" />
-    <ClInclude Include="blender_hud_stamina.h" />
-    <ClInclude Include="blender_hud_bleeding.h" />
-    <ClInclude Include="blender_hud_mask.h" />
-    <ClInclude Include="blender_hud_satiety.h" />
-    <ClInclude Include="blender_hud_thirst.h" />
-    <ClInclude Include="blender_lens_flares.h" />
     <ClInclude Include="..\xrRenderDX10\imgui_impl_dx11.h">
       <Filter>imgui_render</Filter>
     </ClInclude>
-    <ClInclude Include="blender_ss_sunshafts.h" />
+    <ClInclude Include="..\..\..\SDK\include\ssao\GFSDK_SSAO.h">
+      <Filter>Kernel</Filter>
+    </ClInclude>
+    <ClInclude Include="blender_hud_bleeding.h">
+      <Filter>Shading templates</Filter>
+    </ClInclude>
+    <ClInclude Include="blender_hud_blood.h">
+      <Filter>Shading templates</Filter>
+    </ClInclude>
+    <ClInclude Include="blender_hud_mask.h">
+      <Filter>Shading templates</Filter>
+    </ClInclude>
+    <ClInclude Include="blender_hud_satiety.h">
+      <Filter>Shading templates</Filter>
+    </ClInclude>
+    <ClInclude Include="blender_hud_stamina.h">
+      <Filter>Shading templates</Filter>
+    </ClInclude>
+    <ClInclude Include="blender_hud_thirst.h">
+      <Filter>Shading templates</Filter>
+    </ClInclude>
+    <ClInclude Include="blender_lens_flares.h">
+      <Filter>Shading templates</Filter>
+    </ClInclude>
+    <ClInclude Include="blender_ss_sunshafts.h">
+      <Filter>Shading templates</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1360,21 +1379,47 @@
     <ClCompile Include="..\xrRender\dxPixEventWrapper.cpp">
       <Filter>Debug</Filter>
     </ClCompile>
-    <ClCompile Include="..\xrRender\rendertarget_raindrops.cpp" />
-    <ClCompile Include="..\xrRender\rendertarget_phase_hud_effects.cpp" />
-    <ClCompile Include="blender_hud_blood.cpp" />
-    <ClCompile Include="blender_hud_stamina.cpp" />
-    <ClCompile Include="blender_hud_bleeding.cpp" />
-    <ClCompile Include="blender_hud_mask.cpp" />
-    <ClCompile Include="r4_rendertarget_phase_hud_mask.cpp" />
-    <ClCompile Include="blender_hud_satiety.cpp" />
-    <ClCompile Include="blender_hud_thirst.cpp" />
-    <ClCompile Include="blender_lens_flares.cpp" />
-    <ClCompile Include="r4_rendertarget_phase_lens_flares.cpp" />
     <ClCompile Include="..\xrRenderDX10\imgui_impl_dx11.cpp">
       <Filter>imgui_render</Filter>
     </ClCompile>
-    <ClCompile Include="blender_ss_sunshafts.cpp" />
-    <ClCompile Include="r4_rendertarget_phase_ss_sunshafts.cpp" />
+    <ClCompile Include="blender_hud_bleeding.cpp">
+      <Filter>Shading templates</Filter>
+    </ClCompile>
+    <ClCompile Include="blender_hud_blood.cpp">
+      <Filter>Shading templates</Filter>
+    </ClCompile>
+    <ClCompile Include="blender_hud_mask.cpp">
+      <Filter>Shading templates</Filter>
+    </ClCompile>
+    <ClCompile Include="blender_hud_satiety.cpp">
+      <Filter>Shading templates</Filter>
+    </ClCompile>
+    <ClCompile Include="blender_hud_stamina.cpp">
+      <Filter>Shading templates</Filter>
+    </ClCompile>
+    <ClCompile Include="blender_hud_thirst.cpp">
+      <Filter>Shading templates</Filter>
+    </ClCompile>
+    <ClCompile Include="blender_lens_flares.cpp">
+      <Filter>Shading templates</Filter>
+    </ClCompile>
+    <ClCompile Include="blender_ss_sunshafts.cpp">
+      <Filter>Shading templates</Filter>
+    </ClCompile>
+    <ClCompile Include="r4_rendertarget_phase_hud_mask.cpp">
+      <Filter>Core_Target</Filter>
+    </ClCompile>
+    <ClCompile Include="r4_rendertarget_phase_lens_flares.cpp">
+      <Filter>Core_Target</Filter>
+    </ClCompile>
+    <ClCompile Include="r4_rendertarget_phase_ss_sunshafts.cpp">
+      <Filter>Core_Target</Filter>
+    </ClCompile>
+    <ClCompile Include="..\xrRender\rendertarget_phase_hud_effects.cpp">
+      <Filter>Core_Target</Filter>
+    </ClCompile>
+    <ClCompile Include="..\xrRender\rendertarget_raindrops.cpp">
+      <Filter>Core_Target</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -417,7 +417,6 @@ Memory.mem_usage();
 	// Destroying
 //.	destroySound();
 	destroyInput();
-	g_discord.Shutdown();
 
 	if( !g_bBenchmark && !g_SASH.IsRunning())
 		destroySettings();
