@@ -334,8 +334,8 @@ void CResourceManager::Delete(const Shader* S)
 	Msg	("! ERROR: Failed to find complete shader");
 }
 
-xr_vector<CTexture*> tex_to_load;
-
+//xr_vector<CTexture*> tex_to_load;
+/*
 void TextureLoading(u16 thread_num) {
 	Msg("TextureLoading -> thread %d started!", thread_num);
 
@@ -351,14 +351,72 @@ void TextureLoading(u16 thread_num) {
 
 	Msg("TextureLoading -> thread %d finished!", thread_num);
 }
+*/
 
+#include <thread>
+
+xr_vector<CTexture*> map_thread;
+
+#define MAX_THREADS 16
+xrCriticalSection csTEXTURES;
+
+void MT_LOAD(int th)
+{
+	CTimer timer;
+	u64 total = 0;
+	for (;;)
+	{
+		csTEXTURES.Enter();
+		if (map_thread.empty())
+		{
+			csTEXTURES.Leave();
+			break;
+		}
+		CTexture* t = map_thread.back();
+		map_thread.pop_back();
+		csTEXTURES.Leave();
+
+		timer.Start();
+		t->Load();
+		total += timer.GetElapsed_ticks();
+	}
+
+	Msg("Texture Thread[%d]: %d ms", th, total);
+}
+
+void CResourceManager::DeferredUpload()
+{
+	if (!RDEVICE.b_is_Ready) return;
+
+
+	CTimer t;
+	t.Start();
+
+	map_thread.clear();
+
+	for (auto tex : m_textures)
+		map_thread.push_back(tex.second);
+
+	std::thread* th = new std::thread[MAX_THREADS];
+
+	for (int i = 0; i < MAX_THREADS; i++)
+		th[i] = std::thread(MT_LOAD, i);
+
+	for (int i = 0; i < MAX_THREADS; i++)
+		th[i].join();
+
+
+	Msg("Textures Loading: %u", t.GetElapsed_ms());
+}
+
+/*
 void CResourceManager::DeferredUpload()
 {
 	/*	if (!RDEVICE.b_is_Ready) return;
 		for (map_TextureIt t=m_textures.begin(); t!=m_textures.end(); t++)
 		{
 			t->second->Load();
-		} */
+		} 
 	tex_to_load.clear();
 
 	Msg("CResourceManager::DeferredUpload -> START, size = %d", m_textures.size());
@@ -392,6 +450,7 @@ void CResourceManager::DeferredUpload()
 
 	Msg("texture loading time: %d", timer.GetElapsed_ms());
 }
+*/
 
 void CResourceManager::DeferredUnload()
 {

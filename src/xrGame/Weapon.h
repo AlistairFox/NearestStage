@@ -14,9 +14,6 @@
 
 #include "CameraRecoil.h"
 
-extern ENGINE_API Fvector4 ps_ssfx_grass_interactive;
-extern ENGINE_API Fvector4 ps_ssfx_int_grass_params_2;
-
 class CEntity;
 class ENGINE_API CMotionDef;
 class CSE_ALifeItemWeapon;
@@ -90,6 +87,7 @@ public:
 	float			m_fLR_CameraFactor; // Фактор бокового наклона худа при движении камеры [-1; +1]
 	float			m_fLR_InertiaFactor; // Фактор горизонтальной инерции худа при движении камеры [-1; +1]
 	float			m_fUD_InertiaFactor; // Фактор вертикальной инерции худа при движении камеры [-1; +1]
+
 
 
 

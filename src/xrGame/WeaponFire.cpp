@@ -122,9 +122,8 @@ void CWeapon::FireTrace		(const Fvector& P, const Fvector& D)
 			Light_Start();
 
 		// Interactive Grass FX
-		Fvector4 ps_ssfx_int_grass_params_2 = { 1.0f, 5.0f, 1.0f, 1.0f };
-		Fvector ShotPos = Fvector().mad(P, D, 1.5f);
-		g_pGamePersistent->GrassBendersAddShot(cast_game_object()->ID(), ShotPos, D, 3.0f, 20.0f, ps_ssfx_int_grass_params_2.z, ps_ssfx_int_grass_params_2.w);
+		//Fvector ShotPos = Fvector().mad(P, D, 1.5f);
+		//g_pGamePersistent->GrassBendersAddShot(cast_game_object()->ID(), ShotPos, D, 3.0f, 20.0f, ps_ssfx_int_grass_params_2.z, ps_ssfx_int_grass_params_2.w);
 
 		// Ammo
 		m_magazine.pop_back();

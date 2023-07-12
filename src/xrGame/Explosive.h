@@ -15,6 +15,8 @@
 class IRender_Light;
 DEFINE_VECTOR(CPhysicsShellHolder*,BLASTED_OBJECTS_V,BLASTED_OBJECTS_I);
 
+
+
 class CExplosive : 
 	public IDamageSource
 {
@@ -177,6 +179,3 @@ IC void random_point_in_object_box(Fvector &out_pos,CObject* obj)
 	obj->XFORM().transform_tiny(out_pos);
 	out_pos.add(l_c);
 }
-
-extern ENGINE_API Fvector4 ps_ssfx_grass_interactive;
-extern ENGINE_API Fvector4 ps_ssfx_int_grass_params_2;
