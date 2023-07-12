@@ -118,7 +118,7 @@
     <IntDir>..\..\..\OutputDirectory\Intermediate\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>E:\NearestStage_r\binares\x64-Release</OutDir>
+    <OutDir>$(SolutionDir)\..\binares\$(Platform)-$(Configuration)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
