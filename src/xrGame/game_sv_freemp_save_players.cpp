@@ -6,6 +6,7 @@
 #include "Weapon.h"
 #include "CustomDetector.h"
 #include "xrServer_Objects_ALife.h"
+#include "CustomOutfit.h"
 
 void game_sv_freemp::SavePlayer(game_PlayerState* ps, CInifile* file)
 {
@@ -75,6 +76,17 @@ void game_sv_freemp::SavePlayer(game_PlayerState* ps, CInifile* file)
 			file->w_fvector3("actor_position", "angle", actor_cse->o_Angle);
 		}
 
+	}
+
+	if (smart_cast<CInventoryOwner*>(obj)) 
+	{
+		CInventoryOwner* pInvOwner = smart_cast<CInventoryOwner*>(obj);
+		CCustomOutfit* pOutfit = (CCustomOutfit*)pInvOwner->inventory().ItemFromSlot(OUTFIT_SLOT);
+		if (pOutfit)
+		{
+			file->w_string("actor_outf", "actor_last_outfit", pOutfit->m_section_id.c_str());
+			file->w_u32("actor_outf", "actor_last_outcond", pOutfit->GetCondition());
+		}
 	}
 }
 
@@ -354,3 +366,4 @@ bool game_sv_freemp::load_position_RP(game_PlayerState* ps, Fvector& pos, Fvecto
 
 	return false;
 }
+

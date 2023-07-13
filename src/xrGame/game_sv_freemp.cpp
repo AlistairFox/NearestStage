@@ -218,15 +218,6 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 				
  		ps->setFlag(GAME_PLAYER_MP_SAVE_LOADED);
  	}
-	if (ps && ps->LastOutfitLPCSTR) 
-	{
-		Msg("if (ps && ps->LastOutfit) ");
-		
-		CSE_Abstract* E = spawn_begin(ps->LastOutfitLPCSTR);
-		E->ID_Parent = ps->GameID;
-		smart_cast<CCustomOutfit*>(E)->SetCondition(ps->LastOutfitCond / 2.0f); //Anti-reparing of a player's outfit to a half :)
-		spawn_end(E, m_server->GetServerClient()->ID);
-	}
 }
 
 void game_sv_freemp::OnPlayerReady(ClientID id_who)
@@ -429,15 +420,6 @@ BOOL game_sv_freemp::OnTouch(u16 eid_who, u16 eid_what, BOOL bForced)
 
 void game_sv_freemp::on_death(CSE_Abstract* e_dest, CSE_Abstract* e_src)
 {
-	CSE_ALifeCreatureActor* E = smart_cast<CSE_ALifeCreatureActor*>(e_dest);
-
-	if (E && smart_cast<CSE_ALifeItemCustomOutfit*>(E) != NULL)
-	{
-		get_id(E->ID)->LastOutfitLPCSTR = smart_cast<CSE_ALifeItemCustomOutfit*>(E)->name();
-		get_id(E->ID)->LastOutfitCond	= smart_cast<CSE_ALifeItemCustomOutfit*>(E)->m_fCondition;
-		Msg("Outfit casted: ", smart_cast<CSE_ALifeItemCustomOutfit*>(E)->name());
-	}
-
 	inherited::on_death(e_dest, e_src);
 
 	if (!ai().get_alife())

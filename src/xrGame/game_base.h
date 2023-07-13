@@ -4,7 +4,6 @@
 #include "alife_space.h"
 #include "gametype_chooser.h"
 #include "player_account.h"
-#include "CustomOutfit.h"
 
 #pragma pack(push,1)
 
@@ -74,8 +73,6 @@ struct game_PlayerState
 	bool		m_bPayForSpawn;
 	u32			m_online_time;
 	player_account	m_account;
-	LPCSTR	LastOutfitLPCSTR;
-	float	LastOutfitCond;
 	
 	shared_str	m_player_ip;
 	shared_str	m_player_digest;
