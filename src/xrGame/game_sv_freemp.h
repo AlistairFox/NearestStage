@@ -18,6 +18,8 @@ protected:
 public:
 
 	u32								oldTime = 0;
+
+
 									game_sv_freemp();
 	virtual							~game_sv_freemp();
 	
