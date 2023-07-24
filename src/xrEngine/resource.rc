@@ -59,13 +59,13 @@ BEGIN
     BEGIN
         BLOCK "000004b0"
         BEGIN
-            VALUE "CompanyName", "NSL TM"
-            VALUE "FileDescription", "OMP NSL"
+            VALUE "CompanyName", "NearestStage Team"
+            VALUE "FileDescription", "NearestStage:Extended"
             VALUE "FileVersion", "NS"
             VALUE "InternalName", "xrEngine"
             VALUE "LegalCopyright", "Copyright © 2009 GSC Game World"
             VALUE "OriginalFilename", "xrEngine.exe"
-            VALUE "ProductName", "OMP NSL"
+            VALUE "ProductName", "NearestStage:Extended"
             VALUE "ProductVersion", "NS"
         END
     END
