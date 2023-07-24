@@ -1163,7 +1163,6 @@ HRESULT	CRender::shader_compile			(
 
 	if (o.hbao_plus)
 	{
-		Msg("* Define Shader: USE_HBAO_PLUS");
 		defines[def_it].Name = "USE_HBAO_PLUS";
 		defines[def_it].Definition = "1";
 		def_it++;

@@ -65,6 +65,8 @@
 //HBAO
 #define		r2_RT_HBAO_plus_normal		"$user$ssao_normal"	// DX11 only
 
+#define		r2_RT_secondVP		"$user$viewport2"		// --#SM+#-- +SecondVP+  
+
 #define		JITTER(a) r2_jitter #a
 
 const		float				SMAP_near_plane		= .1f	;

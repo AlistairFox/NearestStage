@@ -525,6 +525,9 @@ ENGINE_API float ps_r2_sun_shafts_min = 0.f;
 ENGINE_API float ps_r2_sun_shafts_value = 1.f;
 int updatecl_frames = 10;
 
+ENGINE_API float VIEWPORT_NEAR = 0.01f;
+
+
 u32	renderer_value	= 3;
 //void fill_render_mode_list();
 //void free_render_mode_list();
@@ -772,6 +775,8 @@ void CCC_Register()
 	// Texture manager	
 	CMD4(CCC_Integer,	"texture_lod",			&psTextureLOD,				0,	4	);
 	CMD4(CCC_Integer,	"net_dedicated_sleep",	&psNET_DedicatedSleep,		0,	64	);
+
+	CMD4(CCC_Float, "r_viewport_near", &VIEWPORT_NEAR, 0.0001f, 1.f);
 
 	// General video control
 	CMD1(CCC_VidMode,	"vid_mode"				);
