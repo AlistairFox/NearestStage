@@ -228,7 +228,14 @@ bool CWeaponMagazined::TryReload()
 			Actor()->callback(GameObject::eWeaponNoAmmoAvailable)(lua_game_object(), AC);
 		}
 
-		m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->Get( m_ammoTypes[m_ammoType].c_str(), false ));
+		CActor* pActor = smart_cast<CActor*>(H_Parent());
+
+		if (pActor)
+		{
+			m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->Get(m_ammoTypes[m_ammoType].c_str(), false));
+		}
+		else
+			m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(m_ammoTypes[m_ammoType].c_str()));
 		
 		if (IsMisfire() && iAmmoElapsed)
 		{
@@ -247,7 +254,13 @@ bool CWeaponMagazined::TryReload()
 		{
 			for (u32 i = 0; i < m_ammoTypes.size(); ++i)
 			{
-				m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->Get(*m_ammoTypes[i], false));
+				if (pActor)
+				{
+					m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->Get(*m_ammoTypes[i], false));
+				}
+				else
+					m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(*m_ammoTypes[i]));
+
 				if (m_pCurrentAmmo)
 				{
 					m_ammoType = i;
@@ -409,14 +422,26 @@ void CWeaponMagazined::ReloadMagazine()
 			return;
 
 		//попытаться найти в инвентаре патроны текущего типа 
-		m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->Get(tmp_sect_name, false));
+		CActor* pActor = smart_cast<CActor*>(H_Parent());
+		if (pActor)
+		{
+			m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->Get(tmp_sect_name, false));
+		}
+		else
+			m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(tmp_sect_name));
 		
 		if(!m_pCurrentAmmo && !m_bLockType) 
 		{
 			for(u8 i = 0; i < u8(m_ammoTypes.size()); ++i) 
 			{
 				//проверить патроны всех подходящих типов
-				m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->Get( m_ammoTypes[i].c_str(), false ));
+				if (pActor)
+				{
+					m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->Get(m_ammoTypes[i].c_str(), false));
+				}
+				else
+					m_pCurrentAmmo = smart_cast<CWeaponAmmo*>(m_pInventory->GetAny(m_ammoTypes[i].c_str()));
+
 				if(m_pCurrentAmmo) 
 				{ 
 					m_ammoType = i;

@@ -811,12 +811,6 @@ void CAI_Stalker::UpdateCL()
 			sight().update			();
 		}
 
-		if (OnServer())
-		{
-			Exec_Look(Device.fTimeDelta);
-			Exec_Visibility();
-		}
-		else
 		Exec_Look(client_update_fdelta());
 		STOP_PROFILE
 
