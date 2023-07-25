@@ -17,8 +17,11 @@
 //#include "R_Backend.h"
 
 extern ENGINE_API float VIEWPORT_NEAR;
+extern ENGINE_API int psSVPFrameDelay;
 
-#define VIEWPORT_NEAR_HUD 0.01f
+enum ViewPort;
+
+#define VIEWPORT_NEAR_HUD 0.005f
 
 #define DEVICE_RESET_PRECACHE_FRAME_COUNT 10
 
@@ -108,19 +111,19 @@ class	ENGINE_API CRenderDeviceBase :
 public:
 };
 
-#pragma pack(pop)
-// refs
-class ENGINE_API CRenderDevice: public CRenderDeviceBase
+class ENGINE_API CSecondVPParams //--#SM+#-- +SecondVP+
 {
-public:
-	class ENGINE_API CSecondVPParams //--#SM+#-- +SecondVP+
-	{
-		bool isActive; //      
-		u8 frameDelay;  //             
-						  //(    2 -   ,      FPS   )
+	bool isActive; // Флаг активации рендера во второй вьюпорт
+	u8 frameDelay;  // На каком кадре с момента прошлого рендера во второй вьюпорт мы начнём новый
+					  //(не может быть меньше 2 - каждый второй кадр, чем больше тем более низкий FPS во втором вьюпорте)
 
-	public:
-		bool isCamReady; //    (FOV, ,  .)    
+public:
+	bool isCamReady; // Флаг готовности камеры (FOV, позиция, и т.п) к рендеру второго вьюпорта
+
+	u32 screenWidth;
+	u32 screenHeight;
+
+		bool isR1;
 
 		IC bool IsSVPActive() { return isActive; }
 		IC void SetSVPActive(bool bState);
@@ -130,10 +133,14 @@ public:
 		void  SetSVPFrameDelay(u8 iDelay)
 		{
 			frameDelay = iDelay;
-			clamp<u8>(frameDelay, 2, u8(-1));
+			clamp<u8>(frameDelay, psSVPFrameDelay, u8(-1));
 		}
-	};
+};
 
+#pragma pack(pop)
+// refs
+class ENGINE_API CRenderDevice : public CRenderDeviceBase
+{
 private:
     // Main objects used for creating and rendering the 3D scene
     u32										m_dwWindowStyle;
@@ -198,6 +205,13 @@ public:
 	CStats*									Statistic;
 
 	Fmatrix									mInvFullTransform;
+
+	// Saved main viewport params
+	Fvector mainVPCamPosSaved;
+	Fmatrix mainVPFullTrans;
+	Fmatrix mainVPViewSaved;
+	Fmatrix mainVPProjectSaved;
+
 	
 	CRenderDevice			()
 		:
@@ -222,7 +236,7 @@ public:
 
 		//--#SM+#-- +SecondVP+
 		m_SecondViewport.SetSVPActive(false);
-		m_SecondViewport.SetSVPFrameDelay(2);
+		m_SecondViewport.SetSVPFrameDelay(psSVPFrameDelay); // Change it to 2-3, if you want to save perfomance. Will cause skips in updating image in scope
 		m_SecondViewport.isCamReady = false;
 	};
 
@@ -343,5 +357,7 @@ public:
 	bool			b_need_user_input;
 };
 extern ENGINE_API CLoadScreenRenderer load_screen_renderer;
+
+
 
 #endif

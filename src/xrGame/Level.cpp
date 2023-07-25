@@ -1293,6 +1293,18 @@ void CLevel::OnSessionTerminate		(LPCSTR reason)
 	MainMenu()->OnSessionTerminate(CStringTable().translate(reason).c_str());
 }
 
+#include "../xrEngine/CameraManager.h"
+#include "ActorEffector.h"
+
+void CLevel::ApplyCamera()
+{
+	inherited::ApplyCamera();
+
+	if (lastApplyCameraVPNear > -1.f)
+		lastApplyCamera(lastApplyCameraVPNear);
+}
+
+
 u32	GameID()
 {
 	return Game().Type();

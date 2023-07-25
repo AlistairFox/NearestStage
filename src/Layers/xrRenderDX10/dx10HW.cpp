@@ -18,30 +18,25 @@
 #include "imgui_impl_dx11.h"
 
 #ifndef _EDITOR
-void	fill_vid_mode_list			(CHW* _hw);
-void	free_vid_mode_list			();
+void	fill_vid_mode_list(CHW* _hw);
+void	free_vid_mode_list();
 
-void	fill_render_mode_list		();
-void	free_render_mode_list		();
+void	fill_render_mode_list();
+void	free_render_mode_list();
 #else
-void	fill_vid_mode_list			(CHW* _hw)	{}
-void	free_vid_mode_list			()			{}
-void	fill_render_mode_list		()			{}
-void	free_render_mode_list		()			{}
+void	fill_vid_mode_list(CHW* _hw) {}
+void	free_vid_mode_list() {}
+void	fill_render_mode_list() {}
+void	free_render_mode_list() {}
 #endif
 
 CHW			HW;
 
-//	DX10: Don't neeed this?
-/*
-#ifdef DEBUG
-IDirect3DStateBlock9*	dwDebugSB = 0;
-#endif
-*/
+extern ENGINE_API float psSVPImageSizeK;
 
-CHW::CHW() : 
-//	hD3D(NULL),
-	//pD3D(NULL),
+CHW::CHW() :
+	//	hD3D(NULL),
+		//pD3D(NULL),
 	m_pAdapter(0),
 	pDevice(NULL),
 	m_move_window(true)
@@ -50,6 +45,8 @@ CHW::CHW() :
 {
 	Device.seqAppActivate.Add(this);
 	Device.seqAppDeactivate.Add(this);
+
+	storedVP = (ViewPort)0;
 }
 
 CHW::~CHW()
@@ -62,28 +59,9 @@ CHW::~CHW()
 //////////////////////////////////////////////////////////////////////
 void CHW::CreateD3D()
 {
-	/*	Partially implemented dynamic load
-	LPCSTR		_name			= "d3d10.dll";
 
-	hD3D            			= LoadLibrary(_name);
-
-	//	If library can't be loaded computer don't support DirectX 10 at all
-	if (!hD3D)					return;
-	//	check if adapter support Direc3D 10 interface
-
-	typedef HRESULT _CreateDXGIFactory( REFIID riid,	void **ppFactory);
-
-	_CreateDXGIFactory  *CreateFactory = (_CreateDXGIFactory*)GetProcAddress(hD3D,"CreateDXGIFactory");
-	R_ASSERT(CreateFactory);
-
-	IDXGIFactory * pFactory;
-	R_CHK( CreateFactory(__uuidof(IDXGIFactory), (void**)(&pFactory)) );
-	pFactory->EnumAdapters(0, &m_pAdapter);
-	pFactory->Release();
-	*/
-
-	IDXGIFactory * pFactory;
-	R_CHK( CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)(&pFactory)) );
+	IDXGIFactory* pFactory;
+	R_CHK(CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)(&pFactory)));
 
 	m_pAdapter = 0;
 	m_bUsePerfhud = false;
@@ -92,11 +70,11 @@ void CHW::CreateD3D()
 	// Look for 'NVIDIA NVPerfHUD' adapter
 	// If it is present, override default settings
 	UINT i = 0;
-	while(pFactory->EnumAdapters(i, &m_pAdapter) != DXGI_ERROR_NOT_FOUND)
+	while (pFactory->EnumAdapters(i, &m_pAdapter) != DXGI_ERROR_NOT_FOUND)
 	{
 		DXGI_ADAPTER_DESC desc;
 		m_pAdapter->GetDesc(&desc);
-		if(!wcscmp(desc.Description,L"NVIDIA PerfHUD"))
+		if (!wcscmp(desc.Description, L"NVIDIA PerfHUD"))
 		{
 			m_bUsePerfhud = true;
 			break;
@@ -115,56 +93,31 @@ void CHW::CreateD3D()
 
 	pFactory->Release();
 
-	/*
-	R_ASSERT2	           	 	(hD3D,"Can't find 'd3d10.dll'\nPlease install latest version of DirectX before running this program");
-	typedef IDirect3D9 * WINAPI _Direct3DCreate9(UINT SDKVersion);
-	_Direct3DCreate9* createD3D	= (_Direct3DCreate9*)GetProcAddress(hD3D,"Direct3DCreate9");	R_ASSERT(createD3D);
-	this->pD3D 					= createD3D( D3D_SDK_VERSION );
-	R_ASSERT2					(this->pD3D,"Please install DirectX 9.0c");
-	*/
 }
 
 void CHW::DestroyD3D()
 {
 	//_RELEASE					(this->pD3D);
 
-	_SHOW_REF				("refCount:m_pAdapter",m_pAdapter);
-	_RELEASE				(m_pAdapter);
+	_SHOW_REF("refCount:m_pAdapter", m_pAdapter);
+	_RELEASE(m_pAdapter);
 
-//	FreeLibrary(hD3D);
+	//	FreeLibrary(hD3D);
 }
 
-void CHW::CreateDevice( HWND m_hWnd, bool move_window )
+void CHW::CreateDevice(HWND m_hWnd, bool move_window)
 {
-	m_move_window			= move_window;
+	m_move_window = move_window;
 	CreateD3D();
 
-	/* Partially implemented dynamic load
-	typedef HRESULT _D3DxxCreateDeviceAndSwapChain(
-		IDXGIAdapter *pAdapter,
-		D3Dxx_DRIVER_TYPE DriverType,
-		HMODULE Software,
-		UINT Flags,
-		UINT SDKVersion,
-		DXGI_SWAP_CHAIN_DESC *pSwapChainDesc,
-		IDXGISwapChain **ppSwapChain,
-		ID3DxxDevice **ppDevice
-		);
 
-
-
-	_D3DxxCreateDeviceAndSwapChain *CreateDeviceAndSwapChain = 
-		(_D3DxxCreateDeviceAndSwapChain*)
-		GetProcAddress(hD3D,"D3DxxCreateDeviceAndSwapChain");
-	R_ASSERT(CreateDeviceAndSwapChain);
-	*/
 
 	// TODO: DX10: Create appropriate initialization
 
 	// General - select adapter and device
-	BOOL  bWindowed			= !psDeviceFlags.is(rsFullscreen);
+	BOOL  bWindowed = !psDeviceFlags.is(rsFullscreen);
 
-	m_DriverType = Caps.bForceGPU_REF ? 
+	m_DriverType = Caps.bForceGPU_REF ?
 		D3D_DRIVER_TYPE_REFERENCE : D3D_DRIVER_TYPE_HARDWARE;
 
 	if (m_bUsePerfhud)
@@ -190,9 +143,9 @@ void CHW::CreateDevice( HWND m_hWnd, bool move_window )
 
 	// Display the name of video board
 	DXGI_ADAPTER_DESC Desc;
-	R_CHK( m_pAdapter->GetDesc(&Desc) );
+	R_CHK(m_pAdapter->GetDesc(&Desc));
 	//	Warning: Desc.Description is wide string
-	Msg		("* GPU [vendor:%X]-[device:%X]: %S", Desc.VendorId, Desc.DeviceId, Desc.Description);
+	Msg("* GPU [vendor:%X]-[device:%X]: %S", Desc.VendorId, Desc.DeviceId, Desc.Description);
 	/*
 	// Display the name of video board
 	D3DADAPTER_IDENTIFIER9	adapterID;
@@ -211,8 +164,8 @@ void CHW::CreateDevice( HWND m_hWnd, bool move_window )
 	Caps.id_device	= adapterID.DeviceId;
 	*/
 
-	Caps.id_vendor	= Desc.VendorId;
-	Caps.id_device	= Desc.DeviceId;
+	Caps.id_vendor = Desc.VendorId;
+	Caps.id_device = Desc.DeviceId;
 
 	/*
 	// Retreive windowed mode
@@ -221,8 +174,8 @@ void CHW::CreateDevice( HWND m_hWnd, bool move_window )
 
 	*/
 	// Select back-buffer & depth-stencil format
-	D3DFORMAT&	fTarget	= Caps.fTarget;
-	D3DFORMAT&	fDepth	= Caps.fDepth;
+	D3DFORMAT& fTarget = Caps.fTarget;
+	D3DFORMAT& fDepth = Caps.fDepth;
 
 	//	HACK: DX10: Embed hard target format.
 	fTarget = D3DFMT_X8R8G8B8;	//	No match in DX10. D3DFMT_A8B8G8R8->DXGI_FORMAT_R8G8B8A8_UNORM
@@ -263,7 +216,7 @@ void CHW::CreateDevice( HWND m_hWnd, bool move_window )
 		}
 		fDepth  = selectDepthStencil(fTarget);
 	}
-	
+
 
 	if ((D3DFMT_UNKNOWN==fTarget) || (D3DFMT_UNKNOWN==fTarget))	{
 		Msg					("Failed to initialize graphics hardware.\nPlease try to restart the game.");
@@ -273,12 +226,12 @@ void CHW::CreateDevice( HWND m_hWnd, bool move_window )
 	}
 
 	*/
-	
-	// Set up the presentation parameters
-	DXGI_SWAP_CHAIN_DESC	&sd	= m_ChainDesc;
-	ZeroMemory				( &sd, sizeof(sd) );
 
-	selectResolution	(sd.BufferDesc.Width, sd.BufferDesc.Height, bWindowed);
+	// Set up the presentation parameters
+	DXGI_SWAP_CHAIN_DESC& sd = m_ChainDesc;
+	ZeroMemory(&sd, sizeof(sd));
+
+	selectResolution(sd.BufferDesc.Width, sd.BufferDesc.Height, bWindowed);
 
 	// Back buffer
 	//.	P.BackBufferWidth		= dwWidth;
@@ -317,7 +270,7 @@ void CHW::CreateDevice( HWND m_hWnd, bool move_window )
 	}
 	else
 	{
-		sd.BufferDesc.RefreshRate = selectRefresh( sd.BufferDesc.Width, sd.BufferDesc.Height, sd.BufferDesc.Format);
+		sd.BufferDesc.RefreshRate = selectRefresh(sd.BufferDesc.Width, sd.BufferDesc.Height, sd.BufferDesc.Format);
 	}
 
 	//	Additional set up
@@ -327,47 +280,47 @@ void CHW::CreateDevice( HWND m_hWnd, bool move_window )
 #ifdef DEBUG
 	//createDeviceFlags |= D3Dxx_CREATE_DEVICE_DEBUG;
 #endif
-   HRESULT R;
+	HRESULT R;
 	// Create the device
 	//	DX10 don't need it?
 	//u32 GPU		= selectGPU();
 #ifdef USE_DX11
-    D3D_FEATURE_LEVEL pFeatureLevels[] =
-    {
-        D3D_FEATURE_LEVEL_11_0,
-//        D3D_FEATURE_LEVEL_10_1,
-//        D3D_FEATURE_LEVEL_10_0,
-    };
+	D3D_FEATURE_LEVEL pFeatureLevels[] =
+	{
+		D3D_FEATURE_LEVEL_11_0,
+		//        D3D_FEATURE_LEVEL_10_1,
+		//        D3D_FEATURE_LEVEL_10_0,
+	};
 
-   R =  D3D11CreateDeviceAndSwapChain(   0,//m_pAdapter,//What wrong with adapter??? We should use another version of DXGI?????
-                                          m_DriverType,
-                                          NULL,
-                                          createDeviceFlags,
-										  pFeatureLevels,
-										  sizeof(pFeatureLevels)/sizeof(pFeatureLevels[0]),
-										  D3D11_SDK_VERSION,
-                                          &sd,
-                                          &m_pSwapChain,
-		                                  &pDevice,
-										  &FeatureLevel,		
-										  &pContext);
+	R = D3D11CreateDeviceAndSwapChain(0,//m_pAdapter,//What wrong with adapter??? We should use another version of DXGI?????
+		m_DriverType,
+		NULL,
+		createDeviceFlags,
+		pFeatureLevels,
+		sizeof(pFeatureLevels) / sizeof(pFeatureLevels[0]),
+		D3D11_SDK_VERSION,
+		&sd,
+		&m_pSwapChain,
+		&pDevice,
+		&FeatureLevel,
+		&pContext);
 #else
-   R =  D3DX10CreateDeviceAndSwapChain(   m_pAdapter,
-                                          m_DriverType,
-                                          NULL,
-                                          createDeviceFlags,
-                                          &sd,
-                                          &m_pSwapChain,
-		                                    &pDevice );
+	R = D3DX10CreateDeviceAndSwapChain(m_pAdapter,
+		m_DriverType,
+		NULL,
+		createDeviceFlags,
+		&sd,
+		&m_pSwapChain,
+		&pDevice);
 
-   pContext = pDevice;
-   FeatureLevel = D3D_FEATURE_LEVEL_10_0;
-   if(!FAILED(R))
-   {
-      D3DX10GetFeatureLevel1( pDevice, &pDevice1 );
-	  FeatureLevel = D3D_FEATURE_LEVEL_10_1;
-   }
-   pContext1 = pDevice1;
+	pContext = pDevice;
+	FeatureLevel = D3D_FEATURE_LEVEL_10_0;
+	if (!FAILED(R))
+	{
+		D3DX10GetFeatureLevel1(pDevice, &pDevice1);
+		FeatureLevel = D3D_FEATURE_LEVEL_10_1;
+	}
+	pContext1 = pDevice1;
 #endif
 
 	/*
@@ -384,17 +337,17 @@ void CHW::CreateDevice( HWND m_hWnd, bool move_window )
 	if (FAILED(R))
 	{
 		// Fatal error! Cannot create rendering device AT STARTUP !!!
-		Msg					("Failed to initialize graphics hardware.\n"
-							 "Please try to restart the game.\n"
-							 "CreateDevice returned 0x%08x", R
-							 );
-		FlushLog			();
-		MessageBox			(NULL,"Failed to initialize graphics hardware.\nPlease try to restart the game.","Error!",MB_OK|MB_ICONERROR);
-		TerminateProcess	(GetCurrentProcess(),0);
+		Msg("Failed to initialize graphics hardware.\n"
+			"Please try to restart the game.\n"
+			"CreateDevice returned 0x%08x", R
+		);
+		FlushLog();
+		MessageBox(NULL, "Failed to initialize graphics hardware.\nPlease try to restart the game.", "Error!", MB_OK | MB_ICONERROR);
+		TerminateProcess(GetCurrentProcess(), 0);
 	};
 	R_CHK(R);
 
-	_SHOW_REF	("* CREATE: DeviceREF:",HW.pDevice);
+	_SHOW_REF("* CREATE: DeviceREF:", HW.pDevice);
 
 #ifdef USE_DX11
 
@@ -439,12 +392,12 @@ void CHW::CreateDevice( HWND m_hWnd, bool move_window )
 	UpdateViews();
 
 	//u32	memory									= pDevice->GetAvailableTextureMem	();
-	size_t	memory									= Desc.DedicatedVideoMemory;
-	Msg		("*     Texture memory: %d M",		memory/(1024*1024));
+	size_t	memory = Desc.DedicatedVideoMemory;
+	Msg("*     Texture memory: %d M", memory / (1024 * 1024));
 	//Msg		("*          DDI-level: %2.1f",		float(D3DXGetDriverLevel(pDevice))/100.f);
 #ifndef _EDITOR
-	updateWindowProps							(m_hWnd);
-	fill_vid_mode_list							(this);
+	updateWindowProps(m_hWnd);
+	fill_vid_mode_list(this);
 #endif
 
 #ifdef USE_DX11
@@ -468,49 +421,57 @@ void CHW::DestroyDevice()
 	BSManager.ClearStateArray();
 	SSManager.ClearStateArray();
 
-	_SHOW_REF				("refCount:pBaseZB",pBaseZB);
-	_RELEASE				(pBaseZB);
+	//_SHOW_REF				("refCount:pBaseZB",pBaseZB);
+	//_RELEASE				(pBaseZB);
 
-	_SHOW_REF				("refCount:pBaseRT",pBaseRT);
-	_RELEASE				(pBaseRT);
-//#ifdef DEBUG
-//	_SHOW_REF				("refCount:dwDebugSB",dwDebugSB);
-//	_RELEASE				(dwDebugSB);
-//#endif
+	for (auto it = viewPortsRTZB.begin(); it != viewPortsRTZB.end(); ++it)
+	{
+		_SHOW_REF("refCount:pBaseZB", it->second.baseZB);
+		_SHOW_REF("refCount:pBaseRT", it->second.baseRT);
+		_RELEASE(it->second.baseZB);
+		_RELEASE(it->second.baseRT);
+#ifdef USE_DX11
+		it->second.pDepthStencil->Release();
+		_RELEASE(it->second.pBaseDepthReadSRV);
+#endif
+	}
+
+	//_SHOW_REF				("refCount:pBaseRT",pBaseRT);
+	//_RELEASE				(pBaseRT);
 
 	//	Must switch to windowed mode to release swap chain
-	if (!m_ChainDesc.Windowed) m_pSwapChain->SetFullscreenState( FALSE, NULL);
-	_SHOW_REF				("refCount:m_pSwapChain",m_pSwapChain);
-	_RELEASE				(m_pSwapChain);
+	if (!m_ChainDesc.Windowed) m_pSwapChain->SetFullscreenState(FALSE, NULL);
+	_SHOW_REF("refCount:m_pSwapChain", m_pSwapChain);
+	_RELEASE(m_pSwapChain);
 
 #ifdef USE_DX11
-	_RELEASE				(pContext);
+	_RELEASE(pContext);
 
 	if (pSSAO)
 		_RELEASE(pSSAO);
 
-	pDepthStencil->Release();
+	// pDepthStencil->Release();
 
 #endif
 
 #ifndef USE_DX11
-	_RELEASE				(HW.pDevice1);
+	_RELEASE(HW.pDevice1);
 #endif
-	_SHOW_REF				("DeviceREF:",HW.pDevice);
-	_RELEASE				(HW.pDevice);
+	_SHOW_REF("DeviceREF:", HW.pDevice);
+	_RELEASE(HW.pDevice);
 
 
-	DestroyD3D				();
+	DestroyD3D();
 
 #ifndef _EDITOR
-	free_vid_mode_list		();
+	free_vid_mode_list();
 #endif
 }
 
 //////////////////////////////////////////////////////////////////////
 // Resetting device
 //////////////////////////////////////////////////////////////////////
-void CHW::Reset (HWND hwnd)
+void CHW::Reset(HWND hwnd)
 {
 #ifdef USE_DX11
 	ImGui_ImplDX11_InvalidateDeviceObjects();
@@ -518,15 +479,15 @@ void CHW::Reset (HWND hwnd)
 	ImGui_ImplDX10_InvalidateDeviceObjects();
 #endif
 
-	DXGI_SWAP_CHAIN_DESC &cd = m_ChainDesc;
+	DXGI_SWAP_CHAIN_DESC& cd = m_ChainDesc;
 
-	BOOL	bWindowed		= !psDeviceFlags.is	(rsFullscreen);
+	BOOL	bWindowed = !psDeviceFlags.is(rsFullscreen);
 
 	cd.Windowed = bWindowed;
 
 	m_pSwapChain->SetFullscreenState(!bWindowed, NULL);
 
-	DXGI_MODE_DESC	&desc = m_ChainDesc.BufferDesc;
+	DXGI_MODE_DESC& desc = m_ChainDesc.BufferDesc;
 
 	selectResolution(desc.Width, desc.Height, bWindowed);
 
@@ -536,7 +497,7 @@ void CHW::Reset (HWND hwnd)
 		desc.RefreshRate.Denominator = 1;
 	}
 	else
-		desc.RefreshRate = selectRefresh( desc.Width, desc.Height, desc.Format);
+		desc.RefreshRate = selectRefresh(desc.Width, desc.Height, desc.Format);
 
 	CHK_DX(m_pSwapChain->ResizeTarget(&desc));
 
@@ -544,11 +505,19 @@ void CHW::Reset (HWND hwnd)
 #ifdef DEBUG
 	//	_RELEASE			(dwDebugSB);
 #endif
-	_SHOW_REF				("refCount:pBaseZB",pBaseZB);
-	_SHOW_REF				("refCount:pBaseRT",pBaseRT);
+	for (auto it = viewPortsRTZB.begin(); it != viewPortsRTZB.end(); ++it)
+	{
+		_SHOW_REF("refCount:pBaseZB", it->second.baseZB);
+		_SHOW_REF("refCount:pBaseRT", it->second.baseRT);
+		_RELEASE(it->second.baseZB);
+		_RELEASE(it->second.baseRT);
+	}
 
-	_RELEASE(pBaseZB);
-	_RELEASE(pBaseRT);
+	//_SHOW_REF				("refCount:pBaseZB",pBaseZB);
+	//_SHOW_REF				("refCount:pBaseRT",pBaseRT);
+
+	//_RELEASE(pBaseZB);
+	//_RELEASE(pBaseRT);
 
 	CHK_DX(m_pSwapChain->ResizeBuffers(
 		cd.BufferCount,
@@ -559,69 +528,30 @@ void CHW::Reset (HWND hwnd)
 
 	UpdateViews();
 
-/*
-	// Windoze
-	DevPP.SwapEffect			= bWindowed?D3DSWAPEFFECT_COPY:D3DSWAPEFFECT_DISCARD;
-	DevPP.Windowed				= bWindowed;
-	DevPP.PresentationInterval	= D3DPRESENT_INTERVAL_IMMEDIATE;
-	if( !bWindowed )		DevPP.FullScreen_RefreshRateInHz	= selectRefresh	(DevPP.BackBufferWidth,DevPP.BackBufferHeight,Caps.fTarget);
-	else					DevPP.FullScreen_RefreshRateInHz	= D3DPRESENT_RATE_DEFAULT;
+
+	updateWindowProps(hwnd);
+
+}
+
+
+void CHW::SwitchVP(ViewPort vp)
+{
+	if (storedVP == vp && pBaseRT)
+		return;
+
+	storedVP = vp;
+
+	auto it = viewPortsRTZB.find(vp);
+
+	if (it == viewPortsRTZB.end())
+		it = viewPortsRTZB.find(MAIN_VIEWPORT);
+
+	pBaseRT = it->second.baseRT;
+	pBaseZB = it->second.baseZB;
+#ifdef USE_DX11
+	pBaseDepthReadSRV = it->second.pBaseDepthReadSRV;
+	// pDepthStencil = it->second.pDepthStencil;
 #endif
-
-	while	(TRUE)	{
-		HRESULT _hr							= HW.pDevice->Reset	(&DevPP);
-		if (SUCCEEDED(_hr))					break;
-		Msg		("! ERROR: [%dx%d]: %s",DevPP.BackBufferWidth,DevPP.BackBufferHeight,Debug.error2string(_hr));
-		Sleep	(100);
-	}
-	R_CHK				(pDevice->GetRenderTarget			(0,&pBaseRT));
-	R_CHK				(pDevice->GetDepthStencilSurface	(&pBaseZB));
-*/
-
-
-//#ifdef DEBUG
-//	R_CHK				(pDevice->CreateStateBlock			(D3DSBT_ALL,&dwDebugSB));
-//#endif
-
-	updateWindowProps	(hwnd);
-
-
-		/*
-#ifdef DEBUG
-	_RELEASE			(dwDebugSB);
-#endif
-	_RELEASE			(pBaseZB);
-	_RELEASE			(pBaseRT);
-
-	BOOL	bWindowed		= !psDeviceFlags.is	(rsFullscreen);
-#else
-	BOOL	bWindowed		= TRUE;
-#endif
-
-	selectResolution		(DevPP.BackBufferWidth, DevPP.BackBufferHeight, bWindowed);
-	// Windoze
-	DevPP.SwapEffect			= bWindowed?D3DSWAPEFFECT_COPY:D3DSWAPEFFECT_DISCARD;
-	DevPP.Windowed				= bWindowed;
-	DevPP.PresentationInterval	= D3DPRESENT_INTERVAL_IMMEDIATE;
-	if( !bWindowed )		DevPP.FullScreen_RefreshRateInHz	= selectRefresh	(DevPP.BackBufferWidth,DevPP.BackBufferHeight,Caps.fTarget);
-	else					DevPP.FullScreen_RefreshRateInHz	= D3DPRESENT_RATE_DEFAULT;
-#endif
-
-	while	(TRUE)	{
-		HRESULT _hr							= HW.pDevice->Reset	(&DevPP);
-		if (SUCCEEDED(_hr))					break;
-		Msg		("! ERROR: [%dx%d]: %s",DevPP.BackBufferWidth,DevPP.BackBufferHeight,Debug.error2string(_hr));
-		Sleep	(100);
-	}
-	R_CHK				(pDevice->GetRenderTarget			(0,&pBaseRT));
-	R_CHK				(pDevice->GetDepthStencilSurface	(&pBaseZB));
-#ifdef DEBUG
-	R_CHK				(pDevice->CreateStateBlock			(D3DSBT_ALL,&dwDebugSB));
-#endif
-#ifndef _EDITOR
-	updateWindowProps	(hwnd);
-#endif
-	*/
 #ifdef USE_DX11
 	ImGui_ImplDX11_CreateDeviceObjects();
 #else
@@ -629,35 +559,35 @@ void CHW::Reset (HWND hwnd)
 #endif
 }
 
-D3DFORMAT CHW::selectDepthStencil	(D3DFORMAT fTarget)
+D3DFORMAT CHW::selectDepthStencil(D3DFORMAT fTarget)
 {
 	// R3 hack
 #pragma todo("R3 need to specify depth format")
 	return D3DFMT_D24S8;
 }
 
-void CHW::selectResolution( u32 &dwWidth, u32 &dwHeight, BOOL bWindowed )
+void CHW::selectResolution(u32& dwWidth, u32& dwHeight, BOOL bWindowed)
 {
-	fill_vid_mode_list			(this);
+	fill_vid_mode_list(this);
 
-	if(bWindowed)
+	if (bWindowed)
 	{
-		dwWidth		= psCurrentVidMode[0];
-		dwHeight	= psCurrentVidMode[1];
+		dwWidth = psCurrentVidMode[0];
+		dwHeight = psCurrentVidMode[1];
 	}
 	else //check
 	{
 		string64					buff;
-		xr_sprintf					(buff,sizeof(buff),"%dx%d",psCurrentVidMode[0],psCurrentVidMode[1]);
+		xr_sprintf(buff, sizeof(buff), "%dx%d", psCurrentVidMode[0], psCurrentVidMode[1]);
 
-		if(_ParseItem(buff,vid_mode_token)==u32(-1)) //not found
+		if (_ParseItem(buff, vid_mode_token) == u32(-1)) //not found
 		{ //select safe
-			xr_sprintf				(buff,sizeof(buff),"vid_mode %s",vid_mode_token[0].name);
-			Console->Execute		(buff);
+			xr_sprintf(buff, sizeof(buff), "vid_mode %s", vid_mode_token[0].name);
+			Console->Execute(buff);
 		}
 
-		dwWidth						= psCurrentVidMode[0];
-		dwHeight					= psCurrentVidMode[1];
+		dwWidth = psCurrentVidMode[0];
+		dwHeight = psCurrentVidMode[1];
 	}
 }
 
@@ -668,7 +598,7 @@ u32	CHW::selectPresentInterval	()
 	D3DCAPS9	caps;
 	pD3D->GetDeviceCaps(DevAdapter,DevT,&caps);
 
-	if (!psDeviceFlags.test(rsVSync)) 
+	if (!psDeviceFlags.test(rsVSync))
 	{
 		if (caps.PresentationIntervals & D3DPRESENT_INTERVAL_IMMEDIATE)
 			return D3DPRESENT_INTERVAL_IMMEDIATE;
@@ -699,19 +629,19 @@ u32 CHW::selectGPU ()
 
 void CHW::OnAppActivate()
 {
-	if ( m_pSwapChain && !m_ChainDesc.Windowed )
+	if (m_pSwapChain && !m_ChainDesc.Windowed)
 	{
-		ShowWindow( m_ChainDesc.OutputWindow, SW_RESTORE );
-		m_pSwapChain->SetFullscreenState( TRUE, NULL );
+		ShowWindow(m_ChainDesc.OutputWindow, SW_RESTORE);
+		m_pSwapChain->SetFullscreenState(TRUE, NULL);
 	}
 }
 
 void CHW::OnAppDeactivate()
 {
-	if ( m_pSwapChain && !m_ChainDesc.Windowed )
+	if (m_pSwapChain && !m_ChainDesc.Windowed)
 	{
-		m_pSwapChain->SetFullscreenState( FALSE, NULL );
-		ShowWindow( m_ChainDesc.OutputWindow, SW_MINIMIZE );
+		m_pSwapChain->SetFullscreenState(FALSE, NULL);
+		ShowWindow(m_ChainDesc.OutputWindow, SW_MINIMIZE);
 	}
 }
 
@@ -773,7 +703,7 @@ DXGI_RATIONAL CHW::selectRefresh(u32 dwWidth, u32 dwHeight, DXGI_FORMAT fmt)
 	return res;
 }
 
-BOOL CHW::support( D3DFORMAT fmt, DWORD type, DWORD usage)
+BOOL CHW::support(D3DFORMAT fmt, DWORD type, DWORD usage)
 {
 	//	TODO: DX10: implement stub for this code.
 	VERIFY(!"Implement CHW::support");
@@ -788,11 +718,11 @@ BOOL CHW::support( D3DFORMAT fmt, DWORD type, DWORD usage)
 void CHW::updateWindowProps(HWND m_hWnd)
 {
 	//	BOOL	bWindowed				= strstr(Core.Params,"-dedicated") ? TRUE : !psDeviceFlags.is	(rsFullscreen);
-	BOOL	bWindowed				= !psDeviceFlags.is	(rsFullscreen);
+	BOOL	bWindowed = !psDeviceFlags.is(rsFullscreen);
 
-	u32		dwWindowStyle			= 0;
+	u32		dwWindowStyle = 0;
 	// Set window properties depending on what mode were in.
-	if (bWindowed)		{
+	if (bWindowed) {
 		if (m_move_window) {
 			dwWindowStyle = WS_BORDER | WS_VISIBLE;
 			if (!strstr(Core.Params, "-no_dialog_header"))
@@ -818,32 +748,32 @@ void CHW::updateWindowProps(HWND m_hWnd)
 				(DesktopRect.right + m_ChainDesc.BufferDesc.Width) / 2,
 				(DesktopRect.bottom + m_ChainDesc.BufferDesc.Height) / 2);
 
-			AdjustWindowRect		(	&m_rcWindowBounds, dwWindowStyle, FALSE );
+			AdjustWindowRect(&m_rcWindowBounds, dwWindowStyle, FALSE);
 
-			SetWindowPos			(	m_hWnd, 
-				HWND_NOTOPMOST,	
+			SetWindowPos(m_hWnd,
+				HWND_NOTOPMOST,
 				m_rcWindowBounds.left,
 				m_rcWindowBounds.top,
-				( m_rcWindowBounds.right - m_rcWindowBounds.left ),
-				( m_rcWindowBounds.bottom - m_rcWindowBounds.top ),
-				SWP_SHOWWINDOW|SWP_NOCOPYBITS|SWP_DRAWFRAME );
+				(m_rcWindowBounds.right - m_rcWindowBounds.left),
+				(m_rcWindowBounds.bottom - m_rcWindowBounds.top),
+				SWP_SHOWWINDOW | SWP_NOCOPYBITS | SWP_DRAWFRAME);
 		}
 	}
 	else
 	{
-		SetWindowLong			( m_hWnd, GWL_STYLE, dwWindowStyle=(WS_POPUP|WS_VISIBLE) );
+		SetWindowLong(m_hWnd, GWL_STYLE, dwWindowStyle = (WS_POPUP | WS_VISIBLE));
 	}
 
-	ShowCursor	(FALSE);
-	SetForegroundWindow( m_hWnd );
+	ShowCursor(FALSE);
+	SetForegroundWindow(m_hWnd);
 }
 
 
 struct _uniq_mode
 {
-	_uniq_mode(LPCSTR v):_val(v){}
+	_uniq_mode(LPCSTR v) :_val(v) {}
 	LPCSTR _val;
-	bool operator() (LPCSTR _other) {return !stricmp(_val,_other);}
+	bool operator() (LPCSTR _other) { return !stricmp(_val, _other); }
 };
 
 #ifndef _EDITOR
@@ -923,76 +853,76 @@ Msg							("[%s]",_tmp[i]);
 */
 void free_vid_mode_list()
 {
-	for( int i=0; vid_mode_token[i].name; i++ )
+	for (int i = 0; vid_mode_token[i].name; i++)
 	{
-		xr_free					(vid_mode_token[i].name);
+		xr_free(vid_mode_token[i].name);
 	}
-	xr_free						(vid_mode_token);
-	vid_mode_token				= NULL;
+	xr_free(vid_mode_token);
+	vid_mode_token = NULL;
 }
 
 void fill_vid_mode_list(CHW* _hw)
 {
-	if(vid_mode_token != NULL)		return;
+	if (vid_mode_token != NULL)		return;
 	xr_vector<LPCSTR>	_tmp;
 	xr_vector<DXGI_MODE_DESC>	modes;
 
-	IDXGIOutput *pOutput;
+	IDXGIOutput* pOutput;
 	//_hw->m_pSwapChain->GetContainingOutput(&pOutput);
 	_hw->m_pAdapter->EnumOutputs(0, &pOutput);
 	VERIFY(pOutput);
 
 	UINT num = 0;
 	DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	UINT flags         = 0;
+	UINT flags = 0;
 
 	// Get the number of display modes available
-	pOutput->GetDisplayModeList( format, flags, &num, 0);
+	pOutput->GetDisplayModeList(format, flags, &num, 0);
 
 	// Get the list of display modes
 	modes.resize(num);
-	pOutput->GetDisplayModeList( format, flags, &num, &modes.front());
+	pOutput->GetDisplayModeList(format, flags, &num, &modes.front());
 
 	_RELEASE(pOutput);
 
-	for (u32 i=0; i<num; ++i)
+	for (u32 i = 0; i < num; ++i)
 	{
-		DXGI_MODE_DESC &desc = modes[i];
+		DXGI_MODE_DESC& desc = modes[i];
 		string32		str;
 
-		if(desc.Width < 800)
+		if (desc.Width < 800)
 			continue;
 
 		xr_sprintf(str, sizeof(str), "%dx%d", desc.Width, desc.Height);
 
-		if(_tmp.end() != std::find_if(_tmp.begin(), _tmp.end(), _uniq_mode(str)))
+		if (_tmp.end() != std::find_if(_tmp.begin(), _tmp.end(), _uniq_mode(str)))
 			continue;
 
-		_tmp.push_back				(NULL);
-		_tmp.back()					= xr_strdup(str);
+		_tmp.push_back(NULL);
+		_tmp.back() = xr_strdup(str);
 	}
-	
 
 
-//	_tmp.push_back				(NULL);
-//	_tmp.back()					= xr_strdup("1024x768");
 
-	u32 _cnt						= _tmp.size()+1;
+	//	_tmp.push_back				(NULL);
+	//	_tmp.back()					= xr_strdup("1024x768");
 
-	vid_mode_token					= xr_alloc<xr_token>(_cnt);
+	u32 _cnt = _tmp.size() + 1;
 
-	vid_mode_token[_cnt-1].id			= -1;
-	vid_mode_token[_cnt-1].name		= NULL;
+	vid_mode_token = xr_alloc<xr_token>(_cnt);
+
+	vid_mode_token[_cnt - 1].id = -1;
+	vid_mode_token[_cnt - 1].name = NULL;
 
 #ifdef DEBUG
-	Msg("Available video modes[%d]:",_tmp.size());
+	Msg("Available video modes[%d]:", _tmp.size());
 #endif // DEBUG
-	for( u32 i=0; i<_tmp.size(); ++i )
+	for (u32 i = 0; i < _tmp.size(); ++i)
 	{
-		vid_mode_token[i].id		= i;
-		vid_mode_token[i].name		= _tmp[i];
+		vid_mode_token[i].id = i;
+		vid_mode_token[i].name = _tmp[i];
 #ifdef DEBUG
-		Msg							("[%s]",_tmp[i]);
+		Msg("[%s]", _tmp[i]);
 #endif // DEBUG
 	}
 
@@ -1042,24 +972,151 @@ void fill_vid_mode_list(CHW* _hw)
 
 void CHW::UpdateViews()
 {
-	DXGI_SWAP_CHAIN_DESC &sd = m_ChainDesc;
+	DXGI_SWAP_CHAIN_DESC& sd = m_ChainDesc;
 	HRESULT R;
+
+	// Set up svp image size
+	Device.m_SecondViewport.screenWidth = u32((sd.BufferDesc.Width / 32) * psSVPImageSizeK) * 32;
+	Device.m_SecondViewport.screenHeight = u32((sd.BufferDesc.Height / 32) * psSVPImageSizeK) * 32;
+
 
 	// Create a render target view
 	//R_CHK	(pDevice->GetRenderTarget			(0,&pBaseRT));
-	ID3DTexture2D *pBuffer;
-	R = m_pSwapChain->GetBuffer( 0, __uuidof( ID3DTexture2D ), (LPVOID*)&pBuffer );
+	//ID3DTexture2D *pBuffer;
+	//R = m_pSwapChain->GetBuffer( 0, __uuidof( ID3DTexture2D ), (LPVOID*)&pBuffer );
+	//R_CHK(R);
+
+	viewPortsRTZB.insert(mk_pair(MAIN_VIEWPORT, HWViewPortRTZB()));
+	viewPortsRTZB.insert(mk_pair(SECONDARY_WEAPON_SCOPE, HWViewPortRTZB()));
+
+	ID3DTexture2D* temp1;
+	ID3DTexture2D* temp2;
+
+	R = m_pSwapChain->GetBuffer(0, __uuidof(ID3DTexture2D), reinterpret_cast<void**>(&temp1));
+	R_CHK2(R, "!Erroneous buffer result");
+
+	D3D_TEXTURE2D_DESC desc;
+	temp1->GetDesc(&desc);
+	desc.Width = Device.m_SecondViewport.screenWidth;
+	desc.Height = Device.m_SecondViewport.screenHeight;
+
+	R = pDevice->CreateTexture2D(&desc, NULL, &temp2);
+
 	R_CHK(R);
-	R = pDevice->CreateRenderTargetView( pBuffer, NULL, &pBaseRT);
+	R = pDevice->CreateRenderTargetView(temp1, NULL, &viewPortsRTZB.at(MAIN_VIEWPORT).baseRT);
 	R_CHK(R);
 
-	pBuffer->Release();
+	R = pDevice->CreateRenderTargetView(temp2, NULL, &viewPortsRTZB.at(SECONDARY_WEAPON_SCOPE).baseRT);
+	R_CHK(R);
+
+	temp1->Release();
+	temp2->Release();
+
+#ifdef USE_DX11
+	//R = pDevice->CreateRenderTargetView( pBuffer, NULL, &pBaseRT);
+	//pBuffer->Release();
+	//R_CHK(R);
 
 	//	Create Depth/stencil buffer
 	//	HACK: DX10: hard depth buffer format
 	//R_CHK	(pDevice->GetDepthStencilSurface	(&pBaseZB));
 
-#ifdef USE_DX11
+// #ifdef USE_DX11
+	// D3D_TEXTURE2D_DESC descDepth;
+	// descDepth.Width = sd.BufferDesc.Width;
+	// descDepth.Height = sd.BufferDesc.Height;
+	// descDepth.MipLevels = 1;
+	// descDepth.ArraySize = 1;
+	// descDepth.Format = DXGI_FORMAT_R24G8_TYPELESS; // DXGI_FORMAT_D24_UNORM_S8_UINT;
+	// descDepth.SampleDesc.Count = 1;
+	// descDepth.SampleDesc.Quality = 0;
+	// descDepth.Usage = D3D_USAGE_DEFAULT;
+	// descDepth.BindFlags = D3D_BIND_DEPTH_STENCIL | D3D_BIND_SHADER_RESOURCE;;
+	// descDepth.CPUAccessFlags = 0;
+	// descDepth.MiscFlags = 0;
+	// R = pDevice->CreateTexture2D( &descDepth,       // Texture desc
+		// NULL,                  // Initial data
+		// &pDepthStencil ); // [out] Texture
+	// R_CHK(R);
+
+	// //	Create Depth/stencil view
+	// //R = pDevice->CreateDepthStencilView( pDepthStencil, NULL, &pBaseZB );
+	// //R_CHK(R);
+	// D3D_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
+	// dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	// dsvDesc.Flags = 0;
+	// dsvDesc.ViewDimension = D3D_DSV_DIMENSION_TEXTURE2D;
+	// dsvDesc.Texture2D.MipSlice = 0;
+	// R_CHK(pDevice->CreateDepthStencilView(pDepthStencil, &dsvDesc, &pBaseZB)); // read & wtire DSV
+
+
+
+	// // Shader resource view
+	// D3D_SHADER_RESOURCE_VIEW_DESC depthSRVDesc = {};
+	// depthSRVDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	// depthSRVDesc.ViewDimension = D3D_SRV_DIMENSION_TEXTURE2D;
+	// depthSRVDesc.Texture2D.MipLevels = 1;
+	// depthSRVDesc.Texture2D.MostDetailedMip = 0; // No MIP
+	// R_CHK(pDevice->CreateShaderResourceView(pDepthStencil, &depthSRVDesc, &pBaseDepthReadSRV)); // read SRV
+
+	// if (pBaseDepthReadSRV)
+	// {
+		// Msg("* Shader Resource: pBaseDepthReadSRV Created");
+	// }
+
+// #else 
+	// ID3DTexture2D* pDepthStencil = NULL;
+	// D3D_TEXTURE2D_DESC descDepth;
+	// descDepth.Width = sd.BufferDesc.Width;
+	// descDepth.Height = sd.BufferDesc.Height;
+	// descDepth.MipLevels = 1;
+	// descDepth.ArraySize = 1;
+	// descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	// descDepth.SampleDesc.Count = 1;
+	// descDepth.SampleDesc.Quality = 0;
+	// descDepth.Usage = D3D_USAGE_DEFAULT;
+	// descDepth.BindFlags = D3D_BIND_DEPTH_STENCIL | D3D_BIND_SHADER_RESOURCE;;
+	// descDepth.CPUAccessFlags = 0;
+	// descDepth.MiscFlags = 0;
+	// R = pDevice->CreateTexture2D(&descDepth,       // Texture desc
+		// NULL,                  // Initial data
+		// &pDepthStencil); // [out] Texture
+	// R_CHK(R);
+
+	// //	Create Depth/stencil view
+	// R = pDevice->CreateDepthStencilView(pDepthStencil, NULL, &pBaseZB);
+	// R_CHK(R);
+
+	// pDepthStencil->Release();
+
+// #endif 
+
+	//R = pDevice->CreateRenderTargetView( pBuffer, NULL, &pBaseRT);
+	//pBuffer->Release();
+	//R_CHK(R);
+
+	//	Create Depth/stencil buffer
+	//	HACK: DX10: hard depth buffer format
+	//R_CHK	(pDevice->GetDepthStencilSurface	(&pBaseZB));
+	//ID3DTexture2D* pDepthStencil = NULL;
+
+	//-------------- CREATE TEXTURE 2D MAIN
+	// ID3DTexture2D* depth_stencil = NULL;
+	// D3D_TEXTURE2D_DESC descDepth;
+	// descDepth.Width = sd.BufferDesc.Width;
+	// descDepth.Height = sd.BufferDesc.Height;
+	// descDepth.MipLevels = 1;
+	// descDepth.ArraySize = 1;
+	// descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	// descDepth.SampleDesc.Count = 1;
+	// descDepth.SampleDesc.Quality = 0;
+	// descDepth.Usage = D3D_USAGE_DEFAULT;
+	// descDepth.BindFlags = D3D_BIND_DEPTH_STENCIL;
+	// descDepth.CPUAccessFlags = 0;
+	// descDepth.MiscFlags = 0;
+	// //R = pDevice->CreateTexture2D( &descDepth,NULL,&pDepthStencil );
+	// R = pDevice->CreateTexture2D(&descDepth, NULL, &depth_stencil);
+	// R_CHK(R);
 	D3D_TEXTURE2D_DESC descDepth;
 	descDepth.Width = sd.BufferDesc.Width;
 	descDepth.Height = sd.BufferDesc.Height;
@@ -1069,41 +1126,98 @@ void CHW::UpdateViews()
 	descDepth.SampleDesc.Count = 1;
 	descDepth.SampleDesc.Quality = 0;
 	descDepth.Usage = D3D_USAGE_DEFAULT;
-	descDepth.BindFlags = D3D_BIND_DEPTH_STENCIL | D3D_BIND_SHADER_RESOURCE;;
+	descDepth.BindFlags = D3D_BIND_DEPTH_STENCIL | D3D_BIND_SHADER_RESOURCE;
 	descDepth.CPUAccessFlags = 0;
 	descDepth.MiscFlags = 0;
-	R = pDevice->CreateTexture2D( &descDepth,       // Texture desc
+	R = pDevice->CreateTexture2D(&descDepth,       // Texture desc
 		NULL,                  // Initial data
-		&pDepthStencil ); // [out] Texture
+		&viewPortsRTZB.at(MAIN_VIEWPORT).pDepthStencil); // [out] Texture
 	R_CHK(R);
 
-	//	Create Depth/stencil view
-	//R = pDevice->CreateDepthStencilView( pDepthStencil, NULL, &pBaseZB );
-	//R_CHK(R);
+	//-------------- CREATE DSV MAIN
+	//    Create Depth/stencil view
+	// R = pDevice->CreateDepthStencilView(depth_stencil, NULL, &viewPortsRTZB.at(MAIN_VIEWPORT).baseZB);
+	// R_CHK(R);
+	// depth_stencil->Release();
+
 	D3D_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
 	dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	dsvDesc.Flags = 0;
 	dsvDesc.ViewDimension = D3D_DSV_DIMENSION_TEXTURE2D;
 	dsvDesc.Texture2D.MipSlice = 0;
-	R_CHK(pDevice->CreateDepthStencilView(pDepthStencil, &dsvDesc, &pBaseZB)); // read & wtire DSV
+	// R_CHK(pDevice->CreateDepthStencilView(pDepthStencil, &dsvDesc, &pBaseZB)); // read & wtire DSV
 
+	R = pDevice->CreateDepthStencilView(viewPortsRTZB.at(MAIN_VIEWPORT).pDepthStencil, &dsvDesc, &viewPortsRTZB.at(MAIN_VIEWPORT).baseZB);
+	R_CHK(R);
 
-
-	// Shader resource view
+	//-------------- CREATE SRV MAIN
+	// D3D_SHADER_RESOURCE_VIEW_DESC depthSRVDesc = {};
+	// depthSRVDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	// depthSRVDesc.ViewDimension = D3D_SRV_DIMENSION_TEXTURE2D;
+	// depthSRVDesc.Texture2D.MipLevels = 1;
+	// depthSRVDesc.Texture2D.MostDetailedMip = 0; // No MIP
+	// R_CHK(pDevice->CreateShaderResourceView(pDepthStencil, &depthSRVDesc, &pBaseDepthReadSRV)); // read SRV
+	// if (pBaseDepthReadSRV)
+		// Msg("* Shader Resource: pBaseDepthReadSRV Created");
 	D3D_SHADER_RESOURCE_VIEW_DESC depthSRVDesc = {};
 	depthSRVDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
 	depthSRVDesc.ViewDimension = D3D_SRV_DIMENSION_TEXTURE2D;
 	depthSRVDesc.Texture2D.MipLevels = 1;
 	depthSRVDesc.Texture2D.MostDetailedMip = 0; // No MIP
-	R_CHK(pDevice->CreateShaderResourceView(pDepthStencil, &depthSRVDesc, &pBaseDepthReadSRV)); // read SRV
+	R_CHK(pDevice->CreateShaderResourceView(viewPortsRTZB.at(MAIN_VIEWPORT).pDepthStencil, &depthSRVDesc, &viewPortsRTZB.at(MAIN_VIEWPORT).pBaseDepthReadSRV)); // read SRV
+	if (viewPortsRTZB.at(MAIN_VIEWPORT).pBaseDepthReadSRV)
+	Msg("* Shader Resource: MAIN_VIEWPORT: pBaseDepthReadSRV Created");
 
-	if (pBaseDepthReadSRV)
-	{
-		Msg("* Shader Resource: pBaseDepthReadSRV Created");
-	}
+	//-------------- CREATE TEXTURE 2D SECONDARY
+	// descDepth.Width = Device.m_SecondViewport.screenWidth;
+	// descDepth.Height = Device.m_SecondViewport.screenHeight;
+	// R = pDevice->CreateTexture2D(&descDepth, NULL, &depth_stencil);
+	// R_CHK(R);
+	descDepth.Width = Device.m_SecondViewport.screenWidth;
+	descDepth.Height = Device.m_SecondViewport.screenHeight;
+	R = pDevice->CreateTexture2D(&descDepth, NULL, &viewPortsRTZB.at(SECONDARY_WEAPON_SCOPE).pDepthStencil);
+	R_CHK(R);
 
+	//-------------- CREATE DSV SECONDARY
+	// R = pDevice->CreateDepthStencilView(depth_stencil, NULL, &viewPortsRTZB.at(SECONDARY_WEAPON_SCOPE).baseZB);
+	// R_CHK(R);
+	// depth_stencil->Release();
+	R = pDevice->CreateDepthStencilView(viewPortsRTZB.at(SECONDARY_WEAPON_SCOPE).pDepthStencil, &dsvDesc, &viewPortsRTZB.at(SECONDARY_WEAPON_SCOPE).baseZB);
+	R_CHK(R);
+
+	//-------------- CREATE SRV SECONDARY
+	// D3D_SHADER_RESOURCE_VIEW_DESC depthSRVDesc = {};
+	// depthSRVDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	// depthSRVDesc.ViewDimension = D3D_SRV_DIMENSION_TEXTURE2D;
+	// depthSRVDesc.Texture2D.MipLevels = 1;
+	// depthSRVDesc.Texture2D.MostDetailedMip = 0; // No MIP
+	// R_CHK(pDevice->CreateShaderResourceView(pDepthStencil, &depthSRVDesc, &pBaseDepthReadSRV)); // read SRV
+	// if (pBaseDepthReadSRV)
+		// Msg("* Shader Resource: pBaseDepthReadSRV Created");
+	R_CHK(pDevice->CreateShaderResourceView(viewPortsRTZB.at(SECONDARY_WEAPON_SCOPE).pDepthStencil, &depthSRVDesc, &viewPortsRTZB.at(SECONDARY_WEAPON_SCOPE).pBaseDepthReadSRV)); // read SRV
+	if (viewPortsRTZB.at(SECONDARY_WEAPON_SCOPE).pBaseDepthReadSRV)
+	Msg("* Shader Resource: SECONDARY_VIEWPORT: pBaseDepthReadSRV Created");
+
+
+
+
+
+
+	// first init
+	// pBaseRT = viewPortsRTZB.at(MAIN_VIEWPORT).baseRT;
+	// pBaseZB = viewPortsRTZB.at(MAIN_VIEWPORT).baseZB;
+	pBaseDepthReadSRV = viewPortsRTZB.at(MAIN_VIEWPORT).pBaseDepthReadSRV;
+	// pDepthStencil = viewPortsRTZB.at(MAIN_VIEWPORT).pDepthStencil;
 #else 
-	ID3DTexture2D* pDepthStencil = NULL;
+	//R = pDevice->CreateRenderTargetView( pBuffer, NULL, &pBaseRT);
+	//pBuffer->Release();
+	//R_CHK(R);
+
+	//	Create Depth/stencil buffer
+	//	HACK: DX10: hard depth buffer format
+	//R_CHK	(pDevice->GetDepthStencilSurface	(&pBaseZB));
+	//ID3DTexture2D* pDepthStencil = NULL;
+	ID3DTexture2D* depth_stencil = NULL;
 	D3D_TEXTURE2D_DESC descDepth;
 	descDepth.Width = sd.BufferDesc.Width;
 	descDepth.Height = sd.BufferDesc.Height;
@@ -1113,22 +1227,39 @@ void CHW::UpdateViews()
 	descDepth.SampleDesc.Count = 1;
 	descDepth.SampleDesc.Quality = 0;
 	descDepth.Usage = D3D_USAGE_DEFAULT;
-	descDepth.BindFlags = D3D_BIND_DEPTH_STENCIL | D3D_BIND_SHADER_RESOURCE;;
+	descDepth.BindFlags = D3D_BIND_DEPTH_STENCIL;
 	descDepth.CPUAccessFlags = 0;
 	descDepth.MiscFlags = 0;
-	R = pDevice->CreateTexture2D(&descDepth,       // Texture desc
-		NULL,                  // Initial data
-		&pDepthStencil); // [out] Texture
+	//R = pDevice->CreateTexture2D( &descDepth,NULL,&pDepthStencil );
+	R = pDevice->CreateTexture2D(&descDepth, NULL, &depth_stencil);
 	R_CHK(R);
 
 	//	Create Depth/stencil view
-	R = pDevice->CreateDepthStencilView(pDepthStencil, NULL, &pBaseZB);
+	R = pDevice->CreateDepthStencilView(depth_stencil, NULL, &viewPortsRTZB.at(MAIN_VIEWPORT).baseZB);
+	R_CHK(R);
+	//R = pDevice->CreateDepthStencilView( pDepthStencil, NULL, &pBaseZB );
+	//R_CHK(R);
+
+	//pDepthStencil->Release();
+
+	depth_stencil->Release();
+
+	descDepth.Width = Device.m_SecondViewport.screenWidth;
+	descDepth.Height = Device.m_SecondViewport.screenHeight;
+
+	R = pDevice->CreateTexture2D(&descDepth, NULL, &depth_stencil);
 	R_CHK(R);
 
-	pDepthStencil->Release();
+	R = pDevice->CreateDepthStencilView(depth_stencil, NULL, &viewPortsRTZB.at(SECONDARY_WEAPON_SCOPE).baseZB);
+	R_CHK(R);
 
-#endif 
+	depth_stencil->Release();
 
+#endif
+
+	// first init
+	pBaseRT = viewPortsRTZB.at(MAIN_VIEWPORT).baseRT;
+	pBaseZB = viewPortsRTZB.at(MAIN_VIEWPORT).baseZB;
 
 }
 #endif

@@ -91,6 +91,7 @@ _action  actions[]		= {
 	{ "quick_use_2",		kQUICK_USE_2			,_both},
 	{ "quick_use_3",		kQUICK_USE_3			,_both},
 	{ "quick_use_4",		kQUICK_USE_4			,_both},
+	{ "wpn_nv_change",		kWPN_NV_CHANGE			,_both},
 
 	{ "quick_save",			kQUICK_SAVE				,_sp},		
 	{ "quick_load",			kQUICK_LOAD				,_sp},		

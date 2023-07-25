@@ -308,6 +308,7 @@
     <ClInclude Include="..\xrRender\xr_effgamma.h" />
     <ClInclude Include="blender_bloom_build.h" />
     <ClInclude Include="blender_combine.h" />
+    <ClInclude Include="blender_cut.h" />
     <ClInclude Include="blender_deffer_aref.h" />
     <ClInclude Include="blender_deffer_flat.h" />
     <ClInclude Include="blender_deffer_model.h" />
@@ -497,6 +498,7 @@
     <ClCompile Include="..\xrRender\xr_effgamma.cpp" />
     <ClCompile Include="blender_bloom_build.cpp" />
     <ClCompile Include="blender_combine.cpp" />
+    <ClCompile Include="blender_cut.cpp" />
     <ClCompile Include="blender_deffer_aref.cpp" />
     <ClCompile Include="blender_deffer_flat.cpp" />
     <ClCompile Include="blender_deffer_model.cpp" />
@@ -549,6 +551,7 @@
     <ClCompile Include="r4_rendertarget_phase_accumulator.cpp" />
     <ClCompile Include="r4_rendertarget_phase_bloom.cpp" />
     <ClCompile Include="r4_rendertarget_phase_combine.cpp" />
+    <ClCompile Include="r4_rendertarget_phase_cut.cpp" />
     <ClCompile Include="r4_rendertarget_phase_hdao.cpp" />
     <ClCompile Include="r4_rendertarget_phase_hud_mask.cpp" />
     <ClCompile Include="r4_rendertarget_phase_lens_flares.cpp" />

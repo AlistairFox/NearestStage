@@ -190,6 +190,8 @@ void CRender::Render		()
 	g_r						= 1;
 	VERIFY					(0==mapDistort.size());
 
+	Target->needClearAccumulator = true;
+
 	bool	_menu_pp		= g_pGamePersistent?g_pGamePersistent->OnRenderPPUI_query():false;
 	if (_menu_pp)			{
 		render_menu			()	;
@@ -450,7 +452,7 @@ void CRender::BeforeWorldRender() {}
 //     - --#SM+#-- +SecondVP+
 void CRender::AfterWorldRender()
 {
-	if (Device.m_SecondViewport.IsSVPFrame())
+	if (currentViewPort == SECONDARY_WEAPON_SCOPE)
 	{
 		//    ( )  -  
 		IDirect3DSurface9* pBackBuffer = NULL;

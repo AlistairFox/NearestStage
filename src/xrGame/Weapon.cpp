@@ -1106,7 +1106,7 @@ void CWeapon::EnableActorNVisnAfterZoom()
 
 bool CWeapon::need_renderable()
 {
-	return !Device.m_SecondViewport.IsSVPFrame() && !(IsZoomed() && ZoomTexture() && !IsRotatingToZoom());
+	return Render->currentViewPort == MAIN_VIEWPORT && !(IsZoomed() && ZoomTexture() && !IsRotatingToZoom());
 }
 
 void CWeapon::renderable_Render		()
@@ -1636,14 +1636,32 @@ void CWeapon::GetZoomData(const float scope_factor, float& delta, float& min_zoo
 	delta = (delta_factor_total * (1 - m_fZoomMinKoeff)) / m_fZoomStepCount;
 }
 
+// Lex Addon (correct by Suhar_) 24.10.2018		(begin)
+float LastZoomFactor = NULL;
+
 void CWeapon::OnZoomIn()
 {
 	m_zoom_params.m_bIsZoomModeNow		= true;
 
-	if(bIsSecondVPZoomPresent() && m_zoom_params.m_bUseDynamicZoom)
-		SetZoomFactor(m_fRTZoomFactor);
+
+	if (bIsSecondVPZoomPresent() && m_zoom_params.m_bUseDynamicZoom && IsScopeAttached())
+		if (bIsSecondVPZoomPresent() && m_zoom_params.m_bUseDynamicZoom && IsScopeAttached())
+		{
+			if (LastZoomFactor)
+				m_fRTZoomFactor = LastZoomFactor;
+			else
+				m_fRTZoomFactor = CurrentZoomFactor();
+			float delta, min_zoom_factor;
+			GetZoomData(m_zoom_params.m_fScopeZoomFactor, delta, min_zoom_factor);
+			clamp(m_fRTZoomFactor, m_zoom_params.m_fScopeZoomFactor, min_zoom_factor);
+
+
+
+			SetZoomFactor(CurrentZoomFactor());
+		}
 	else
-		m_zoom_params.m_fCurrentZoomFactor	= CurrentZoomFactor();
+		SetZoomFactor(m_zoom_params.m_bUseDynamicZoom ? m_fRTZoomFactor : CurrentZoomFactor());
+	// Lex Addon (correct by Suhar_) 24.10.2018		(end)
 
 	// Отключаем инерцию (Заменено GetInertionFactor())
 	// EnableHudInertion(FALSE);
@@ -2629,6 +2647,7 @@ void CWeapon::ZoomDynamicMod(bool bIncrement, bool bForceLimit)
 		float f = (bIsSecondVPZoomPresent() ? m_fRTZoomFactor : GetZoomFactor());
 
 		f -= delta * (bIncrement ? 1.f : -1.f);
+
 		clamp(f, max_zoom_factor, min_zoom_factor);
 
 
@@ -2638,6 +2657,7 @@ void CWeapon::ZoomDynamicMod(bool bIncrement, bool bForceLimit)
 			SetZoomFactor(f);
 
 		// Lex Addon (correct by Suhar_) 24.10.2018		(begin)  
+		LastZoomFactor = f;
 		// Lex Addon (correct by Suhar_) 24.10.2018		(end)
 	}
 }

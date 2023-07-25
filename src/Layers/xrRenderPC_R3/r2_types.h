@@ -48,7 +48,9 @@
 #define		r2_jitter			"$user$jitter_"			// --- dither
 #define		r2_jitter_mipped	"$user$jitter_mipped"			// --- dither
 
-#define		r2_RT_secondVP		"$user$viewport2"		// --#SM+#-- +SecondVP+   
+#define		r2_RT_secondVP		"$user$viewport2"		// --#SM+#-- +SecondVP+ Хранит картинку со второго вьюпорта
+#define     r2_RT_temp          "$user$temp"
+#define     r2_RT_temp_without_samples          "$user$temp_ws"
 
 #define		r2_sunmask			"shaders\\sunmask"  
 

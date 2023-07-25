@@ -527,6 +527,10 @@ int updatecl_frames = 10;
 
 ENGINE_API float VIEWPORT_NEAR = 0.01f;
 
+ENGINE_API float psSVPImageSizeK = 0.7f;
+ENGINE_API int psSVPFrameDelay = 1;
+
+
 
 u32	renderer_value	= 3;
 //void fill_render_mode_list();
@@ -691,6 +695,8 @@ extern Flags32		psEnvFlags;
 
 extern int			g_ErrorLineCount;
 
+ENGINE_API BOOL debugSecondVP = FALSE;
+
 ENGINE_API int			ps_r__Supersample			= 1;
 ENGINE_API int			ps_r__WallmarksOnSkeleton = 1;
 
@@ -705,6 +711,10 @@ void CCC_Register()
 	CMD1(CCC_Disconnect,"disconnect"			);
 	CMD1(CCC_SaveCFG,	"cfg_save"				);
 	CMD1(CCC_LoadCFG,	"cfg_load"				);
+
+	//New
+	CMD4(CCC_Float, "svp_image_size_k", &psSVPImageSizeK, 0.1f, 2.f);
+	CMD4(CCC_Integer, "svp_frame_delay", &psSVPFrameDelay, 0, 5);
 
 #ifdef DEBUG
 	CMD1(CCC_MotionsStat,	"stat_motions"		);
@@ -758,6 +768,8 @@ void CCC_Register()
 	CMD3(CCC_Mask,		"rs_refresh_60hz",		&psDeviceFlags,		rsRefresh60hz			);
 	CMD3(CCC_Mask,		"rs_stats",				&psDeviceFlags,		rsStatistic				);
 	CMD4(CCC_Float,		"rs_vis_distance",		&psVisDistance,		0.4f,	1.5f			);
+
+	CMD4(CCC_Integer, "rs_debug_second_vp", &debugSecondVP, FALSE, TRUE);
 
 	CMD3(CCC_Mask,		"rs_cam_pos",			&psDeviceFlags,		rsCameraPos				);
 #ifdef DEBUG

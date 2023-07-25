@@ -526,6 +526,9 @@ void CRender::Calculate				()
 						VERIFY								(L);
 						if (L->spatial.sector)				{
 							vis_data&		vis		= L->get_homdata	( );
+
+							L->frame_render = 0; // makes lights render in both viewports
+
 							if	(HOM.visible(vis))	L_DB->add_light		(L);
 						}
 					}
@@ -1013,7 +1016,7 @@ void CRender::BeforeWorldRender() {}
 //     - --#SM+#-- +SecondVP+
 void CRender::AfterWorldRender()
 {
-	if (Device.m_SecondViewport.IsSVPFrame())
+	if (currentViewPort == SECONDARY_WEAPON_SCOPE)
 	{
 		//    ( )  -  
 		IRender_Target* T = getTarget();

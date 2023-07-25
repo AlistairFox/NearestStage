@@ -595,6 +595,8 @@ void dbg_draw_geoms(xr_vector<CODEGeom*>& m_weapon_geoms)
 }
 #endif
 
+#define IK_CALC_DIST 100.f
+#define IK_ALWAYS_CALC_DIST 20.f
 
 void CCharacterPhysicsSupport::in_UpdateCL( )
 {
@@ -636,15 +638,25 @@ void CCharacterPhysicsSupport::in_UpdateCL( )
 		m_character_shell_control.UpdateFrictionAndJointResistanse( m_pPhysicsShell );
 
 	} 
-	//else if ( !m_EntityAlife.g_Alive( ) && !m_EntityAlife.use_simplified_visual( ) )
-	//{
-		//ActivateShell( NULL );
-		//m_PhysicMovementControl->DestroyCharacter( );
-	//} 
 	else if( ik_controller( ) )
 	{
-		update_interactive_anims();
-		ik_controller( )->Update();
+		CFrustum& view_frust = ::Render->ViewBase;
+
+		vis_data& vis = m_EntityAlife.Visual()->getVisData();
+		Fvector p;
+
+		m_EntityAlife.XFORM().transform_tiny(p, vis.sphere.P);
+
+		float dist = Device.vCameraPosition.distance_to(p);
+
+		if (dist < IK_CALC_DIST) // if the distance is too big - no need to calc ik.
+		{
+			if (view_frust.testSphere_dirty(p, vis.sphere.R) || dist < IK_ALWAYS_CALC_DIST) // calc if object is in view frustum or if distance is less than "always calc"
+			{
+				update_interactive_anims();
+				ik_controller()->Update();
+			}
+		}
 	}
 
 #ifdef DEBUG

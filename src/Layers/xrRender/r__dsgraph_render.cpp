@@ -473,7 +473,7 @@ void R_dsgraph_structure::r_dsgraph_render_hud	()
 	Fmatrix FTold				= Device.mFullTransform;
 	Device.mProject.build_projection(
 		deg2rad(psHUD_FOV*Device.fFOV /* *Device.fASPECT*/ ), 
-		Device.fASPECT, VIEWPORT_NEAR, 
+		Device.fASPECT, VIEWPORT_NEAR_HUD,
 		g_pGamePersistent->Environment().CurrentEnv->far_plane);
 
 	Device.mFullTransform.mul	(Device.mProject, Device.mView);
@@ -488,33 +488,6 @@ void R_dsgraph_structure::r_dsgraph_render_hud	()
 	if (g_hud && g_hud->RenderActiveItemUIQuery())
 		r_dsgraph_render_hud_ui						();				// hud ui
 #endif
-	/*
-	if(g_hud && g_hud->RenderActiveItemUIQuery())
-	{
-#if	RENDER!=R_R1
-		// Targets, use accumulator for temporary storage
-		const ref_rt	rt_null;
-		//	Reset all rt.
-		//RCache.set_RT(0,	0);
-		RCache.set_RT(0,	1);
-		RCache.set_RT(0,	2);
-		//if (RImplementation.o.albedo_wo)	RCache.set_RT(RImplementation.Target->rt_Accumulator->pRT,	0);
-		//else								RCache.set_RT(RImplementation.Target->rt_Color->pRT,	0);
-		if (RImplementation.o.albedo_wo)	RImplementation.Target->u_setrt		(RImplementation.Target->rt_Accumulator,	rt_null,	rt_null,	HW.pBaseZB);
-		else								RImplementation.Target->u_setrt		(RImplementation.Target->rt_Color,			rt_null,	rt_null,	HW.pBaseZB);
-		//	View port is reset in DX9 when you change rt
-		rmNear						();
-#endif
-		g_hud->RenderActiveItemUI	();
-
-#if	RENDER!=R_R1
-		//RCache.set_RT(0,	0);
-		// Targets, use accumulator for temporary storage
-		if (RImplementation.o.albedo_wo)	RImplementation.Target->u_setrt		(RImplementation.Target->rt_Position,	RImplementation.Target->rt_Normal,	RImplementation.Target->rt_Accumulator,	HW.pBaseZB);
-		else								RImplementation.Target->u_setrt		(RImplementation.Target->rt_Position,	RImplementation.Target->rt_Normal,	RImplementation.Target->rt_Color,		HW.pBaseZB);
-#endif
-	}
-	*/
 
 	rmNormal					();
 
@@ -535,7 +508,7 @@ void R_dsgraph_structure::r_dsgraph_render_hud_ui()
 	Fmatrix FTold				= Device.mFullTransform;
 	Device.mProject.build_projection(
 		deg2rad(psHUD_FOV*Device.fFOV /* *Device.fASPECT*/ ), 
-		Device.fASPECT, VIEWPORT_NEAR, 
+		Device.fASPECT, VIEWPORT_NEAR_HUD,
 		g_pGamePersistent->Environment().CurrentEnv->far_plane);
 
 	Device.mFullTransform.mul	(Device.mProject, Device.mView);
@@ -588,7 +561,7 @@ void	R_dsgraph_structure::r_dsgraph_render_sorted	()
 	Fmatrix FTold = Device.mFullTransform;
 	Device.mProject.build_projection(
 		deg2rad(psHUD_FOV * Device.fFOV),
-		Device.fASPECT, VIEWPORT_NEAR,
+		Device.fASPECT, VIEWPORT_NEAR_HUD,
 		g_pGamePersistent->Environment().CurrentEnv->far_plane);
 
 	Device.mFullTransform.mul(Device.mProject, Device.mView);
@@ -625,7 +598,7 @@ void	R_dsgraph_structure::r_dsgraph_render_emissive	()
 	Fmatrix FTold				= Device.mFullTransform;
 	Device.mProject.build_projection(
 		deg2rad(psHUD_FOV*Device.fFOV /* *Device.fASPECT*/ ), 
-		Device.fASPECT, VIEWPORT_NEAR, 
+		Device.fASPECT, VIEWPORT_NEAR_HUD,
 		g_pGamePersistent->Environment().CurrentEnv->far_plane);
 
 	Device.mFullTransform.mul	(Device.mProject, Device.mView);

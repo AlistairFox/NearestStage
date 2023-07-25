@@ -65,7 +65,10 @@
 //HBAO
 #define		r2_RT_HBAO_plus_normal		"$user$ssao_normal"	// DX11 only
 
-#define		r2_RT_secondVP		"$user$viewport2"		// --#SM+#-- +SecondVP+  
+#define		r2_RT_secondVP		"$user$viewport2"		// --#SM+#-- +SecondVP+ Хранит картинку со второго вьюпорта
+#define     r2_RT_temp          "$user$temp"
+#define     r2_RT_temp_without_samples          "$user$temp_ws"
+
 
 #define		JITTER(a) r2_jitter #a
 
