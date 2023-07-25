@@ -709,7 +709,7 @@ void CWeapon::LoadCurrentScopeParams(LPCSTR section)
 
 void CWeapon::Load3DScopeParams(LPCSTR section)
 {
-	bool SWM_3D_SCOPES = true;
+	bool SWM_3D_SCOPES = (psActorFlags.test(AF_USE_3D_SCOPES));
 
 	if (SWM_3D_SCOPES)
 		m_zoom_params.m_fSecondVPFovFactor = READ_IF_EXISTS(pSettings, r_float, section, "3d_fov", 0.0f);

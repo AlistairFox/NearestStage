@@ -1856,6 +1856,7 @@ void CCC_RegisterCommands()
  
 
 	CMD4(CCC_Float, "fov", &g_fov, 5.0f, 180.0f);
+	CMD3(CCC_Mask, "use_3d_scopres", &psActorFlags, AF_USE_3D_SCOPES);
 
 	// Demo
 #if 1//ndef MASTER_GOLD
