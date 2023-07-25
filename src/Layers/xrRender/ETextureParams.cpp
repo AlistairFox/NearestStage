@@ -101,11 +101,11 @@ void STextureParams::Load(IReader& F)
 
    // if(F.open_chunk(THM_CHUNK_EXT_NORMALMAP))
 
-        if (F.find_chunk(THM_CHUNK_EXT_NORMALMAP))
-	        F.r_stringZ			(ext_normal_map_name);
+    //    if (F.find_chunk(THM_CHUNK_EXT_NORMALMAP))
+	//        F.r_stringZ			(ext_normal_map_name);
 
-        if (F.find_chunk(THM_CHUNK_FADE_DELAY))
-            fade_delay			= F.r_u8();
+   //     if (F.find_chunk(THM_CHUNK_FADE_DELAY))
+  //          fade_delay			= F.r_u8();
 }
 
 
