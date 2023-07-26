@@ -525,7 +525,7 @@ ENGINE_API float ps_r2_sun_shafts_min = 0.f;
 ENGINE_API float ps_r2_sun_shafts_value = 1.f;
 int updatecl_frames = 10;
 
-ENGINE_API float VIEWPORT_NEAR = 0.01f;
+ENGINE_API float VIEWPORT_NEAR = 0.2f;
 
 ENGINE_API float psSVPImageSizeK = 0.7f;
 ENGINE_API int psSVPFrameDelay = 1;
