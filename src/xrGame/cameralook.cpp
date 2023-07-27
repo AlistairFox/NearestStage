@@ -73,13 +73,9 @@ void CCameraLook::Move( int cmd, float val, float factor)
 
 void CCameraLook::OnActivate( CCameraBase* old_cam )
 {
-	if (old_cam&&(m_Flags.is(flRelativeLink)==old_cam->m_Flags.is(flRelativeLink)))
-	{
-		yaw				= old_cam->yaw;
-		vPosition.set	(old_cam->vPosition);
-	}
-	if (yaw>PI_MUL_2) yaw-=PI_MUL_2;
-	if (yaw<-PI_MUL_2)yaw+=PI_MUL_2;
+	yaw = old_cam->yaw;
+	pitch = old_cam->pitch;
+	roll = old_cam->roll;
 }
 
 #include "../xrEngine/xr_input.h"
