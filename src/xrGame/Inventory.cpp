@@ -1337,7 +1337,7 @@ void  CInventory::AddAvailableItems(TIItemContainer& items_container, bool for_t
 					if (pOwner) {
 						std::uint32_t slot = item->BaseSlot();
 
-						if (slot != INV_SLOT_3 || KNIFE_SLOT)
+						if (slot != INV_SLOT_3)
 							items_container.push_back(item);
 					}
 					else {

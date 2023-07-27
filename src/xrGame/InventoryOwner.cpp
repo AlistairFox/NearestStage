@@ -349,11 +349,6 @@ void CInventoryOwner::renderable_Render		()
 	if (lWeapon && lValid && lWeapon != inventory().ActiveItem())
 		lWeapon->renderable_Render();
 
-	auto KWeapon = inventory().ItemFromSlot(KNIFE_SLOT);
-	bool KValid = KWeapon->BaseSlot() == KNIFE_SLOT;
-	if (KWeapon && KValid && KWeapon != inventory().ActiveItem())
-		KWeapon->renderable_Render();
-
 
 	CAttachmentOwner::renderable_Render();
 }

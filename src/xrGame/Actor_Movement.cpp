@@ -470,16 +470,8 @@ void CActor::g_cl_Orientate	(u32 mstate_rl, float dt)
 		return;
 	}
 
-	if (eacFreeLook != cam_active)
-	{
-		r_torso.yaw = cam_Active()->GetWorldYaw();
-		r_torso.pitch = cam_Active()->GetWorldPitch();
-	}
-	else
-	{
-		r_torso.yaw = cam_FirstEye()->GetWorldYaw();
-		r_torso.pitch = cam_FirstEye()->GetWorldPitch();
-	}
+	r_torso.yaw = angle_inertion_var(r_torso.yaw, cam_Active()->GetWorldYaw(), 1.4f, 5.5f, PI_DIV_6, Device.dwTimeGlobal);
+	r_torso.pitch = angle_inertion_var(r_torso.pitch, cam_Active()->GetWorldPitch(), 1.f, 3.4f, PI_DIV_6, Device.dwTimeGlobal);
 
 	if (MpSafeMODE())
 	{
@@ -503,7 +495,9 @@ void CActor::g_cl_Orientate	(u32 mstate_rl, float dt)
 	if (mstate_rl&mcAnyMove)	{
 		r_model_yaw		= angle_normalize(r_torso.yaw);
 		mstate_real		&=~mcTurn;
-	} else {
+	}
+	else 
+	{
 		// if camera rotated more than 45 degrees - align model with it
 		float ty = angle_normalize(r_torso.yaw);
 		if (_abs(r_model_yaw - ty) > PI_DIV_4 - 30)
@@ -518,6 +512,7 @@ void CActor::g_cl_Orientate	(u32 mstate_rl, float dt)
 		if (mstate_rl & mcTurn) {
 			angle_lerp(r_model_yaw, r_model_yaw_dest, PI_MUL_2, dt);
 		}
+		
 	}
 }
 

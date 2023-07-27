@@ -1257,7 +1257,7 @@ void CActor::UpdateCL	()
 	if(IsFocused())
 		g_player_hud->update			(trans);
 
-	if (cam_Active() != cam_FirstEye() && (!MpAnimationMODE()))
+	if (cam_Active() != cam_FirstEye() && (!MpAnimationMODE())) //разблокировать все камеры
 		cam_Set(eacFirstEye);
 
 	m_bPickupMode=false;
