@@ -12,6 +12,7 @@ void game_sv_freemp::SavePlayer(game_PlayerState* ps, CInifile* file)
 {
 	CObject* obj = Level().Objects.net_Find(ps->GameID);
 	CActor* actor = smart_cast<CActor*>(obj);
+	CInventoryOwner* pInvOwner = smart_cast<CInventoryOwner*>(obj);
   
 	if (actor && actor->g_Alive())
 	{
@@ -22,6 +23,9 @@ void game_sv_freemp::SavePlayer(game_PlayerState* ps, CInifile* file)
 		for (auto item : items)
 		{
 			if (!xr_strcmp("mp_players_rukzak", item->m_section_id.c_str()))
+				continue;
+
+			if (item->BaseSlot() == OUTFIT_SLOT && pInvOwner->inventory().ItemFromSlot(OUTFIT_SLOT))
 				continue;
 
 			id += 1;
@@ -78,14 +82,23 @@ void game_sv_freemp::SavePlayer(game_PlayerState* ps, CInifile* file)
 
 	}
 
-	if (smart_cast<CInventoryOwner*>(obj)) 
+}
+
+void game_sv_freemp::SavePlayerOutfits(game_PlayerState* ps, CInifile* outfsFile)
+{
+	CObject* obj = Level().Objects.net_Find(ps->GameID);
+	CActor* actor = smart_cast<CActor*>(obj);
+	if (!actor)
+		return;
+	if (smart_cast<CInventoryOwner*>(obj))
 	{
-		CInventoryOwner* pInvOwner = smart_cast<CInventoryOwner*>(obj);
-		CCustomOutfit* pOutfit = (CCustomOutfit*)pInvOwner->inventory().ItemFromSlot(OUTFIT_SLOT);
+		CCustomOutfit* pOutfit = smart_cast <CCustomOutfit*>(actor->inventory().ItemFromSlot(OUTFIT_SLOT));
 		if (pOutfit)
 		{
-			file->w_string("actor_outf", "actor_last_outfit", pOutfit->m_section_id.c_str());
-			file->w_u32("actor_outf", "actor_last_outcond", pOutfit->GetCondition());
+			string128 temp;
+			sprintf(temp, "%s", ps->getName());
+			outfsFile->w_string(temp, "actor_last_outfit", pOutfit->m_section_id.c_str());
+			outfsFile->w_float(temp, "actor_last_outcond", pOutfit->GetCondition());
 		}
 	}
 }
@@ -183,6 +196,32 @@ bool game_sv_freemp::LoadPlayer(game_PlayerState* ps, CInifile* file)
 	}
 	else
 		return false;
+}
+
+void game_sv_freemp::LoadPlayerOtfits(game_PlayerState* ps, CInifile* outfsFile)
+{
+
+		string128 temp;
+		sprintf(temp, "%s", ps->getName());
+		if (!outfsFile->section_exist(temp))
+			return;
+
+		Msg("Load Oufit");
+		LPCSTR section = outfsFile->r_string(temp, "actor_last_outfit");
+		float cond = outfsFile->r_float(temp, "actor_last_outcond");
+		if (ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
+		{
+			float cond = outfsFile->r_float(temp, "actor_last_outcond")/2;
+		}
+
+		CSE_Abstract* E = spawn_begin(section);
+		CSE_ALifeItem* item = smart_cast<CSE_ALifeItem*>(E);
+		if (item)
+		{
+			item->m_fCondition = cond;
+			item->ID_Parent = ps->GameID;
+			spawn_end(item, m_server->GetServerClient()->ID);
+		}
 }
 
 bool game_sv_freemp::HasSaveFile(game_PlayerState* ps)

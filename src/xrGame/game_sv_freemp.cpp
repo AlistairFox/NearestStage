@@ -208,6 +208,12 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 	inherited::RespawnPlayer(id_who, NoSpectator);
 
  	game_PlayerState* ps = get_id(id_who); 
+	string_path file_out;
+	FS.update_path(file_out, "$mp_saves_players_outfits$", "players_outfits.ltx");
+	CInifile* filoutf = xr_new<CInifile>(file_out, true);
+	if (filoutf)
+	LoadPlayerOtfits(ps, filoutf);
+	xr_delete(filoutf);
 
 	if (ps)
 	{
@@ -369,6 +375,21 @@ void game_sv_freemp::Update()
 				file->save_as(file_name);
 				xr_delete(file);
 			}
+
+			CObject* obj = Level().Objects.net_Find(player.second->GameID);
+			CActor* actor = smart_cast<CActor*>(obj);
+			if (!actor)
+				return;
+			if (!actor->g_Alive())
+				return;
+			string_path file_outf_name;
+			FS.update_path(file_outf_name, "$mp_saves_players_outfits$", "players_outfits.ltx");
+
+			CInifile* outfsFile = xr_new<CInifile>(file_outf_name, false, false);
+			SavePlayerOutfits(player.second, outfsFile);
+			if(actor->g_Alive())
+			outfsFile->save_as(file_outf_name);
+			xr_delete(outfsFile);
 		}
 	}
 

@@ -62,7 +62,9 @@ public:
 
 
 	virtual     void				SavePlayer(game_PlayerState* ps, CInifile* file);
+	virtual     void				SavePlayerOutfits(game_PlayerState* ps, CInifile* outfsFile);
 	virtual     bool				LoadPlayer(game_PlayerState* ps, CInifile* file);
+	virtual     void				LoadPlayerOtfits(game_PlayerState* ps, CInifile* outfsFile);
 	virtual		bool				HasSaveFile(game_PlayerState* ps);
 
 	virtual		void				SaveInvBox(CSE_ALifeInventoryBox* box, CInifile* file);

@@ -919,7 +919,7 @@ void CActor::Die	(CObject* who)
 			{
 				CCustomOutfit *pOutfit = smart_cast<CCustomOutfit *> (item_in_slot);
 				if (pOutfit)
-					continue;
+					return;
 			};
 			if(item_in_slot) 
 				inventory().Ruck(item_in_slot);
@@ -976,7 +976,7 @@ void CActor::Die	(CObject* who)
 		start_tutorial		("game_over");
 	} else
 	{
-		cam_Set				(eacFixedLookAt);
+		cam_Set				(eacFirstEye);
 	}
 	
 	mstate_wishful	&=		~mcAnyMove;
