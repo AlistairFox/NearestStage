@@ -7,11 +7,17 @@
 #include "alife_time_manager.h"
 #include "CustomOutfit.h"
 
+BOOL g_SV_IsVipeMode = FALSE;
+
 game_sv_freemp::game_sv_freemp()
 	:pure_relcase(&game_sv_freemp::net_Relcase)
 {
 	m_type = eGameIDFreeMp;
 
+	if (g_SV_IsVipeMode) 
+	{
+		
+	}
 }
 
 game_sv_freemp::~game_sv_freemp()
@@ -76,16 +82,30 @@ void game_sv_freemp::OnPlayerConnectFinished(ClientID id_who)
 		xrCData->ps->setFlag(GAME_PLAYER_FLAG_SPECTATOR);
 		xrCData->ps->setFlag(GAME_PLAYER_FLAG_READY);
 		
-		
-		if (HasSaveFile(xrCData->ps))
+		if (!g_SV_IsVipeMode) 
 		{
-			xrCData->ps->resetFlag(GAME_PLAYER_MP_SAVE_LOADED);
+			if (HasSaveFile(xrCData->ps))
+			{
+				xrCData->ps->resetFlag(GAME_PLAYER_MP_SAVE_LOADED);
+			}
+			else
+			{
+				xrCData->ps->setFlag(GAME_PLAYER_MP_SAVE_LOADED);
+			}
 		}
 		else
 		{
-			xrCData->ps->setFlag(GAME_PLAYER_MP_SAVE_LOADED);
+			if (HasSaveFile(xrCData->ps))
+			{
+				xrCData->ps->team = 11;
+				xrCData->ps->resetFlag(GAME_PLAYER_MP_SAVE_LOADED);
+			}
+			else
+			{
+				xrCData->ps->team = 11;
+				xrCData->ps->setFlag(GAME_PLAYER_MP_SAVE_LOADED);
+			}
 		}
-		 
 
  		xrCData->ps->net_Export(P, TRUE);
 		u_EventSend(P);

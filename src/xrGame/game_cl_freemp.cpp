@@ -296,6 +296,10 @@ void game_cl_freemp::OnChatMessage(NET_Packet* P)
 
 		else if (team == 9)
 			PlayerTex = "ui_inGame2_neutral_2_mask";
+
+		else if (team == 12)
+			PlayerTex = "ui_inGame2_obre4en";
+
 		else if (team == 50)
 			PlayerTex = "ui_inGame2_V_poiskah_Soroki";
 

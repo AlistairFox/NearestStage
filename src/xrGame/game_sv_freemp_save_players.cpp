@@ -366,4 +366,3 @@ bool game_sv_freemp::load_position_RP(game_PlayerState* ps, Fvector& pos, Fvecto
 
 	return false;
 }
-
