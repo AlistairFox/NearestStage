@@ -916,6 +916,9 @@ void	CActor::OnChangeVisual()
 
 void	CActor::ChangeVisual			( shared_str NewVisual )
 {
+	if (!g_Alive())
+		return;
+
 	if (!NewVisual.size()) return;
 	if (cNameVisual().size() )
 	{

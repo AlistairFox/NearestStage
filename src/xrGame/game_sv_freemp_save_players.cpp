@@ -200,18 +200,16 @@ bool game_sv_freemp::LoadPlayer(game_PlayerState* ps, CInifile* file)
 
 void game_sv_freemp::LoadPlayerOtfits(game_PlayerState* ps, CInifile* outfsFile)
 {
-
 		string128 temp;
 		sprintf(temp, "%s", ps->getName());
 		if (!outfsFile->section_exist(temp))
 			return;
-
 		Msg("Load Oufit");
 		LPCSTR section = outfsFile->r_string(temp, "actor_last_outfit");
 		float cond = outfsFile->r_float(temp, "actor_last_outcond");
 		if (ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
 		{
-			float cond = outfsFile->r_float(temp, "actor_last_outcond")/2;
+			cond /= 2;
 		}
 
 		CSE_Abstract* E = spawn_begin(section);

@@ -207,6 +207,8 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 {
 	inherited::RespawnPlayer(id_who, NoSpectator);
 
+	xrClientData* xrCData = (xrClientData*)m_server->ID_to_client(id_who);
+
  	game_PlayerState* ps = get_id(id_who); 
 	string_path file_out;
 	FS.update_path(file_out, "$mp_saves_players_outfits$", "players_outfits.ltx");
@@ -222,6 +224,12 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 	}
 
 	if (Game().Type() == eGameIDFreeMp)
+
+		if (ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
+		{
+			xrCData->ps->money_for_round /= 1.1;
+		}
+
 	if (ps && !ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
 	{
 		string_path file_name;
