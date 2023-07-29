@@ -227,7 +227,7 @@ void game_sv_freemp::LoadPlayerOtfits(game_PlayerState* ps, CInifile* outfsFile)
 		float cond = outfsFile->r_float(temp, "actor_last_outcond");
 		if (ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
 		{
-			cond /= 2;
+			cond /= Random.randF(1.1, 2);
 		}
 
 		CSE_Abstract* E = spawn_begin(section);

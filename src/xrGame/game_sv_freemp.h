@@ -16,7 +16,6 @@ protected:
 	xr_map<u16, u32> inv_box;
 
 public:
-
 	u32								oldTime = 0;
 
 

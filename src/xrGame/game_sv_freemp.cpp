@@ -206,7 +206,6 @@ void game_sv_freemp::OnTransferMoney(NET_Packet & P, ClientID const & clientID)
 void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 {
 	inherited::RespawnPlayer(id_who, NoSpectator);
-
 	xrClientData* xrCData = (xrClientData*)m_server->ID_to_client(id_who);
 
  	game_PlayerState* ps = get_id(id_who); 
@@ -234,7 +233,7 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 
 		if (ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
 		{
-			xrCData->ps->money_for_round /= 1.1;
+			xrCData->ps->money_for_round /= Random.randF(1.f, 1.2f);
 		}
 
 	if (ps && !ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
