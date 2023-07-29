@@ -103,6 +103,24 @@ void game_sv_freemp::SavePlayerOutfits(game_PlayerState* ps, CInifile* outfsFile
 	}
 }
 
+void game_sv_freemp::SavePlayerDetectors(game_PlayerState* ps, CInifile* detsFile)
+{
+	CObject* obj = Level().Objects.net_Find(ps->GameID);
+	CActor* actor = smart_cast<CActor*>(obj);
+	if (!actor)
+		return;
+	if (smart_cast<CInventoryOwner*>(obj))
+	{
+		CCustomDetector* pDet = smart_cast<CCustomDetector*>(actor->inventory().ItemFromSlot(DETECTOR_SLOT));
+		if (pDet)
+		{
+			string128 temp;
+			sprintf(temp, "%s", ps->getName());
+			detsFile->w_string(temp, "actor_detector", pDet->m_section_id.c_str());
+		}
+	}
+}
+
 bool game_sv_freemp::LoadPlayer(game_PlayerState* ps, CInifile* file)
 {
 	if (file->section_exist("actor"))
@@ -217,6 +235,23 @@ void game_sv_freemp::LoadPlayerOtfits(game_PlayerState* ps, CInifile* outfsFile)
 		if (item)
 		{
 			item->m_fCondition = cond;
+			item->ID_Parent = ps->GameID;
+			spawn_end(item, m_server->GetServerClient()->ID);
+		}
+}
+
+void game_sv_freemp::LoadPlayerDetectors(game_PlayerState* ps, CInifile* detsFile)
+{
+	string128 temp;
+	sprintf(temp, "%s", ps->getName());
+	if (!detsFile->section_exist(temp))
+		return;
+	Msg("%s DETECTOR LOAD", temp);
+		LPCSTR section = detsFile->r_string(temp, "actor_detector");
+		CSE_Abstract* E = spawn_begin(section);
+		CSE_ALifeItem* item = smart_cast<CSE_ALifeItem*>(E);
+		if (item)
+		{
 			item->ID_Parent = ps->GameID;
 			spawn_end(item, m_server->GetServerClient()->ID);
 		}

@@ -216,6 +216,13 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 	if (filoutf)
 	LoadPlayerOtfits(ps, filoutf);
 	xr_delete(filoutf);
+	
+	string_path file_det;
+	FS.update_path(file_det, "$mp_saves_players_detectors$", "players_detectors.ltx");
+	CInifile* filedet = xr_new<CInifile>(file_det, true);
+	if (filedet)
+	LoadPlayerDetectors(ps, filedet);
+	xr_delete(filedet);
 
 	if (ps)
 	{
@@ -398,6 +405,16 @@ void game_sv_freemp::Update()
 			if(actor->g_Alive())
 			outfsFile->save_as(file_outf_name);
 			xr_delete(outfsFile);
+
+
+			string_path file_det_name;
+			FS.update_path(file_det_name, "$mp_saves_players_detectors$", "players_detectors.ltx");
+
+			CInifile* detsFile = xr_new<CInifile>(file_det_name, false, false);
+			SavePlayerDetectors(player.second, detsFile);
+			if (actor->g_Alive())
+				detsFile->save_as(file_det_name);
+			xr_delete(detsFile);
 		}
 	}
 
