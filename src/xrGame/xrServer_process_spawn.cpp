@@ -153,15 +153,13 @@ CSE_Abstract* xrServer::Process_spawn(NET_Packet& P, ClientID sender, BOOL bSpaw
 	if (!tpExistedEntity)
 	{
 		game->OnPostCreate(E->ID);
-	};
+	}
+	else
+		game->OnAlifeCreate(E);
 
 	// log
 	//Msg		("- SERVER: Spawning '%s'(%d,%d,%d) as #%d, on '%s'", E->s_name_replace, E->g_team(), E->g_squad(), E->g_group(), E->ID, CL?CL->Name:"*SERVER*");
 	return E;
 }
 
-/*
-void spawn_WithPhantom
-void spawn_FromPhantom
-void spawn_Simple
-*/
+

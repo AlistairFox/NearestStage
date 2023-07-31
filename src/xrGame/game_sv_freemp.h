@@ -12,12 +12,33 @@ protected:
 	CALifeSimulator* m_alife_simulator;
 
 protected:
-	xr_vector<u16> inventory_boxes;
-	xr_map<u16, u32> inv_box;
 
 public:
 	u32								oldTime = 0;
 
+	struct outfits
+	{
+		LPCSTR player_name;
+		LPCSTR outfit_name;
+		float outfit_cond;
+	};
+	xr_vector<outfits> save_outfits;
+
+	struct detectors
+	{
+		LPCSTR player_name;
+		LPCSTR detector_name;
+	};
+	xr_vector<detectors> save_detectors;
+
+	struct inventory_boxes
+	{
+		CSE_Abstract* entity;
+		bool loaded = false;
+	};
+	xr_map<u16, inventory_boxes> inventory_boxes_cse;
+
+	virtual		void				OnAlifeCreate(CSE_Abstract* E);
 
 									game_sv_freemp();
 	virtual							~game_sv_freemp();

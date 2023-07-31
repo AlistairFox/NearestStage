@@ -25,8 +25,8 @@ void game_sv_freemp::SavePlayer(game_PlayerState* ps, CInifile* file)
 			if (!xr_strcmp("mp_players_rukzak", item->m_section_id.c_str()))
 				continue;
 
-			if (item->BaseSlot() == OUTFIT_SLOT && pInvOwner->inventory().ItemFromSlot(OUTFIT_SLOT))
-				continue;
+			//if (item->BaseSlot() == OUTFIT_SLOT && pInvOwner->inventory().ItemFromSlot(OUTFIT_SLOT))
+			//	continue;
 
 			id += 1;
 			string32 itemID;
@@ -90,15 +90,29 @@ void game_sv_freemp::SavePlayerOutfits(game_PlayerState* ps, CInifile* outfsFile
 	CActor* actor = smart_cast<CActor*>(obj);
 	if (!actor)
 		return;
+
 	if (smart_cast<CInventoryOwner*>(obj))
 	{
 		CCustomOutfit* pOutfit = smart_cast <CCustomOutfit*>(actor->inventory().ItemFromSlot(OUTFIT_SLOT));
 		if (pOutfit)
 		{
-			string128 temp;
-			sprintf(temp, "%s", ps->getName());
-			outfsFile->w_string(temp, "actor_last_outfit", pOutfit->m_section_id.c_str());
-			outfsFile->w_float(temp, "actor_last_outcond", pOutfit->GetCondition());
+			outfits data;
+			data.player_name = ps->getName();
+			data.outfit_cond = pOutfit->GetCondition();
+			data.outfit_name = pOutfit->m_section_id.c_str();
+			
+			auto PS = std::find_if(save_outfits.begin(), save_outfits.end(), [&](outfits data)
+				{
+					if (strstr(data.player_name, ps->getName()))
+						return true;
+					else
+						return false;
+				});
+
+			if (PS == save_outfits.end())
+				save_outfits.push_back(data);
+			else
+				(*PS) = data;
 		}
 	}
 }
@@ -114,9 +128,22 @@ void game_sv_freemp::SavePlayerDetectors(game_PlayerState* ps, CInifile* detsFil
 		CCustomDetector* pDet = smart_cast<CCustomDetector*>(actor->inventory().ItemFromSlot(DETECTOR_SLOT));
 		if (pDet)
 		{
-			string128 temp;
-			sprintf(temp, "%s", ps->getName());
-			detsFile->w_string(temp, "actor_detector", pDet->m_section_id.c_str());
+			detectors data;
+			data.player_name = ps->getName();
+			data.detector_name = pDet->m_section_id.c_str();
+
+			auto DS = std::find_if(save_detectors.begin(), save_detectors.end(), [&](detectors data)
+				{
+					if (strstr(data.player_name, ps->getName()))
+						return true;
+					else
+						return false;
+				});
+
+			if (DS == save_detectors.end())
+				save_detectors.push_back(data);
+			else
+				(*DS) = data;
 		}
 	}
 }
@@ -218,6 +245,7 @@ bool game_sv_freemp::LoadPlayer(game_PlayerState* ps, CInifile* file)
 
 void game_sv_freemp::LoadPlayerOtfits(game_PlayerState* ps, CInifile* outfsFile)
 {
+	/*
 		string128 temp;
 		sprintf(temp, "%s", ps->getName());
 		if (!outfsFile->section_exist(temp))
@@ -225,6 +253,22 @@ void game_sv_freemp::LoadPlayerOtfits(game_PlayerState* ps, CInifile* outfsFile)
 		Msg("Load Oufit");
 		LPCSTR section = outfsFile->r_string(temp, "actor_last_outfit");
 		float cond = outfsFile->r_float(temp, "actor_last_outcond");
+		*/
+
+	auto PN = std::find_if(save_outfits.begin(), save_outfits.end(), [&](outfits data)
+		{
+			if (strstr(data.player_name, ps->getName()))
+				return true;
+			else
+				return false;
+		});
+
+	if (PN == save_outfits.end())
+		return;
+	
+
+	LPCSTR section = (*PN).outfit_name;
+	float cond = (*PN).outfit_cond;
 		if (ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
 		{
 			cond /= Random.randF(1.1, 2);
@@ -242,12 +286,29 @@ void game_sv_freemp::LoadPlayerOtfits(game_PlayerState* ps, CInifile* outfsFile)
 
 void game_sv_freemp::LoadPlayerDetectors(game_PlayerState* ps, CInifile* detsFile)
 {
+	/*
 	string128 temp;
 	sprintf(temp, "%s", ps->getName());
 	if (!detsFile->section_exist(temp))
 		return;
 	Msg("%s DETECTOR LOAD", temp);
 		LPCSTR section = detsFile->r_string(temp, "actor_detector");
+		*/
+
+	auto PD = std::find_if(save_detectors.begin(), save_detectors.end(), [&](detectors data)
+		{
+			if (strstr(data.player_name, ps->getName()))
+				return true;
+			else
+				return false;
+		});
+
+	if (PD == save_detectors.end())
+		return;
+
+
+	LPCSTR section = (*PD).detector_name;
+
 		CSE_Abstract* E = spawn_begin(section);
 		CSE_ALifeItem* item = smart_cast<CSE_ALifeItem*>(E);
 		if (item)

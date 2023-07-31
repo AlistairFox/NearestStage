@@ -40,6 +40,17 @@ void game_sv_freemp::Create(shared_str & options)
 	oldTime = 0;
 }
 
+void game_sv_freemp::OnAlifeCreate(CSE_Abstract* E)
+{
+	if (smart_cast<CSE_ALifeInventoryBox*>(E))
+	{
+		inventory_boxes data;
+		data.entity = E;
+		inventory_boxes_cse[E->ID] = data;
+	}
+
+}
+
 // player connect #1
 void game_sv_freemp::OnPlayerConnect(ClientID id_who)
 {
@@ -208,20 +219,25 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 	inherited::RespawnPlayer(id_who, NoSpectator);
 	xrClientData* xrCData = (xrClientData*)m_server->ID_to_client(id_who);
 
- 	game_PlayerState* ps = get_id(id_who); 
-	string_path file_out;
+ 	game_PlayerState* ps = get_id(id_who);
+
+	/*string_path file_out;
 	FS.update_path(file_out, "$mp_saves_players_outfits$", "players_outfits.ltx");
 	CInifile* filoutf = xr_new<CInifile>(file_out, true);
 	if (filoutf)
-	LoadPlayerOtfits(ps, filoutf);
+	LoadPlayerOtfits(ps, nullptr);
 	xr_delete(filoutf);
 	
 	string_path file_det;
 	FS.update_path(file_det, "$mp_saves_players_detectors$", "players_detectors.ltx");
 	CInifile* filedet = xr_new<CInifile>(file_det, true);
 	if (filedet)
-	LoadPlayerDetectors(ps, filedet);
+	LoadPlayerDetectors(ps, nullptr);
 	xr_delete(filedet);
+	*/
+
+	LoadPlayerOtfits(ps, nullptr);
+	LoadPlayerDetectors(ps, nullptr);
 
 	if (ps)
 	{
@@ -292,6 +308,23 @@ void game_sv_freemp::OnPlayerDisconnect(ClientID id_who, LPSTR Name, u16 GameID)
 	P.w_stringZ(Name);
 	u_EventSend(P);
 	//---------------------------------------------------
+
+	std::remove_if(save_outfits.begin(), save_outfits.end(), [&](outfits data)
+		{
+			if (strstr(data.player_name, Name))
+				return true;
+			else
+				return false;
+		});
+
+	std::remove_if(save_detectors.begin(), save_detectors.end(), [&](detectors data)
+		{
+			if (strstr(data.player_name, Name))
+				return true;
+			else
+				return false;
+		});
+	
 
 //	AllowDeadBodyRemove			(id_who, GameID);
 	CObject* pObject = Level().Objects.net_Find(GameID);
@@ -390,8 +423,9 @@ void game_sv_freemp::Update()
 				xr_delete(file);
 			}
 
-			CObject* obj = Level().Objects.net_Find(player.second->GameID);
-			CActor* actor = smart_cast<CActor*>(obj);
+			//CObject* obj = Level().Objects.net_Find(player.second->GameID);
+			//CActor* actor = smart_cast<CActor*>(obj);
+/*
 			if (!actor)
 				return;
 			if (!actor->g_Alive())
@@ -414,14 +448,17 @@ void game_sv_freemp::Update()
 			if (actor->g_Alive())
 				detsFile->save_as(file_det_name);
 			xr_delete(detsFile);
+			*/
 		}
 	}
 
 		if (Level().game && Device.dwFrame % save_time2 == 0)
 		{
-		for (int i = 0; i != server().GetEntitiesNum(); i++)
+		
+		//for (int i = 0; i != server().GetEntitiesNum(); i++)
+			for(auto entity:inventory_boxes_cse)
 		{
-			CSE_Abstract* abs = server().GetEntity(i);
+			CSE_Abstract* abs = entity.second.entity;
 			CSE_ALifeInventoryBox* box = smart_cast<CSE_ALifeInventoryBox*>(abs);
 			if (box)
 			{
@@ -431,19 +468,9 @@ void game_sv_freemp::Update()
 				xr_strcat(invbox_name, ".ltx");
 				FS.update_path(path_name, "$mp_saves_invbox$", invbox_name);
 
-				bool need_load = true;
-
-				for (auto box_id : inventory_boxes)
+				if (!entity.second.loaded)
 				{
-					if (box->ID == box_id)
-					{
-						need_load = false;
-					}
-				}
-
-				if (need_load)
-				{
-					inventory_boxes.push_back(box->ID);
+					inventory_boxes_cse[entity.first].loaded = true;
 					CInifile* boxFile = xr_new<CInifile>(path_name, true);
 					LoadInvBox(box, boxFile);
 					xr_delete (boxFile);
