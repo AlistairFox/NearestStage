@@ -16,16 +16,18 @@
 
 void CStalkerAnimationManager::play_delayed_callbacks	()
 {
-	if (m_call_script_callback) {
-		m_call_script_callback	= false;
-		object().callback		(GameObject::eScriptAnimation)	();
+	if (m_call_script_callback)
+	{
+		m_call_script_callback = false;
+		object().callback(GameObject::eScriptAnimation)	();
 		return;
 	}
 
-	if (m_call_global_callback) {
-		m_call_global_callback	= false;
+	if (m_call_global_callback)
+	{
+		m_call_global_callback = false;
 		if (m_global_callback)
-			m_global_callback	();
+			m_global_callback();
 		return;
 	}
 }
@@ -63,13 +65,15 @@ IC	void CStalkerAnimationManager::play_script_impl			()
 	legs().reset			();
 
 	const CStalkerAnimationScript	&selected = assign_script_animation();
-	script().animation		(selected.animation());
-	if (selected.use_movement_controller()) {
-		script().target_matrix	(selected.transform(object()));
-		if ( m_start_new_script_animation ) {
-			m_start_new_script_animation	= false;
-			if ( selected.has_transform() && object().animation_movement( ) )
-				object().destroy_anim_mov_ctrl	( );
+	script().animation(selected.animation());
+	if (selected.use_movement_controller())
+	{
+		script().target_matrix(selected.transform(object()));
+		if (m_start_new_script_animation)
+		{
+			m_start_new_script_animation = false;
+			if (selected.has_transform() && object().animation_movement())
+				object().destroy_anim_mov_ctrl();
 		}
 	}
 
@@ -233,12 +237,21 @@ void CStalkerAnimationManager::update_impl					()
 void CStalkerAnimationManager::update						()
 {
 	START_PROFILE("stalker/client_update/animations")
-	try {
-		update_impl			();
+	try
+	{
+		update_impl();
 	}
-	catch(...) {
-		Msg					("! error in stalker with visual %s",*object().cNameVisual());
-		throw;
+	catch (...)
+	{
+		Msg("! error in stalker with visual %s", *object().cNameVisual());
+		/* avo: prevent game from crashing */
+		global().reset();
+		head().reset();
+		torso().reset();
+		legs().reset();
+		return;
+		//throw;
+		/* avo: end */
 	}
 	STOP_PROFILE
 }

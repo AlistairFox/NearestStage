@@ -165,7 +165,7 @@ void CHitMemoryManager::add					(const CHitObject &_hit_object)
 		return;
 
 	CHitObject					hit_object = _hit_object;
-	hit_object.m_squad_mask.set	(m_stalker->agent_manager().member().mask(m_stalker),TRUE);
+	hit_object.m_squad_mask.set(!m_stalker ? squad_mask_type(-1) : m_stalker->agent_manager().member().mask(m_stalker), TRUE);
 
 	const CEntityAlive			*entity_alive = hit_object.m_object;
 	HITS::iterator	J = std::find(m_hits->begin(),m_hits->end(),object_id(entity_alive));
@@ -288,10 +288,10 @@ void CHitMemoryManager::save	(NET_Packet &packet) const
 		packet.w_float			((*I).m_self_params.m_orientation.roll);
 #endif // USE_ORIENTATION
 #ifdef USE_LEVEL_TIME
-		packet.w_u32			((Device.dwTimeGlobal >= (*I).m_level_time) ? (Device.dwTimeGlobal - (*I).m_level_time) : 0);
+		packet.w_u32			((Device.dwTimeGlobal > (*I).m_level_time) ? (Device.dwTimeGlobal - (*I).m_level_time) : 0);
 #endif // USE_LAST_LEVEL_TIME
 #ifdef USE_LEVEL_TIME
-		packet.w_u32			((Device.dwTimeGlobal >= (*I).m_level_time) ? (Device.dwTimeGlobal - (*I).m_last_level_time) : 0);
+		packet.w_u32			((Device.dwTimeGlobal > (*I).m_level_time) ? (Device.dwTimeGlobal - (*I).m_last_level_time) : 0);
 #endif // USE_LAST_LEVEL_TIME
 #ifdef USE_FIRST_LEVEL_TIME
 		packet.w_u32			((Device.dwTimeGlobal >= (*I).m_level_time) ? (Device.dwTimeGlobal - (*I).m_first_level_time) : 0);
@@ -336,13 +336,15 @@ void CHitMemoryManager::load	(IReader &packet)
 #endif
 #ifdef USE_LEVEL_TIME
 		VERIFY						(Device.dwTimeGlobal >= object.m_level_time);
-		object.m_level_time			= packet.r_u32();
-		object.m_level_time			+= Device.dwTimeGlobal;
+		object.m_level_time = Device.dwTimeGlobal - packet.r_u32();
+		if (object.m_level_time > Device.dwTimeGlobal)
+			object.m_level_time = Device.dwTimeGlobal;
 #endif // USE_LEVEL_TIME
 #ifdef USE_LAST_LEVEL_TIME
 		VERIFY						(Device.dwTimeGlobal >= object.m_last_level_time);
-		object.m_last_level_time	= packet.r_u32();
-		object.m_last_level_time	+= Device.dwTimeGlobal;
+		object.m_last_level_time = Device.dwTimeGlobal - packet.r_u32();
+		if (object.m_last_level_time > Device.dwTimeGlobal)
+			object.m_last_level_time = Device.dwTimeGlobal;
 #endif // USE_LAST_LEVEL_TIME
 #ifdef USE_FIRST_LEVEL_TIME
 		VERIFY						(Device.dwTimeGlobal >= (*I).m_first_level_time);
