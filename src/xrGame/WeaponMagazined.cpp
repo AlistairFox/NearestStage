@@ -347,23 +347,54 @@ void CWeaponMagazined::UnloadMagazine(bool spawn_ammo)
 		{
 			if (m_pInventory)
 			{
-				const TIItemContainer& list = m_pInventory->m_belt;
-				for (TIItemContainer::const_iterator it = list.begin(); list.end() != it; ++it)
+				CActor* pActor = smart_cast<CActor*>(H_Parent());
+				if (pActor)
 				{
-					PIItem pIItem = *it;
-					CWeaponAmmo* l_pA = smart_cast<CWeaponAmmo*>(pIItem);
-					if (l_pA && pIItem->Useful())
+					const TIItemContainer& list = m_pInventory->m_belt;
+
+
+					for (TIItemContainer::const_iterator it = list.begin(); list.end() != it; ++it)
 					{
-						if (!xr_strcmp(pIItem->object().cNameSect(), l_it->first))
+						PIItem pIItem = *it;
+						CWeaponAmmo* l_pA = smart_cast<CWeaponAmmo*>(pIItem);
+						if (l_pA && pIItem->Useful())
 						{
-							u16 l_free = l_pA->m_boxSize - l_pA->m_boxCurr;
-							if (l_free > 0)
+							if (!xr_strcmp(pIItem->object().cNameSect(), l_it->first))
 							{
-								u16 to_add = l_free < l_it->second ? l_free : l_it->second;
-								l_pA->m_boxCurr = l_pA->m_boxCurr + to_add;
-								l_it->second = l_it->second - to_add;
-								ammos_to_sync[l_pA->ID()] = l_pA->m_boxCurr;
-								if (l_it->second <= 0) break;
+								u16 l_free = l_pA->m_boxSize - l_pA->m_boxCurr;
+								if (l_free > 0)
+								{
+									u16 to_add = l_free < l_it->second ? l_free : l_it->second;
+									l_pA->m_boxCurr = l_pA->m_boxCurr + to_add;
+									l_it->second = l_it->second - to_add;
+									ammos_to_sync[l_pA->ID()] = l_pA->m_boxCurr;
+									if (l_it->second <= 0) break;
+								}
+							}
+						}
+					}
+				}
+				else
+				{
+					const TIItemContainer& list = m_pInventory->m_ruck;
+
+					for (TIItemContainer::const_iterator it = list.begin(); list.end() != it; ++it)
+					{
+						PIItem pIItem = *it;
+						CWeaponAmmo* l_pA = smart_cast<CWeaponAmmo*>(pIItem);
+						if (l_pA && pIItem->Useful())
+						{
+							if (!xr_strcmp(pIItem->object().cNameSect(), l_it->first))
+							{
+								u16 l_free = l_pA->m_boxSize - l_pA->m_boxCurr;
+								if (l_free > 0)
+								{
+									u16 to_add = l_free < l_it->second ? l_free : l_it->second;
+									l_pA->m_boxCurr = l_pA->m_boxCurr + to_add;
+									l_it->second = l_it->second - to_add;
+									ammos_to_sync[l_pA->ID()] = l_pA->m_boxCurr;
+									if (l_it->second <= 0) break;
+								}
 							}
 						}
 					}
