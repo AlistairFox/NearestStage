@@ -26,3 +26,31 @@ void					CSoundRender_Core::i_destroy_source		(CSoundRender_Source*  S)
 {
 	// No actual destroy at all
 }
+
+void CSoundRender_Core::i_create_all_sources()
+{
+	CTimer T;
+	T.Start();
+
+	FS_FileSet flist;
+	FS.file_list(flist, "$game_sounds$", FS_ListFiles, "*.ogg");
+	for (const FS_File& file : flist)
+	{
+		string256 id;
+		xr_strcpy(id, file.name.c_str());
+
+		xr_strlwr(id);
+		if (strext(id))
+			*strext(id) = 0;
+
+		CSoundRender_Source* S = new CSoundRender_Source();
+		if (!S->load(id, false, false))
+		{
+			xr_delete(S);
+			continue;
+		}
+		s_sources.push_back(S);
+	}
+
+	Msg("Finished creating %d sound sources. Duration: %d ms", flist.size(), T.GetElapsed_ms());
+}

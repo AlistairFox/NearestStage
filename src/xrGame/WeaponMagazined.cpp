@@ -43,7 +43,6 @@ CWeaponMagazined::CWeaponMagazined(ESoundTypes eSoundType) : CWeapon()
 
 	psWpnAnimsFlag = { 0 };
 	
-	m_sSndShotCurrent			= NULL;
 	m_sSilencerFlameParticles	= m_sSilencerSmokeParticles = NULL;
 
 	m_bFireSingleShot			= false;
@@ -96,7 +95,13 @@ void CWeaponMagazined::Load	(LPCSTR section)
 	// Sounds
 	m_sounds.LoadSound(section,"snd_draw", "sndShow"		, false, m_eSoundShow		);
 	m_sounds.LoadSound(section,"snd_holster", "sndHide"		, false, m_eSoundHide		);
-	m_sounds.LoadSound(section,"snd_shoot", "sndShot"		, false, m_eSoundShot		);
+
+	//Alundaio: LAYERED_SND_SHOOT
+	m_sounds.LoadSound(section, "snd_shoot", "sndShot", false, m_eSoundShot);
+	if (WeaponSoundExist(section, "snd_shoot_actor"))
+		m_sounds.LoadSound(section, "snd_shoot_actor", "sndShotActor", false, m_eSoundShot);
+	//-Alundaio
+
 	m_sounds.LoadSound(section,"snd_empty", "sndEmptyClick"	, false, m_eSoundEmptyClick	);
 	m_sounds.LoadSound(section,"snd_reload", "sndReload"		, true, m_eSoundReload		);
 
@@ -109,8 +114,6 @@ void CWeaponMagazined::Load	(LPCSTR section)
 		m_sounds.LoadSound(section, "snd_reload_empty", "sndReloadEmpty", true, m_eSoundReload);
 	if (WeaponSoundExist(section, "snd_reload_misfire"))
 		m_sounds.LoadSound(section, "snd_reload_misfire", "sndReloadMisfire", true, m_eSoundReload);
-	
-	m_sSndShotCurrent = "sndShot";
 		
 	//звуки и партиклы глушителя, еслит такой есть
 	if ( m_eSilencerStatus == ALife::eAddonAttachable || m_eSilencerStatus == ALife::eAddonPermanent )
@@ -764,7 +767,17 @@ void CWeaponMagazined::SetDefaults	()
 void CWeaponMagazined::OnShot()
 {
 	// Sound
-	PlaySound					(m_sSndShotCurrent.c_str(), get_LastFP());
+	if (IsSilencerAttached() && SilencerAttachable()) //skyloader: dont touch SilencerAttachable(), it needs for pb, vss, val
+		PlaySound("sndSilencerShot", get_LastFP());
+	else
+	{
+		if (Position().distance_to(Device.vCameraPosition) > 200 && Position().distance_to(Device.vCameraPosition) < 300)
+			PlaySound("sndShotDist", get_LastFP());
+		else if (Position().distance_to(Device.vCameraPosition) > 300)
+			PlaySound("sndShotDistFar", get_LastFP());
+		else
+			PlaySound("sndShot", get_LastFP());
+	}
 
 	// Camera	
 	AddShotEffector				();
@@ -1310,7 +1323,6 @@ void CWeaponMagazined::InitAddons()
 	{		
 		m_sFlameParticlesCurrent	= m_sSilencerFlameParticles;
 		m_sSmokeParticlesCurrent	= m_sSilencerSmokeParticles;
-		m_sSndShotCurrent			= "sndSilencerShot";
 
 		//подсветка от выстрела
 		LoadLights					(*cNameSect(), "silencer_");
@@ -1320,7 +1332,6 @@ void CWeaponMagazined::InitAddons()
 	{
 		m_sFlameParticlesCurrent	= m_sFlameParticles;
 		m_sSmokeParticlesCurrent	= m_sSmokeParticles;
-		m_sSndShotCurrent			= "sndShot";
 
 		//подсветка от выстрела
 		LoadLights		(*cNameSect(), "");
@@ -1718,7 +1729,6 @@ bool CWeaponMagazined::install_upgrade_impl( LPCSTR section, bool test )
 	result2 = process_if_exists_set( section, "snd_reload", &CInifile::r_string, str, test );
 	if ( result2 && !test ) { m_sounds.LoadSound( section, "snd_reload"	, "sndReload"		, true, m_eSoundReload	);	}
 	result |= result2;
-
 
 	//snd_shoot1     = weapons\ak74u_shot_1 ??
 	//snd_shoot2     = weapons\ak74u_shot_2 ??

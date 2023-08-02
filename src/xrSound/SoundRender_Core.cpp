@@ -18,6 +18,7 @@ float	psSoundRolloff			= 0.75f;
 u32		psSoundModel			= 0;
 float	psSoundVEffects			= 1.0f;
 float	psSoundVFactor			= 1.0f;
+int		psSoundPrecacheAll = 0;
 
 float	psSoundVMusic			= 1.f;
 int		psSoundCacheSizeMB		= 32;
@@ -81,6 +82,11 @@ void CSoundRender_Core::_initialize(int stage)
     cache.initialize			(psSoundCacheSizeMB*1024,cache_bytes_per_line);
 
     bReady						= TRUE;
+
+	if (psSoundPrecacheAll == 1)
+	{
+		i_create_all_sources();
+	}
 }
 
 extern xr_vector<u8> g_target_temp_data;

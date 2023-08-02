@@ -787,6 +787,7 @@ void CCC_Register()
 	// Texture manager	
 	CMD4(CCC_Integer,	"texture_lod",			&psTextureLOD,				0,	4	);
 	CMD4(CCC_Integer,	"net_dedicated_sleep",	&psNET_DedicatedSleep,		0,	64	);
+	CMD4(CCC_Integer, "snd_precache_all", &psSoundPrecacheAll, 0, 1);
 
 	CMD4(CCC_Float, "r_viewport_near", &VIEWPORT_NEAR, 0.0001f, 1.f);
 

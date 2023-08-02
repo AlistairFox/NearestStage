@@ -38,7 +38,8 @@ void CWeaponMagazinedWGrenade::Load	(LPCSTR section)
 	
 	
 	//// Sounds
-	m_sounds.LoadSound(section,"snd_shoot_grenade"	, "sndShotG"		, false, m_eSoundShot);
+	m_sounds.LoadSound(section, "snd_shoot_grenade", "sndShotG", false, m_eSoundShot);
+
 	m_sounds.LoadSound(section,"snd_reload_grenade"	, "sndReloadG"	, true, m_eSoundReload);
 	m_sounds.LoadSound(section,"snd_switch"			, "sndSwitch"		, true, m_eSoundReload);
 	
@@ -148,7 +149,9 @@ void CWeaponMagazinedWGrenade::OnShot		()
 	if(m_bGrenadeMode)
 	{
 		PlayAnimShoot		();
-		PlaySound			("sndShotG", get_LastFP2());
+
+		PlaySound("sndShotG", get_LastFP());
+
 		AddShotEffector		();
 		StartFlameParticles2();
 	} 
@@ -293,7 +296,8 @@ void CWeaponMagazinedWGrenade::OnEvent(NET_Packet& P, u16 type)
 				if(bLaunch)
 				{
 					PlayAnimShoot		();
-					PlaySound			("sndShotG", get_LastFP2());
+					PlaySound("sndShotG", get_LastFP());
+
 					AddShotEffector		();
 					StartFlameParticles2();
 				}

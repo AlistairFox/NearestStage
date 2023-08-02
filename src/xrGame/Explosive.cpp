@@ -84,7 +84,8 @@ void CExplosive::LightDestroy()
 
 CExplosive::~CExplosive(void) 
 {
-	sndExplode.destroy		();
+	sndExplode.destroy();
+
 }
 
 void CExplosive::Load(LPCSTR section) 
@@ -121,7 +122,9 @@ void CExplosive::Load(CInifile const *ini,LPCSTR section)
 	//трассы для разлета осколков
 	m_fFragmentSpeed			= ini->r_float	(section,"fragment_speed"				);
 
-	LPCSTR	snd_name		= ini->r_string(section,"snd_explode");
+	m_layered_sounds.LoadSound(ini, section, "snd_explode", "sndExplode", false, m_eSoundExplode);
+
+	LPCSTR	snd_name = ini->r_string(section, "snd_explode");
 	sndExplode.create		(snd_name, st_Effect,m_eSoundExplode);
 
 	m_fExplodeDurationMax	= ini->r_float(section, "explode_duration");
@@ -336,8 +339,8 @@ void CExplosive::Explode()
 
 //	Msg("---------CExplosive Explode [%d] frame[%d]",cast_game_object()->ID(), Device.dwFrame);
 	OnBeforeExplosion();
-	//играем звук взрыва
-	Sound->play_at_pos(sndExplode, 0, pos, false);
+
+	m_layered_sounds.PlaySound("sndExplode", pos, smart_cast<CObject*>(this), false, false, (u8)-1);
 	
 	//показываем эффекты
 
