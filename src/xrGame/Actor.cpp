@@ -986,9 +986,10 @@ void CActor::Die	(CObject* who)
 
 	if	(IsGameTypeSingle())
 	{
-		cam_Set				(eacFreeLook);
+		cam_Set				(eacFirstEye);
 		start_tutorial		("game_over");
-	} else
+	}
+	else
 	{
 		cam_Set				(eacFirstEye);
 	}
