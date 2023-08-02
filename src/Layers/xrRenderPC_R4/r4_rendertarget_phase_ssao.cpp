@@ -165,6 +165,7 @@ extern float hbao_plus_blur_sharp;
 
 void CRenderTarget::phase_hbao_plus()
 {
+
 	PIX_EVENT(render_hbao_plus);
 	u32 bias = 0;
 

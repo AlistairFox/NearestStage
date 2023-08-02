@@ -49,6 +49,9 @@ void update_rain_drops_factor(bool act_on_rain)
 void CRenderTarget::PhaseRainDrops()
 {
 
+	if (Device.m_SecondViewport.IsSVPActive()) // не рендерить капли в прицеле
+		return;
+
 	static bool actor_in_hideout = true;
 	static u32 last_ray_pick_time = Device.dwTimeGlobal;
 	if (Device.dwTimeGlobal > (last_ray_pick_time + 1000)) { //Апдейт рейтрейса - раз в секунду. Чаще апдейтить нет смысла.
