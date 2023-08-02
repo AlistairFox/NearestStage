@@ -485,6 +485,8 @@ protected:
 	float					m_fWalk_StrafeFactor;
 	float					m_fRun_StrafeFactor;
 
+	u32						m_iBaseArtefactCount;
+
 public:
 	Fvector					GetMovementSpeed		() {return NET_SavedAccel;};
 	//////////////////////////////////////////////////////////////////////////
@@ -510,6 +512,8 @@ public:
 	virtual float						MaxCarryWeight		() const;
 			float						MaxWalkWeight		() const;
 			float						get_additional_weight() const;
+
+			u32							GetBaseArtefactCount() const { return m_iBaseArtefactCount; }
 
 protected:
 	CFireDispertionController			m_fdisp_controller;

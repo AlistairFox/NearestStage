@@ -1287,11 +1287,18 @@ u32  CInventory::BeltWidth() const
 	CActor* pActor = smart_cast<CActor*>( m_pOwner );
 	if ( pActor )
 	{
+		u32 result = pActor->GetBaseArtefactCount();
+
 		CCustomOutfit* outfit = pActor->GetOutfit();
 		if ( outfit )
 		{
-			return outfit->get_artefact_count();
+			result += outfit->get_artefact_count();
+			clamp(result, u32(0), u32(10));
+
+			return result;
 		}
+		else
+			return pActor->GetBaseArtefactCount();
 	}
 	return 0; //m_iMaxBelt;
 }
