@@ -64,7 +64,7 @@ protected:
 	bool					m_bNightVisionOn;
 
 	CNightVisionEffector*	m_night_vision;
-	HUD_SOUND_COLLECTION_LAYERED m_sounds;
+	HUD_SOUND_COLLECTION m_sounds;
 
 	enum EStats{
 		eTorchActive				= (1<<0),

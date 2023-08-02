@@ -62,12 +62,16 @@ MotionID CStalkerAnimationManager::global_critical_hit		()
 	VERIFY						(animation_slot >= 1);
 	VERIFY						(animation_slot <= 3);
 
-	//Alun: Fix stalker sprint
-	EBodyState b_state = body_state();
-	if (eMovementTypeRun == object().movement().movement_type() && b_state == eBodyStateStand)
-		return (MotionID());
-
-	return global().select(m_data_storage->m_part_animations.A[b_state].m_global.A[1].A);
+	return						(
+		global().select(
+			m_data_storage->m_part_animations.A[
+				eBodyStateStand
+			].m_global.A[
+				object().critical_wound_type() + 6 * (animation_slot - 1)
+			].A,
+					&object().critical_wound_weights()
+					)
+		);
 }
 
 MotionID CStalkerAnimationManager::assign_global_animation	(bool &animation_movement_controller)

@@ -48,8 +48,6 @@ IC	bool CGraphEngine::search		(
 		const _Parameters		&parameters
 	)
 {
-	if (start_node == _index_type(-1) || dest_node == _index_type(-1))
-		return false;
 
 #ifndef AI_COMPILER
 	Device.Statistic->AI_Path.Begin();
@@ -93,8 +91,6 @@ IC	bool CGraphEngine::search			(
 		_Parameters				&parameters
 	)
 {
-	if (start_node == _index_type(-1) || dest_node == _index_type(-1))
-		return false;
 
 #ifndef AI_COMPILER
 	Device.Statistic->AI_Path.Begin();
@@ -140,8 +136,6 @@ IC	bool CGraphEngine::search			(
 		_PathManager			&path_manager
 	)
 {
-	if (start_node == _index_type(-1) || dest_node == _index_type(-1))
-		return false;
 
 #ifndef AI_COMPILER
 	Device.Statistic->AI_Path.Begin();
