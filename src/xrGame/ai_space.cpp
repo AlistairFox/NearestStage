@@ -107,11 +107,15 @@ void CAI_Space::load				(LPCSTR level_name)
 
 	m_level_graph			= xr_new<CLevelGraph>();
 	game_graph().set_current_level(current_level.id());
-	//R_ASSERT2				(cross_table().header().level_guid() == level_graph().header().guid(), "cross_table doesn't correspond to the AI-map");
-	//R_ASSERT2				(cross_table().header().game_guid() == game_graph().header().guid(), "graph doesn't correspond to the cross table");
-	
-	Msg("CROSS_TABLE VERSION(%d) == (%d)", cross_table().header().level_guid() , level_graph().header().guid());
-	Msg("CROSS_TABLE VERSION(%d) == (%d)", cross_table().header().game_guid(), game_graph().header().guid());
+
+	auto lguid = cross_table().header().level_guid();
+	auto lgameguid = cross_table().header().game_guid();
+	auto lsguid = level_graph().header().guid();
+	auto lsgameguid = game_graph().header().guid();
+
+
+	Msg("CROSS_TABLE:        [%llu][%llu] == [%llu][%llu]", lguid.g[0], lguid.g[1], lsguid.g[0], lsguid.g[1]);
+	Msg("CROSS_TABLE GAME:    [%llu][%llu] == [%llu][%llu]", lgameguid.g[0], lgameguid.g[1], lsgameguid.g[0], lsgameguid.g[1]);
 	
 	m_graph_engine			= xr_new<CGraphEngine>(
 		_max(
