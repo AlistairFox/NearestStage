@@ -2827,8 +2827,17 @@ public:
 
 			sscanf(tmp, "%s", &login);
 
+			if (file->line_exist(login, "Admin"))
+			{
+				Msg("%s already have admin rights", login);
+				return;
+			}
+
 			if (file && file->section_exist(login))
+			{
 				file->w_bool(login, "Admin", true);
+				Msg("Complete!!! %s have Admin rights", login);
+			}
 			else
 			{
 				Msg("%s not found", login);
@@ -2874,6 +2883,8 @@ public:
 					string256 temp;
 					sprintf(temp, "sv_kick %s", login);
 					Console->Execute(temp);
+
+					Msg("Complete!!! %s was demoted", login);
 				}
 				else
 				{
