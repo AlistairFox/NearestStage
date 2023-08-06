@@ -2829,6 +2829,63 @@ public:
 
 			if (file && file->section_exist(login))
 				file->w_bool(login, "Admin", true);
+			else
+			{
+				Msg("%s not found", login);
+				return;
+			}
+
+			file->save_as(filepath);
+		}
+		else
+		{
+			NET_Packet P;
+			P.w_begin(M_REMOTE_CONTROL_CMD);
+			string128 str;
+			xr_sprintf(str, "Admin has rights %s", Core.UserName);
+			P.w_stringZ(str);
+			Level().Send(P, net_flags(TRUE, TRUE));
+		}
+	}
+};
+
+class CCC_UnAdminAccount : public IConsole_Command
+{
+public:
+	CCC_UnAdminAccount(LPCSTR N) :IConsole_Command(N) { bEmptyArgsHandled = false; };
+	virtual void Execute(LPCSTR args)
+	{
+		if (OnServer())
+		{
+			string_path filepath;
+			FS.update_path(filepath, "$mp_saves_logins$", "logins.ltx");
+			CInifile* file = xr_new<CInifile>(filepath, false, true);
+			string256 tmp, login;
+			exclude_raid_from_args(args, tmp, sizeof(tmp));
+
+			sscanf(tmp, "%s", &login);
+
+			if (file && file->section_exist(login))
+			{
+				if (file->line_exist(login, "Admin"))
+				{
+					file->remove_line(login, "Admin");
+					
+					string256 temp;
+					sprintf(temp, "sv_kick %s", login);
+					Console->Execute(temp);
+				}
+				else
+				{
+					Msg("%s not have admin rights", login);
+					return;
+				}
+			}
+			else
+			{
+				Msg("%s not found", login);
+				return;
+			}
 
 			file->save_as(filepath);
 		}
@@ -2999,7 +3056,13 @@ void register_mp_console_commands()
 	CMD1(CCC_AdmRegisterAccount,	"adm_register_account");
 	CMD1(CCC_AdmBanAccount,			"adm_ban_account");
 	CMD1(CCC_AdmUnBanAccount,		"adm_unban_account");
-	CMD1(CCC_AdminAccount, "has_admin_rights");
+
+	if(g_dedicated_server)
+	{
+	CMD1(CCC_AdminAccount, "give_admin_rights");
+	CMD1(CCC_UnAdminAccount, "dis_admin_rights");
+	}
+
 	CMD1(CCC_ChangeTeam, "changeteam");
 
 	CMD1(CCC_MovePlayerToRPoint,	"sv_move_player_to_rpoint");
