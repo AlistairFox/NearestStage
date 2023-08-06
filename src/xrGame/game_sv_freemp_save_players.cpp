@@ -245,16 +245,6 @@ bool game_sv_freemp::LoadPlayer(game_PlayerState* ps, CInifile* file)
 
 void game_sv_freemp::LoadPlayerOtfits(game_PlayerState* ps, CInifile* outfsFile)
 {
-	/*
-		string128 temp;
-		sprintf(temp, "%s", ps->getName());
-		if (!outfsFile->section_exist(temp))
-			return;
-		Msg("Load Oufit");
-		LPCSTR section = outfsFile->r_string(temp, "actor_last_outfit");
-		float cond = outfsFile->r_float(temp, "actor_last_outcond");
-		*/
-
 	auto PN = std::find_if(save_outfits.begin(), save_outfits.end(), [&](outfits data)
 		{
 			if (strstr(data.player_name, ps->getName()))
@@ -269,6 +259,9 @@ void game_sv_freemp::LoadPlayerOtfits(game_PlayerState* ps, CInifile* outfsFile)
 
 	LPCSTR section = (*PN).outfit_name;
 	float cond = (*PN).outfit_cond;
+
+	Msg("%s Load Outfit Sect: %s, Cond: %f ",ps->getName(), section, cond);
+
 		if (ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
 		{
 			cond /= Random.randF(1.1, 2);
@@ -286,15 +279,6 @@ void game_sv_freemp::LoadPlayerOtfits(game_PlayerState* ps, CInifile* outfsFile)
 
 void game_sv_freemp::LoadPlayerDetectors(game_PlayerState* ps, CInifile* detsFile)
 {
-	/*
-	string128 temp;
-	sprintf(temp, "%s", ps->getName());
-	if (!detsFile->section_exist(temp))
-		return;
-	Msg("%s DETECTOR LOAD", temp);
-		LPCSTR section = detsFile->r_string(temp, "actor_detector");
-		*/
-
 	auto PD = std::find_if(save_detectors.begin(), save_detectors.end(), [&](detectors data)
 		{
 			if (strstr(data.player_name, ps->getName()))
@@ -306,8 +290,9 @@ void game_sv_freemp::LoadPlayerDetectors(game_PlayerState* ps, CInifile* detsFil
 	if (PD == save_detectors.end())
 		return;
 
-
 	LPCSTR section = (*PD).detector_name;
+
+	Msg("%s Load Detector: %s",ps->getName(), section);
 
 		CSE_Abstract* E = spawn_begin(section);
 		CSE_ALifeItem* item = smart_cast<CSE_ALifeItem*>(E);

@@ -236,8 +236,11 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 	xr_delete(filedet);
 	*/
 
-	LoadPlayerOtfits(ps, nullptr);
-	LoadPlayerDetectors(ps, nullptr);
+	if (ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
+	{
+		LoadPlayerOtfits(ps, nullptr);
+		LoadPlayerDetectors(ps, nullptr);
+	}
 
 	if (ps)
 	{
@@ -420,6 +423,8 @@ void game_sv_freemp::Update()
 				CInifile* file = xr_new<CInifile>(file_name, false, false);
 				SavePlayer(player.second, file);
 				file->save_as(file_name);
+				SavePlayerOutfits(player.second, nullptr);
+				SavePlayerDetectors(player.second, nullptr);
 				xr_delete(file);
 			}
 
