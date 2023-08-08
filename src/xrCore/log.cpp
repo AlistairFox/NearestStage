@@ -177,10 +177,23 @@ void InitLog()
 	LogFile->reserve	(1000);
 }
 
+
 void CreateLog			(BOOL nl)
 {
     no_log				= nl;
-	strconcat			(sizeof(log_file_name),log_file_name,"Nearest_Log",".log");
+
+	bool save_old_logs = (strstr(Core.Params, "-save_old_logs"));
+
+	if (save_old_logs)
+	{
+		string64 t_stemp;
+		timestamp(t_stemp);
+
+		strconcat(sizeof(log_file_name), log_file_name, "Nearest_Log_",t_stemp, "_", ".log");
+	}
+	else
+	strconcat(sizeof(log_file_name), log_file_name, "Nearest_Log", ".log");
+
 	if (FS.path_exist("$logs$"))
 		FS.update_path	(logFName,"$logs$",log_file_name);
 	if (!no_log){
