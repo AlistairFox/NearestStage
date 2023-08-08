@@ -81,7 +81,7 @@ bool TestDX11Present()
 	sd.SampleDesc.Quality = 0;
 	sd.Windowed = TRUE;
 
-	D3D_FEATURE_LEVEL pFeatureLevels[] = {D3D_FEATURE_LEVEL_11_0};
+	D3D_FEATURE_LEVEL pFeatureLevels[] = {D3D_FEATURE_LEVEL_10_0};
 	D3D_FEATURE_LEVEL FeatureLevel;
 
 	ID3D11Device*           pd3dDevice = NULL;

@@ -407,7 +407,7 @@ u32 t_width = Device.dwWidth, t_height = Device.dwHeight;
 		Render->currentViewPort = Render->viewPortsThisFrame[i];
 		Render->needPresenting = (Render->currentViewPort == MAIN_VIEWPORT) ? true : false;
 
-		if (Render->currentViewPort == SECONDARY_WEAPON_SCOPE && (psDeviceFlags.test(rsR3) || psDeviceFlags.test(rsR4)))
+		if (Render->currentViewPort == SECONDARY_WEAPON_SCOPE && psDeviceFlags.test(rsR4))
 		{
 			Device.dwWidth = m_SecondViewport.screenWidth;
 			Device.dwHeight = m_SecondViewport.screenHeight;
@@ -460,7 +460,7 @@ u32 t_width = Device.dwWidth, t_height = Device.dwHeight;
 				End();
 			}
 		}
-		if ((psDeviceFlags.test(rsR3) || psDeviceFlags.test(rsR4)))
+		if (psDeviceFlags.test(rsR4))
 		{
 			Device.dwWidth = t_width;
 			Device.dwHeight = t_height;

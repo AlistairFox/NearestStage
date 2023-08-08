@@ -547,16 +547,11 @@ public:
 	}
 	virtual void	Execute	(LPCSTR args)
 	{
-		//fill_render_mode_list	();
-		//	vid_quality_token must be already created!
+
 		tokens					= vid_quality_token;
 
 		inherited::Execute		(args);
-		//	0 - r1
-		//	1..3 - r2
-		//	4 - r3
 		psDeviceFlags.set		(rsR2, ((renderer_value>0) && renderer_value<4) );
-		psDeviceFlags.set		(rsR3, (renderer_value==4) );
 		psDeviceFlags.set		(rsR4, (renderer_value>=5) );
 
 		r2_sun_static	= (renderer_value<2);

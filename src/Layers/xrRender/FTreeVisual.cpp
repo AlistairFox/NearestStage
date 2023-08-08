@@ -159,7 +159,7 @@ void FTreeVisual::Render	(float LOD)
 #endif
 	RCache.tree.set_c_sun	(s*c_scale.sun,  s*c_bias.sun,0,0);							// sun
 
-	#if RENDER == R_R4 || RENDER == R_R3
+	#if RENDER == R_R4
 		
 		if (ps_ssfx_grass_interactive.y > 0)
 		 {

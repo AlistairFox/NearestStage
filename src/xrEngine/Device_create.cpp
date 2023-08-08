@@ -87,7 +87,7 @@ cdb_bDebug		= &bDebug;
 	fASPECT				= 1.f;
 	m_pRender->Create(m_hWnd, dwWidth, dwHeight, fWidth_2, fHeight_2, true);
 
-	if (psDeviceFlags.test(rsR3) || psDeviceFlags.test(rsR4))
+	if (psDeviceFlags.test(rsR4))
 	{
 		m_SecondViewport.screenWidth = u32((dwWidth / 32) * psSVPImageSizeK) * 32;
 		m_SecondViewport.screenHeight = u32((dwHeight / 32) * psSVPImageSizeK) * 32;
