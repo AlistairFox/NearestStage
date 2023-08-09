@@ -237,7 +237,7 @@ void CStalkerAnimationManager::update						()
 		update_impl();
 	}
 	catch (...) {
-		Msg("! error in stalker with visual %s", *object().cNameVisual());
+		Msg("! error in stalker [%s] with visual [%s]", object().cNameSect().c_str(), object().cNameVisual().c_str());
 		throw;
 	}
 	STOP_PROFILE
