@@ -27,6 +27,7 @@
 #include "HUDManager.h"
 #include "Actor.h"
 #include "ai/stalker/ai_stalker.h"
+#include "../xrEngine/GameMtlLib.h"
 
 #define WEAPON_REMOVE_TIME		60000
 #define ROTATION_TIME			0.25f
@@ -2063,6 +2064,45 @@ float _lerp(const float& _val_a, const float& _val_b, const float& _factor)
 	return (_val_a * (1.0 - _factor)) + (_val_b * _factor);
 }
 
+static BOOL pick_trace_callback(collide::rq_result& result, LPVOID params)
+{
+	collide::rq_result* RQ = (collide::rq_result*)params;
+	if (!result.O)
+	{
+		// ïîëó÷èòü òðåóãîëüíèê è óçíàòü åãî ìàòåðèàë
+		CDB::TRI* T = Level().ObjectSpace.GetStaticTris() + result.element;
+		if (T->material < GMLib.CountMaterial())
+		{
+			if (GMLib.GetMaterialByIdx(T->material)->Flags.is(SGameMtl::flPassable) || GMLib.GetMaterialByIdx(T->material)->Flags.is(SGameMtl::flActorObstacle))
+				return TRUE;
+		}
+	}
+	*RQ = result;
+	return FALSE;
+}
+
+static float GetRayQueryDist()
+{
+	collide::rq_result RQ;
+	g_pGameLevel->ObjectSpace.RayPick(Device.vCameraPosition, Device.vCameraDirection, 3.0f, collide::rqtStatic, RQ, Actor());
+	if (!RQ.O)
+	{
+		CDB::TRI* T = Level().ObjectSpace.GetStaticTris() + RQ.element;
+		if (T->material < GMLib.CountMaterial())
+		{
+			collide::rq_result  RQ2;
+			collide::rq_results RQR;
+			RQ2.range = 3.0f;
+			collide::ray_defs RD(Device.vCameraPosition, Device.vCameraDirection, RQ2.range, CDB::OPT_CULL, collide::rqtStatic);
+			if (Level().ObjectSpace.RayQuery(RQR, RD, pick_trace_callback, &RQ2, NULL, Level().CurrentEntity()))
+			{
+				clamp(RQ2.range, RQ.range, RQ2.range);
+				return RQ2.range;
+			}
+		}
+	}
+	return RQ.range;
+}
 
 
 void CWeapon::UpdateHudAdditonal(Fmatrix& trans)
@@ -2114,8 +2154,7 @@ void CWeapon::UpdateHudAdditonal(Fmatrix& trans)
 	{
 		CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
 		u8 idx = GetCurrentHudOffsetIdx();
-		collide::rq_result& RQ = HUD().GetCurrentRayQuery();
-		float dist = RQ.range;
+		float dist = GetRayQueryDist();
 
 		attachable_hud_item* hi = HudItemData();
 		R_ASSERT(hi);
