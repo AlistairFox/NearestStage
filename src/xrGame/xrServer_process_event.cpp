@@ -14,6 +14,7 @@
 #include "game_sv_freemp.h"
 
 #include "Actor.h"
+#include "Torch.h"
 
 
 void xrServer::Process_event	(NET_Packet& P, ClientID sender)
@@ -382,6 +383,18 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 			item->SetCondition(condition);
 
 	}	break;
+	case GEG_PLAYER_USE_BATTERY:
+	{
+		float m_fBatteryChargeLevel;
+		P.r_float(m_fBatteryChargeLevel);
+
+		CObject* obj = Level().Objects.net_Find(destination);
+		CTorch* pTorch = smart_cast<CTorch*>(obj);
+		if (pTorch)
+			pTorch->Recharge(m_fBatteryChargeLevel);
+		SendBroadcast(SV_Client->ID, P, net_flags(true, true));
+
+	} break;
 
 	case GE_MONEY_ACTOR:
 	{

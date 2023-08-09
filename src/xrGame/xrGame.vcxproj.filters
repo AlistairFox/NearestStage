@@ -7452,6 +7452,10 @@
     <ClInclude Include="embedded_editor\embedded_editor_admin.h">
       <Filter>EmbeddedEditor</Filter>
     </ClInclude>
+    <ClInclude Include="Battery.h" />
+    <ClInclude Include="UI\UIInventoryItemParams.h">
+      <Filter>UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -11156,6 +11160,10 @@
     </ClCompile>
     <ClCompile Include="embedded_editor\embedded_editor_admin.cpp">
       <Filter>EmbeddedEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="Battery.cpp" />
+    <ClCompile Include="UI\UIInventoryItemParams.cpp">
+      <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
