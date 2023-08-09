@@ -107,7 +107,7 @@ protected:
 	CUIDragDropListEx*			m_pInventoryBackpackList;
 
 	enum						{e_af_count = 10};
-	CUIStatic*					m_belt_list_over[e_af_count];
+	xr_vector<CUIStatic*>		m_belt_list_over;
 	CUIStatic*					m_HelmetOver;
 
 	CUIStatic*					m_InvSlot2Highlight;
@@ -119,7 +119,7 @@ protected:
 	CUIStatic*					m_PDASlotHighlight;
 	CUIStatic*					m_TorchSlotHighlight;
 	CUIStatic*					m_QuickSlotsHighlight[4];
-	CUIStatic*					m_ArtefactSlotsHighlight[e_af_count];
+	xr_vector<CUIStatic*>		m_ArtefactSlotsHighlight;
 	CUIStatic*					m_BackpackSlotHighlight;
 
 	CUIInventoryUpgradeWnd*		m_pUpgradeWnd;
