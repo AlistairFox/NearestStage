@@ -12,6 +12,7 @@
 #include "Actor.h"
 #include "inventory.h"
 #include "game_sv_base.h"
+#include "CustomDetector.h"
 
 CBattery::CBattery()
 {
@@ -45,6 +46,16 @@ BOOL CBattery::net_Spawn(CSE_Abstract* DC)
 bool CBattery::Useful() const
 {
 	if (!inherited::Useful()) return false;
+	if (!H_Parent())
+		return false;
+	CActor* pA = smart_cast<CActor*>(Level().Objects.net_Find(H_Parent()->ID()));
+	if (!pA)
+		return false;
+
+	CTorch* flashlight = smart_cast<CTorch*>(pA->inventory().ItemFromSlot(TORCH_SLOT));
+
+	if (!flashlight)
+		return false;
 
 	//ïðîâåðèòü íå âñå ëè åùå ñúåäåíî
 	if (m_iPortionsNum == 0) return false;
@@ -54,21 +65,9 @@ bool CBattery::Useful() const
 
 bool CBattery::UseBy(CEntityAlive* entity_alive)
 {
-	CActor* pA = smart_cast<CActor*>(entity_alive);
-	if (!pA)
+
+	if (!inherited::Useful()) 
 		return false;
-
-	CTorch* flashlight = smart_cast<CTorch*>(pA->inventory().ItemFromSlot(TORCH_SLOT));
-
-	if (flashlight)
-	{
-
-		NET_Packet P;
-		Msg("BatteryChargetLevel: %f", m_fBatteryChargeLevel);
-		Game().u_EventGen(P, GEG_PLAYER_USE_BATTERY, flashlight->object_id());
-		P.w_float(m_fBatteryChargeLevel);
-		Level().Send(P, net_flags(TRUE, TRUE, FALSE, TRUE));
-	}
 
 	//Msg("Battery Charge is: %f", m_fBatteryChargeLevel); //Äëÿ òåñòîâ
 
@@ -77,4 +76,24 @@ bool CBattery::UseBy(CEntityAlive* entity_alive)
 	else
 		m_iPortionsNum = 0;
 	return true;
+}
+
+void CBattery::ChargeTorch()
+{
+	if (!H_Parent())
+		return;
+	CActor* pA = smart_cast<CActor*>(Level().Objects.net_Find(H_Parent()->ID()));
+	if (!pA)
+		return;
+	CTorch* flashlight = smart_cast<CTorch*>(pA->inventory().ItemFromSlot(TORCH_SLOT));
+
+	if (flashlight)
+	{
+		NET_Packet P;
+		Msg("BatteryChargetLevel: %f", m_fBatteryChargeLevel);
+		Game().u_EventGen(P, GEG_PLAYER_USE_BATTERY, flashlight->object_id());
+		P.w_float(m_fBatteryChargeLevel);
+		Level().Send(P, net_flags(TRUE, TRUE, FALSE, TRUE));
+	}
+
 }
