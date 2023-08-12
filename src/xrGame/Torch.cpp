@@ -54,8 +54,6 @@ CTorch::CTorch(void)
 	m_fMaxRange = 20.f;
 	m_fCurveRange = 20.f;
 
-	m_SuitableBattery = nullptr;
-
 	m_bNightVisionOn = false;
 
 	// Disabling shift by x and z axes for 1st render, 
@@ -95,12 +93,25 @@ void CTorch::Load(LPCSTR section)
 	m_light_section = READ_IF_EXISTS(pSettings, r_string, section, "light_section", "torch_definition");
 	m_fMaxChargeLevel = READ_IF_EXISTS(pSettings, r_float, section, "max_charge_level", 1.0f);
 	m_fUnchargeSpeed = READ_IF_EXISTS(pSettings, r_float, section, "uncharge_speed", 0.0f);
-	m_SuitableBattery = READ_IF_EXISTS(pSettings, r_string, section, "suitable_battery", "torch_battery");
 
 	if (pSettings->line_exist(section, "snd_turn_on"))
 		m_sounds.LoadSound(section, "snd_turn_on", "sndTurnOn", false, SOUND_TYPE_ITEM_USING);
 	if (pSettings->line_exist(section, "snd_turn_off"))
 		m_sounds.LoadSound(section, "snd_turn_off", "sndTurnOff", false, SOUND_TYPE_ITEM_USING);
+
+	m_SuitableBatteries.clear();
+	LPCSTR batteries = READ_IF_EXISTS(pSettings, r_string, section, "suitable_batteries", "torch_battery");
+
+	if (batteries && batteries[0])
+	{
+		string128 battery_sect;
+		int count = _GetItemCount(batteries);
+		for (int it = 0; it < count; ++it)
+		{
+			_GetItem(batteries, it, battery_sect);
+			m_SuitableBatteries.push_back(battery_sect);
+		}
+	}
 
 	m_bNightVisionEnabled = !!pSettings->r_bool(section,"night_vision");
 	float rnd_charge = ::Random.randF(0.0f, m_fMaxChargeLevel);
@@ -691,4 +702,9 @@ void CTorch::Recharge(float val)
 	m_fCurrentChargeLevel += val;
 	clamp(m_fCurrentChargeLevel, 0.f, m_fMaxChargeLevel);
 	SetCondition(m_fCurrentChargeLevel);
+}
+
+bool CTorch::IsNecessaryItem(const shared_str& item_sect, xr_vector<shared_str> item)
+{
+	return (std::find(item.begin(), item.end(), item_sect) != item.end());
 }

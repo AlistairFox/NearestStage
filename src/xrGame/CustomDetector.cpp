@@ -247,7 +247,6 @@ CCustomDetector::CCustomDetector()
 	m_fMaxChargeLevel = 0.0f;
 	m_fCurrentChargeLevel = 1.0f;
 	m_fUnchargeSpeed = 0.0f;
-	m_SuitableBattery = nullptr;
 }
 
 CCustomDetector::~CCustomDetector() 
@@ -276,7 +275,19 @@ void CCustomDetector::Load(LPCSTR section)
 
 	m_fMaxChargeLevel = READ_IF_EXISTS(pSettings, r_float, section, "max_charge_level", 1.0f);
 	m_fUnchargeSpeed = READ_IF_EXISTS(pSettings, r_float, section, "uncharge_speed", 0.0f);
-	m_SuitableBattery = READ_IF_EXISTS(pSettings, r_string, section, "suitable_battery", "torch_battery");
+	m_SuitableBatteries.clear();
+	LPCSTR batteries = READ_IF_EXISTS(pSettings, r_string, section, "suitable_batteries", "torch_battery");
+
+	if (batteries && batteries[0])
+	{
+		string128 battery_sect;
+		int count = _GetItemCount(batteries);
+		for (int it = 0; it < count; ++it)
+		{
+			_GetItem(batteries, it, battery_sect);
+			m_SuitableBatteries.push_back(battery_sect);
+		}
+	}
 
 	float rnd_charge = ::Random.randF(0.0f, m_fMaxChargeLevel);
 	m_fCurrentChargeLevel = rnd_charge;
@@ -534,4 +545,9 @@ BOOL CAfList::feel_touch_contact	(CObject* O)
 			res = false;
 	}
 	return						res;
+}
+
+bool CCustomDetector::IsNecessaryItem(const shared_str& item_sect, xr_vector<shared_str> item)
+{
+	return (std::find(item.begin(), item.end(), item_sect) != item.end());
 }
