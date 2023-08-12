@@ -30,6 +30,7 @@ CDetectorAnomaly::CDetectorAnomaly(void)
 	m_fMaxChargeLevel = 0.0f;
 	m_fCurrentChargeLevel = 1.0f;
 	m_fUnchargeSpeed = 0.0f;
+	m_SuitableBattery = nullptr;
 }
 
 CDetectorAnomaly::~CDetectorAnomaly(void)
@@ -95,6 +96,7 @@ void CDetectorAnomaly::Load(LPCSTR section)
 	m_ef_detector_type = pSettings->r_u32(section, "ef_detector_type");
 	m_fMaxChargeLevel = READ_IF_EXISTS(pSettings, r_float, section, "max_charge_level", 1.0f);
 	m_fUnchargeSpeed = READ_IF_EXISTS(pSettings, r_float, section, "uncharge_speed", 0.0f);
+	m_SuitableBattery = READ_IF_EXISTS(pSettings, r_string, section, "suitable_battery", "torch_battery");
 
 	float rnd_charge = ::Random.randF(0.0f, m_fMaxChargeLevel);
 	m_fCurrentChargeLevel = rnd_charge;
@@ -134,7 +136,7 @@ void CDetectorAnomaly::UpdateCL()
 	inherited::UpdateCL();
 	UpdateChargeLevel();
 
-	if (!IsWorking()) return;
+	if (!m_bWorking) return;
 	if (!H_Parent()) return;
 	if (m_fCurrentChargeLevel <= 0.0) return;
 
@@ -150,12 +152,6 @@ void CDetectorAnomaly::UpdateCL()
 	{
 		CCustomZone* pZone = it->first;
 		ZONE_INFO& zone_info = it->second;
-
-
-		/*//òàêîé òèï çîí íå îáíàðóæèâàåòñÿ
-		if(m_ZoneTypeMap.find(pZone->CLS_ID) == m_ZoneTypeMap.end() ||
-			!pZone->VisibleByDetector())
-			continue;*/
 
 		ZONE_TYPE& zone_type = m_ZoneTypeMap[pZone->CLS_ID];
 
@@ -282,7 +278,7 @@ void CDetectorAnomaly::load(IReader& input_packet)
 
 void CDetectorAnomaly::UpdateChargeLevel(void)
 {
-	if (IsWorking())
+	if (m_bWorking)
 	{
 		float uncharge_coef = (m_fUnchargeSpeed / 16) * Device.fTimeDelta;
 
@@ -291,13 +287,9 @@ void CDetectorAnomaly::UpdateChargeLevel(void)
 		float condition = 1.f * m_fCurrentChargeLevel;
 		SetCondition(condition);
 
-		//Msg("Update Charge Lvl Anomaly Detector: %f", m_fCurrentChargeLevel); //For test
-
-		clamp(m_fCurrentChargeLevel, 0.f, 1.f);
+		clamp(m_fCurrentChargeLevel, 0.f, m_fMaxChargeLevel);
 		SetCondition(m_fCurrentChargeLevel);
 	}
-	/*else
-		SetCondition(m_fCurrentChargeLevel);*/
 }
 
 float CDetectorAnomaly::GetUnchargeSpeed() const
@@ -313,18 +305,15 @@ float CDetectorAnomaly::GetCurrentChargeLevel() const
 void CDetectorAnomaly::SetCurrentChargeLevel(float val)
 {
 	m_fCurrentChargeLevel = val;
+	clamp(m_fCurrentChargeLevel, 0.f, m_fMaxChargeLevel);
 	float condition = 1.f * m_fCurrentChargeLevel / m_fUnchargeSpeed;
 	SetCondition(condition);
 }
 
 void CDetectorAnomaly::Recharge(float val)
 {
-	m_fCurrentChargeLevel = m_fCurrentChargeLevel + val;
+	m_fCurrentChargeLevel += val;
+	clamp(m_fCurrentChargeLevel, 0.f, m_fMaxChargeLevel);
 
 	SetCondition(m_fCurrentChargeLevel);
-
-	//Msg("Charge Level In Recharge: %f", val); //For Test
-
-	if (m_fCurrentChargeLevel > m_fMaxChargeLevel)
-		m_fCurrentChargeLevel = m_fMaxChargeLevel;
 }

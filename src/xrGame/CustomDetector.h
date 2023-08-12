@@ -176,6 +176,8 @@ public:
 	float	m_fMaxChargeLevel;
 	float	m_fCurrentChargeLevel;
 	float	m_fUnchargeSpeed;
+
+	shared_str	m_SuitableBattery;
 protected:
 			bool	CheckCompatibilityInt		(CHudItem* itm, u16* slot_to_activate);
 			void 	TurnDetectorInternal		(bool b);

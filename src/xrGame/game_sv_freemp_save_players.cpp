@@ -8,6 +8,7 @@
 #include "xrServer_Objects_ALife.h"
 #include "CustomOutfit.h"
 #include "Torch.h"
+#include "AnomalyDetector.h"
 
 void game_sv_freemp::SavePlayer(game_PlayerState* ps, CInifile* file)
 {
@@ -77,6 +78,8 @@ void game_sv_freemp::SavePlayer(game_PlayerState* ps, CInifile* file)
 			file->w_string("torch", "section", pTorch->m_section_id.c_str());
 			file->w_float("torch", "charge", pTorch->GetCondition());
 		}
+
+		CDetectorAnomaly* pAnDet = smart_cast<CDetectorAnomaly*>(actor->inventory().ItemFromSlot(DOSIMETER_SLOT));
 
 		file->w_u32("actor", "items_count", id);
 		file->w_u32("actor", "money", ps->money_for_round);

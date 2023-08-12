@@ -54,6 +54,8 @@ CTorch::CTorch(void)
 	m_fMaxRange = 20.f;
 	m_fCurveRange = 20.f;
 
+	m_SuitableBattery = nullptr;
+
 	m_bNightVisionOn = false;
 
 	// Disabling shift by x and z axes for 1st render, 
@@ -93,6 +95,7 @@ void CTorch::Load(LPCSTR section)
 	m_light_section = READ_IF_EXISTS(pSettings, r_string, section, "light_section", "torch_definition");
 	m_fMaxChargeLevel = READ_IF_EXISTS(pSettings, r_float, section, "max_charge_level", 1.0f);
 	m_fUnchargeSpeed = READ_IF_EXISTS(pSettings, r_float, section, "uncharge_speed", 0.0f);
+	m_SuitableBattery = READ_IF_EXISTS(pSettings, r_string, section, "suitable_battery", "torch_battery");
 
 	if (pSettings->line_exist(section, "snd_turn_on"))
 		m_sounds.LoadSound(section, "snd_turn_on", "sndTurnOn", false, SOUND_TYPE_ITEM_USING);
@@ -677,17 +680,15 @@ bool CTorch::IsSwitchedOn() const
 void CTorch::SetCurrentChargeLevel(float val)
 {
 	m_fCurrentChargeLevel = val;
+	clamp(m_fCurrentChargeLevel, 0.f, m_fMaxChargeLevel);
+
 	float condition = 1.f * m_fCurrentChargeLevel / m_fUnchargeSpeed;
 	SetCondition(condition);
 }
 
 void CTorch::Recharge(float val)
 {
-	m_fCurrentChargeLevel = m_fCurrentChargeLevel + val;
+	m_fCurrentChargeLevel += val;
+	clamp(m_fCurrentChargeLevel, 0.f, m_fMaxChargeLevel);
 	SetCondition(m_fCurrentChargeLevel);
-
-	//Msg("Battery Charge in Recharge is: %f", val); //Äëÿ òåñòîâ
-
-	if (m_fCurrentChargeLevel > m_fMaxChargeLevel)
-		m_fCurrentChargeLevel = m_fMaxChargeLevel;
 }

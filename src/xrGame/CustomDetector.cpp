@@ -247,6 +247,7 @@ CCustomDetector::CCustomDetector()
 	m_fMaxChargeLevel = 0.0f;
 	m_fCurrentChargeLevel = 1.0f;
 	m_fUnchargeSpeed = 0.0f;
+	m_SuitableBattery = nullptr;
 }
 
 CCustomDetector::~CCustomDetector() 
@@ -275,6 +276,7 @@ void CCustomDetector::Load(LPCSTR section)
 
 	m_fMaxChargeLevel = READ_IF_EXISTS(pSettings, r_float, section, "max_charge_level", 1.0f);
 	m_fUnchargeSpeed = READ_IF_EXISTS(pSettings, r_float, section, "uncharge_speed", 0.0f);
+	m_SuitableBattery = READ_IF_EXISTS(pSettings, r_string, section, "suitable_battery", "torch_battery");
 
 	float rnd_charge = ::Random.randF(0.0f, m_fMaxChargeLevel);
 	m_fCurrentChargeLevel = rnd_charge;
@@ -486,7 +488,7 @@ void CCustomDetector::UpdateChargeLevel(void)
 
 		//Msg("Çàðÿä äåòåêòîðà: %f", m_fCurrentChargeLevel); //Äëÿ òåñòîâ
 
-		clamp(m_fCurrentChargeLevel, 0.f, 1.f);
+		clamp(m_fCurrentChargeLevel, 0.f, m_fMaxChargeLevel);
 		SetCondition(m_fCurrentChargeLevel);
 	}
 	/*else
@@ -506,20 +508,17 @@ float CCustomDetector::GetCurrentChargeLevel() const
 void CCustomDetector::SetCurrentChargeLevel(float val)
 {
 	m_fCurrentChargeLevel = val;
+	clamp(m_fCurrentChargeLevel, 0.f, m_fMaxChargeLevel);
 	float condition = 1.f * m_fCurrentChargeLevel / m_fUnchargeSpeed;
 	SetCondition(condition);
 }
 
 void CCustomDetector::Recharge(float val)
 {
-	m_fCurrentChargeLevel = m_fCurrentChargeLevel + val;
+	m_fCurrentChargeLevel += val;
+	clamp(m_fCurrentChargeLevel, 0.f, m_fMaxChargeLevel);
 
 	SetCondition(m_fCurrentChargeLevel);
-
-	//Msg("Ïåðåäàíûé â äåòåêòîð çàðÿä: %f", val); //Äëÿ Òåñòîâ
-
-	if (m_fCurrentChargeLevel > m_fMaxChargeLevel)
-		m_fCurrentChargeLevel = m_fMaxChargeLevel;
 }
 
 BOOL CAfList::feel_touch_contact	(CObject* O)

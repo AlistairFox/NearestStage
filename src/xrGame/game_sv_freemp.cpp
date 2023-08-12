@@ -268,9 +268,6 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 
 		CInifile* file = xr_new<CInifile>(file_name, true);
 
-		SpawnItemToActor(ps->GameID, "device_torch");
-		SpawnItemToActor(ps->GameID, "wpn_knife");
-		SpawnItemToActor(ps->GameID, "device_pda");
 		SpawnItemToActor(ps->GameID, "wpn_binoc");
 		LoadPlayer(ps, file);
 		xr_delete  (file);

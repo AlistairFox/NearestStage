@@ -75,6 +75,8 @@ public:
 	float	m_fCurrentChargeLevel;
 	float	m_fUnchargeSpeed;
 
+	shared_str		m_SuitableBattery;
+
 	bool m_bWorking;
 
 protected:

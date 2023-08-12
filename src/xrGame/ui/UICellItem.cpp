@@ -13,6 +13,10 @@
 #include "Weapon.h"
 #include "CustomOutfit.h"
 #include "ActorHelmet.h"
+#include "CustomDetector.h"
+#include "Torch.h"
+#include "AnomalyDetector.h"
+#include "eatable_item.h"
 
 CUICellItem* CUICellItem::m_mouse_selected_item = NULL;
 
@@ -25,6 +29,7 @@ CUICellItem::CUICellItem()
 //-	m_mark				= NULL;
 	m_upgrade			= NULL;
 	m_pConditionState	= NULL;
+	m_pChargeState = nullptr;
 	m_drawn_frame		= 0;
 	SetAccelerator		(0);
 	m_b_destroy_childs	= true;
@@ -73,6 +78,15 @@ void CUICellItem::init()
 	AttachChild(m_pConditionState);
 	CUIXmlInit::InitProgressBar(uiXml, "condition_progess_bar", 0, m_pConditionState);
 	m_pConditionState->Show(true);
+
+	if (uiXml.NavigateToNode("charge_level_progess_bar", 0))
+	{
+		m_pChargeState = xr_new<CUIProgressBar>();
+		m_pChargeState->SetAutoDelete(true);
+		AttachChild(m_pChargeState);
+		CUIXmlInit::InitProgressBar(uiXml, "charge_level_progess_bar", 0, m_pChargeState);
+		m_pChargeState->Show(true);
+	}
 }
 
 void CUICellItem::Draw()
@@ -197,6 +211,8 @@ void CUICellItem::SetOwnerList(CUIDragDropListEx* p)
 {
 	m_pParentList = p;
 	UpdateConditionProgressBar();
+	if (m_pChargeState)
+		UpdateChargeLevelProgressBar();
 }
 
 void CUICellItem::UpdateConditionProgressBar()
@@ -226,6 +242,54 @@ void CUICellItem::UpdateConditionProgressBar()
 		}
 	}
 	m_pConditionState->Show(false);
+}
+
+void CUICellItem::UpdateChargeLevelProgressBar()
+{
+	if (m_pParentList && m_pParentList->GetConditionProgBarVisibility())
+	{
+		PIItem itm = (PIItem)m_pData;
+		CTorch* torch = smart_cast<CTorch*>(itm);
+		CCustomDetector* artefact_detector = smart_cast<CCustomDetector*>(itm);
+		CDetectorAnomaly* anomaly_detector = smart_cast<CDetectorAnomaly*>(itm);
+		CArtefact* artefact = smart_cast<CArtefact*>(itm);
+
+		if (torch || artefact_detector || anomaly_detector || artefact)
+		{
+			Ivector2 itm_grid_size = GetGridSize();
+
+			if (m_pParentList->GetVerticalPlacement())
+				std::swap(itm_grid_size.x, itm_grid_size.y);
+
+			Ivector2 cell_size = m_pParentList->CellSize();
+			Ivector2 cell_space = m_pParentList->CellsSpacing();
+			float x = 1.f;
+			float y = itm_grid_size.y * (cell_size.y + cell_space.y) - m_pChargeState->GetHeight() - 2.f;
+
+			m_pChargeState->SetWndPos(Fvector2().set(x, y));
+
+			if (torch)
+			{
+				m_pChargeState->SetProgressPos(iCeil(torch->GetCurrentChargeLevel() * 13.0f) / 13.0f);
+				m_pChargeState->Show(true);
+			}
+			else if (artefact_detector)
+			{
+				m_pChargeState->SetProgressPos(iCeil(artefact_detector->GetCurrentChargeLevel() * 13.0f) / 13.0f);
+				m_pChargeState->Show(true);
+			}
+			else if (anomaly_detector)
+			{
+				m_pChargeState->SetProgressPos(iCeil(anomaly_detector->GetCurrentChargeLevel() * 13.0f) / 13.0f);
+				m_pChargeState->Show(true);
+			}
+			else
+				m_pChargeState->Show(false);
+
+			return;
+		}
+	}
+	m_pChargeState->Show(false);
 }
 
 bool CUICellItem::EqualTo(CUICellItem* itm)
