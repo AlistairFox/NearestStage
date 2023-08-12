@@ -28,6 +28,7 @@ public:
 	{
 		LPCSTR player_name;
 		LPCSTR detector_name;
+		float detector_cond;
 	};
 	xr_vector<detectors> save_detectors;
 

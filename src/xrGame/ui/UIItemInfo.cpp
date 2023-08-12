@@ -26,6 +26,8 @@
 #include "../eatable_item.h"
 #include "UICellItem.h"
 #include "../Torch.h"
+#include "../CustomDetector.h"
+#include "../AnomalyDetector.h"
 
 extern const LPCSTR g_inventory_upgrade_xml;
 
@@ -365,7 +367,10 @@ void CUIItemInfo::TryAddConditionInfo( CInventoryItem& pInvItem, CInventoryItem*
 	//CWeapon*		weapon = smart_cast<CWeapon*>( &pInvItem );
 	//CCustomOutfit*	outfit = smart_cast<CCustomOutfit*>( &pInvItem );
 	CTorch* torch = smart_cast<CTorch*>(&pInvItem);
-	if (torch)
+	CCustomDetector* artefact_detector = smart_cast<CCustomDetector*>(&pInvItem);
+	CDetectorAnomaly* anomaly_detector = smart_cast<CDetectorAnomaly*>(&pInvItem);
+
+	if (torch || artefact_detector || anomaly_detector)
 	{
 		UIItemConditionParams->SetInfo(pCompareItem, pInvItem);
 		UIDesc->AddWindow(UIItemConditionParams, false);
@@ -431,7 +436,9 @@ void CUIItemInfo::TryAddBoosterInfo(CInventoryItem& pInvItem)
 void CUIItemInfo::TryAddItemInfo(CInventoryItem& pInvItem)
 {
 	CInventoryItemObject* item = smart_cast<CInventoryItemObject*>(&pInvItem);
-	if (item && UIInventoryItem)
+	CHudItemObject* hud_item = smart_cast<CHudItemObject*>(&pInvItem);
+
+	if ((item || hud_item) && UIInventoryItem)
 	{
 		UIInventoryItem->SetInfo(pInvItem.object().cNameSect());
 		UIDesc->AddWindow(UIInventoryItem, false);

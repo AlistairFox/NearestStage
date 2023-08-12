@@ -13,6 +13,7 @@
 #include "inventory.h"
 #include "game_sv_base.h"
 #include "CustomDetector.h"
+#include "AnomalyDetector.h"
 
 CBattery::CBattery()
 {
@@ -53,8 +54,10 @@ bool CBattery::Useful() const
 		return false;
 
 	CTorch* flashlight = smart_cast<CTorch*>(pA->inventory().ItemFromSlot(TORCH_SLOT));
+	CCustomDetector* artifact_detector = smart_cast<CCustomDetector*>(pA->inventory().ItemFromSlot(DETECTOR_SLOT));
+	CDetectorAnomaly* anomaly_detector = smart_cast<CDetectorAnomaly*>(pA->inventory().ItemFromSlot(DOSIMETER_SLOT));
 
-	if (!flashlight)
+	if (!flashlight || !artifact_detector || !anomaly_detector)
 		return false;
 
 	//ïðîâåðèòü íå âñå ëè åùå ñúåäåíî
@@ -65,16 +68,14 @@ bool CBattery::Useful() const
 
 bool CBattery::UseBy(CEntityAlive* entity_alive)
 {
-
 	if (!inherited::Useful()) 
 		return false;
-
-	//Msg("Battery Charge is: %f", m_fBatteryChargeLevel); //Äëÿ òåñòîâ
 
 	if (m_iPortionsNum > 0)
 		--m_iPortionsNum;
 	else
 		m_iPortionsNum = 0;
+
 	return true;
 }
 
@@ -82,18 +83,62 @@ void CBattery::ChargeTorch()
 {
 	if (!H_Parent())
 		return;
+
 	CActor* pA = smart_cast<CActor*>(Level().Objects.net_Find(H_Parent()->ID()));
+
 	if (!pA)
 		return;
+
 	CTorch* flashlight = smart_cast<CTorch*>(pA->inventory().ItemFromSlot(TORCH_SLOT));
 
 	if (flashlight)
 	{
 		NET_Packet P;
 		Msg("BatteryChargetLevel: %f", m_fBatteryChargeLevel);
-		Game().u_EventGen(P, GEG_PLAYER_USE_BATTERY, flashlight->object_id());
+		Game().u_EventGen(P, GEG_PLAYER_CHARGE_TORCH, flashlight->object_id());
 		P.w_float(m_fBatteryChargeLevel);
 		Level().Send(P, net_flags(TRUE, TRUE, FALSE, TRUE));
 	}
+}
 
+void CBattery::ChargeArtifactDetector()
+{
+	if (!H_Parent())
+		return;
+
+	CActor* pA = smart_cast<CActor*>(Level().Objects.net_Find(H_Parent()->ID()));
+
+	if (!pA)
+		return;
+
+	CCustomDetector* artifact_detector = smart_cast<CCustomDetector*>(pA->inventory().ItemFromSlot(DETECTOR_SLOT));
+
+	if (artifact_detector)
+	{
+		NET_Packet P;
+		Game().u_EventGen(P, GEG_PLAYER_CHARGE_DETECTORS, artifact_detector->object_id());
+		P.w_float(m_fBatteryChargeLevel);
+		Level().Send(P, net_flags(TRUE, TRUE, FALSE, TRUE));
+	}
+}
+
+void CBattery::ChargeAnomalyDetector()
+{
+	if (!H_Parent())
+		return;
+
+	CActor* pA = smart_cast<CActor*>(Level().Objects.net_Find(H_Parent()->ID()));
+
+	if (!pA)
+		return;
+
+	CDetectorAnomaly* anomaly_detector = smart_cast<CDetectorAnomaly*>(pA->inventory().ItemFromSlot(DOSIMETER_SLOT));
+
+	if (anomaly_detector)
+	{
+		NET_Packet P;
+		Game().u_EventGen(P, GEG_PLAYER_CHARGE_DOSIMETER, anomaly_detector->object_id());
+		P.w_float(m_fBatteryChargeLevel);
+		Level().Send(P, net_flags(TRUE, TRUE, FALSE, TRUE));
+	}
 }

@@ -15,6 +15,8 @@
 
 #include "Actor.h"
 #include "Torch.h"
+#include "CustomDetector.h"
+#include "AnomalyDetector.h"
 
 
 void xrServer::Process_event	(NET_Packet& P, ClientID sender)
@@ -383,7 +385,7 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 			item->SetCondition(condition);
 
 	}	break;
-	case GEG_PLAYER_USE_BATTERY:
+	case GEG_PLAYER_CHARGE_TORCH:
 	{
 		float m_fBatteryChargeLevel;
 		P.r_float(m_fBatteryChargeLevel);
@@ -395,7 +397,27 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 		SendBroadcast(SV_Client->ID, P, net_flags(true, true));
 
 	} break;
+	case GEG_PLAYER_CHARGE_DETECTORS:
+	{
+		float m_fBatteryChargeLevel;
+		P.r_float(m_fBatteryChargeLevel);
 
+		CObject* obj = Level().Objects.net_Find(destination);
+		CCustomDetector* artifact_detectors = smart_cast<CCustomDetector*>(obj);
+		if (artifact_detectors)
+			artifact_detectors->Recharge(m_fBatteryChargeLevel);
+		SendBroadcast(SV_Client->ID, P, net_flags(true, true));
+	}break;
+	case GEG_PLAYER_CHARGE_DOSIMETER:
+	{
+		float m_fBatteryChargeLevel;
+		P.r_float(m_fBatteryChargeLevel);
+		CObject* obj = Level().Objects.net_Find(destination);
+		CDetectorAnomaly* anomal_detector = smart_cast<CDetectorAnomaly*>(obj);
+		if (anomal_detector)
+			anomal_detector->Recharge(m_fBatteryChargeLevel);
+		SendBroadcast(SV_Client->ID, P, net_flags(true, true));
+	}break;
 	case GE_MONEY_ACTOR:
 	{
 		s32 money = P.r_s32();

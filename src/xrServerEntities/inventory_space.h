@@ -17,6 +17,7 @@ enum{
 	TORCH_SLOT,		// torch
 	ARTEFACT_SLOT,	// artefact
 	HELMET_SLOT,
+	DOSIMETER_SLOT,
 	BACKPACK_SLOT,	// Backpack 13 slot
 	LAST_SLOT = BACKPACK_SLOT
 };

@@ -114,6 +114,8 @@ void CUIActorMenu::Construct()
 	m_QuickSlotsHighlight[0]	->Show(false);
 	m_BackpackSlotHighlight = UIHelper::CreateStatic(uiXml, "backpack_slot_highlight", this);
 	m_BackpackSlotHighlight		->Show(false);
+	m_DosimeterSlotHighlight = UIHelper::CreateStatic(uiXml, "dosimeter_slot_highlight", this);
+	m_DosimeterSlotHighlight->Show(false);
 
 	m_pInventoryBagList = UIHelper::CreateDragDropListEx(uiXml, "dragdrop_bag", this);
 	m_pInventoryBeltList = UIHelper::CreateDragDropListEx(uiXml, "dragdrop_belt", this);
@@ -133,6 +135,7 @@ void CUIActorMenu::Construct()
 	m_pQuickSlot = UIHelper::CreateDragDropReferenceList(uiXml, "dragdrop_quick_slots", this);
 	m_pQuickSlot->Initialize();
 	m_pInventoryBackpackList = UIHelper::CreateDragDropListEx(uiXml, "dragdrop_backpack", this);
+	m_pInventoryDosimeterList = UIHelper::CreateDragDropListEx(uiXml, "dragdrop_dosimeter", this);
 
 	Fvector2 pos;
 	pos								= m_QuickSlotsHighlight[0]->GetWndPos();
@@ -304,6 +307,7 @@ void CUIActorMenu::Construct()
 	BindDragDropListEvents				(m_pDeadBodyBagList);
 	BindDragDropListEvents				(m_pQuickSlot);
 	BindDragDropListEvents				(m_pInventoryBackpackList);
+	BindDragDropListEvents				(m_pInventoryDosimeterList);
 
 	m_allowed_drops[iTrashSlot].push_back(iActorBag);
 	m_allowed_drops[iTrashSlot].push_back(iActorSlot);

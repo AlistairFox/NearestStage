@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "customdetector.h"
 #include "ui/ArtefactDetectorUI.h"
 #include "hudmanager.h"
@@ -10,6 +10,7 @@
 #include "ui/UIWindow.h"
 #include "player_hud.h"
 #include "weapon.h"
+#include "Battery.h"
 
 ITEM_INFO::ITEM_INFO()
 {
@@ -117,8 +118,8 @@ void CCustomDetector::ToggleDetector(bool bFastMode)
 			{
 				if (OnServer())
 				{
-					// Ïûòàåìñÿ äîñòàòü äîïóñòèìûé ïðåäìåò: íîæ, îðóæèå èëè òï
-					// ïðè ýòîì áóäåò ñïðÿòàíî òåêóùåå îðóæèå
+					// ÐŸÑ‹Ñ‚Ð°ÐµÐ¼ÑÑ Ð´Ð¾ÑÑ‚Ð°Ñ‚ÑŒ Ð´Ð¾Ð¿ÑƒÑÑ‚Ð¸Ð¼Ñ‹Ð¹ Ð¿Ñ€ÐµÐ´Ð¼ÐµÑ‚: Ð½Ð¾Ð¶, Ð¾Ñ€ÑƒÐ¶Ð¸Ðµ Ð¸Ð»Ð¸ Ñ‚Ð¿
+					// Ð¿Ñ€Ð¸ ÑÑ‚Ð¾Ð¼ Ð±ÑƒÐ´ÐµÑ‚ ÑÐ¿Ñ€ÑÑ‚Ð°Ð½Ð¾ Ñ‚ÐµÐºÑƒÑ‰ÐµÐµ Ð¾Ñ€ÑƒÐ¶Ð¸Ðµ
 					m_pInventory->Activate(slot_to_activate);
 				}
 				else
@@ -131,7 +132,7 @@ void CCustomDetector::ToggleDetector(bool bFastMode)
 						CGameObject::u_EventSend(P);
 					}
 				}
-				// óêàçûâàåì, ÷òî íóæíî áóäåò äîñòàòü äåòåêòîð
+				// ÑƒÐºÐ°Ð·Ñ‹Ð²Ð°ÐµÐ¼, Ñ‡Ñ‚Ð¾ Ð½ÑƒÐ¶Ð½Ð¾ Ð±ÑƒÐ´ÐµÑ‚ Ð´Ð¾ÑÑ‚Ð°Ñ‚ÑŒ Ð´ÐµÑ‚ÐµÐºÑ‚Ð¾Ñ€
 				m_bNeedActivation = true;
 			}
 			else
@@ -242,6 +243,10 @@ CCustomDetector::CCustomDetector()
 	m_ui				= NULL;
 	m_bFastAnimMode		= false;
 	m_bNeedActivation	= false;
+
+	m_fMaxChargeLevel = 0.0f;
+	m_fCurrentChargeLevel = 1.0f;
+	m_fUnchargeSpeed = 0.0f;
 }
 
 CCustomDetector::~CCustomDetector() 
@@ -267,8 +272,30 @@ void CCustomDetector::Load(LPCSTR section)
 
 	m_sounds.LoadSound( section, "snd_draw", "sndShow");
 	m_sounds.LoadSound( section, "snd_holster", "sndHide");
+
+	m_fMaxChargeLevel = READ_IF_EXISTS(pSettings, r_float, section, "max_charge_level", 1.0f);
+	m_fUnchargeSpeed = READ_IF_EXISTS(pSettings, r_float, section, "uncharge_speed", 0.0f);
+
+	float rnd_charge = ::Random.randF(0.0f, m_fMaxChargeLevel);
+	m_fCurrentChargeLevel = rnd_charge;
+
 }
 
+void CCustomDetector::OnEvent(NET_Packet& P, u16 type)
+{
+	switch (type)
+	{
+	case GEG_PLAYER_CHARGE_DETECTORS:
+	{
+		float charge_level;
+		P.r_float(charge_level);
+		Recharge(charge_level);
+
+	}break;
+	default:
+		break;
+	}
+}
 
 void CCustomDetector::shedule_Update(u32 dt) 
 {
@@ -291,17 +318,18 @@ bool CCustomDetector::IsWorking()
 
 void CCustomDetector::UpfateWork()
 {
+	if (m_fCurrentChargeLevel > 0)
 	UpdateAf				();
 	m_ui->update			();
 }
 
 void CCustomDetector::UpdateVisibility()
 {
-	// Pavel: Ïðåäîòâðàùåíèå êðàøà ïðè äèñêîííåêòå ñåðâåðà
+	// Pavel: ÐŸÑ€ÐµÐ´Ð¾Ñ‚Ð²Ñ€Ð°Ñ‰ÐµÐ½Ð¸Ðµ ÐºÑ€Ð°ÑˆÐ° Ð¿Ñ€Ð¸ Ð´Ð¸ÑÐºÐ¾Ð½Ð½ÐµÐºÑ‚Ðµ ÑÐµÑ€Ð²ÐµÑ€Ð°
 	if (!Actor())
 		return;
 
-	// Pavel: ÕÀÊ. Ïðÿ÷åì äåòåêòîð, åñëè â ðóêàõ îêàçûâàåòñÿ îðóæèå (êðîìå ïèñòîëåòà, íîæà, áîëòà)
+	// Pavel: Ð¥ÐÐš. ÐŸÑ€ÑÑ‡ÐµÐ¼ Ð´ÐµÑ‚ÐµÐºÑ‚Ð¾Ñ€, ÐµÑÐ»Ð¸ Ð² Ñ€ÑƒÐºÐ°Ñ… Ð¾ÐºÐ°Ð·Ñ‹Ð²Ð°ÐµÑ‚ÑÑ Ð¾Ñ€ÑƒÐ¶Ð¸Ðµ (ÐºÑ€Ð¾Ð¼Ðµ Ð¿Ð¸ÑÑ‚Ð¾Ð»ÐµÑ‚Ð°, Ð½Ð¾Ð¶Ð°, Ð±Ð¾Ð»Ñ‚Ð°)
 	if (!IsGameTypeSingle() && OnClient())
 	{
 		u16 curSlot = m_pInventory->GetActiveSlot();
@@ -368,6 +396,8 @@ void CCustomDetector::UpdateCL()
 {
 	inherited::UpdateCL();
 
+	UpdateChargeLevel();
+
 	if(H_Parent()!=Level().CurrentEntity() )			return;
 
 	UpdateVisibility		();
@@ -396,8 +426,8 @@ void CCustomDetector::OnMoveToRuck(const SInvItemPlace& prev)
 		SwitchState					(eHidden);
 		g_player_hud->detach_item	(this);
 
-		// Pavel: ôèêñ äëÿ ìï, íå íóæíî äîñòàâàòü äåòåêòîð,
-		// åñëè îí áûë óáðàí / çàìåí¸í íà äðóãîé âî âðåìÿ ïåðåçàðÿäêè
+		// Pavel: Ñ„Ð¸ÐºÑ Ð´Ð»Ñ Ð¼Ð¿, Ð½Ðµ Ð½ÑƒÐ¶Ð½Ð¾ Ð´Ð¾ÑÑ‚Ð°Ð²Ð°Ñ‚ÑŒ Ð´ÐµÑ‚ÐµÐºÑ‚Ð¾Ñ€,
+		// ÐµÑÐ»Ð¸ Ð¾Ð½ Ð±Ñ‹Ð» ÑƒÐ±Ñ€Ð°Ð½ / Ð·Ð°Ð¼ÐµÐ½Ñ‘Ð½ Ð½Ð° Ð´Ñ€ÑƒÐ³Ð¾Ð¹ Ð²Ð¾ Ð²Ñ€ÐµÐ¼Ñ Ð¿ÐµÑ€ÐµÐ·Ð°Ñ€ÑÐ´ÐºÐ¸
 		m_bNeedActivation = false;
 	}
 	TurnDetectorInternal			(false);
@@ -428,6 +458,68 @@ void CCustomDetector::TurnDetectorInternal(bool b)
 #include "game_base_space.h"
 void CCustomDetector::UpdateNightVisionMode(bool b_on)
 {
+}
+
+void CCustomDetector::save(NET_Packet& output_packet)
+{
+	inherited::save(output_packet);
+	save_data(m_fCurrentChargeLevel, output_packet);
+
+}
+
+void CCustomDetector::load(IReader& input_packet)
+{
+	inherited::load(input_packet);
+	load_data(m_fCurrentChargeLevel, input_packet);
+}
+
+void CCustomDetector::UpdateChargeLevel(void)
+{
+	if (IsWorking())
+	{
+		float uncharge_coef = (m_fUnchargeSpeed / 16) * Device.fTimeDelta;
+
+		m_fCurrentChargeLevel -= uncharge_coef;
+
+		float condition = 1.f * m_fCurrentChargeLevel;
+		SetCondition(condition);
+
+		//Msg("Ã‡Ã Ã°Ã¿Ã¤ Ã¤Ã¥Ã²Ã¥ÃªÃ²Ã®Ã°Ã : %f", m_fCurrentChargeLevel); //Ã„Ã«Ã¿ Ã²Ã¥Ã±Ã²Ã®Ã¢
+
+		clamp(m_fCurrentChargeLevel, 0.f, 1.f);
+		SetCondition(m_fCurrentChargeLevel);
+	}
+	/*else
+		SetCondition(m_fCurrentChargeLevel);*/
+}
+
+float CCustomDetector::GetUnchargeSpeed() const
+{
+	return m_fUnchargeSpeed;
+}
+
+float CCustomDetector::GetCurrentChargeLevel() const
+{
+	return m_fCurrentChargeLevel;
+}
+
+void CCustomDetector::SetCurrentChargeLevel(float val)
+{
+	m_fCurrentChargeLevel = val;
+	float condition = 1.f * m_fCurrentChargeLevel / m_fUnchargeSpeed;
+	SetCondition(condition);
+}
+
+void CCustomDetector::Recharge(float val)
+{
+	m_fCurrentChargeLevel = m_fCurrentChargeLevel + val;
+
+	SetCondition(m_fCurrentChargeLevel);
+
+	//Msg("ÃÃ¥Ã°Ã¥Ã¤Ã Ã­Ã»Ã© Ã¢ Ã¤Ã¥Ã²Ã¥ÃªÃ²Ã®Ã° Ã§Ã Ã°Ã¿Ã¤: %f", val); //Ã„Ã«Ã¿ Ã’Ã¥Ã±Ã²Ã®Ã¢
+
+	if (m_fCurrentChargeLevel > m_fMaxChargeLevel)
+		m_fCurrentChargeLevel = m_fMaxChargeLevel;
 }
 
 BOOL CAfList::feel_touch_contact	(CObject* O)

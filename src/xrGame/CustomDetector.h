@@ -6,6 +6,7 @@
 #include "artefact.h"
 #include "ai_sounds.h"
 #include <functional>
+#include "Battery.h"
 //#include "ui/ArtefactDetectorUI.h"
 
 class CCustomZone;
@@ -131,6 +132,8 @@ public:
 	virtual BOOL 	net_Spawn			(CSE_Abstract* DC);
 	virtual void 	Load				(LPCSTR section);
 
+	void OnEvent(NET_Packet& P, u16 type);
+
 	virtual void 	OnH_A_Chield		();
 	virtual void 	OnH_B_Independent	(bool just_before_destroy);
 
@@ -161,6 +164,18 @@ public:
 	void			HideAndSetCallback(const detector_fn_t fn);
 
 	virtual u32		ef_detector_type	() const	{return 1;};
+
+	void	UpdateChargeLevel(void);
+	virtual void	save(NET_Packet& output_packet);
+	virtual void	load(IReader& input_packet);
+	float	GetCurrentChargeLevel(void) const;
+	void	SetCurrentChargeLevel(float val);
+	float	GetUnchargeSpeed(void) const;
+	void	Recharge(float val);
+
+	float	m_fMaxChargeLevel;
+	float	m_fCurrentChargeLevel;
+	float	m_fUnchargeSpeed;
 protected:
 			bool	CheckCompatibilityInt		(CHudItem* itm, u16* slot_to_activate);
 			void 	TurnDetectorInternal		(bool b);

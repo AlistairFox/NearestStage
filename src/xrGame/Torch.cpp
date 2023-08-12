@@ -475,7 +475,7 @@ void CTorch::OnEvent(NET_Packet& P, u16 type)
 {
 	switch (type)
 	{
-	case GEG_PLAYER_USE_BATTERY:
+	case GEG_PLAYER_CHARGE_TORCH:
 	{
 		float cond;
 		P.r_float(cond);

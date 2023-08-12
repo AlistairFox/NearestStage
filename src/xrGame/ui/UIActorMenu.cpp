@@ -38,6 +38,7 @@
 #include "UIMainIngameWnd.h"
 #include "../Trade.h"
 #include "Backpack.h"
+#include "AnomalyDetector.h"
 
 void CUIActorMenu::SetActor(CInventoryOwner* io)
 {
@@ -344,6 +345,7 @@ EDDListType CUIActorMenu::GetListType(CUIDragDropListEx* l)
 	if(l==m_pQuickSlot)					return iQuickSlot;
 	if(l==m_pTrashList)					return iTrashSlot;
 	if (l == m_pInventoryBackpackList) return iActorSlot;
+	if (l == m_pInventoryDosimeterList) return iActorSlot;
 
 
 	R_ASSERT(0);
@@ -514,6 +516,7 @@ void CUIActorMenu::clear_highlight_lists()
 	m_PDASlotHighlight->Show(false);
 	m_TorchSlotHighlight->Show(false);
 	m_BackpackSlotHighlight->Show(false);
+	m_DosimeterSlotHighlight->Show(false);
 
 
 	for(u8 i=0; i<4; i++)
@@ -559,6 +562,7 @@ void CUIActorMenu::highlight_item_slot(CUICellItem* cell_item)
 	CEatableItem* eatable = smart_cast<CEatableItem*>(item);
 	CArtefact* artefact = smart_cast<CArtefact*>(item);
 	CBackpack* backpack = smart_cast<CBackpack*>(item);
+	CDetectorAnomaly* anomaly_detector = smart_cast<CDetectorAnomaly*>(item);
 
 	if(weapon)
 	{
@@ -605,6 +609,14 @@ void CUIActorMenu::highlight_item_slot(CUICellItem* cell_item)
 		if (m_BackpackSlotHighlight)
 		{
 			m_BackpackSlotHighlight->Show(true);
+		}
+		return;
+	}
+	if (anomaly_detector)
+	{
+		if (m_DosimeterSlotHighlight)
+		{
+			m_DosimeterSlotHighlight->Show(true);
 		}
 		return;
 	}
@@ -872,6 +884,7 @@ void CUIActorMenu::ClearAllLists()
 	m_pTradePartnerList->ClearAll				(true);
 	m_pDeadBodyBagList->ClearAll				(true);
 	m_pInventoryBackpackList->ClearAll(true);
+	m_pInventoryDosimeterList->ClearAll(true);
 }
 
 void CUIActorMenu::CallMessageBoxYesNo( LPCSTR text )

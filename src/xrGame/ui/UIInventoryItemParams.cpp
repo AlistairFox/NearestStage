@@ -21,6 +21,8 @@
 #include "UIActorMenu.h"
 
 #include "../Torch.h"
+#include "../CustomDetector.h"
+#include "../AnomalyDetector.h"
 
 CUIInventoryItem::CUIInventoryItem()
 {

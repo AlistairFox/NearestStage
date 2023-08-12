@@ -7,6 +7,7 @@
 #include "CustomDetector.h"
 #include "xrServer_Objects_ALife.h"
 #include "CustomOutfit.h"
+#include "Torch.h"
 
 void game_sv_freemp::SavePlayer(game_PlayerState* ps, CInifile* file)
 {
@@ -66,6 +67,15 @@ void game_sv_freemp::SavePlayer(game_PlayerState* ps, CInifile* file)
 		if (detector)
 		{
 			file->w_string("detector", "section", detector->m_section_id.c_str());
+			file->w_float("detector", "charge", detector->GetCondition());
+		}
+
+		CTorch* pTorch = smart_cast<CTorch*>(actor->inventory().ItemFromSlot(TORCH_SLOT));
+
+		if (pTorch)
+		{
+			file->w_string("torch", "section", pTorch->m_section_id.c_str());
+			file->w_float("torch", "charge", pTorch->GetCondition());
 		}
 
 		file->w_u32("actor", "items_count", id);
@@ -130,6 +140,7 @@ void game_sv_freemp::SavePlayerDetectors(game_PlayerState* ps, CInifile* detsFil
 		{
 			detectors data;
 			data.player_name = ps->getName();
+			data.detector_cond = pDet->GetCondition();
 			data.detector_name = pDet->m_section_id.c_str();
 
 			auto DS = std::find_if(save_detectors.begin(), save_detectors.end(), [&](detectors data)
@@ -166,9 +177,30 @@ bool game_sv_freemp::LoadPlayer(game_PlayerState* ps, CInifile* file)
 		{
 			LPCSTR name = file->r_string("detector", "section");
 
+			float det_cond = 0;
+
+			if(file->line_exist("detector", "charge"))
+			float det_cond = file->r_float("detector", "charge");
+
 			CSE_Abstract* E = spawn_begin(name);
 			E->ID_Parent = ps->GameID;
 			CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>(E);
+			item->m_fCondition = det_cond;
+			spawn_end(E, m_server->GetServerClient()->ID);
+		}
+
+		if (file->section_exist("torch"))
+		{
+			LPCSTR torch_name = file->r_string("torch", "section");
+			float torch_cond = 0;
+			if(file->line_exist("torch", "charge"))
+			torch_cond = file->r_float("torch", "charge");
+
+			CSE_Abstract* E = spawn_begin(torch_name);
+			E->ID_Parent = ps->GameID;
+			CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>(E);
+
+			item->m_fCondition = torch_cond;
 			spawn_end(E, m_server->GetServerClient()->ID);
 		}
 
@@ -291,6 +323,9 @@ void game_sv_freemp::LoadPlayerDetectors(game_PlayerState* ps, CInifile* detsFil
 		return;
 
 	LPCSTR section = (*PD).detector_name;
+	float cond = (*PD).detector_cond;
+	if (cond > 1)
+		cond = 1;
 
 	Msg("%s Load Detector: %s",ps->getName(), section);
 
@@ -299,6 +334,7 @@ void game_sv_freemp::LoadPlayerDetectors(game_PlayerState* ps, CInifile* detsFil
 		if (item)
 		{
 			item->ID_Parent = ps->GameID;
+			item->m_fCondition = cond;
 			spawn_end(item, m_server->GetServerClient()->ID);
 		}
 }
