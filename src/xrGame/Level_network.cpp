@@ -471,6 +471,7 @@ void			CLevel::OnBuildVersionChallenge		()
 	P.w_u64					(auth);
 	P.w_stringZ(Core.UserName);
 	P.w_stringZ(Core.Password);
+	P.w_stringZ(Core.CompName);
 
 	SecureSend				(P, net_flags(TRUE, TRUE, TRUE, TRUE));
 };

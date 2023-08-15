@@ -2787,16 +2787,29 @@ public:
 
 			CInifile* file = xr_new<CInifile>(filepath, false, true);
 
-			string256 tmp, login, password;
+			string256 tmp, login, password, comp_name;
 			exclude_raid_from_args(args, tmp, sizeof(tmp));
 
-			sscanf(tmp, "%s %s", &login, &password);
+			sscanf(tmp, "%s %s %s", &login, &password, &comp_name);
 
+			string_path reg_data;
+			FS.update_path(reg_data, "$reg_data$", comp_name);
+			CInifile* reg_data_file = xr_new<CInifile>(reg_data, false, true);
+
+			reg_data_file->w_string(login, "comp_name", comp_name);
+
+			if (FS.exist(reg_data))
+			{
+				Msg("!!!ERROR: User with comp_name %s already exist", comp_name);
+				return;
+			}else
 			if (file)
 			{
 				file->w_string(login, "password", password);
+				file->w_string(login, "comp_name", comp_name);
 			}
 
+			reg_data_file->save_as(reg_data);
 			file->save_as(filepath);
 		}
 		else
