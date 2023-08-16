@@ -220,14 +220,25 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 	P.r_stringZ(password);
 	P.r_stringZ(comp_name);
 
+	string_path denied_reg;
 	string_path path_xray;
 	FS.update_path(path_xray, "$mp_saves_logins$", "logins.ltx");
+
+	LPCSTR blockednames = login.c_str();
+	FS.update_path(denied_reg, "$denied_accounts$", blockednames);
+	CInifile* denfile = xr_new<CInifile>(denied_reg, true);
 
 	CInifile* file = xr_new<CInifile>(path_xray, true);
 
 	if (!CL->flags.bLocal)
 	{
-			if (file->section_exist(login))
+			if (FS.exist(denied_reg))
+			{
+				Msg("--ERROR: попытка регистрации некорректного никнейма!");
+				SendConnectResult(CL, 0, ecr_data_verification_failed, "Заявка на регистрацию отклоненна: некорректный никнейм");
+				return;
+			}
+			else if (file->section_exist(login))
 			{
 				shared_str pass_check;
 
@@ -278,7 +289,7 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 				LPCSTR username = login.c_str();
 				string_path path_registered;
 				string256 transl;
-				sprintf(transl, "%s.ltx",username);
+				sprintf(transl, "%s.ltx", username);
 				FS.update_path(path_registered, "$mp_acces_reg$", transl);
 				CInifile* regacc = xr_new<CInifile>(path_registered, false, true);
 				if (FS.exist(path_registered))
@@ -302,6 +313,7 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 					return;
 				}
 			}
+		
 	}
 
 	{				
