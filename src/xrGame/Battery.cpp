@@ -63,14 +63,16 @@ bool CBattery::Useful() const
 
 	if (flashlight || artifact_detector || anomaly_detector)
 	{
-		if (flashlight && flashlight->m_fCurrentChargeLevel <= 0.99f && flashlight->IsNecessaryItem(this->cNameSect().c_str(), flashlight->m_SuitableBatteries))
+/*		if (flashlight && flashlight->m_fCurrentChargeLevel <= 0.99f && flashlight->m_SuitableBattery == this->cNameSect().c_str())
 			return true;
-		else if (artifact_detector && artifact_detector->m_fCurrentChargeLevel <= 0.99f && artifact_detector->IsNecessaryItem(this->cNameSect().c_str(), artifact_detector->m_SuitableBatteries))
+		else if (artifact_detector && artifact_detector->m_fCurrentChargeLevel <= 0.99f && artifact_detector->m_SuitableBattery == this->cNameSect().c_str())
 			return true;
-		else if (anomaly_detector && anomaly_detector->m_fCurrentChargeLevel <= 0.99f && anomaly_detector->IsNecessaryItem(this->cNameSect().c_str(), anomaly_detector->m_SuitableBatteries))
+		else if (anomaly_detector && anomaly_detector->m_fCurrentChargeLevel <= 0.99f && anomaly_detector->m_SuitableBattery == this->cNameSect().c_str())
 			return true;
 		else
 			return false;
+			*/
+		return true;
 	}
 	else
 		return false;
@@ -111,12 +113,16 @@ bool CBattery::UseBy(CEntityAlive* entity_alive)
 				ChargeArtifactDetector();
 		}
 	}
-	else if (m_iUseFor == 1)
+
+	if (m_iUseFor == 1)
 		ChargeTorch();
-	else if (m_iUseFor == 2)
+
+	if (m_iUseFor == 2)
 		ChargeArtifactDetector();
-	else
+
+	if (m_iUseFor == 3)
 		ChargeAnomalyDetector();
+
 
 
 	if (m_iPortionsNum > 0)
@@ -144,7 +150,6 @@ void CBattery::ChargeTorch()
 	if (flashlight)
 	{
 		NET_Packet P;
-		Msg("BatteryChargetLevel: %f", m_fBatteryChargeLevel);
 		Game().u_EventGen(P, GEG_PLAYER_CHARGE_TORCH, flashlight->object_id());
 		P.w_float(m_fBatteryChargeLevel);
 		Level().Send(P, net_flags(TRUE, TRUE, FALSE, TRUE));
@@ -183,7 +188,6 @@ void CBattery::ChargeAnomalyDetector()
 		return;
 
 	CDetectorAnomaly* anomaly_detector = smart_cast<CDetectorAnomaly*>(pA->inventory().ItemFromSlot(DOSIMETER_SLOT));
-
 	if (anomaly_detector)
 	{
 		NET_Packet P;

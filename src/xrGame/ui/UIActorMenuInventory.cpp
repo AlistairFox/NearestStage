@@ -1390,6 +1390,15 @@ void CUIActorMenu::ProcessPropertiesBoxClicked( CUIWindow* w, void* d )
 		TryUseItem(cell_item);
 		break;
 	}
+	case BATTERY_CHARGE_DOSIMETER:
+	{
+		CBattery* battery = smart_cast<CBattery*>(item);
+		if (!battery)
+			break;
+		battery->ChargeAnomalyDetector();
+		TryUseItem(cell_item);
+		break;
+	}
 	case ENABLE_ANOM_DET:
 	{
 		CDetectorAnomaly* pAnomDet = smart_cast<CDetectorAnomaly*>(item);
@@ -1404,15 +1413,6 @@ void CUIActorMenu::ProcessPropertiesBoxClicked( CUIWindow* w, void* d )
 		if (!pAnomDet)
 			break;
 		pAnomDet->TurnOff();
-		break;
-	}
-	case BATTERY_CHARGE_DOSIMETER:
-	{
-		CBattery* battery = smart_cast<CBattery*>(item);
-		if (!battery)
-			break;
-		battery->m_iUseFor = 3;
-		TryUseItem(cell_item);
 		break;
 	}
 	}//switch

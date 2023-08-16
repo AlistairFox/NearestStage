@@ -173,13 +173,12 @@ public:
 	float	GetUnchargeSpeed(void) const;
 	void	Recharge(float val);
 
-	bool	IsNecessaryItem(const shared_str& item_sect, xr_vector<shared_str> item);
 
 	float	m_fMaxChargeLevel;
 	float	m_fCurrentChargeLevel;
 	float	m_fUnchargeSpeed;
 
-	xr_vector<shared_str> m_SuitableBatteries;
+	shared_str	m_SuitableBattery;
 protected:
 			bool	CheckCompatibilityInt		(CHudItem* itm, u16* slot_to_activate);
 			void 	TurnDetectorInternal		(bool b);
