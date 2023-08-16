@@ -284,15 +284,19 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 				if (FS.exist(path_registered))
 				{
 					Msg("!!!Попытка повторной регистрации аккаунта %s", username);
-					SendConnectResult(CL, 0, ecr_data_verification_failed, "Данный пользователь уже ожидает регистрацию.");
+					SendConnectResult(CL, 0, ecr_data_verification_failed, "Данный никнейм уже зарегистрирован или ожидает регистрации.");
 					return;
 				}
 				else
 				{
-					regacc->w_string(username, "user_password", password.c_str());
-					regacc->w_string(username, "comp_user", comp_name.c_str());
-					regacc->save_as(path_registered);
-					Msg("!!!Пользователь %s подал запрос на регистрацию!", username);
+					if (regacc)
+					{
+						regacc->w_string("user_data", "username", username);
+						regacc->w_string("user_data", "user_password", password.c_str());
+						regacc->w_string("user_data", "comp_user", comp_name.c_str());
+						regacc->save_as(path_registered);
+						Msg("~ Пользователь %s подал запрос на регистрацию!", username);
+					}
 
 					SendConnectResult(CL, 0, ecr_data_verification_failed, "Вас Зарегистрируют в Ближайшее время!");
 					return;

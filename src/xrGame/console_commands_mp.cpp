@@ -2796,21 +2796,79 @@ public:
 			FS.update_path(reg_data, "$reg_data$", comp_name);
 			CInifile* reg_data_file = xr_new<CInifile>(reg_data, false, true);
 
-			reg_data_file->w_string(login, "comp_name", comp_name);
-
 			if (FS.exist(reg_data))
 			{
-				Msg("!!!ERROR: User with comp_name %s already exist", comp_name);
+				Msg("!!!ERROR: User with comp_name %s already exist.", comp_name);
 				return;
 			}else
 			if (file)
 			{
+				reg_data_file->w_string(login, "comp_name", comp_name);
 				file->w_string(login, "password", password);
 				file->w_string(login, "comp_name", comp_name);
 			}
 
+			Msg("--Complete! User: %s has been registered.", login);
 			reg_data_file->save_as(reg_data);
 			file->save_as(filepath);
+		}
+		else
+		{
+			NET_Packet P;
+			P.w_begin(M_REMOTE_CONTROL_CMD);
+			string128 str;
+			xr_sprintf(str, "adm_register_account %s %s", Core.UserName, Core.Password);
+			P.w_stringZ(str);
+			Level().Send(P, net_flags(TRUE, TRUE));
+		}
+	}
+};
+
+class CCC_AdmRegisterFileAcc : public IConsole_Command {
+public:
+	CCC_AdmRegisterFileAcc(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = false; };
+
+	virtual void Execute(LPCSTR args)
+	{
+		if (OnServer())
+		{
+			string_path registered_file;
+
+			string256 tmp, regfile_name;
+			exclude_raid_from_args(args, tmp, sizeof(tmp));
+
+			sscanf(tmp, "%s", &regfile_name);
+			xr_strcat(regfile_name, ".ltx");
+
+			LPCSTR login, password, comp_name;
+			FS.update_path(registered_file, "$mp_acces_reg$", regfile_name);
+			CInifile* registr_file = xr_new<CInifile>(registered_file,true);
+
+				if (FS.exist(registered_file))
+				{
+					if (registr_file->section_exist("user_data"))
+					{
+						Msg("--File acces.");
+						Msg("~ regfile name: %s.", regfile_name);
+						login = registr_file->r_string("user_data", "username");
+						password = registr_file->r_string("user_data", "user_password");
+						comp_name = registr_file->r_string("user_data", "comp_user");
+						Msg("* User Login: %s.", login);
+						Msg("* User password: %s.", password);
+						Msg("* User Comp_Name: %s.", comp_name);
+
+						string_path regdata;
+						sprintf(regdata, "adm_register_account %s %s %s", login, password, comp_name);
+
+						Console->Execute(regdata);
+					}
+				}
+				else
+				{
+					Msg("!!!ERROR: Uncorrect file name");
+					return;
+				}
+
 		}
 		else
 		{
@@ -2842,18 +2900,18 @@ public:
 
 			if (file->line_exist(login, "Admin"))
 			{
-				Msg("%s already have admin rights", login);
+				Msg("!!%s already have admin rights", login);
 				return;
 			}
 
 			if (file && file->section_exist(login))
 			{
 				file->w_bool(login, "Admin", true);
-				Msg("Complete!!! %s have Admin rights", login);
+				Msg("--Complete!!! %s have Admin rights", login);
 			}
 			else
 			{
-				Msg("%s not found", login);
+				Msg("!!%s not found", login);
 				return;
 			}
 
@@ -2897,17 +2955,17 @@ public:
 					sprintf(temp, "sv_kick %s", login);
 					Console->Execute(temp);
 
-					Msg("Complete!!! %s was demoted", login);
+					Msg("--Complete!!! %s was demoted", login);
 				}
 				else
 				{
-					Msg("%s not have admin rights", login);
+					Msg("!!%s not have admin rights", login);
 					return;
 				}
 			}
 			else
 			{
-				Msg("%s not found", login);
+				Msg("!!%s not found", login);
 				return;
 			}
 
@@ -3078,6 +3136,7 @@ void register_mp_console_commands()
 	CMD1(CCC_AdmUnlimatedAmmo,      "adm_unlimated_ammo");
 
 	CMD1(CCC_AdmRegisterAccount,	"adm_register_account");
+	CMD1(CCC_AdmRegisterFileAcc, "adm_register_file");
 	CMD1(CCC_AdmBanAccount,			"adm_ban_account");
 	CMD1(CCC_AdmUnBanAccount,		"adm_unban_account");
 

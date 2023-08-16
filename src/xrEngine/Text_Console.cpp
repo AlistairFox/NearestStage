@@ -109,7 +109,7 @@ void	CTextConsole::CreateLogWnd()
 	UpdateWindow(m_hLogWnd);
 	//-----------------------------------------------
 	LOGFONT lf; 
-	lf.lfHeight = -12; 
+	lf.lfHeight = -15; 
 	lf.lfWidth = 0;
 	lf.lfEscapement = 0; 
 	lf.lfOrientation = 0; 
@@ -235,7 +235,7 @@ void CTextConsole::DrawLog( HDC hDC, RECT* pRect )
 	int Width = wRC.right - wRC.left;
 	int Height = wRC.bottom - wRC.top;
 	wRC = *pRect;
-	int y_top_max = (int)(0.65f * Height);
+	int y_top_max = (int)(0.45f * Height);
 
 	//---------------------------------------------------------------------------------
 	LPCSTR s_edt = ec().str_edit();
