@@ -2792,20 +2792,21 @@ public:
 
 			sscanf(tmp, "%s %s %s", &login, &password, &comp_name);
 
+			LPCSTR hwid = comp_name;
 			string_path reg_data;
-			FS.update_path(reg_data, "$reg_data$", comp_name);
+			FS.update_path(reg_data, "$reg_data$", "hw_buffer.ltx");
 			CInifile* reg_data_file = xr_new<CInifile>(reg_data, false, true);
 
-			if (FS.exist(reg_data))
+			if (reg_data_file->line_exist("hwbuffer", hwid))
 			{
-				Msg("!!!ERROR: User with comp_name %s already exist.", comp_name);
+				Msg("!!!ERROR: User with HWid %s already exist.", comp_name);
 				return;
 			}else
 			if (file)
 			{
-				reg_data_file->w_string(login, "comp_name", comp_name);
+				reg_data_file->w_string("hwbuffer", comp_name, comp_name);
 				file->w_string(login, "password", password);
-				file->w_string(login, "comp_name", comp_name);
+				file->w_string(login, "hwid", comp_name);
 			}
 
 			Msg("--Complete! User: %s has been registered.", login);
@@ -2852,10 +2853,10 @@ public:
 						Msg("~ regfile name: %s.", regfile_name);
 						login = registr_file->r_string("user_data", "username");
 						password = registr_file->r_string("user_data", "user_password");
-						comp_name = registr_file->r_string("user_data", "comp_user");
+						comp_name = registr_file->r_string("user_data", "hwid");
 						Msg("* User Login: %s.", login);
 						Msg("* User password: %s.", password);
-						Msg("* User Comp_Name: %s.", comp_name);
+						Msg("* User HWid: %s.", comp_name);
 
 						string_path regdata;
 						sprintf(regdata, "adm_register_account %s %s %s", login, password, comp_name);

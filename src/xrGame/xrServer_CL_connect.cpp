@@ -304,7 +304,7 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 					{
 						regacc->w_string("user_data", "username", username);
 						regacc->w_string("user_data", "user_password", password.c_str());
-						regacc->w_string("user_data", "comp_user", comp_name.c_str());
+						regacc->w_string("user_data", "hwid", comp_name.c_str());
 						regacc->save_as(path_registered);
 						Msg("~ ѕользователь %s подал запрос на регистрацию!", username);
 					}

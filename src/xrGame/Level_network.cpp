@@ -462,6 +462,12 @@ void			CLevel::OnBuildVersionChallenge		()
 {
 	NET_Packet P;
 	P.w_begin				(M_CL_AUTH);
+
+	HW_PROFILE_INFO hwProfileinfo;
+	LPCSTR h = 0;
+	if (GetCurrentHwProfile(&hwProfileinfo))
+		h = hwProfileinfo.szHwProfileGuid;
+
 #ifdef USE_DEBUG_AUTH
 	u64 auth = MP_DEBUG_AUTH;
 	Msg("* Sending auth value ...");
@@ -471,7 +477,7 @@ void			CLevel::OnBuildVersionChallenge		()
 	P.w_u64					(auth);
 	P.w_stringZ(Core.UserName);
 	P.w_stringZ(Core.Password);
-	P.w_stringZ(Core.CompName);
+	P.w_stringZ(h);
 
 	SecureSend				(P, net_flags(TRUE, TRUE, TRUE, TRUE));
 };
