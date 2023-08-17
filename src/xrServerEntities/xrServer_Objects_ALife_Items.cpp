@@ -31,6 +31,7 @@ CSE_ALifeInventoryItem::CSE_ALifeInventoryItem(LPCSTR caSection)
 {
 	//текущее состояние вещи
 	m_fCondition				= 1.0f;
+	m_fChargeLevel = 0.0f;
 
 	m_fMass						= pSettings->r_float(caSection, "inv_weight");
 	m_dwCost					= pSettings->r_u32(caSection, "cost");
@@ -464,6 +465,8 @@ void CSE_ALifeItemTorch::UPDATE_Read		(NET_Packet	&tNetPacket)
 	m_active					= !!(F & eTorchActive);
 	m_nightvision_active		= !!(F & eNightVisionActive);
 	m_attached					= !!(F & eAttached);
+	tNetPacket.r_float(m_fCondition);
+	tNetPacket.r_float(m_fChargeLevel);
 }
 
 void CSE_ALifeItemTorch::UPDATE_Write		(NET_Packet	&tNetPacket)
@@ -475,6 +478,8 @@ void CSE_ALifeItemTorch::UPDATE_Write		(NET_Packet	&tNetPacket)
 	F |= (m_nightvision_active ? eNightVisionActive : 0);
 	F |= (m_attached ? eAttached : 0);
 	tNetPacket.w_u8(F);
+	tNetPacket.w_float(m_fCondition);
+	tNetPacket.w_float(m_fChargeLevel);
 }
 
 #ifndef XRGAME_EXPORTS
@@ -918,11 +923,15 @@ void CSE_ALifeItemDetector::STATE_Write		(NET_Packet	&tNetPacket)
 void CSE_ALifeItemDetector::UPDATE_Read		(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Read		(tNetPacket);
+	tNetPacket.r_float(m_fCondition);
+	tNetPacket.r_float(m_fChargeLevel);
 }
 
 void CSE_ALifeItemDetector::UPDATE_Write	(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Write		(tNetPacket);
+	tNetPacket.w_float(m_fCondition);
+	tNetPacket.w_float(m_fChargeLevel);
 }
 
 #ifndef XRGAME_EXPORTS

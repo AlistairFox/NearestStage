@@ -325,6 +325,21 @@ void CCustomDetector::UpfateWork()
 	m_ui->update			();
 }
 
+void CCustomDetector::net_Export(NET_Packet& P)
+{
+	inherited::net_Export(P);
+	P.w_float(GetCondition());
+	P.w_float(m_fCurrentChargeLevel);
+}
+
+void CCustomDetector::net_Import(NET_Packet& P)
+{
+	inherited::net_Import(P);
+
+		P.r_float(m_fCondition);
+		P.r_float(m_fCurrentChargeLevel);
+}
+
 void CCustomDetector::UpdateVisibility()
 {
 	// Pavel: Предотвращение краша при дисконнекте сервера
@@ -486,13 +501,9 @@ void CCustomDetector::UpdateChargeLevel(void)
 		float condition = 1.f * m_fCurrentChargeLevel;
 		SetCondition(condition);
 
-		//Msg("Çàðÿä äåòåêòîðà: %f", m_fCurrentChargeLevel); //Äëÿ òåñòîâ
-
 		clamp(m_fCurrentChargeLevel, 0.f, m_fMaxChargeLevel);
 		SetCondition(m_fCurrentChargeLevel);
 	}
-	/*else
-		SetCondition(m_fCurrentChargeLevel);*/
 }
 
 float CCustomDetector::GetUnchargeSpeed() const

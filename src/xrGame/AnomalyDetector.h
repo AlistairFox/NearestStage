@@ -63,6 +63,8 @@ public:
 	virtual void 	OnMoveToSlot(const SInvItemPlace& prev);
 	virtual void 	OnMoveToRuck(const SInvItemPlace& prev);
 
+	virtual void net_Export(NET_Packet& P);
+	virtual void net_Import(NET_Packet& P);
 	void UpdateChargeLevel(void);
 	virtual void save(NET_Packet& output_packet);
 	virtual void load(IReader& input_packet);

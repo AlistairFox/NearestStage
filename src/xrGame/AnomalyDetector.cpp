@@ -266,6 +266,20 @@ void CDetectorAnomaly::OnMoveToRuck(const SInvItemPlace& prev)
 	m_bWorking = false;
 }
 
+void CDetectorAnomaly::net_Export(NET_Packet& P)
+{
+	inherited::net_Export(P);
+	P.w_float(GetCondition());
+	P.w_float(m_fCurrentChargeLevel);
+}
+
+void CDetectorAnomaly::net_Import(NET_Packet& P)
+{
+	inherited::net_Import(P);
+	SetCondition(P.r_float());
+	m_fCurrentChargeLevel = P.r_float();
+}
+
 void CDetectorAnomaly::OnMoveToSlot(const SInvItemPlace& prev)
 {
 	inherited::OnMoveToSlot(prev);

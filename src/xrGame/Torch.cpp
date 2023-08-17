@@ -522,6 +522,9 @@ void CTorch::net_Export			(NET_Packet& P)
 			F |= eAttached;
 	}
 	P.w_u8(F);
+
+	P.w_float(GetCondition());
+	P.w_float(m_fCurrentChargeLevel);
 //	Msg("CTorch::net_export - NV[%d]", m_bNightVisionOn);
 }
 
@@ -544,6 +547,11 @@ void CTorch::net_Import			(NET_Packet& P)
 			SwitchNightVision			(new_m_bNightVisionOn);
 		}
 	}
+	float cond = P.r_float();
+	float curr_cond = P.r_float();
+	SetCondition(cond);
+	m_fCurrentChargeLevel = curr_cond;
+	Msg("torch import %f", cond);
 }
 
 void CTorch::save(NET_Packet& output_packet)
