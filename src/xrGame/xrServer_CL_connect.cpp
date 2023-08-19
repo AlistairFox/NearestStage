@@ -398,13 +398,13 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 				bad_register_file->save_as(bad_register);
 				if (bad_register_descr == 0)
 				{
-					Msg("!! ERROR: пользователю была отказана регистрация по причине 0");
+					Msg("!! ERROR: пользователю была отказана регистрация по причине некорректный никнейм");
 					SendConnectResult(CL, 0, ecr_data_verification_failed, "Отказ регистрации: смените никнейм!");
 					return;
 				}
 				else if (bad_register_descr == 1)
 				{
-					Msg("!! ERROR: пользователю была отказана регистрация по причине 1");
+					Msg("!! ERROR: пользователю была отказана регистрация по причине некорректный пароль");
 					SendConnectResult(CL, 0, ecr_data_verification_failed, "Отказ регистрации: смените пароль!");
 					return;
 				}
