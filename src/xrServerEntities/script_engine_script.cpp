@@ -108,10 +108,17 @@ void prefetch_module(LPCSTR file_name)
 	ai().script_engine().process_file(file_name);
 }
 
+extern bool registration = false;
+void SwitchRegistration(bool value)
+{ 
+ registration = value; 
+}
+
 class CAuthForm
 {
 public:
 	bool loaded = false;
+	bool registration = false;
 	LPCSTR name;
 	LPCSTR pass;
 	LPCSTR ip;
@@ -121,6 +128,10 @@ public:
 	LPCSTR get_pass() { return pass; }
 	LPCSTR get_ip() { return ip; }
 	LPCSTR get_port() { return port; }
+	void set_name(LPCSTR value) { name = value; }
+	void set_pass(LPCSTR value) { pass = value; }
+	void set_ip(LPCSTR value) { ip = value; }
+	void set_port(LPCSTR value) { port = value; }
 	bool get_loaded() { return loaded; }
 
 	CAuthForm() {};
@@ -300,8 +311,13 @@ void CScriptEngine::script_register(lua_State *L)
 		.def("pass", &CAuthForm::get_pass)
 		.def("ip", &CAuthForm::get_ip)
 		.def("port", &CAuthForm::get_port)
+		.def("set_name", &CAuthForm::set_name)
+		.def("set_pass", &CAuthForm::set_pass)
+		.def("set_ip", &CAuthForm::set_ip)
+		.def("set_port", &CAuthForm::set_port)
 		];
 
 	function(L, "save_auth", SetLoginAuth);
 	function(L, "load_auth", GetLoginAuth);
+	function(L, "registration_switch", SwitchRegistration);
 }

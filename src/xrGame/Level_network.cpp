@@ -458,6 +458,7 @@ BOOL			CLevel::Connect2Server				(LPCSTR options)
 	return TRUE;
 };
 
+extern bool registration;
 void			CLevel::OnBuildVersionChallenge		()
 {
 	NET_Packet P;
@@ -474,10 +475,17 @@ void			CLevel::OnBuildVersionChallenge		()
 #else
 	u64 auth = FS.auth_get();
 #endif //#ifdef DEBUG
+
+	if (registration)
+		Msg("Registration on");
+
 	P.w_u64					(auth);
 	P.w_stringZ(Core.UserName);
 	P.w_stringZ(Core.Password);
 	P.w_stringZ(h);
+	P.w_u8(registration);
+	registration = false;
+
 
 	SecureSend				(P, net_flags(TRUE, TRUE, TRUE, TRUE));
 };
