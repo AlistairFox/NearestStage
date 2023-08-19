@@ -2883,6 +2883,132 @@ public:
 	}
 };
 
+class CCC_disRegisterFile : public IConsole_Command
+{
+public:
+	CCC_disRegisterFile(LPCSTR N) :IConsole_Command(N) { bEmptyArgsHandled = false; }
+	virtual void Execute(LPCSTR args)
+	{
+		if (OnServer())
+		{
+			string_path registered_file;
+
+			string256 tmp, regfile_name;
+			exclude_raid_from_args(args, tmp, sizeof(tmp));
+
+			sscanf(tmp, "%s", &regfile_name);
+
+			xr_strcat(regfile_name, ".ltx");
+
+			FS.update_path(registered_file, "$mp_acces_reg$", regfile_name);
+			CInifile* registr_file = xr_new<CInifile>(registered_file, true);
+
+			if (FS.exist(registered_file))
+			{
+				if (registr_file->section_exist("user_data"))
+				{
+					Msg("--File acces.");
+					Msg("~ regfile name: %s.", regfile_name);
+					LPCSTR user_hwid;
+					user_hwid = registr_file->r_string("user_data", "hwid");
+					Msg("-- User with HWid: %s, has bad register name!", user_hwid);
+					string_path badreg_list;
+					FS.update_path(badreg_list, "$mp_bad_register$", "bad_register.ltx");
+					CInifile* badreg_list_file = xr_new<CInifile>(badreg_list, false, true);
+					if (!badreg_list_file->line_exist("bad_registration", user_hwid))
+					{
+						badreg_list_file->w_string("bad_registration", user_hwid, "0");
+						badreg_list_file->save_as(badreg_list);
+					}
+					else
+					{
+						Msg("!!!ERROR: User already in BadRegister List!");
+						return;
+					}
+				}
+			}
+			else
+			{
+				Msg("!!!ERROR: Uncorrect file name");
+				return;
+			}
+		}
+		else
+		{
+			NET_Packet P;
+			P.w_begin(M_REMOTE_CONTROL_CMD);
+			string128 str;
+			xr_sprintf(str, "Admin has rights %s", Core.UserName);
+			P.w_stringZ(str);
+			Level().Send(P, net_flags(TRUE, TRUE));
+		}
+	}
+
+};
+
+class CCC_disRegisterPassFile : public IConsole_Command
+{
+public:
+	CCC_disRegisterPassFile(LPCSTR N) :IConsole_Command(N) { bEmptyArgsHandled = false; }
+	virtual void Execute(LPCSTR args)
+	{
+		if (OnServer())
+		{
+			string_path registered_file;
+
+			string256 tmp, regfile_name;
+			exclude_raid_from_args(args, tmp, sizeof(tmp));
+
+			sscanf(tmp, "%s", &regfile_name);
+
+			xr_strcat(regfile_name, ".ltx");
+
+			FS.update_path(registered_file, "$mp_acces_reg$", regfile_name);
+			CInifile* registr_file = xr_new<CInifile>(registered_file, true);
+
+			if (FS.exist(registered_file))
+			{
+				if (registr_file->section_exist("user_data"))
+				{
+					Msg("--File acces.");
+					Msg("~ regfile name: %s.", regfile_name);
+					LPCSTR user_hwid;
+					user_hwid = registr_file->r_string("user_data", "hwid");
+					Msg("-- User with HWid: %s, has bad register pass!", user_hwid);
+					string_path badreg_list;
+					FS.update_path(badreg_list, "$mp_bad_register$", "bad_register.ltx");
+					CInifile* badreg_list_file = xr_new<CInifile>(badreg_list, false, true);
+					if (!badreg_list_file->line_exist("bad_registration", user_hwid))
+					{
+						badreg_list_file->w_string("bad_registration", user_hwid, "1");
+						badreg_list_file->save_as(badreg_list);
+					}
+					else
+					{
+						Msg("!!!ERROR: User already in BadRegister List!");
+						return;
+					}
+				}
+			}
+			else
+			{
+				Msg("!!!ERROR: Uncorrect file name");
+				return;
+			}
+		}
+		else
+		{
+			NET_Packet P;
+			P.w_begin(M_REMOTE_CONTROL_CMD);
+			string128 str;
+			xr_sprintf(str, "Admin has rights %s", Core.UserName);
+			P.w_stringZ(str);
+			Level().Send(P, net_flags(TRUE, TRUE));
+		}
+	}
+
+};
+
 class CCC_AdminAccount : public IConsole_Command
 {
 public:
@@ -3138,6 +3264,8 @@ void register_mp_console_commands()
 
 	CMD1(CCC_AdmRegisterAccount,	"adm_register_account");
 	CMD1(CCC_AdmRegisterFileAcc, "adm_register_file");
+	CMD1(CCC_disRegisterFile, "adm_badregistername_file");
+	CMD1(CCC_disRegisterPassFile, "adm_badregisterpass_file");
 	CMD1(CCC_AdmBanAccount,			"adm_ban_account");
 	CMD1(CCC_AdmUnBanAccount,		"adm_unban_account");
 

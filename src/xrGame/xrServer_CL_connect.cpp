@@ -226,6 +226,8 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 	string_path denied_reg;
 	string_path path_xray;
 	string_path banned_user;
+	string_path bad_register;
+	FS.update_path(bad_register, "$mp_bad_register$", "bad_register.ltx");
 	FS.update_path(banned_user, "$mp_banned_users$", "banned_list.ltx");
 	FS.update_path(path_xray, "$mp_saves_logins$", "logins.ltx");
 
@@ -236,6 +238,8 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 	CInifile* banlist = xr_new<CInifile>(banned_user, true);
 
 	CInifile* file = xr_new<CInifile>(path_xray, true);
+
+	CInifile* bad_register_file = xr_new<CInifile>(bad_register, false, true);
 
 	if (!CL->flags.bLocal)
 	{
@@ -271,116 +275,143 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 		}
 		else
 		{
-			if (reg == 0)
+			if (!bad_register_file->line_exist("bad_registration", comp_name.c_str()))
 			{
-				if (file->section_exist(login))
+				if (reg == 0)
 				{
-					shared_str pass_check;
-
-					if (file->line_exist(login, "password"))
+					if (file->section_exist(login))
 					{
-						pass_check = file->r_string(login, "password");
-						if (file->line_exist(login, "Admin"))
+						shared_str pass_check;
+
+						if (file->line_exist(login, "password"))
 						{
-							if (file->r_bool(login, "Admin"))
+							pass_check = file->r_string(login, "password");
+							if (file->line_exist(login, "Admin"))
 							{
-								xrClientData* data = ID_to_client(CL->ID);
-								if (data && data->ps)
+								if (file->r_bool(login, "Admin"))
 								{
-									Msg("-- %s является администратором", login.c_str());
-									data->ps->setFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS);
-									data->m_admin_rights.m_has_admin_rights = true;
+									xrClientData* data = ID_to_client(CL->ID);
+									if (data && data->ps)
+									{
+										Msg("-- %s является администратором", login.c_str());
+										data->ps->setFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS);
+										data->m_admin_rights.m_has_admin_rights = true;
+									}
 								}
 							}
+
 						}
 
-					}
 
-
-					if (xr_strcmp(pass_check, password) != 0)
-					{
-						Msg("!! ERROR: Пользователь ввел неверный пароль");
-						SendConnectResult(CL, 0, ecr_data_verification_failed, "Проверьте пароль.");
-						return;
-					}
-
-					if (file->line_exist(login, "banned"))
-					{
-						SendConnectResult(CL, 0, ecr_data_verification_failed, "Вы забанены.");
-						return;
-					}
-
-					if (Level().game)
-						for (auto pl : Game().players)
+						if (xr_strcmp(pass_check, password) != 0)
 						{
-							if (!xr_strcmp(pl.second->getName(), login))
-							{
-								Msg("!! ERROR: Повторный вход с одного аккаунта");
-								SendConnectResult(CL, 0, ecr_data_verification_failed, "Повторный вход с одного аккаунта.");
-								return;
-							}
+							Msg("!! ERROR: Пользователь ввел неверный пароль");
+							SendConnectResult(CL, 0, ecr_data_verification_failed, "Проверьте пароль.");
+							return;
 						}
-				}
-				else
-				{
-					Msg("!! ERROR: Пользователь ввел неверный логин");
-					SendConnectResult(CL, 0, ecr_data_verification_failed, "Неверный Логин.");
-					return;
-				}
 
-			}
-			else
-			{
-				LPCSTR hwid = comp_name.c_str();
-				string_path reg_data;
-				FS.update_path(reg_data, "$reg_data$", "hw_buffer.ltx");
-				CInifile* reg_data_file = xr_new<CInifile>(reg_data, false, true);
+						if (file->line_exist(login, "banned"))
+						{
+							SendConnectResult(CL, 0, ecr_data_verification_failed, "Вы забанены.");
+							return;
+						}
 
-				if (reg_data_file->line_exist("hwbuffer", hwid))
-				{
-					Msg("!! ERROR: Попытка повторного запроса на регистрацию от пользователя с HWid: %s", hwid);
-					SendConnectResult(CL, 0, ecr_data_verification_failed, "У вас уже имеется зарегистрированный аккаунт!");
-					return;
-				}
-				else if (FS.exist(denied_reg))
-				{
-					Msg("!! ERROR: попытка регистрации некорректного никнейма!");
-					SendConnectResult(CL, 0, ecr_data_verification_failed, "Заявка на регистрацию отклоненна: некорректный никнейм");
-					return;
-				}
-				else if (!file->section_exist(login))
-				{
-					LPCSTR username = login.c_str();
-					string_path path_registered;
-					string256 transl;
-					sprintf(transl, "%s.ltx", username);
-					FS.update_path(path_registered, "$mp_acces_reg$", transl);
-					CInifile* regacc = xr_new<CInifile>(path_registered, false, true);
-					if (FS.exist(path_registered))
-					{
-						Msg("!! ERROR: Попытка повторной регистрации аккаунта %s", username);
-						SendConnectResult(CL, 0, ecr_data_verification_failed, "Данный никнейм уже ожидает регистрации.");
-						return;
+						if (Level().game)
+							for (auto pl : Game().players)
+							{
+								if (!xr_strcmp(pl.second->getName(), login))
+								{
+									Msg("!! ERROR: Повторный вход с одного аккаунта");
+									SendConnectResult(CL, 0, ecr_data_verification_failed, "Повторный вход с одного аккаунта.");
+									return;
+								}
+							}
 					}
 					else
 					{
-						if (regacc)
-						{
-							regacc->w_string("user_data", "username", username);
-							regacc->w_string("user_data", "user_password", password.c_str());
-							regacc->w_string("user_data", "hwid", comp_name.c_str());
-							regacc->save_as(path_registered);
-							Msg("~ Пользователь %s подал запрос на регистрацию!", username);
-						}
-
-						SendConnectResult(CL, 0, ecr_data_verification_failed, "Вас Зарегистрируют в Ближайшее время!");
+						Msg("!! ERROR: Пользователь ввел неверный логин");
+						SendConnectResult(CL, 0, ecr_data_verification_failed, "Неверный Логин.");
 						return;
 					}
+
 				}
 				else
 				{
-					Msg("!! ERROR: Попытка регистрации занятого никнейма!");
-					SendConnectResult(CL, 0, ecr_data_verification_failed, "Данный никнейм уже зарегистрирован!");
+					LPCSTR hwid = comp_name.c_str();
+					string_path reg_data;
+					FS.update_path(reg_data, "$reg_data$", "hw_buffer.ltx");
+					CInifile* reg_data_file = xr_new<CInifile>(reg_data, false, true);
+
+					if (reg_data_file->line_exist("hwbuffer", hwid))
+					{
+						Msg("!! ERROR: Попытка повторного запроса на регистрацию от пользователя с HWid: %s", hwid);
+						SendConnectResult(CL, 0, ecr_data_verification_failed, "У вас уже имеется зарегистрированный аккаунт!");
+						return;
+					}
+					else if (FS.exist(denied_reg))
+					{
+						Msg("!! ERROR: попытка регистрации некорректного никнейма!");
+						SendConnectResult(CL, 0, ecr_data_verification_failed, "Заявка на регистрацию отклоненна: некорректный никнейм");
+						return;
+					}
+					else if (!file->section_exist(login))
+					{
+						LPCSTR username = login.c_str();
+						string_path path_registered;
+						string256 transl;
+						sprintf(transl, "%s.ltx", username);
+						FS.update_path(path_registered, "$mp_acces_reg$", transl);
+						CInifile* regacc = xr_new<CInifile>(path_registered, false, true);
+						if (FS.exist(path_registered))
+						{
+							Msg("!! ERROR: Попытка повторной регистрации аккаунта %s", username);
+							SendConnectResult(CL, 0, ecr_data_verification_failed, "Данный никнейм уже ожидает регистрации.");
+							return;
+						}
+						else
+						{
+							if (regacc)
+							{
+								regacc->w_string("user_data", "username", username);
+								regacc->w_string("user_data", "user_password", password.c_str());
+								regacc->w_string("user_data", "hwid", comp_name.c_str());
+								regacc->save_as(path_registered);
+								Msg("~ Пользователь %s подал запрос на регистрацию!", username);
+							}
+
+							SendConnectResult(CL, 0, ecr_data_verification_failed, "Вас Зарегистрируют в Ближайшее время!");
+							return;
+						}
+					}
+					else
+					{
+						Msg("!! ERROR: Попытка регистрации занятого никнейма!");
+						SendConnectResult(CL, 0, ecr_data_verification_failed, "Данный никнейм уже зарегистрирован!");
+						return;
+					}
+				}
+			}
+			else
+			{
+				u8 bad_register_descr = bad_register_file->r_u8("bad_registration", comp_name.c_str());
+				bad_register_file->remove_line("bad_registration", comp_name.c_str());
+				bad_register_file->save_as(bad_register);
+				if (bad_register_descr == 0)
+				{
+					Msg("!! ERROR: пользователю была отказана регистрация по причине 0");
+					SendConnectResult(CL, 0, ecr_data_verification_failed, "Отказ регистрации: смените никнейм!");
+					return;
+				}
+				else if (bad_register_descr == 1)
+				{
+					Msg("!! ERROR: пользователю была отказана регистрация по причине 1");
+					SendConnectResult(CL, 0, ecr_data_verification_failed, "Отказ регистрации: смените пароль!");
+					return;
+				}
+				else
+				{
+					Msg("!! ERROR: пользователю была отказана регистрация по причине %s", bad_register_descr);
+					SendConnectResult(CL, 0, ecr_data_verification_failed, "Отказ регистрации: повторите попытку!");
 					return;
 				}
 			}
