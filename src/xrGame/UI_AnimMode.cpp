@@ -7,6 +7,7 @@
 #include "ui/UIXmlInit.h"
 #include "Level.h"
 #include "UICursor.h"
+#include <string_table.h>
 
 extern int ANIM_SELECTED = 0;
 
@@ -82,7 +83,7 @@ void CUIAMode::Init()
 
                     if (file->section_exist(name))
                     {
-                        LPCSTR name_desc = file->r_string(name, "anim_descr");
+                        LPCSTR name_desc = CStringTable().translate(file->r_string(name, "anim_descr")).c_str();
                         text[count] = UIHelper::CreateTextWnd(uiXML_Anims, "caption_text", 0);
                         text[count]->SetText(name_desc);
 
