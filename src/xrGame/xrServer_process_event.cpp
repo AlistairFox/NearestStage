@@ -17,6 +17,8 @@
 #include "Torch.h"
 #include "CustomDetector.h"
 #include "AnomalyDetector.h"
+#include "CustomOutfit.h"
+#include "Weapon.h"
 
 
 void xrServer::Process_event	(NET_Packet& P, ClientID sender)
@@ -416,6 +418,49 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 		CDetectorAnomaly* anomal_detector = smart_cast<CDetectorAnomaly*>(obj);
 		if (anomal_detector)
 			anomal_detector->Recharge(m_fBatteryChargeLevel);
+		SendBroadcast(SV_Client->ID, P, net_flags(true, true));
+	}break;
+	case GEG_PLAYER_REPAIR_OUTFIT:
+	{
+		float cond;
+		P.r_float(cond);
+		CObject* obj = Level().Objects.net_Find(destination);
+		CCustomOutfit* pOutf = smart_cast<CCustomOutfit*>(obj);
+		if (pOutf)
+		{
+			pOutf->SetCondition(cond);
+		}
+		SendBroadcast(SV_Client->ID, P, net_flags(true, true));
+	}break;
+	case GEG_PLAYER_REPAIR_HELMET:
+	{
+		float cond;
+		P.r_float(cond);
+		CObject* obj = Level().Objects.net_Find(destination);
+		SendBroadcast(SV_Client->ID, P, net_flags(true, true));
+	}break;
+	case GEG_PLAYER_REPAIR_WPN1:
+	{
+		float cond;
+		P.r_float(cond);
+		CObject* obj = Level().Objects.net_Find(destination);
+		CWeapon* wpn = smart_cast<CWeapon*>(obj);
+		if (wpn)
+		{
+			wpn->SetCondition(cond);
+		}
+		SendBroadcast(SV_Client->ID, P, net_flags(true, true));
+	}break;
+	case GEG_PLAYER_REPAIR_WPN2:
+	{
+		float cond;
+		P.r_float(cond);
+		CObject* obj = Level().Objects.net_Find(destination);
+		CWeapon* wpn = smart_cast<CWeapon*>(obj);
+		if (wpn)
+		{
+			wpn->SetCondition(cond);
+		}
 		SendBroadcast(SV_Client->ID, P, net_flags(true, true));
 	}break;
 	case GE_MONEY_ACTOR:

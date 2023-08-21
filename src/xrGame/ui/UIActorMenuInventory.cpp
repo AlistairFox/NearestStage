@@ -35,6 +35,8 @@
 #include "../PDA.h"
 #include "../Battery.h"
 #include"../AnomalyDetector.h"
+#include"../RepairKit.h"
+#include "../Actor.h"
 
 #include "../actor_defs.h"
 
@@ -809,9 +811,10 @@ bool CUIActorMenu::TryUseItem( CUICellItem* cell_itm )
 	CAntirad*		pAntirad		= smart_cast<CAntirad*>		(item);
 	CEatableItem*	pEatableItem	= smart_cast<CEatableItem*>	(item);
 	CBattery* pBattery = smart_cast<CBattery*> (item);
+	CRepairKit* pRepairKit = smart_cast<CRepairKit*>	(item);
 	
 
-	if ( !(pMedkit || pAntirad || pEatableItem || pBottleItem || pBattery) )
+	if ( !(pMedkit || pAntirad || pEatableItem || pBottleItem || pBattery || pRepairKit))
 	{
 		return false;
 	}
@@ -1129,11 +1132,42 @@ void CUIActorMenu::PropertiesBoxForUsing( PIItem item, bool& b_show )
 	CBottleItem*	pBottleItem		= smart_cast<CBottleItem*>	(item);
 	CBattery* pBattery = smart_cast<CBattery*>		(item);
 	CDetectorAnomaly* pAnomDet = smart_cast<CDetectorAnomaly*> (item);
+	CRepairKit* pRepairKit = smart_cast<CRepairKit*>	(item);
 
 	CInventory* inv = &m_pActorInvOwner->inventory();
 	PIItem	item_in_torch_slot = inv->ItemFromSlot(TORCH_SLOT);
 	PIItem	item_in_art_detector_slot = inv->ItemFromSlot(DETECTOR_SLOT);
 	PIItem item_in_anomaly_slot = inv->ItemFromSlot(DOSIMETER_SLOT);
+	PIItem	item_in_outfit_slot = inv->ItemFromSlot(OUTFIT_SLOT);
+	PIItem	item_in_helmet_slot = inv->ItemFromSlot(HELMET_SLOT);
+	PIItem	item_in_knife_slot = inv->ItemFromSlot(KNIFE_SLOT);
+	PIItem	item_in_wpn1_slot = inv->ItemFromSlot(INV_SLOT_2);
+	PIItem	item_in_wpn2_slot = inv->ItemFromSlot(INV_SLOT_3);
+
+	CCustomOutfit* outfit = smart_cast<CCustomOutfit*>(Actor()->inventory().ItemFromSlot(OUTFIT_SLOT));
+	CHelmet* helmet = smart_cast<CHelmet*>(Actor()->inventory().ItemFromSlot(HELMET_SLOT));
+	CWeapon* knife = smart_cast<CWeapon*>(Actor()->inventory().ItemFromSlot(KNIFE_SLOT));
+	CWeapon* wpn1 = smart_cast<CWeapon*>(Actor()->inventory().ItemFromSlot(INV_SLOT_2));
+	CWeapon* wpn2 = smart_cast<CWeapon*>(Actor()->inventory().ItemFromSlot(INV_SLOT_3));
+
+	bool can_repair_outfit = false;
+	bool can_repair_helmet = false;
+	bool can_repair_helmet2 = false;
+	bool can_repair_knife = false;
+	bool can_repair_wpn1 = false;
+	bool can_repair_wpn2 = false;
+
+	if (outfit && pRepairKit)
+		can_repair_outfit = outfit->GetCondition() < 0.9f && outfit->GetCondition() >= 0.4f && outfit->m_SuitableRepairKit == pRepairKit->cNameSect().c_str();
+	if (helmet && pRepairKit)
+		can_repair_helmet = helmet->GetCondition() < 0.9f && helmet->GetCondition() >= 0.4f && helmet->m_SuitableRepairKit == pRepairKit->cNameSect().c_str();
+	if (knife && pRepairKit)
+		can_repair_knife = knife->GetCondition() < 0.9f && knife->GetCondition() >= 0.4f && knife->m_SuitableRepairKit == pRepairKit->cNameSect().c_str();
+	if (wpn1 && pRepairKit)
+		can_repair_wpn1 = wpn1->GetCondition() < 0.9f && wpn1->GetCondition() >= 0.4f && wpn1->m_SuitableRepairKit == pRepairKit->cNameSect().c_str();
+	if (wpn2 && pRepairKit)
+		can_repair_wpn2 = wpn2->GetCondition() < 0.9f && wpn2->GetCondition() >= 0.4f && wpn2->m_SuitableRepairKit == pRepairKit->cNameSect().c_str();
+
 
 	LPCSTR act_str = NULL;
 	if ( pMedkit || pAntirad )
@@ -1165,6 +1199,41 @@ void CUIActorMenu::PropertiesBoxForUsing( PIItem item, bool& b_show )
 			shared_str str = CStringTable().translate("st_charge_item");
 			str.printf("%s %s", str.c_str(), item_in_anomaly_slot->m_name.c_str());
 			m_UIPropertiesBox->AddItem(str.c_str(), (void*)item_in_anomaly_slot, BATTERY_CHARGE_DOSIMETER);
+			b_show = true;
+		}
+		return;
+	}
+	else if (pRepairKit)
+	{
+		if (item_in_outfit_slot && can_repair_outfit)
+		{
+			shared_str str = CStringTable().translate("st_repair");
+			str.printf("%s %s", str.c_str(), item_in_outfit_slot->m_name.c_str());
+			m_UIPropertiesBox->AddItem(str.c_str(), (void*)item_in_outfit_slot, REPAIR_KIT_OUTFIT);
+			b_show = true;
+		}
+
+		if (item_in_helmet_slot && can_repair_helmet)
+		{
+			shared_str str = CStringTable().translate("st_repair");
+			str.printf("%s %s", str.c_str(), item_in_helmet_slot->m_name.c_str());
+			m_UIPropertiesBox->AddItem(str.c_str(), (void*)item_in_helmet_slot, REPAIR_KIT_HELMET);
+			b_show = true;
+		}
+
+		if (item_in_wpn1_slot && can_repair_wpn1)
+		{
+			shared_str str = CStringTable().translate("st_repair");
+			str.printf("%s %s", str.c_str(), item_in_wpn1_slot->m_name.c_str());
+			m_UIPropertiesBox->AddItem(str.c_str(), (void*)item_in_wpn1_slot, REPAIR_KIT_WPN1);
+			b_show = true;
+		}
+
+		if (item_in_wpn2_slot && can_repair_wpn2)
+		{
+			shared_str str = CStringTable().translate("st_repair");
+			str.printf("%s %s", str.c_str(), item_in_wpn2_slot->m_name.c_str());
+			m_UIPropertiesBox->AddItem(str.c_str(), (void*)item_in_wpn2_slot, REPAIR_KIT_WPN2);
 			b_show = true;
 		}
 		return;
@@ -1413,6 +1482,46 @@ void CUIActorMenu::ProcessPropertiesBoxClicked( CUIWindow* w, void* d )
 		if (!pAnomDet)
 			break;
 		pAnomDet->TurnOff();
+		break;
+	}
+	case REPAIR_KIT_OUTFIT:
+	{
+		CRepairKit* repair_kit = smart_cast<CRepairKit*>(item);
+		if (!repair_kit)
+			break;
+		repair_kit->ChangeInOutfit();
+		repair_kit->m_iUseFor = 1;
+		TryUseItem(cell_item);
+		break;
+	}
+	case REPAIR_KIT_HELMET:
+	{
+		CRepairKit* repair_kit = smart_cast<CRepairKit*>(item);
+		if (!repair_kit)
+			break;
+		repair_kit->ChangeInHelmet();
+		repair_kit->m_iUseFor = 1;
+		TryUseItem(cell_item);
+		break;
+	}
+	case REPAIR_KIT_WPN1:
+	{
+		CRepairKit* repair_kit = smart_cast<CRepairKit*>(item);
+		if (!repair_kit)
+			break;
+		repair_kit->ChangeInWpn1();
+		repair_kit->m_iUseFor = 1;
+		TryUseItem(cell_item);
+		break;
+	}
+	case REPAIR_KIT_WPN2:
+	{
+		CRepairKit* repair_kit = smart_cast<CRepairKit*>(item);
+		if (!repair_kit)
+			break;
+		repair_kit->ChangeInWpn2();
+		repair_kit->m_iUseFor = 1;
+		TryUseItem(cell_item);
 		break;
 	}
 	}//switch

@@ -8,18 +8,21 @@
 #include "UIXmlInit.h"
 #include "UIHelper.h"
 #include "../string_table.h"
+#include "../RepairKit.h"
+#include "../inventory_item.h"
 
 CUIBoosterInfo::CUIBoosterInfo()
 {
 	for(u32 i = 0; i < eBoostExplImmunity; ++i)
 	{
-		m_booster_items[i] = NULL;
+		m_booster_items[i] = nullptr;
 	}
-	m_booster_satiety = NULL;
-	m_booster_anabiotic = NULL;
-	m_booster_time = NULL;
-	m_booster_thirst = NULL;
-	m_booster_battery = NULL;
+	m_booster_satiety = nullptr;
+	m_booster_anabiotic = nullptr;
+	m_booster_thirst = nullptr;
+	m_booster_battery = nullptr;
+	m_repair_kit_condition = nullptr;
+	m_booster_time = nullptr;
 }
 
 CUIBoosterInfo::~CUIBoosterInfo()
@@ -27,10 +30,11 @@ CUIBoosterInfo::~CUIBoosterInfo()
 	delete_data(m_booster_items);
 	xr_delete(m_booster_satiety);
 	xr_delete(m_booster_anabiotic);
-	xr_delete(m_booster_time);
 	xr_delete(m_booster_battery);
+	xr_delete(m_repair_kit_condition);
 	xr_delete(m_Prop_line);
 	xr_delete(m_booster_thirst);
+	xr_delete(m_booster_time);
 }
 
 LPCSTR boost_influence_caption[] =
@@ -107,6 +111,14 @@ void CUIBoosterInfo::InitFromXml(CUIXml& xml)
 	m_booster_thirst->SetCaption(name);
 	xml.SetLocalRoot(base_node);
 
+	//Repair Kit
+	m_repair_kit_condition = xr_new<UIBoosterInfoItem>();
+	m_repair_kit_condition->Init(xml, "boost_repair_kit_condition");
+	m_repair_kit_condition->SetAutoDelete(false);
+	name = CStringTable().translate("ui_inv_repair_kit_condition").c_str();
+	m_repair_kit_condition->SetCaption(name);
+	xml.SetLocalRoot(base_node);
+
 	m_booster_time = xr_new<UIBoosterInfoItem>();
 	m_booster_time->Init(xml, "boost_time");
 	m_booster_time->SetAutoDelete(false);
@@ -116,7 +128,7 @@ void CUIBoosterInfo::InitFromXml(CUIXml& xml)
 	xml.SetLocalRoot( stored_root );
 }
 
-void CUIBoosterInfo::SetInfo( shared_str const& section )
+void CUIBoosterInfo::SetInfo(CInventoryItem& pInvItem)
 {
 	DetachAll();
 	AttachChild( m_Prop_line );
@@ -127,6 +139,8 @@ void CUIBoosterInfo::SetInfo( shared_str const& section )
 		return;
 	}
 
+	const shared_str& section = pInvItem.object().cNameSect();
+	CRepairKit* pRepairKit = pInvItem.cast_repair_kit();
 	CEntityCondition::BOOSTER_MAP boosters = actor->conditions().GetCurBoosterInfluences();
 
 	float val = 0.0f, max_val = 1.0f;
@@ -209,21 +223,6 @@ void CUIBoosterInfo::SetInfo( shared_str const& section )
 		AttachChild(m_booster_anabiotic);
 	}
 
-	if(pSettings->line_exist(section.c_str(), "boost_time"))
-	{
-		val	= pSettings->r_float(section, "boost_time");
-		if(!fis_zero(val))
-		{
-			m_booster_time->SetValue(val);
-			pos.set(m_booster_time->GetWndPos());
-			pos.y = h;
-			m_booster_time->SetWndPos(pos);
-
-			h += m_booster_time->GetWndSize().y;
-			AttachChild(m_booster_time);
-		}
-	}
-
 	//M.F.S. Team Thirst
 	if (pSettings->line_exist(section.c_str(), "eat_thirst"))
 	{
@@ -252,6 +251,36 @@ void CUIBoosterInfo::SetInfo( shared_str const& section )
 
 			h += m_booster_battery->GetWndSize().y;
 			AttachChild(m_booster_battery);
+		}
+	}
+
+	//Repair Kit
+	if (pRepairKit)
+	{
+		val = pRepairKit->m_fRestoreCondition;
+
+		m_repair_kit_condition->SetValue(val);
+		pos.set(m_repair_kit_condition->GetWndPos());
+		pos.y = h;
+		m_repair_kit_condition->SetWndPos(pos);
+
+		h += m_repair_kit_condition->GetWndSize().y;
+		AttachChild(m_repair_kit_condition);
+	}
+
+
+	if (pSettings->line_exist(section.c_str(), "boost_time"))
+	{
+		val = pSettings->r_float(section, "boost_time");
+		if (!fis_zero(val))
+		{
+			m_booster_time->SetValue(val);
+			pos.set(m_booster_time->GetWndPos());
+			pos.y = h;
+			m_booster_time->SetWndPos(pos);
+
+			h += m_booster_time->GetWndSize().y;
+			AttachChild(m_booster_time);
 		}
 	}
 

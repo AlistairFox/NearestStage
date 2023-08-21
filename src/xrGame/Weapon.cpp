@@ -99,6 +99,8 @@ CWeapon::CWeapon()
 	bNVsecondVPstatus = false;
 	m_fZoomStepCount = 3.0f;
 	m_fZoomMinKoeff = 0.3f;
+
+	m_SuitableRepairKit = nullptr;
 }
 
 const shared_str CWeapon::GetScopeName() const
@@ -597,6 +599,8 @@ void CWeapon::Load		(LPCSTR section)
 		m_hit_probability[i]		= READ_IF_EXISTS(pSettings,r_float,section,temp,1.f);
 	}
 
+	m_SuitableRepairKit = READ_IF_EXISTS(pSettings, r_string, section, "suitable_repair_kit", "repair_kit");
+
 }
 
 void CWeapon::LoadFireParams		(LPCSTR section)
@@ -950,6 +954,22 @@ void CWeapon::OnEvent(NET_Packet& P, u16 type)
 			OnStateSwitch	(u32(state));
 		}
 		break;
+	case GEG_PLAYER_REPAIR_WPN1:
+	{
+		float cond;
+		P.r_float(cond);
+		CActor* pA = smart_cast<CActor*>(H_Parent());
+		PIItem item_from_slot1 = pA->inventory().ItemFromSlot(INV_SLOT_2);
+		item_from_slot1->SetCondition(cond);
+	}break;
+	case GEG_PLAYER_REPAIR_WPN2:
+	{
+		float cond;
+		P.r_float(cond);
+		CActor* pA = smart_cast<CActor*>(H_Parent());
+		PIItem item_from_slot2 = pA->inventory().ItemFromSlot(INV_SLOT_3);
+		item_from_slot2->SetCondition(cond);
+	}break;
 	default:
 		{
 			inherited::OnEvent(P,type);

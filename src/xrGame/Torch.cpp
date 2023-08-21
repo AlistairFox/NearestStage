@@ -551,7 +551,6 @@ void CTorch::net_Import			(NET_Packet& P)
 	float curr_cond = P.r_float();
 	SetCondition(cond);
 	m_fCurrentChargeLevel = curr_cond;
-	Msg("torch import %f", cond);
 }
 
 void CTorch::save(NET_Packet& output_packet)

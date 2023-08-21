@@ -495,6 +495,7 @@ public:
 		bool				unlimited_ammo				();
 	IC	bool				can_be_strapped				() const {return m_can_be_strapped;};
 
+	shared_str				m_SuitableRepairKit;
 protected:
 	u32						m_ef_main_weapon_type;
 	u32						m_ef_weapon_type;

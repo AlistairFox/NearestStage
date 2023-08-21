@@ -849,6 +849,7 @@
     <ClInclude Include="game_cl_roleplay.h" />
     <ClInclude Include="game_sv_roleplay.h" />
     <ClInclude Include="net_physics_state.h" />
+    <ClInclude Include="RepairKit.h" />
     <ClInclude Include="script_event.h" />
     <ClInclude Include="UIGameFMP.h" />
     <ClInclude Include="CustomDetector.h" />
@@ -2792,6 +2793,7 @@
     <ClCompile Include="game_sv_roleplay.cpp" />
     <ClCompile Include="game_sv_roleplay_drop_items.cpp" />
     <ClCompile Include="net_physics_state.cpp" />
+    <ClCompile Include="RepairKit.cpp" />
     <ClCompile Include="script_event.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">pch_script.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch_script.h</PrecompiledHeaderFile>

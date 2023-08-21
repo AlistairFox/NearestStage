@@ -2515,6 +2515,24 @@
     <Filter Include="EmbeddedEditor">
       <UniqueIdentifier>{0a32520c-0b00-4868-9bac-6f0483b4ae44}</UniqueIdentifier>
     </Filter>
+    <Filter Include="repairkit">
+      <UniqueIdentifier>{b08449d1-e5c8-4ded-9ad4-0989b6f59c0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Battery">
+      <UniqueIdentifier>{3499b997-5284-4a36-a7dd-dac9c8660436}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Backpack">
+      <UniqueIdentifier>{4a9c7cc0-5444-4ec7-87b0-1d0ba3e9058e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AnimationMode">
+      <UniqueIdentifier>{c4bdff4c-04e3-4ab3-b4ec-ea338213dd46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NewDetectors">
+      <UniqueIdentifier>{37fb6bed-cd56-4d0f-aa52-7627d78062d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HudGlass">
+      <UniqueIdentifier>{a248309c-97c6-4835-814b-6229799d1051}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mt_config.h">
@@ -7434,9 +7452,6 @@
     <ClInclude Include="VoiceSender.h">
       <Filter>Core\Client\VoiceChat</Filter>
     </ClInclude>
-    <ClInclude Include="UI_AnimMode.h" />
-    <ClInclude Include="Backpack.h" />
-    <ClInclude Include="DynamicHudGlass.h" />
     <ClInclude Include="embedded_editor\embedded_editor_helper.h">
       <Filter>EmbeddedEditor</Filter>
     </ClInclude>
@@ -7452,11 +7467,27 @@
     <ClInclude Include="embedded_editor\embedded_editor_admin.h">
       <Filter>EmbeddedEditor</Filter>
     </ClInclude>
-    <ClInclude Include="Battery.h" />
     <ClInclude Include="UI\UIInventoryItemParams.h">
       <Filter>UI</Filter>
     </ClInclude>
-    <ClInclude Include="AnomalyDetector.h" />
+    <ClInclude Include="RepairKit.h">
+      <Filter>repairkit</Filter>
+    </ClInclude>
+    <ClInclude Include="Battery.h">
+      <Filter>Battery</Filter>
+    </ClInclude>
+    <ClInclude Include="Backpack.h">
+      <Filter>Backpack</Filter>
+    </ClInclude>
+    <ClInclude Include="UI_AnimMode.h">
+      <Filter>AnimationMode</Filter>
+    </ClInclude>
+    <ClInclude Include="AnomalyDetector.h">
+      <Filter>NewDetectors</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicHudGlass.h">
+      <Filter>HudGlass</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -11143,10 +11174,6 @@
     <ClCompile Include="VoiceSender.cpp">
       <Filter>Core\Client\VoiceChat</Filter>
     </ClCompile>
-    <ClCompile Include="ActorAnimation_Scripts.cpp" />
-    <ClCompile Include="UI_AnimMode.cpp" />
-    <ClCompile Include="Backpack.cpp" />
-    <ClCompile Include="DynamicHudGlass.cpp" />
     <ClCompile Include="embedded_editor\embedded_editor_helper.cpp">
       <Filter>EmbeddedEditor</Filter>
     </ClCompile>
@@ -11162,11 +11189,30 @@
     <ClCompile Include="embedded_editor\embedded_editor_admin.cpp">
       <Filter>EmbeddedEditor</Filter>
     </ClCompile>
-    <ClCompile Include="Battery.cpp" />
     <ClCompile Include="UI\UIInventoryItemParams.cpp">
       <Filter>UI</Filter>
     </ClCompile>
-    <ClCompile Include="AnomalyDetector.cpp" />
+    <ClCompile Include="RepairKit.cpp">
+      <Filter>repairkit</Filter>
+    </ClCompile>
+    <ClCompile Include="Battery.cpp">
+      <Filter>Battery</Filter>
+    </ClCompile>
+    <ClCompile Include="Backpack.cpp">
+      <Filter>Backpack</Filter>
+    </ClCompile>
+    <ClCompile Include="UI_AnimMode.cpp">
+      <Filter>AnimationMode</Filter>
+    </ClCompile>
+    <ClCompile Include="ActorAnimation_Scripts.cpp">
+      <Filter>AnimationMode</Filter>
+    </ClCompile>
+    <ClCompile Include="AnomalyDetector.cpp">
+      <Filter>NewDetectors</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicHudGlass.cpp">
+      <Filter>HudGlass</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="ai\monsters\chimera\chimera_attack_state.h">

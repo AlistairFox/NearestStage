@@ -21,6 +21,7 @@ CHelmet::CHelmet()
 	m_boneProtection = xr_new<SBoneProtections>();
 
 	m_b_HasGlass = false;
+	m_SuitableRepairKit = nullptr;
 }
 
 
@@ -63,6 +64,7 @@ void CHelmet::Load(LPCSTR section)
 	m_fShowNearestEnemiesDistance	= READ_IF_EXISTS(pSettings, r_float, section, "nearest_enemies_show_dist",  0.0f );
 
 	m_b_HasGlass = !!READ_IF_EXISTS(pSettings, r_bool, section, "has_glass", FALSE);
+	m_SuitableRepairKit = READ_IF_EXISTS(pSettings, r_string, section, "suitable_repair_kit", "repair_kit");
 }
 
 void CHelmet::ReloadBonesProtection()
@@ -186,6 +188,21 @@ void CHelmet::OnMoveToRuck(const SInvItemPlace& previous_place)
 			if(pTorch)
 				pTorch->SwitchNightVision(false);
 		}
+	}
+}
+
+void CHelmet::OnEvent(NET_Packet& P, u16 type)
+{
+	switch (type)
+	{
+	case GEG_PLAYER_REPAIR_HELMET:
+	{
+		float cond;
+		P.r_float(cond);
+		SetCondition(cond);
+	}break;
+	default:
+		break;
 	}
 }
 

@@ -54,6 +54,7 @@ public:
 
 	shared_str				m_BonesProtectionSect;
 	shared_str				m_NightVisionSect;
+	shared_str				m_SuitableRepairKit;
 
 
 	bool					bIsHelmetAvaliable;
@@ -64,6 +65,7 @@ public:
 	const shared_str&		GetFullIconName			() const	{ return m_full_icon_name; }
 	u32						get_artefact_count		() const	{ return m_artefact_count; }
 
+	virtual void			OnEvent(NET_Packet& P, u16 type);
 	virtual BOOL			net_Spawn				(CSE_Abstract* DC);
 	virtual void			net_Export				(NET_Packet& P);
 	virtual void			net_Import				(NET_Packet& P);

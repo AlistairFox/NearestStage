@@ -30,11 +30,30 @@ CCustomOutfit::CCustomOutfit()
 	m_BonesProtectionSect = NULL;
 
 	m_b_HasGlass = false;
+	m_SuitableRepairKit = nullptr;
 }
 
 CCustomOutfit::~CCustomOutfit() 
 {
 	xr_delete(m_boneProtection);
+}
+
+void CCustomOutfit::OnEvent(NET_Packet& P, u16 type)
+{
+	switch (type)
+	{
+	case GEG_PLAYER_REPAIR_OUTFIT:
+	{
+		float cond;
+		P.r_float(cond);
+		float old_cond = GetCondition();
+		Msg("old cond %f", old_cond);
+		Msg("cond %f", cond);
+		SetCondition(cond);
+	}break;
+	default:
+		break;
+	}
 }
 
 BOOL CCustomOutfit::net_Spawn(CSE_Abstract* DC)
@@ -134,6 +153,7 @@ void CCustomOutfit::Load(LPCSTR section)
 	bIsHelmetAvaliable		= !!READ_IF_EXISTS(pSettings, r_bool, section, "helmet_avaliable", true);
 
 	m_b_HasGlass = !!READ_IF_EXISTS(pSettings, r_bool, section, "has_glass", FALSE);
+	m_SuitableRepairKit = READ_IF_EXISTS(pSettings, r_string, section, "suitable_repair_kit", "repair_kit");
 }
 
 void CCustomOutfit::ReloadBonesProtection()
