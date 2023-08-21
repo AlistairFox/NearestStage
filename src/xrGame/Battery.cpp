@@ -51,6 +51,11 @@ bool CBattery::Useful() const
 
 	if (m_iPortionsNum == 0) return false;
 
+	return true;
+}
+
+bool CBattery::UseAllowed()
+{
 	if (!H_Parent())
 		return false;
 	CActor* pA = smart_cast<CActor*>(Level().Objects.net_Find(H_Parent()->ID()));
@@ -63,15 +68,6 @@ bool CBattery::Useful() const
 
 	if (flashlight || artifact_detector || anomaly_detector)
 	{
-/*		if (flashlight && flashlight->m_fCurrentChargeLevel <= 0.99f && flashlight->m_SuitableBattery == this->cNameSect().c_str())
-			return true;
-		else if (artifact_detector && artifact_detector->m_fCurrentChargeLevel <= 0.99f && artifact_detector->m_SuitableBattery == this->cNameSect().c_str())
-			return true;
-		else if (anomaly_detector && anomaly_detector->m_fCurrentChargeLevel <= 0.99f && anomaly_detector->m_SuitableBattery == this->cNameSect().c_str())
-			return true;
-		else
-			return false;
-			*/
 		return true;
 	}
 	else

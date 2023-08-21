@@ -16,6 +16,7 @@
 #include "UIMainIngameWnd.h"
 #include "UIGameCustom.h"
 #include "eatable_item_object.h"
+#include "UIMessageBox.h"
 
 #include "../silencer.h"
 #include "../scope.h"
@@ -37,6 +38,7 @@
 #include"../AnomalyDetector.h"
 #include"../RepairKit.h"
 #include "../Actor.h"
+#include "UIProgressBar.h"
 
 #include "../actor_defs.h"
 
@@ -818,7 +820,7 @@ bool CUIActorMenu::TryUseItem( CUICellItem* cell_itm )
 	{
 		return false;
 	}
-	if ( !item->Useful() )
+	if (!item->Useful() || (pRepairKit && !pRepairKit->UseAllowed()) || (pBattery && !pBattery->UseAllowed()))
 	{
 		return false;
 	}
@@ -1170,6 +1172,10 @@ void CUIActorMenu::PropertiesBoxForUsing( PIItem item, bool& b_show )
 
 
 	LPCSTR act_str = NULL;
+
+	if ((pRepairKit && !pRepairKit->UseAllowed()) || (pBattery && !pBattery->UseAllowed()))
+		return;
+
 	if ( pMedkit || pAntirad )
 	{
 		act_str = "st_use";
@@ -1448,6 +1454,7 @@ void CUIActorMenu::ProcessPropertiesBoxClicked( CUIWindow* w, void* d )
 			break;
 		battery->m_iUseFor = 1;
 		TryUseItem(cell_item);
+		CallMessageBoxOK("Зарядка Фонарика Завершена!");
 		break;
 	}
 	case BATTERY_CHARGE_DETECTOR:
@@ -1457,6 +1464,7 @@ void CUIActorMenu::ProcessPropertiesBoxClicked( CUIWindow* w, void* d )
 			break;
 		battery->m_iUseFor = 2;
 		TryUseItem(cell_item);
+		CallMessageBoxOK("Зарядка Детектора Завершена!");
 		break;
 	}
 	case BATTERY_CHARGE_DOSIMETER:
@@ -1466,6 +1474,7 @@ void CUIActorMenu::ProcessPropertiesBoxClicked( CUIWindow* w, void* d )
 			break;
 		battery->ChargeAnomalyDetector();
 		TryUseItem(cell_item);
+		CallMessageBoxOK("Зарядка Дозиметра Завершена!");
 		break;
 	}
 	case ENABLE_ANOM_DET:
@@ -1492,6 +1501,8 @@ void CUIActorMenu::ProcessPropertiesBoxClicked( CUIWindow* w, void* d )
 		repair_kit->ChangeInOutfit();
 		repair_kit->m_iUseFor = 1;
 		TryUseItem(cell_item);
+		UpdateConditionProgressBars();
+		CallMessageBoxOK("Починка костюма Завершена!");
 		break;
 	}
 	case REPAIR_KIT_HELMET:
@@ -1502,6 +1513,8 @@ void CUIActorMenu::ProcessPropertiesBoxClicked( CUIWindow* w, void* d )
 		repair_kit->ChangeInHelmet();
 		repair_kit->m_iUseFor = 1;
 		TryUseItem(cell_item);
+		UpdateConditionProgressBars();
+		CallMessageBoxOK("Починка шлема Завершена!");
 		break;
 	}
 	case REPAIR_KIT_WPN1:
@@ -1512,6 +1525,8 @@ void CUIActorMenu::ProcessPropertiesBoxClicked( CUIWindow* w, void* d )
 		repair_kit->ChangeInWpn1();
 		repair_kit->m_iUseFor = 1;
 		TryUseItem(cell_item);
+		UpdateConditionProgressBars();
+		CallMessageBoxOK("Починка оружия Завершена!");
 		break;
 	}
 	case REPAIR_KIT_WPN2:
@@ -1522,6 +1537,8 @@ void CUIActorMenu::ProcessPropertiesBoxClicked( CUIWindow* w, void* d )
 		repair_kit->ChangeInWpn2();
 		repair_kit->m_iUseFor = 1;
 		TryUseItem(cell_item);
+		UpdateConditionProgressBars();
+		CallMessageBoxOK("Починка оружия Завершена!");
 		break;
 	}
 	}//switch

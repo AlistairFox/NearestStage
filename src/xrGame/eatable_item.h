@@ -26,6 +26,7 @@ public:
 	virtual void			OnH_A_Independent			();
 	virtual	bool			UseBy						(CEntityAlive* npc);
 	virtual	bool			Empty						()						{return PortionsNum()==0;};
+	bool			m_bNeedDestroyNotUseful;
 			int				PortionsNum					()	const				{return m_iPortionsNum;}
 
 protected:

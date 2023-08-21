@@ -19,6 +19,7 @@
 #include "AnomalyDetector.h"
 #include "CustomOutfit.h"
 #include "Weapon.h"
+#include "ActorHelmet.h"
 
 
 void xrServer::Process_event	(NET_Packet& P, ClientID sender)
@@ -393,10 +394,11 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 		P.r_float(m_fBatteryChargeLevel);
 
 		CObject* obj = Level().Objects.net_Find(destination);
-		CTorch* pTorch = smart_cast<CTorch*>(obj);
-		if (pTorch)
+		if (CTorch* pTorch = smart_cast<CTorch*>(obj))
+		{
 			pTorch->Recharge(m_fBatteryChargeLevel);
-		SendBroadcast(SV_Client->ID, P, net_flags(true, true));
+			SendBroadcast(SV_Client->ID, P, net_flags(true, true));
+		}
 
 	} break;
 	case GEG_PLAYER_CHARGE_DETECTORS:
@@ -405,63 +407,66 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 		P.r_float(m_fBatteryChargeLevel);
 
 		CObject* obj = Level().Objects.net_Find(destination);
-		CCustomDetector* artifact_detectors = smart_cast<CCustomDetector*>(obj);
-		if (artifact_detectors)
+		if (CCustomDetector* artifact_detectors = smart_cast<CCustomDetector*>(obj))
+		{
 			artifact_detectors->Recharge(m_fBatteryChargeLevel);
-		SendBroadcast(SV_Client->ID, P, net_flags(true, true));
+			SendBroadcast(SV_Client->ID, P, net_flags(true, true));
+		}
 	}break;
 	case GEG_PLAYER_CHARGE_DOSIMETER:
 	{
 		float m_fBatteryChargeLevel;
 		P.r_float(m_fBatteryChargeLevel);
 		CObject* obj = Level().Objects.net_Find(destination);
-		CDetectorAnomaly* anomal_detector = smart_cast<CDetectorAnomaly*>(obj);
-		if (anomal_detector)
+		if (CDetectorAnomaly* anomal_detector = smart_cast<CDetectorAnomaly*>(obj))
+		{
 			anomal_detector->Recharge(m_fBatteryChargeLevel);
-		SendBroadcast(SV_Client->ID, P, net_flags(true, true));
+			SendBroadcast(SV_Client->ID, P, net_flags(true, true));
+		}
 	}break;
 	case GEG_PLAYER_REPAIR_OUTFIT:
 	{
 		float cond;
 		P.r_float(cond);
 		CObject* obj = Level().Objects.net_Find(destination);
-		CCustomOutfit* pOutf = smart_cast<CCustomOutfit*>(obj);
-		if (pOutf)
+		if (CCustomOutfit* pOutf = smart_cast<CCustomOutfit*>(obj))
 		{
 			pOutf->SetCondition(cond);
+			SendBroadcast(SV_Client->ID, P, net_flags(true, true));
 		}
-		SendBroadcast(SV_Client->ID, P, net_flags(true, true));
 	}break;
 	case GEG_PLAYER_REPAIR_HELMET:
 	{
 		float cond;
 		P.r_float(cond);
 		CObject* obj = Level().Objects.net_Find(destination);
-		SendBroadcast(SV_Client->ID, P, net_flags(true, true));
+		if (CHelmet* helmet = smart_cast<CHelmet*>(obj))
+		{
+			helmet->SetCondition(cond);
+			SendBroadcast(SV_Client->ID, P, net_flags(true, true));
+		}
 	}break;
 	case GEG_PLAYER_REPAIR_WPN1:
 	{
 		float cond;
 		P.r_float(cond);
 		CObject* obj = Level().Objects.net_Find(destination);
-		CWeapon* wpn = smart_cast<CWeapon*>(obj);
-		if (wpn)
+		if(CWeapon* wpn = smart_cast<CWeapon*>(obj))
 		{
 			wpn->SetCondition(cond);
+			SendBroadcast(SV_Client->ID, P, net_flags(true, true));
 		}
-		SendBroadcast(SV_Client->ID, P, net_flags(true, true));
 	}break;
 	case GEG_PLAYER_REPAIR_WPN2:
 	{
 		float cond;
 		P.r_float(cond);
 		CObject* obj = Level().Objects.net_Find(destination);
-		CWeapon* wpn = smart_cast<CWeapon*>(obj);
-		if (wpn)
+		if(CWeapon* wpn = smart_cast<CWeapon*>(obj))
 		{
 			wpn->SetCondition(cond);
+			SendBroadcast(SV_Client->ID, P, net_flags(true, true));
 		}
-		SendBroadcast(SV_Client->ID, P, net_flags(true, true));
 	}break;
 	case GE_MONEY_ACTOR:
 	{

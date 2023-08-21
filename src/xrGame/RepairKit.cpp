@@ -30,7 +30,7 @@ void CRepairKit::Load(LPCSTR section)
 {
 	inherited::Load(section);
 
-	m_iPortionsNum = pSettings->r_s32(section, "eat_portions_num");
+	m_iPortionsNum = 1;
 	m_fRestoreCondition = READ_IF_EXISTS(pSettings, r_float, section, "restore_condition", 0.5f);
 	VERIFY(m_iPortionsNum < 10000);
 }
@@ -46,9 +46,13 @@ bool CRepairKit::Useful() const
 {
 	if (!inherited::Useful()) return false;
 
-	//проверить не все ли еще съедено
 	if (m_iPortionsNum == 0) return false;
 
+	return true;
+}
+
+bool CRepairKit::UseAllowed()
+{
 	if (!H_Parent())
 		return false;
 	CActor* pA = smart_cast<CActor*>(Level().Objects.net_Find(H_Parent()->ID()));
@@ -59,9 +63,9 @@ bool CRepairKit::Useful() const
 	CWeapon* wpn1 = smart_cast<CWeapon*>(pA->inventory().ItemFromSlot(INV_SLOT_2));
 	CWeapon* wpn2 = smart_cast<CWeapon*>(pA->inventory().ItemFromSlot(INV_SLOT_3));
 
-	if ((outfit || helmet || wpn1 || wpn2) && m_iUseFor == 1)
+	if (outfit || helmet || wpn1 || wpn2)
 	{
-	/*	if (outfit && outfit->GetCondition() < 0.9f && outfit->GetCondition() >= 0.4f && outfit->m_SuitableRepairKit == this->cNameSect().c_str())
+		if (outfit && outfit->GetCondition() < 0.9f && outfit->GetCondition() >= 0.4f && outfit->m_SuitableRepairKit == this->cNameSect().c_str())
 			return true;
 		else if (helmet && helmet->GetCondition() < 0.9f && helmet->GetCondition() >= 0.4f && helmet->m_SuitableRepairKit == this->cNameSect().c_str())
 			return true;
@@ -69,8 +73,8 @@ bool CRepairKit::Useful() const
 			return true;
 		else if (wpn2 && wpn2->GetCondition() < 0.9f && wpn2->GetCondition() >= 0.4f && wpn2->m_SuitableRepairKit == this->cNameSect().c_str())
 			return true;
-		else*/
-			return true;
+		else
+			return false;
 	}
 	else
 		return false;
@@ -79,9 +83,6 @@ bool CRepairKit::Useful() const
 bool CRepairKit::UseBy(CEntityAlive* entity_alive)
 {
 	if (!inherited::Useful()) return false;
-
-	if (m_iUseFor == 0)
-		return false;
 
 	if (m_iPortionsNum > 0)
 		--m_iPortionsNum;
