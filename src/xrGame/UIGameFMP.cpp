@@ -181,14 +181,6 @@ bool CUIGameFMP::IR_UIOnKeyboardPress(int dik)
 
 	switch (get_binded_action(dik))
 	{
-	case kACTIVE_JOBS:
-	{
-		if (pActor->inventory().m_slots[PDA_SLOT].m_pIItem)
-		{
-			if (!pActor->inventory_disabled())
-				ShowPdaMenu();
-		}
-	} break;
 	case kINVENTORY:
 	{
 		CActor* current_actor = static_cast_checked<CActor*>(Level().CurrentControlEntity());
@@ -216,7 +208,9 @@ bool CUIGameFMP::IR_UIOnKeyboardPress(int dik)
 
 		case kAnimationMode:
 		{
-			if (!m_anims->IsShown())
+			CUIPdaWnd* pda = CurrentGameUI() && &CurrentGameUI()->PdaMenu() ? &CurrentGameUI()->PdaMenu() : nullptr;
+
+			if (!m_anims->IsShown() && !pda->IsShown())
 				m_anims->ShowDialog(false);
 
 		}break;

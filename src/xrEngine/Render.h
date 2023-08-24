@@ -305,6 +305,7 @@ public:
 	virtual void					rmNormal				()											= 0;
 	virtual u32						memory_usage			()											= 0;
 
+	virtual void PdaRenderToTarget() = 0;
 	virtual							u32 active_phase() = 0;
 
 	ViewPort currentViewPort;

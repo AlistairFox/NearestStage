@@ -32,11 +32,11 @@ class PROTECT_API CDialogHolder :public pureFrame
 
 	void					StartMenu						(CUIDialogWnd* pDialog, bool bDoHideIndicators);
 	void					StopMenu						(CUIDialogWnd* pDialog);
-	void					SetMainInputReceiver			(CUIDialogWnd* ir, bool _find_remove);
 protected:
 	void					DoRenderDialogs					();
 	void					CleanInternals					();
 public:
+	void					SetMainInputReceiver(CUIDialogWnd* ir, bool _find_remove);
 							CDialogHolder					();
 	virtual					~CDialogHolder					();
 

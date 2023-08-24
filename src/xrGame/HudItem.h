@@ -147,6 +147,7 @@ public:
 	virtual bool				render_item_3d_ui_query	()					{return false;}
 
 	virtual bool				CheckCompatibility		(CHudItem*)			{return true;}
+	virtual BOOL				ParentIsActor();
 protected:
 
 	IC		void				SetPending			(BOOL H)			{ m_huditem_flags.set(fl_pending, H);}
@@ -177,5 +178,6 @@ public:
 	virtual void				debug_draw_firedeps		() {};
 
 	virtual CHudItem*			cast_hud_item			()				{ return this; }
+	IC std::string GetCurrentMotion() const { return *m_current_motion; }
 };
 

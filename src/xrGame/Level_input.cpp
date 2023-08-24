@@ -23,6 +23,8 @@
 #include "saved_game_wrapper.h"
 
 #include "../Include/xrRender/DebugRender.h"
+#include "ui\UIPdaWnd.h"
+#include "PDA.h"
 
 #ifdef DEBUG
 #	include "ai/monsters/BaseMonster/base_monster.h"
@@ -140,6 +142,9 @@ void CLevel::IR_OnKeyboardPress	(int key)
 
 	if(	g_bDisableAllInput )	return;
 
+	if (const auto pda = b_ui_exist ? &CurrentGameUI()->PdaMenu() : nullptr) // Fix PDA hotkey input for disabled state
+		if (pda->IsShown() && pda->OnKeyboardAction(key, WINDOW_KEY_PRESSED)) return;
+
 	switch ( _curr ) 
 	{
 	case kSCREENSHOT:
@@ -153,15 +158,17 @@ void CLevel::IR_OnKeyboardPress	(int key)
 		break;
 
 	case kQUIT: 
+	{
+
+		if (b_ui_exist && CurrentGameUI()->TopInputReceiver())
 		{
-			if(b_ui_exist && CurrentGameUI()->TopInputReceiver() )
-			{
-					if(CurrentGameUI()->IR_UIOnKeyboardPress(key))	return;//special case for mp and main_menu
-					CurrentGameUI()->TopInputReceiver()->HideDialog();
-			}else
-			{
-				Console->Execute("main_menu");
-			}return;
+			if (CurrentGameUI()->IR_UIOnKeyboardPress(key))	return;//special case for mp and main_menu
+			CurrentGameUI()->TopInputReceiver()->HideDialog();
+		}
+		else
+		{
+			Console->Execute("main_menu");
+		}return;
 		}break;
 	};
 

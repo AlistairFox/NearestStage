@@ -434,8 +434,20 @@ static class cl_screen_params : public R_constant_setup
 };
 static cl_screen_params binder_screen_params;
 
+static class cl_pda_params : public R_constant_setup
+{
+	u32 marker;
+	Fvector4 result;
 
+	virtual void setup(R_constant* C)
+	{
+		float pda_factor = g_pGamePersistent->pda_shader_data.pda_display_factor;
+		float pda_psy_factor = g_pGamePersistent->pda_shader_data.pda_psy_influence;
+		float pda_display_brightness = g_pGamePersistent->pda_shader_data.pda_displaybrightness;
+		RCache.set_c(C, pda_factor, pda_psy_factor, pda_display_brightness, 0.0f);
+	}
 
+} binder_pda_params;
 
 class cl_rain_params : public R_constant_setup
 {
@@ -530,6 +542,7 @@ void	CBlender_Compile::SetMapping	()
 	r_Constant("ssfx_blood_decals", &binder_ssfx_blood_decals);
 	r_Constant("ssfx_hud_drops_1", &binder_ssfx_hud_drops_1);
 	r_Constant("ssfx_hud_drops_2", &binder_ssfx_hud_drops_2);
+	r_Constant("pda_params", &binder_pda_params);
 
 	//hemi cube
 	r_Constant				("L_material",			&binder_material);

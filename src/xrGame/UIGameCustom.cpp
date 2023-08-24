@@ -59,7 +59,6 @@ CUIGameCustom::~CUIGameCustom()
 void CUIGameCustom::HideShownDialogs()
 {
 	HideActorMenu();
-	HidePdaMenu();
 	CUIDialogWnd* mir = TopInputReceiver();
 	if (mir && mir == TalkMenu)
 	{

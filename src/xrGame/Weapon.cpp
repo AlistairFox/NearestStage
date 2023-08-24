@@ -2232,15 +2232,13 @@ void CWeapon::UpdateHudAdditonal(Fmatrix& trans)
 
 	CActor* pA = smart_cast<CActor*>(H_Parent());
 	
-	if (pA->MpSafeMODE() > 0)
+	if (pA->MpSafeMODE())
 	{
 		safemode_rot = TRUE;
-		//Msg("safemode_rot true");
 	}
 	else
 	{
 		safemode_rot = FALSE;
-		//Msg("safemode_rot false");
 	}
 
 	if (b_hud_rotate)
@@ -2256,7 +2254,7 @@ void CWeapon::UpdateHudAdditonal(Fmatrix& trans)
 		curr_offs.mul(m_sFactor);
 		curr_rot.mul(m_sFactor);
 
-		if (safemode_rot == TRUE)
+		if (safemode_rot)
 			m_sFactor += Device.fTimeDelta / 0.3;
 		else
 			m_sFactor -= Device.fTimeDelta / 0.3;

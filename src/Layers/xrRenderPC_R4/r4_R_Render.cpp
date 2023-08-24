@@ -618,3 +618,13 @@ void CRender::AfterWorldRender()
 		HW.pContext->CopySubresourceRegion(res2, 0, 0, 0, 0, res, 0, &sourceRegion);
 	}
 }
+
+void CRender::PdaRenderToTarget()
+{
+	ref_rt* RT = &Target->rt_ui_pda;
+
+	ID3DTexture2D* pBuffer = nullptr;
+	HW.m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBuffer);
+	HW.pContext->CopyResource((*RT)->pSurface, pBuffer);
+	pBuffer->Release();
+}

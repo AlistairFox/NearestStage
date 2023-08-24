@@ -9,17 +9,24 @@
 CBlend	*PlayMotionByParts(IKinematicsAnimated* sa, MotionID motion_ID, BOOL bMixIn, PlayCallback Callback, LPVOID CallbackParam)
 {
 	CBlend	*ret = 0;
-	CMotionDef * md = sa->LL_GetMotionDef( motion_ID );
-
-	if( md->bone_or_part != BI_NONE )
-		return sa->LL_PlayCycle( md->bone_or_part, motion_ID, bMixIn, Callback, CallbackParam );
-
-	for (u16 i=0; i<MAX_PARTS; ++i) 
+	if (sa)
 	{
-		CBlend	*blend	= sa->LL_PlayCycle( i, motion_ID, bMixIn, Callback, CallbackParam );
-		if(blend && !ret)
-				ret = blend;
-			//m_anim_blend = PKinematicsAnimated->PlayCycle(*visual->startup_animation);
+		try
+		{
+			CMotionDef* md = sa->LL_GetMotionDef(motion_ID);
+
+			if (md && md->bone_or_part != BI_NONE)
+				return sa->LL_PlayCycle(md->bone_or_part, motion_ID, bMixIn, Callback, CallbackParam);
+
+			for (u16 i = 0; i < MAX_PARTS; ++i)
+			{
+				CBlend* blend = sa->LL_PlayCycle(i, motion_ID, bMixIn, Callback, CallbackParam);
+				if (blend && !ret)
+					ret = blend;
+				//m_anim_blend = PKinematicsAnimated->PlayCycle(*visual->startup_animation);
+			}
+		}
+		catch (...) {}
 	}
 	return ret;
 }

@@ -317,6 +317,7 @@ public:
 	virtual void					rmNormal					();
 
 	virtual							u32 active_phase() { return phase; };
+	void							PdaRenderToTarget();
 
 	// Constructor/destructor/loader
 	CRender							();

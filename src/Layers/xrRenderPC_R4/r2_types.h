@@ -52,6 +52,7 @@
 #define		r2_jitter			"$user$jitter_"			// --- dither
 #define		r2_jitter_mipped	"$user$jitter_mipped"			// --- dither
 #define		r2_sunmask			"shaders\\sunmask"
+#define		r2_RT_ui			"$user$ui"
 
 #define		r2_RT_blur_h_2	"$user$blur_h_2"
 #define		r2_RT_blur_2		"$user$blur_2"

@@ -20,6 +20,7 @@
 #include "artefact.h"
 #include "IKLimbsController.h"
 #include "player_hud.h"
+#include "PDA.h"
 
 static const float y_spin0_factor = 0.0f;
 static const float y_spin1_factor = 0.4f;
@@ -572,6 +573,7 @@ void CActor::g_SetAnimation(u32 mstate_rl)
 		CWeapon* W = smart_cast<CWeapon*>(_i);
 		CMissile* M = smart_cast<CMissile*>(_i);
 		CArtefact* A = smart_cast<CArtefact*>(_i);
+		CPda* P = smart_cast<CPda*>(_i);
 
 		if (!MpSafeMODE())
 		{
@@ -694,6 +696,20 @@ void CActor::g_SetAnimation(u32 mstate_rl)
 							default: M_torso = TW->moving[moving_idx];
 							}
 
+						}
+						else if (P)
+						{
+							switch (P->GetState())
+							{
+							case CPda::eIdle: M_torso = P->m_bZoomed ? TW->zoom : (moving_idx == STorsoWpn::eSprint ? ST->m_torso[0].moving[moving_idx] : ST->m_torso[4].moving[moving_idx]);
+								break;
+							case CPda::eShowing: M_torso = TW->draw;
+								break;
+							case CPda::eHiding: M_torso = TW->holster;
+								break;
+							default: M_torso = ST->m_torso[4].moving[moving_idx];
+								break;
+							}
 						}
 					}
 				}

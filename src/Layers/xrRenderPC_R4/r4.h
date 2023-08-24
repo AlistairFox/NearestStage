@@ -359,6 +359,7 @@ public:
 	virtual void					rmFar						();
 	virtual void					rmNormal					();
 
+	void							PdaRenderToTarget();
 	virtual							u32 active_phase() { return phase; };
 
 	// Constructor/destructor/loader

@@ -20,7 +20,7 @@
 #include "ui/UIPdaWnd.h"
 #include "ui/UITalkWnd.h"
 #include "ui/UIMessageBox.h"
-
+#include "inventory.h"
 
 CUIGameSP::CUIGameSP()
 :m_game(NULL),m_game_objective(NULL)
@@ -96,17 +96,16 @@ bool CUIGameSP::IR_UIOnKeyboardPress(int dik)
 
 	switch ( get_binded_action(dik) )
 	{
-	case kACTIVE_JOBS:
-		{
-			if ( !pActor->inventory_disabled() )
-				ShowPdaMenu();
-			break;
-		}
 
 	case kINVENTORY:
 		{
-			if ( !pActor->inventory_disabled() )
-				ShowActorMenu();
+		if (!pActor->inventory_disabled())
+		{
+			if (CurrentGameUI()->PdaMenu().IsShown())
+				pActor->inventory().Activate(NO_ACTIVE_SLOT);
+
+			ShowActorMenu();
+		}
 
 			break;
 		}

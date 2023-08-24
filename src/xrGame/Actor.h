@@ -460,6 +460,7 @@ public:
 	bool					CanSprint				();
 	bool					CanRun					();
 	void					StopAnyMove				();
+	void					StopSprint() { mstate_wishful &= ~mcSprint; }
 
 	bool					AnyAction				()	{return (mstate_real & mcAnyAction) != 0;};
 	bool					AnyMove					()	{return (mstate_real & mcAnyMove) != 0;};
