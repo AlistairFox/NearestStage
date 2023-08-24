@@ -481,7 +481,7 @@ void CDetailManager::details_clear()
 			xr_vector<SlotItemVec*>& vis = list[O];
 			if (!vis.empty())
 			{
-				vis.clear_not_free();
+				vis.erase(vis.begin(), vis.end());
 			}
 		}
 	}

@@ -67,8 +67,7 @@ public:
 
 	float fade_distance = 99999;
 	Fvector light_position;
-	
-		void details_clear();
+	void details_clear();
 
 	struct SlotItem
 	{

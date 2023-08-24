@@ -41,8 +41,7 @@ void	light::vis_prepare			()
 
 	vis.distance = Device.vCameraPosition.distance_to(spatial.sphere.P);
 	
-		if (skiptest || vis.distance <= (spatial.sphere.R * 1.01f + safe_area))
-	{
+	if (skiptest || vis.distance <= (spatial.sphere.R * 1.01f + safe_area)) {	// small error
 			// small error
 		vis.visible = true;
 		vis.pending = false;

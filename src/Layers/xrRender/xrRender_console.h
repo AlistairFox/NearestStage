@@ -2,12 +2,6 @@
 #define xrRender_consoleH
 #pragma once
 
-extern ECORE_API Fvector4 ps_ssfx_grass_shadows;
-extern ECORE_API Fvector3 ps_ssfx_shadow_cascades;
-extern ENGINE_API Fvector4 ps_ssfx_grass_interactive;
-extern ECORE_API Fvector4 ps_ssfx_int_grass_params_1;
-extern ENGINE_API Fvector4 ps_ssfx_int_grass_params_2;
-
 extern ECORE_API float ps_r2_tnmp_a; // r2-only
 extern ECORE_API float ps_r2_tnmp_b; // r2-only
 extern ECORE_API float ps_r2_tnmp_c; // r2-only

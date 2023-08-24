@@ -116,7 +116,7 @@ void CDetailManager::hw_Render_dump(const Fvector4& consts, const Fvector4& wave
 			// Grass benders data
 		IGame_Persistent::grass_data & GData = g_pGamePersistent->grass_shader_data;
 	Fvector4 player_pos = { 0, 0, 0, 0 };
-	int BendersQty = _min(16, ps_ssfx_grass_interactive.y + 1);
+	int BendersQty = _min(16, (int)(ps_ssfx_grass_interactive.y + 1));
 	
 			// Add Player?
 		if (ps_ssfx_grass_interactive.x > 0)
@@ -169,7 +169,6 @@ void CDetailManager::hw_Render_dump(const Fvector4& consts, const Fvector4& wave
 						RCache.get_ConstantDirect(strPos, BendersQty * sizeof(Fvector4), &GrassData, 0, 0);
 						c_grass = (Fvector4*)GrassData;
 						}
-					 VERIFY(c_grass);
 					
 						if (c_grass)
 						{
@@ -227,9 +226,6 @@ void CDetailManager::hw_Render_dump(const Fvector4& consts, const Fvector4& wave
 							if (scale <= 0)
 							 break;
 						
-													// Build matrix ( 3x4 matrix, last row - color )
-													//float scale = Instance.scale_calculated;
-
 						Fmatrix& M = Instance.mRotY;
 						c_storage[base + 0].set(M._11 * scale, M._21 * scale, M._31 * scale, M._41);
 						c_storage[base + 1].set(M._12 * scale, M._22 * scale, M._32 * scale, M._42);
@@ -274,6 +270,19 @@ void CDetailManager::hw_Render_dump(const Fvector4& consts, const Fvector4& wave
 				// flush if nessecary
 				if (dwBatch)
 				{
+					// TODO: add phase to RImplementation
+					if (ps_ssfx_grass_shadows.x <= 0)
+					{
+						//auto& dsgraph = RImplementation.get_context(CHW::IMM_CTX_ID);
+						if (!ps_r2_ls_flags.test(R2FLAG_SUN_DETAILS) ||
+							((ps_r2_ls_flags.test(R2FLAG_SUN_DETAILS) && (RImplementation.PHASE_SMAP == RImplementation.phase)) ||
+								(ps_r2_ls_flags.test(R2FLAG_SUN_DETAILS) && (RImplementation.PHASE_NORMAL == RImplementation.phase) && (!RImplementation.o_sun)) ||
+								(!ps_r2_ls_flags.test(R2FLAG_SUN_DETAILS) && (RImplementation.PHASE_NORMAL == RImplementation.phase))))
+						{
+							vis.erase(vis.begin(), vis.end());
+						}
+					}
+
 					Device.Statistic->RenderDUMP_DT_Count += dwBatch;
 					u32 dwCNT_verts = dwBatch * Object.number_vertices;
 					u32 dwCNT_prims = (dwBatch * Object.number_indices) / 3;

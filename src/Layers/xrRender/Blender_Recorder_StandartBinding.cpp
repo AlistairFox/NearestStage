@@ -172,7 +172,7 @@ class cl_fog_params	: public R_constant_setup {
 			float	n		= g_pGamePersistent->Environment().CurrentEnv->fog_near	;
 			float	f		= g_pGamePersistent->Environment().CurrentEnv->fog_far		;
 			float	r		= 1/(f-n);
-			result.set		(-n*r, r, r, r);
+			result.set(-n * r, n, f, r);
 		}
 		RCache.set_c	(C,result);
 	}
@@ -185,7 +185,7 @@ class cl_fog_color	: public R_constant_setup {
 	virtual void setup	(R_constant* C)	{
 		if (marker!=Device.dwFrame)	{
 			CEnvDescriptor&	desc	= *g_pGamePersistent->Environment().CurrentEnv;
-			result.set				(desc.fog_color.x,	desc.fog_color.y, desc.fog_color.z,	0);
+			result.set(desc.fog_color.x, desc.fog_color.y, desc.fog_color.z, desc.fog_density);
 		}
 		RCache.set_c	(C,result);
 	}
@@ -230,6 +230,12 @@ static class cl_inv_v : public R_constant_setup
 		RCache.set_c(C, result);
 	}
 } binder_inv_v;
+
+// Ascii1457's Screen Space Shaders
+extern ENGINE_API Fvector4 ps_ssfx_hud_drops_1;
+extern ENGINE_API Fvector4 ps_ssfx_hud_drops_2;
+extern ENGINE_API Fvector4 ps_ssfx_blood_decals;
+
 
 // DWM: set weather params
 class cl_u_weather : public R_constant_setup
@@ -349,6 +355,23 @@ class cl_hemi_color	: public R_constant_setup {
 
 static cl_hemi_color		binder_hemi_color;
 
+static class pp_image_corrections : public R_constant_setup
+{
+	virtual void setup(R_constant* C)
+	{
+		RCache.set_c(C, ps_r2_img_exposure, ps_r2_img_gamma, ps_r2_img_saturation, 1);
+	}
+} pp_image_corrections;
+
+class pp_color_grading : public R_constant_setup
+{
+	virtual void setup(R_constant* C) override
+	{
+		RCache.set_c(C, ps_r2_img_cg.x, ps_r2_img_cg.y, ps_r2_img_cg.z, 1.f);
+	}
+};
+static pp_color_grading binder_color_grading;
+
 class cl_sky_color : public R_constant_setup
  {
 	u32 marker;
@@ -411,51 +434,52 @@ static class cl_screen_params : public R_constant_setup
 };
 static cl_screen_params binder_screen_params;
 
-// Screen Space Shaders Stuff
-extern Fvector4 ps_ssfx_wpn_dof_1;
-extern float ps_ssfx_wpn_dof_2;
 
-// PseudoPBR
-extern float ps_r3_pbr_intensity;
-extern float ps_r3_pbr_roughness;
 
-static class cl_rain_params : public R_constant_setup
+
+class cl_rain_params : public R_constant_setup
 {
-	u32 marker;
-	Fvector4 result;
-
 	virtual void setup(R_constant* C)
 	{
 		float rainDensity = g_pGamePersistent->Environment().CurrentEnv->rain_density;
-		float rainWetness = g_pGamePersistent->Environment().wetness_factor;
+		float wetness_accum = g_pGamePersistent->Environment().wetness_accum;
 
-		RCache.set_c(C, rainDensity, rainWetness, 0.0f, 0.0f);
+		LPCSTR wetness_comment = "Wetness accumulator:";
+
+		//Log(wetness_comment, wetness_accum);
+
+		RCache.set_c(C, rainDensity, wetness_accum, 0, 0);
 	}
-} binder_rain_params;
+};
+static cl_rain_params binder_rain_params;
 
-static class cl_pseudopbr : public R_constant_setup
+class ssfx_blood_decals : public R_constant_setup
 {
 	virtual void setup(R_constant* C)
 	{
-		RCache.set_c(C, ps_r3_pbr_roughness, ps_r3_pbr_intensity, 0, 0);
+		RCache.set_c(C, ps_ssfx_blood_decals);
 	}
-} cl_pseudopbr;
+};
+static ssfx_blood_decals binder_ssfx_blood_decals;
 
-static class ssfx_wpn_dof_1 : public R_constant_setup
- {
-	virtual void setup(R_constant * C)
-		 {
-		RCache.set_c(C, ps_ssfx_wpn_dof_1.x, ps_ssfx_wpn_dof_1.y, ps_ssfx_wpn_dof_1.z, ps_ssfx_wpn_dof_1.w);
-		}
-	 }    ssfx_wpn_dof_1;
-
-static class ssfx_wpn_dof_2 : public R_constant_setup
+class ssfx_hud_drops_1 : public R_constant_setup
 {
- virtual void setup(R_constant * C)
-		{
-		RCache.set_c(C, ps_ssfx_wpn_dof_2, 0, 0, 0);
-		}
-	 }    ssfx_wpn_dof_2;
+	virtual void setup(R_constant* C)
+	{
+		RCache.set_c(C, ps_ssfx_hud_drops_1);
+	}
+};
+static ssfx_hud_drops_1 binder_ssfx_hud_drops_1;
+
+class ssfx_hud_drops_2 : public R_constant_setup
+{
+	virtual void setup(R_constant* C)
+	{
+		RCache.set_c(C, ps_ssfx_hud_drops_2);
+	}
+};
+static ssfx_hud_drops_2 binder_ssfx_hud_drops_2;
+
 
 // Standart constant-binding
 void	CBlender_Compile::SetMapping	()
@@ -468,8 +492,8 @@ void	CBlender_Compile::SetMapping	()
 
 	// Screen Space Shaders
 	r_Constant("sky_color", &binder_sky_color);
-	r_Constant("ssfx_wpn_dof_1", &ssfx_wpn_dof_1);
-	r_Constant("ssfx_wpn_dof_2", &ssfx_wpn_dof_2);
+
+	r_Constant("pp_img_corrections", &pp_image_corrections);
 
 	// DWM: out to shaders view to world mat, weather params, alternative screen res
 	r_Constant("m_view2world", &binder_m_v2w);
@@ -501,6 +525,11 @@ void	CBlender_Compile::SetMapping	()
 	r_Constant				("c_scale",			&tree_binder_c_scale);
 	r_Constant				("c_bias",			&tree_binder_c_bias);
 	r_Constant				("c_sun",			&tree_binder_c_sun);
+
+	//Screen Space Shaders
+	r_Constant("ssfx_blood_decals", &binder_ssfx_blood_decals);
+	r_Constant("ssfx_hud_drops_1", &binder_ssfx_hud_drops_1);
+	r_Constant("ssfx_hud_drops_2", &binder_ssfx_hud_drops_2);
 
 	//hemi cube
 	r_Constant				("L_material",			&binder_material);
@@ -537,8 +566,7 @@ void	CBlender_Compile::SetMapping	()
 #endif
 	r_Constant				("screen_res",		&binder_screen_res);
 
-	//PseudoPBR
-	r_Constant("pbr_settings", &cl_pseudopbr);
+	r_Constant("pp_img_cg", &binder_color_grading);
 
 	// detail
 	//if (bDetail	&& detail_scaler)

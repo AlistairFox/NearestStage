@@ -287,15 +287,31 @@ float ps_r2_tnmp_gamma = .25f; // r2-only
 float ps_r2_tnmp_onoff = .0f; // r2-only
 
 // Screen Space Shaders Stuff
-Fvector3 ps_ssfx_shadow_cascades = { 20, 80, 250 };
-Fvector4 ps_ssfx_grass_shadows = { .0f, .35f, 30.0f, .0f };
+// Anomaly
+extern ENGINE_API float ps_r2_img_exposure;		// r2-only
+extern ENGINE_API float ps_r2_img_gamma;		// r2-only
+extern ENGINE_API float ps_r2_img_saturation;	// r2-only
+extern ENGINE_API Fvector ps_r2_img_cg;			// r2-only
 
-Fvector4 ps_ssfx_grass_interactive = { .0f, .0f, 2000.0f, 1.0f };
-Fvector4 ps_ssfx_int_grass_params_1 = { 1.0f, 1.0f, 1.0f, 1.0f };
-Fvector4 ps_ssfx_int_grass_params_2 = { 1.0f, 5.0f, 1.0f, 1.0f };
+// Ascii1457's Screen Space Shaders
+extern ENGINE_API Fvector3 ps_ssfx_shadow_cascades;
+extern ENGINE_API Fvector4 ps_ssfx_grass_shadows;
+extern ENGINE_API Fvector4 ps_ssfx_grass_interactive;
+extern ENGINE_API Fvector4 ps_ssfx_int_grass_params_1;
+extern ENGINE_API Fvector4 ps_ssfx_int_grass_params_2;
+extern ENGINE_API Fvector4 ps_ssfx_hud_drops_1;
+extern ENGINE_API Fvector4 ps_ssfx_hud_drops_2;
+extern ENGINE_API Fvector4 ps_ssfx_blood_decals;
+extern ENGINE_API Fvector4 ps_ssfx_rain_1;
+extern ENGINE_API Fvector4 ps_ssfx_rain_2;
+extern ENGINE_API Fvector4 ps_ssfx_rain_3;
 
-Fvector4 ps_ssfx_wpn_dof_1 = { .0f, .0f, .0f, .0f };
-float ps_ssfx_wpn_dof_2 = 1.0f;
+int ps_screen_space_shaders = 0;
+
+//extern ENGINE_API Fvector4 ps_ssfx_wpn_dof_1;
+//extern ENGINE_API float ps_ssfx_wpn_dof_2;
+
+//Fvector4 ps_ssfx_wpn_dof_1 = { .0f, .0f, .0f, .0f };
 
 
 //	x - min (0), y - focus (1.4), z - max (100)
@@ -378,11 +394,11 @@ public:
 	void apply()
 		 {
 		#if defined(USE_DX10) || defined(USE_DX11)
-			RImplementation.init_cacades();
+			RImplementation.init_cascades();
 		#endif
 			 }
 	
-		CCC_ssfx_cascades(LPCSTR N, Fvector3 * V, const Fvector3 _min, const Fvector3 _max) : CCC_Vector3(N, V, _min, _max)
+		CCC_ssfx_cascades(LPCSTR N, Fvector3* V, const Fvector3 _min, const Fvector3 _max) : CCC_Vector3(N, V, _min, _max)
 		 {
 		};
 	
@@ -392,7 +408,7 @@ public:
 		apply();
 		}
 	
-		virtual void Status(TStatus & S)
+		virtual void GetStatus(TStatus& S)
 		 {
 		CCC_Vector3::Status(S);
 		apply();
@@ -978,6 +994,18 @@ void		xrRender_initconsole	()
 
 	CMD3(CCC_Mask, "r__actor_shadow", &ps_actor_shadow_flags, RFLAG_ACTOR_SHADOW);  //Swartz
 
+	tw_min.set(0, 0, 0);
+	tw_max.set(1, 1, 1);
+	Fvector4 tw2_min = { -100.f, -100.f, -100.f, -100.f };
+	Fvector4 tw2_max = { 100.f, 100.f, 100.f, 100.f };
+
+	CMD4(CCC_Vector3, "r__color_grading", &ps_r2_img_cg, tw_min, tw_max);
+	// Anomaly
+	CMD4(CCC_Float, "r__exposure", &ps_r2_img_exposure, 0.5f, 4.0f);
+	CMD4(CCC_Float, "r__gamma", &ps_r2_img_gamma, 0.5f, 2.2f);
+	CMD4(CCC_Float, "r__saturation", &ps_r2_img_saturation, 0.0f, 2.0f);
+
+
 	CMD3(CCC_Mask, "r2_raindrops", &ps_r2_rain_drops_flags, R2FLAG_RAIN_DROPS);
 	CMD3(CCC_Mask, "r2_rain_drops_control", &ps_r2_rain_drops_flags, R2FLAG_RAIN_DROPS_CONTROL);
 	CMD4(CCC_Float, "r2_rain_drops_intensity", &ps_r2_rain_drops_intensity, 0.f, 1.f);
@@ -1164,18 +1192,21 @@ void		xrRender_initconsole	()
 	CMD3(CCC_Mask,			"r3_volumetric_smoke",			&ps_r2_ls_flags,			R3FLAG_VOLUMETRIC_SMOKE);
 	CMD1(CCC_memory_stats,	"render_memory_stats" );
 
+
 	// Screen Space Shaders
+	CMD4(CCC_Integer, "r__screen_space_shaders", &ps_screen_space_shaders, 0, 1);
 	CMD4(CCC_Vector4, "ssfx_grass_shadows", &ps_ssfx_grass_shadows, Fvector4().set(0, 0, 0, 0), Fvector4().set(3, 1, 100, 100));
 	CMD4(CCC_ssfx_cascades, "ssfx_shadow_cascades", &ps_ssfx_shadow_cascades, Fvector3().set(1.0f, 1.0f, 1.0f), Fvector3().set(300, 300, 300));
-	
-		CMD4(CCC_Vector4, "ssfx_grass_interactive", &ps_ssfx_grass_interactive, Fvector4().set(0, 0, 0, 0), Fvector4().set(1, 15, 5000, 1));
-	CMD4(CCC_Vector4, "ssfx_int_grass_params_1", &ps_ssfx_int_grass_params_1, Fvector4().set(0, 0, 0, 0), Fvector4().set(5, 5, 5, 5));
+	CMD4(CCC_Vector4, "ssfx_grass_interactive", &ps_ssfx_grass_interactive, Fvector4().set(0, 0, 0, 0), Fvector4().set(1, 15, 5000, 1));
+	CMD4(CCC_Vector4, "ssfx_int_grass_params_1", &ps_ssfx_int_grass_params_1, Fvector4().set(0, 0, 0, 0), Fvector4().set(5, 5, 5, 60));
 	CMD4(CCC_Vector4, "ssfx_int_grass_params_2", &ps_ssfx_int_grass_params_2, Fvector4().set(0, 0, 0, 0), Fvector4().set(5, 20, 1, 5));
+	CMD4(CCC_Vector4, "ssfx_hud_drops_1", &ps_ssfx_hud_drops_1, Fvector4().set(0, 0, 0, 0), Fvector4().set(100000, 100, 100, 100));
+	CMD4(CCC_Vector4, "ssfx_hud_drops_2", &ps_ssfx_hud_drops_2, Fvector4().set(0, 0, 0, 0), tw2_max);
+	CMD4(CCC_Vector4, "ssfx_blood_decals", &ps_ssfx_blood_decals, Fvector4().set(0, 0, 0, 0), Fvector4().set(5, 5, 0, 0));
+	CMD4(CCC_Vector4, "ssfx_rain_1", &ps_ssfx_rain_1, Fvector4().set(0, 0, 0, 0), Fvector4().set(10, 5, 5, 2));
+	CMD4(CCC_Vector4, "ssfx_rain_2", &ps_ssfx_rain_2, Fvector4().set(0, 0, 0, 0), Fvector4().set(1, 10, 10, 10));
+	CMD4(CCC_Vector4, "ssfx_rain_3", &ps_ssfx_rain_3, Fvector4().set(0, 0, 0, 0), Fvector4().set(1, 10, 10, 10));
 
-	Fvector4 tw2_min = { -100.f, -100.f, -100.f, -100.f };
-	Fvector4 tw2_max = { 100.f, 100.f, 100.f, 100.f };
-		CMD4(CCC_Vector4, "ssfx_wpn_dof_1", &ps_ssfx_wpn_dof_1, tw2_min, tw2_max);
-	CMD4(CCC_Float, "ssfx_wpn_dof_2", &ps_ssfx_wpn_dof_2, 0, 1);
 
 	// Geometry optimization
 	CMD4(CCC_Integer, "r__optimize_static_geom", &opt_static, 0, 4);

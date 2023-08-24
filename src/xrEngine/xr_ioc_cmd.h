@@ -8,6 +8,26 @@
 
 #include "xrSASH.h"
 
+// Anomaly
+extern ENGINE_API float ps_r2_img_exposure;
+extern ENGINE_API float ps_r2_img_gamma;
+extern ENGINE_API float ps_r2_img_saturation;
+extern ENGINE_API Fvector ps_r2_img_cg;
+
+// Ascii's Shaders
+extern ENGINE_API Fvector4 ps_ssfx_grass_shadows;
+extern ENGINE_API Fvector3 ps_ssfx_shadow_cascades;
+extern ENGINE_API Fvector4 ps_ssfx_grass_interactive;
+extern ENGINE_API Fvector4 ps_ssfx_int_grass_params_1;
+extern ENGINE_API Fvector4 ps_ssfx_int_grass_params_2;
+extern ENGINE_API Fvector4 ps_ssfx_hud_drops_1;
+extern ENGINE_API Fvector4 ps_ssfx_hud_drops_2;
+extern ENGINE_API Fvector4 ps_ssfx_blood_decals;
+extern ENGINE_API Fvector4 ps_ssfx_rain_1;
+extern ENGINE_API Fvector4 ps_ssfx_rain_2;
+extern ENGINE_API Fvector4 ps_ssfx_rain_3;
+
+
 class ENGINE_API	IConsole_Command
 {
 public		:
@@ -268,39 +288,58 @@ protected	:
 public		
 :
 	CCC_Vector3(LPCSTR N, Fvector* V, const Fvector _min, const Fvector _max) :
-	  IConsole_Command(N),
-	  value(V)
+		IConsole_Command(N),
+		value(V)
 	{
 		min.set(_min);
 		max.set(_max);
 	};
-	const Fvector	GetValue	() const {return *value;};
-	Fvector*		GetValuePtr	() const {return value;};
+	const Fvector GetValue() const { return *value; };
+	Fvector* GetValuePtr() const { return value; };
 
-	virtual void	Execute	(LPCSTR args)
+	virtual void Execute(LPCSTR args)
 	{
 		Fvector v;
-		if (3!=sscanf(args,"%f,%f,%f",&v.x,&v.y,&v.z))	{ InvalidSyntax(); return; }
-		if (v.x<min.x || v.y<min.y || v.z<min.z)		{ InvalidSyntax(); return; }
-		if (v.x>max.x || v.y>max.y || v.z>max.z)		{ InvalidSyntax(); return; }
+		if (3 != sscanf(args, "%f,%f,%f", &v.x, &v.y, &v.z))
+		{
+			if (3 != sscanf(args, "(%f,%f,%f)", &v.x, &v.y, &v.z))
+			{
+				InvalidSyntax();
+				return;
+			}
+		}
+
+		if (v.x < min.x || v.y < min.y || v.z < min.z)
+		{
+			InvalidSyntax();
+			return;
+		}
+		if (v.x > max.x || v.y > max.y || v.z > max.z)
+		{
+			InvalidSyntax();
+			return;
+		}
 		value->set(v);
 	}
-	virtual void	Status	(TStatus& S)
-	{	
-		xr_sprintf	(S,sizeof(S),"(%f, %f, %f)",value->x,value->y,value->z);
-	}
-	virtual void	Info	(TInfo& I)
-	{	
-		xr_sprintf(I,sizeof(I),"vector3 in range [%e,%e,%e]-[%e,%e,%e]",min.x,min.y,min.z,max.x,max.y,max.z);
-	}
-	virtual void	fill_tips(vecTips& tips, u32 mode)
+
+	virtual void Status(TStatus& S)
 	{
-		TStatus  str;
-		xr_sprintf( str, sizeof(str), "(%e, %e, %e)  (current)  [(%e,%e,%e)-(%e,%e,%e)]", value->x, value->y, value->z, min.x, min.y, min.z, max.x, max.y, max.z );
-		tips.push_back( str );
-		IConsole_Command::fill_tips( tips, mode );
+		xr_sprintf(S, sizeof(S), "(%f, %f, %f)", value->x, value->y, value->z);
 	}
 
+	virtual void Info(TInfo& I)
+	{
+		xr_sprintf(I, sizeof(I), "vector3 in range [%e,%e,%e]-[%e,%e,%e]", min.x, min.y, min.z, max.x, max.y, max.z);
+	}
+
+	virtual void fill_tips(vecTips& tips, u32 mode)
+	{
+		TStatus str;
+		xr_sprintf(str, sizeof(str), "(%e, %e, %e) (current) [(%e,%e,%e)-(%e,%e,%e)]", value->x, value->y, value->z,
+			min.x, min.y, min.z, max.x, max.y, max.z);
+		tips.push_back(str);
+		IConsole_Command::fill_tips(tips, mode);
+	}
 };
 
 class CCC_Vector4 : public IConsole_Command

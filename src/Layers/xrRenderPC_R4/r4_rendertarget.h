@@ -98,7 +98,6 @@ public:
 	ref_rt						rt_secondVP;		// 32bit		(r,g,b,a) --//#SM+#-- +SecondVP+
 
 
-	resptr_core<CRT, resptrcode_crt> rt_Generic_temp;
 
 	//	Igor: for volumetric lights
 	ref_rt						rt_Generic_2;		// 32bit		(r,g,b,a)				// post-process, intermidiate results, etc.
@@ -133,6 +132,9 @@ public:
 	ref_texture					t_noise				[TEX_jitter_count];
 	ID3DTexture2D*			t_noise_surf_mipped;
 	ref_texture					t_noise_mipped;
+
+	// Anomaly
+	resptr_core<CRT, resptrcode_crt> rt_Generic_temp;
 private:
 	// OCCq
 

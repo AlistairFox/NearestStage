@@ -216,6 +216,7 @@ void CEnvironment::RenderLast		()
 
 void CEnvironment::OnDeviceCreate()
 {
+	wetness_accum = 0;
 //.	bNeed_re_create_env			= TRUE;
 	m_pRender->OnDeviceCreate();
 	/*

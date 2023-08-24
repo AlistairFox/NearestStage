@@ -18,6 +18,7 @@
 
 #define FLAME_TIME 0.05f
 
+extern ENGINE_API Fvector4 ps_ssfx_int_grass_params_2;
 
 float _nrand(float sigma)
 {
@@ -122,9 +123,8 @@ void CWeapon::FireTrace		(const Fvector& P, const Fvector& D)
 			Light_Start();
 
 		// Interactive Grass FX
-		//Fvector ShotPos = Fvector().mad(P, D, 1.5f);
-		//g_pGamePersistent->GrassBendersAddShot(cast_game_object()->ID(), ShotPos, D, 3.0f, 20.0f, ps_ssfx_int_grass_params_2.z, ps_ssfx_int_grass_params_2.w);
-
+		Fvector ShotPos = Fvector().mad(P, D, 1.5f);
+		g_pGamePersistent->GrassBendersAddShot(cast_game_object()->ID(), ShotPos, D, 3.0f, 20.0f, ps_ssfx_int_grass_params_2.z, ps_ssfx_int_grass_params_2.w);
 		// Ammo
 		m_magazine.pop_back();
 		--iAmmoElapsed;

@@ -17,7 +17,7 @@
 #include "../control_path_builder_base.h"
 #include "../../../actor_mp_client.h"
 
-
+extern ENGINE_API Fvector4 ps_ssfx_grass_interactive;
 CPseudoGigant::CPseudoGigant()
 {
 	CControlled::init_external(this);
@@ -270,10 +270,6 @@ void CPseudoGigant::on_threaten_execute()
 		pos.y += 0.1f;
 		m_sound_threaten_hit.play_at_pos(this, pos);
 
-		// Interactive Grass FX
-		extern Fvector4 ps_ssfx_grass_interactive;
-		g_pGamePersistent->GrassBendersAddExplosion(ID(), pos, Fvector().set(0, -99, 0), 1.33f, 5.0f, ps_ssfx_grass_interactive.w, 20);
-
 		// играть партиклы
 		PlayParticles(m_kick_particles, pos, Direction());
 
@@ -354,6 +350,8 @@ void CPseudoGigant::on_threaten_execute()
 				// Нанести хит
 				NET_Packet	l_P;
 				SHit		HS;
+
+				g_pGamePersistent->GrassBendersAddExplosion(pObj->ID(), pos, Fvector().set(0, -99, 0), 1.33f, 5.0f, ps_ssfx_grass_interactive.w, 20);
 
 				HS.GenHeader(GE_HIT, pA->ID());														//	u_EventGen	(l_P,GE_HIT, pA->ID());
 				HS.whoID = (pObj->ID());														//	l_P.w_u16	(ID());

@@ -193,7 +193,7 @@ void	CBlender_Tree::Compile	(CBlender_Compile& C)
 	case SE_R2_NORMAL_HQ:	// deffer
 
 				// Is a branch/bush. Use a different VS
-		if (oBlend.value)
+		if (oBlend.value && RImplementation.o.ssfx_branches)
 			tvs = "tree_branch";
 
 		if (bUseATOC)
