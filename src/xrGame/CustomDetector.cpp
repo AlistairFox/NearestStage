@@ -295,6 +295,7 @@ void CCustomDetector::OnEvent(NET_Packet& P, u16 type)
 
 	}break;
 	default:
+		inherited::OnEvent(P, type);
 		break;
 	}
 }

@@ -250,6 +250,7 @@ void CDetectorAnomaly::OnEvent(NET_Packet& P, u16 type)
 		Recharge(cond);
 	}break;
 	default:
+		inherited::OnEvent(P, type);
 		break;
 	}
 }

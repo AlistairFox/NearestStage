@@ -920,6 +920,22 @@ void CActor::Die	(CObject* who)
 				};
 			continue;
 			}
+			else
+			{
+				CCustomOutfit* pOutfit = smart_cast<CCustomOutfit*> (item_in_slot);
+				if (pOutfit)
+				{
+					pOutfit->DestroyObject();
+					continue;
+				}
+
+				CCustomDetector* pDet = smart_cast<CCustomDetector*>(item_in_slot);
+				if (pDet)
+				{
+					pDet->DestroyObject();
+					continue;
+				}
+			};
 			if(item_in_slot) 
 				inventory().Ruck(item_in_slot);
 		};

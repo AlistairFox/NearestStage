@@ -52,6 +52,7 @@ void CCustomOutfit::OnEvent(NET_Packet& P, u16 type)
 		SetCondition(cond);
 	}break;
 	default:
+		inherited::OnEvent(P, type);
 		break;
 	}
 }
