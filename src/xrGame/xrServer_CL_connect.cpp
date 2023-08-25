@@ -223,23 +223,22 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 	P.r_stringZ(comp_name);
 	P.r_u8(reg);
 
-	string_path denied_reg;
-	string_path path_xray;
-	string_path banned_user;
-	string_path bad_register;
-	FS.update_path(bad_register, "$mp_bad_register$", "bad_register.ltx");
-	FS.update_path(banned_user, "$mp_banned_users$", "banned_list.ltx");
-	FS.update_path(path_xray, "$mp_saves_logins$", "logins.ltx");
+	string_path denied_reg;// filtering names
+	string_path path_xray; // logins
+	string_path banned_user; // hwid banlist
+	string_path bad_register; // callback on uncorrect registration
 
 	LPCSTR blockednames = login.c_str();
-	FS.update_path(denied_reg, "$denied_accounts$", blockednames);
-	CInifile* denfile = xr_new<CInifile>(denied_reg, true);
 
-	CInifile* banlist = xr_new<CInifile>(banned_user, true);
+	FS.update_path(denied_reg, "$denied_accounts$", blockednames); // filtering names
+	FS.update_path(path_xray, "$mp_saves_logins$", "logins.ltx"); // logins
+	FS.update_path(banned_user, "$mp_banned_users$", "banned_list.ltx"); // hwid banlist
+	FS.update_path(bad_register, "$mp_bad_register$", "bad_register.ltx"); // callback on uncorrect registration
 
-	CInifile* file = xr_new<CInifile>(path_xray, true);
-
-	CInifile* bad_register_file = xr_new<CInifile>(bad_register, false, true);
+	CInifile* denfile = xr_new<CInifile>(denied_reg, true); // filtering names
+	CInifile* file = xr_new<CInifile>(path_xray, true); // logins
+	CInifile* banlist = xr_new<CInifile>(banned_user, true); // hwid banlist
+	CInifile* bad_register_file = xr_new<CInifile>(bad_register, false, true);  // callback on uncorrect registration
 
 	if (!CL->flags.bLocal)
 	{

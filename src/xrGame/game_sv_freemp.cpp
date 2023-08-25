@@ -470,6 +470,14 @@ void game_sv_freemp::Update()
 				xr_strcat(invbox_name, ".ltx");
 				FS.update_path(path_name, "$mp_saves_invbox$", invbox_name);
 
+
+				//check saving box or not
+				string_path curr_invbox_name;
+				FS.update_path(curr_invbox_name, "$mp_check_saves_invbox$", "save_box_list.ltx");
+				CInifile* curr_box_file = xr_new<CInifile>(curr_invbox_name, true);
+				LPCSTR box_name = box->name_replace();
+				//
+
 				if (!entity.second.loaded)
 				{
 					inventory_boxes_cse[entity.first].loaded = true;
@@ -477,7 +485,7 @@ void game_sv_freemp::Update()
 					LoadInvBox(box, boxFile);
 					xr_delete (boxFile);
 				}
-				else
+				else if(curr_box_file->line_exist("saving_boxes", box_name))
 				{
 					CInifile* boxFile = xr_new<CInifile>(path_name, false, false);
 					bool can_write = FS.can_modify_file(path_name);
@@ -485,6 +493,7 @@ void game_sv_freemp::Update()
 					SaveInvBox(box, boxFile);
 					boxFile->save_as(path_name);
 					xr_delete(boxFile);
+					xr_delete(curr_box_file);
 				}
 
 				
