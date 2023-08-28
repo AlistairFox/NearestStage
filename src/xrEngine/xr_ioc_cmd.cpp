@@ -714,6 +714,7 @@ ENGINE_API int			ps_r__Supersample			= 1;
 ENGINE_API int			ps_r__WallmarksOnSkeleton = 1;
 
 int ps_framelimiter = 0;
+Fvector3 rsstats_color = Fvector3().set(237, 0, 106);
 
 void CCC_Register()
 {
@@ -724,6 +725,7 @@ void CCC_Register()
 	CMD1(CCC_Disconnect,"disconnect"			);
 	CMD1(CCC_SaveCFG,	"cfg_save"				);
 	CMD1(CCC_LoadCFG,	"cfg_load"				);
+	CMD4(CCC_Vector3, "rs_stats_color", &rsstats_color, Fvector3().set(0, 0, 0), Fvector3().set(255, 255, 255));
 
 	//New
 	CMD4(CCC_Float, "svp_image_size_k", &psSVPImageSizeK, 0.1f, 2.f);

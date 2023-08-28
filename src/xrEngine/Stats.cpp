@@ -75,6 +75,8 @@ void _draw_cam_pos(CGameFont* pFont)
 
 u32 hex_color(int r, int g, int b) { int hex = 0xff000000 | (r << 16) | (g << 8) | b;     return hex; };
 
+extern Fvector3 rsstats_color;
+
 void CStats::Show() 
 {
 	// Stop timers
@@ -202,7 +204,7 @@ void CStats::Show()
 	if (psDeviceFlags.test(rsStatistic))
 	{
 		pFont->SetHeightI(0.03f);
-		F.SetColor(hex_color(237, 0, 106));
+		F.SetColor(hex_color(rsstats_color.x, rsstats_color.y, rsstats_color.z));
 		F.OutSet(1650, 20);
 		F.OutNext("FPS:   %3.0f", fFPS);
 
