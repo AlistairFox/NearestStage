@@ -88,8 +88,11 @@ protected:
 	float m_fUD_InertiaFactor;
 	static void _BCL JoystickCallback(CBoneInstance* B);
 public:
+	virtual void OnEvent(NET_Packet& P, u16 type);
+	virtual void SwitchState(u32 S);
 	virtual void OnStateSwitch(u32 S);
 	virtual void OnAnimationEnd(u32 state);
+	virtual void TogglePda();
 	virtual void UpdateHudAdditonal(Fmatrix& trans);
 	virtual void OnMoveToRuck(const SInvItemPlace& prev);
 	virtual void UpdateCL();

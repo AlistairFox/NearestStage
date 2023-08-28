@@ -156,6 +156,8 @@ bool CUIPdaWnd::OnMouseAction(float x, float y, EUIMessages mouse_action)
 		CPda* pda = smart_cast<CPda*>(Actor()->inventory().ActiveItem());
 		if (pda)
 		{
+			if (pda->IsPending())
+				return true;
 
 			if (mouse_action == WINDOW_LBUTTON_DOWN)
 				bButtonL = true;
@@ -466,17 +468,6 @@ bool CUIPdaWnd::OnKeyboardAction(int dik, EUIMessages keyboard_action)
 
 						return true;
 				}
-				if (action == kACTIVE_JOBS && (!pUILogsWnd->IsShown()))		
-				{
-
-						CObject* obj = (GameID() == eGameIDSingle) ? Level().CurrentEntity() : Level().CurrentControlEntity();
-						{
-							IInputReceiver* IR = smart_cast<IInputReceiver*>(smart_cast<CGameObject*>(obj));
-							if (IR) IR->IR_OnKeyboardPress(action);
-						}
-						return true;
-
-				}
 				if ((action == kUSE || action == kINVENTORY || (action > kCAM_ZOOM_OUT && action < kWPN_NEXT)) && (!pUILogsWnd->IsShown())) // Since UI no longer passes non-movement inputs to the actor input receiver this is needed now.
 				{
 						CObject* obj = (GameID() == eGameIDSingle) ? Level().CurrentEntity() : Level().CurrentControlEntity();
@@ -489,6 +480,9 @@ bool CUIPdaWnd::OnKeyboardAction(int dik, EUIMessages keyboard_action)
 
 				if (action == kWPN_ZOOM)
 				{
+					if (pda->IsPending())
+						return false;
+
 					if (!pda->m_bZoomed)
 						Actor()->StopSprint();
 					else

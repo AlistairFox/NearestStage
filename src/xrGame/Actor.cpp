@@ -2129,37 +2129,6 @@ void CActor::AnimTorsoPlayCallBack(CBlend* B)
 	actor->m_bAnimTorsoPlayed = FALSE;
 }
 
-
-/*
-void CActor::UpdateMotionIcon(u32 mstate_rl)
-{
-	CUIMotionIcon*	motion_icon=CurrentGameUI()->UIMainIngameWnd->MotionIcon();
-	if(mstate_rl&mcClimb)
-	{
-		motion_icon->ShowState(CUIMotionIcon::stClimb);
-	}
-	else
-	{
-		if(mstate_rl&mcCrouch)
-		{
-			if (!isActorAccelerated(mstate_rl, IsZoomAimingMode()))
-				motion_icon->ShowState(CUIMotionIcon::stCreep);
-			else
-				motion_icon->ShowState(CUIMotionIcon::stCrouch);
-		}
-		else
-		if(mstate_rl&mcSprint)
-				motion_icon->ShowState(CUIMotionIcon::stSprint);
-		else
-		if(mstate_rl&mcAnyMove && isActorAccelerated(mstate_rl, IsZoomAimingMode()))
-			motion_icon->ShowState(CUIMotionIcon::stRun);
-		else
-			motion_icon->ShowState(CUIMotionIcon::stNormal);
-	}
-}
-*/
-
-
 CPHDestroyable*	CActor::ph_destroyable	()
 {
 	return smart_cast<CPHDestroyable*>(character_physics_support());

@@ -424,33 +424,6 @@ void game_sv_freemp::Update()
 				SavePlayerDetectors(player.second, nullptr);
 				xr_delete(file);
 			}
-
-			//CObject* obj = Level().Objects.net_Find(player.second->GameID);
-			//CActor* actor = smart_cast<CActor*>(obj);
-/*
-			if (!actor)
-				return;
-			if (!actor->g_Alive())
-				return;
-			string_path file_outf_name;
-			FS.update_path(file_outf_name, "$mp_saves_players_outfits$", "players_outfits.ltx");
-
-			CInifile* outfsFile = xr_new<CInifile>(file_outf_name, false, false);
-			SavePlayerOutfits(player.second, outfsFile);
-			if(actor->g_Alive())
-			outfsFile->save_as(file_outf_name);
-			xr_delete(outfsFile);
-
-
-			string_path file_det_name;
-			FS.update_path(file_det_name, "$mp_saves_players_detectors$", "players_detectors.ltx");
-
-			CInifile* detsFile = xr_new<CInifile>(file_det_name, false, false);
-			SavePlayerDetectors(player.second, detsFile);
-			if (actor->g_Alive())
-				detsFile->save_as(file_det_name);
-			xr_delete(detsFile);
-			*/
 		}
 	}
 

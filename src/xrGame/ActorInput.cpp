@@ -40,6 +40,7 @@
 #include "static_cast_checked.hpp"
 #include "CameraEffector.h"
 #include "ActorEffector.h"
+#include "PDA.h"
 
 extern u32 hud_adj_mode;
 extern float m_fFactor;
@@ -105,7 +106,6 @@ void CActor::IR_OnKeyboardPress(int cmd)
 			Level().game->u_EventSend(packet);
 		}
 	}break;
-
 	default:
 		{
 		}break;
@@ -204,6 +204,12 @@ void CActor::IR_OnKeyboardPress(int cmd)
 				return;
 			}
 		}break;
+	case kACTIVE_JOBS:
+	{
+		auto pda = smart_cast<CPda*>(inventory().ItemFromSlot(PDA_SLOT));
+		if (pda)
+			pda->TogglePda();
+	}break;
 /*
 	case kFLARE:{
 			PIItem fl_active = inventory().ItemFromSlot(FLARE_SLOT);

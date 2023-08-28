@@ -23,6 +23,7 @@
 #include "player_hud.h"
 #include "ai/stalker/ai_stalker.h"
 #include "weaponmagazined.h"
+#include"PDA.h"
 
 using namespace InventoryUtilities;
 
@@ -739,21 +740,6 @@ bool CInventory::Action(u16 cmd, u32 flags)
 				}
 			}
 		}break;
-	case kACTIVE_JOBS:
-	{
-		b_send_event = true;
-		if (flags & CMD_START)
-		{
-			if (GetActiveSlot() == PDA_SLOT && ActiveItem())
-			{
-				Activate(NO_ACTIVE_SLOT);
-			}
-			else
-			{
-				Activate(PDA_SLOT);
-			}
-		}
-	}break;
 	}
 
 	if (b_send_event && g_pGameLevel && OnClient() && pActor)

@@ -17,6 +17,7 @@
 #include "ui\UIPdaWnd.h"
 #include "ai_sounds.h"
 #include "Inventory.h"
+#include "ActorCondition.h"
 
 CPda::CPda(void)
 {
@@ -76,13 +77,92 @@ void CPda::Load(LPCSTR section)
 	m_thumb_rot[1] = READ_IF_EXISTS(pSettings, r_float, section, "thumb_rot_y", 0.f);
 }
 
+void CPda::OnEvent(NET_Packet& P, u16 type)
+{
+	switch (type)
+	{
+	case GEG_PDA_ACTIVATED:
+	{
+		u16 slot = P.r_u16();
+		CActor* pA = smart_cast<CActor*>(H_Parent());
+		if (pA)
+		{
+			pA->inventory().Activate(slot);
+		}
+	}break;
+	default:
+		inherited::OnEvent(P, type);
+		break;
+	}
+}
+
+void CPda::SwitchState(u32 S)
+{
+	if (IsGameTypeSingle() || OnServer())
+	{
+		inherited::SwitchState(S);
+		return;
+	}
+
+	if (!IsGameTypeSingle() && OnClient())
+	{
+		SetNextState(S);
+		OnStateSwitch(u32(S));
+
+		switch (S)
+		{
+		case eHidden:
+		{
+			Msg("eHidden");
+		}break;
+		case eShowing:
+		{
+			Msg("eShowing");
+		}break;
+		case eIdle:
+		{
+			Msg("eIdle");
+		}break;
+		case eHiding:
+		{
+			Msg("eHiding");
+		}break;
+		}
+	}
+}
+
 void CPda::OnStateSwitch(u32 S)
 {
+	Msg("GetState: %d, %d", GetState(), S);
 	inherited::OnStateSwitch(S);
-
-	if (!ParentIsActor())
+	if (OnServer())
+	{
+		switch (S)
+		{
+		case eShowing:
+		{
+			g_player_hud->attach_item(this);
+			PlayHUDMotion("anm_show", false, this, GetState());
+			SetPending(true);
+		}break;
+		case eHiding:
+		{
+			PlayHUDMotion("anm_hide", false, this, GetState());
+			SetPending(true);
+		}break;
+		case eIdle:
+		{
+		PlayAnimIdle();
+		SetPending(false);
+		}break;
+		default:
+			break;
+		}
 		return;
-
+	}
+	if (!H_Parent() || !Level().CurrentControlEntity())
+		return;
+	if (H_Parent()->ID() == Level().CurrentControlEntity()->ID())
 	switch (S)
 	{
 	case eShowing:
@@ -130,13 +210,12 @@ void CPda::OnStateSwitch(u32 S)
 		if (pda && pda->IsShown())
 			pda->HideDialog();
 
-		SetPending(false);
 	}
 	break;
 	case eIdle:
 	{
 		PlayAnimIdle();
-
+		SetPending(false);
 		if (m_joystick_bone && joystick == BI_NONE && HudItemData())
 			joystick = HudItemData()->m_model->LL_BoneID(m_joystick_bone);
 
@@ -158,18 +237,29 @@ void CPda::OnAnimationEnd(u32 state)
 	{
 	case eShowing:
 	{
-		SetPending(false);
+		Msg("eShowing end");
 		SwitchState(eIdle);
 	}
 	break;
 	case eHiding:
 	{
-		SetPending(false);
+		Msg("eHiding end");
 		SwitchState(eHidden);
 		g_player_hud->detach_item(this);
 	}
 	break;
 	}
+}
+
+void CPda::TogglePda()
+{
+	Msg("%d", GetState());
+	u16 slot_to_activate = GetState() == eHidden ? PDA_SLOT:NO_ACTIVE_SLOT;
+	NET_Packet						P;
+	CGameObject::u_EventGen(P, GEG_PDA_ACTIVATED, ID());
+	P.w_u16(slot_to_activate);
+	CGameObject::u_EventSend(P);
+	//SwitchState(GetState() == eHidden ? eShowing : eHiding);
 }
 
 // inertion
@@ -182,6 +272,11 @@ IC float inertion(float _val_cur, float _val_trgt, float _friction)
 void CPda::JoystickCallback(CBoneInstance* B)
 {
 	CPda* Pda = static_cast<CPda*>(B->callback_param());
+	if (!Pda->H_Parent() || !Level().CurrentControlEntity())
+		return;
+	if (Pda->H_Parent()->ID() != Level().CurrentControlEntity()->ID())
+		return;
+
 	CUIPdaWnd* pda = CurrentGameUI() ? &CurrentGameUI()->PdaMenu() : nullptr;
 	if (!pda)
 		return;
@@ -246,7 +341,10 @@ void CPda::UpdateCL()
 {
 	inherited::UpdateCL();
 
-	if (!ParentIsActor())
+	if (!H_Parent() || !Level().CurrentControlEntity())
+		return;
+
+	if (H_Parent()->ID() != Level().CurrentControlEntity()->ID())
 		return;
 
 	const u32 state = GetState();
@@ -284,9 +382,14 @@ void CPda::UpdateCL()
 		g_pGamePersistent->pda_shader_data.pda_displaybrightness = 1.f;
 
 		clamp(g_pGamePersistent->pda_shader_data.pda_displaybrightness, 0.f, 1.f);
-
+		float psy_factor;
+			CActor* pA = smart_cast<CActor*>(H_Parent());
+			if(pA)
+			{
+				psy_factor = pA->conditions().GetPsy();
+			}
 		// Screen "Glitch" factor
-		g_pGamePersistent->pda_shader_data.pda_psy_influence = 0.f;
+		g_pGamePersistent->pda_shader_data.pda_psy_influence = psy_factor;
 
 		// Update Display Visibility (turn on/off)
 		if (target_screen_switch < Device.fTimeGlobal)
@@ -307,8 +410,12 @@ void CPda::OnMoveToRuck(const SInvItemPlace& prev)
 {
 	inherited::OnMoveToRuck(prev);
 
-	if (!ParentIsActor())
+	if (!H_Parent() || !Level().CurrentControlEntity())
 		return;
+
+	if (H_Parent()->ID() != Level().CurrentControlEntity()->ID())
+		return;
+
 
 	if (prev.type == eItemPlaceSlot)
 	{
@@ -361,17 +468,12 @@ void CPda::UpdateXForm()
 
 void CPda::OnActiveItem()
 {
-	if (!ParentIsActor())
-		return;
-
 	SwitchState(eShowing);
 }
 
 void CPda::OnHiddenItem()
 {
-	if (!ParentIsActor())
-		return;
-
+	Msg("OnDeactivateItem");
 	SwitchState(eHiding);
 }
 
@@ -471,11 +573,13 @@ void CPda::OnH_B_Independent(bool just_before_destroy)
 {
 	inherited::OnH_B_Independent(just_before_destroy);
 
+	if (!H_Parent() || !Level().CurrentControlEntity())
+		return;
+	if (H_Parent()->ID() != Level().CurrentControlEntity()->ID())
+		return;
+
 	//âûêëþ÷èòü
 	TurnOff();
-
-	if (!ParentIsActor())
-		return;
 
 	m_sounds.PlaySound("sndHide", Position(), H_Root(), !!GetHUDmode(), false);
 
