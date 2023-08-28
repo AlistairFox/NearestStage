@@ -9,6 +9,7 @@
 #include "CustomOutfit.h"
 #include "Torch.h"
 #include "AnomalyDetector.h"
+#include "PDA.h"
 
 void game_sv_freemp::SavePlayer(game_PlayerState* ps, CInifile* file)
 {
@@ -27,8 +28,8 @@ void game_sv_freemp::SavePlayer(game_PlayerState* ps, CInifile* file)
 			if (!xr_strcmp("mp_players_rukzak", item->m_section_id.c_str()))
 				continue;
 
-			//if (item->BaseSlot() == OUTFIT_SLOT && pInvOwner->inventory().ItemFromSlot(OUTFIT_SLOT))
-			//	continue;
+			if (item->BaseSlot() == DOSIMETER_SLOT)
+				continue;
 
 			id += 1;
 			string32 itemID;
@@ -63,23 +64,36 @@ void game_sv_freemp::SavePlayer(game_PlayerState* ps, CInifile* file)
 			}
 		}
 
-		CCustomDetector* detector = smart_cast<CCustomDetector*>(actor->inventory().ItemFromSlot(DETECTOR_SLOT));
-
-		if (detector)
-		{
-			file->w_string("detector", "section", detector->m_section_id.c_str());
-			file->w_float("detector", "charge", detector->GetCondition());
-		}
-
 		CTorch* pTorch = smart_cast<CTorch*>(actor->inventory().ItemFromSlot(TORCH_SLOT));
-
+		//сохранение фонарика
 		if (pTorch)
 		{
-			file->w_string("torch", "section", pTorch->m_section_id.c_str());
-			file->w_float("torch", "charge", pTorch->GetCondition());
+			file->w_string("player_device", "torch_section", pTorch->m_section_id.c_str());
+			file->w_float("player_device", "torch_charge", pTorch->GetCondition());
+		}
+
+		CCustomDetector* detector = smart_cast<CCustomDetector*>(actor->inventory().ItemFromSlot(DETECTOR_SLOT));
+		//сохранение детектора
+		if (detector)
+		{
+			file->w_string("player_device", "detector_section", detector->m_section_id.c_str());
+			file->w_float("player_device", "detector_charge", detector->GetCondition());
 		}
 
 		CDetectorAnomaly* pAnDet = smart_cast<CDetectorAnomaly*>(actor->inventory().ItemFromSlot(DOSIMETER_SLOT));
+		//сохранение детектора аномалий
+		if (pAnDet)
+		{
+			file->w_string("player_device", "anomaly_detector_section", pAnDet->m_section_id.c_str());
+			file->w_float("player_device", "anomaly_detector_charge", pAnDet->GetCondition());
+		}
+
+		CPda* pPda = smart_cast<CPda*>(actor->inventory().ItemFromSlot(PDA_SLOT));
+		//сохранения пда
+		if (pPda)
+		{
+			file->w_string("player_device", "pda_section", pPda->m_section_id.c_str());
+		}
 
 		file->w_u32("actor", "items_count", id);
 		file->w_u32("actor", "money", ps->money_for_round);
@@ -203,14 +217,31 @@ bool game_sv_freemp::LoadPlayer(game_PlayerState* ps, CInifile* file)
 
 		Msg("[game_sv_freemp] LoadPlayer [%s] items[%d]", ps->getName(), count);
 
-		if (file->section_exist("detector"))
+		//загрузка фонарика
+		if (file->line_exist("player_device", "torch_section"))
 		{
-			LPCSTR name = file->r_string("detector", "section");
+			LPCSTR torch_name = file->r_string("player_device", "torch_section");
+			float torch_cond = 0;
+			if(file->line_exist("player_device", "torch_charge"))
+			torch_cond = file->r_float("player_device", "torch_charge");
+
+			CSE_Abstract* E = spawn_begin(torch_name);
+			E->ID_Parent = ps->GameID;
+			CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>(E);
+
+			item->m_fCondition = torch_cond;
+			spawn_end(E, m_server->GetServerClient()->ID);
+		}
+
+		//загрузка детектора
+		if (file->line_exist("player_device", "detector_section"))
+		{
+			LPCSTR name = file->r_string("player_device", "detector_section");
 
 			float det_cond = 0;
 
-			if(file->line_exist("detector", "charge"))
-			float det_cond = file->r_float("detector", "charge");
+			if (file->line_exist("player_device", "detector_charge"))
+				float det_cond = file->r_float("player_device", "detector_charge");
 
 			CSE_Abstract* E = spawn_begin(name);
 			E->ID_Parent = ps->GameID;
@@ -219,18 +250,28 @@ bool game_sv_freemp::LoadPlayer(game_PlayerState* ps, CInifile* file)
 			spawn_end(E, m_server->GetServerClient()->ID);
 		}
 
-		if (file->section_exist("torch"))
+		//загрузка детектора аномалий
+		if (file->line_exist("player_device", "anomaly_detector_section"))
 		{
-			LPCSTR torch_name = file->r_string("torch", "section");
-			float torch_cond = 0;
-			if(file->line_exist("torch", "charge"))
-			torch_cond = file->r_float("torch", "charge");
+			LPCSTR pAnomDetector = file->r_string("player_device", "anomaly_detector_section");
+			float pAnomDetector_cond = 0;
+			if (file->line_exist("player_device", "anomaly_detector_charge"));
+			pAnomDetector_cond = file->r_float("player_device", "anomaly_detector_charge");
 
-			CSE_Abstract* E = spawn_begin(torch_name);
+			CSE_Abstract* E = spawn_begin(pAnomDetector);
 			E->ID_Parent = ps->GameID;
 			CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>(E);
 
-			item->m_fCondition = torch_cond;
+			item->m_fCondition = pAnomDetector_cond;
+			spawn_end(E, m_server->GetServerClient()->ID);
+		}
+
+		//загрузка пда
+		if (file->line_exist("player_device", "pda_section"))
+		{
+			LPCSTR pPda = file->r_string("player_device", "pda_section");
+			CSE_Abstract* E = spawn_begin(pPda);
+			E->ID_Parent = ps->GameID;
 			spawn_end(E, m_server->GetServerClient()->ID);
 		}
 
