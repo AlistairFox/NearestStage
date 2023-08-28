@@ -216,7 +216,8 @@ void add_offline_impl						(CSE_ALifeDynamicObject *object, const xr_vector<ALif
 {
 	for (u32 i=0, n=saved_children.size(); i<n; ++i) {
 		CSE_ALifeDynamicObject	*child = smart_cast<CSE_ALifeDynamicObject*>(ai().alife().objects().object(saved_children[i],true));
-		R_ASSERT				(child);
+		if (!child)
+			continue;
 		child->m_bOnline		= false;
 
 		CSE_ALifeInventoryItem	*inventory_item = smart_cast<CSE_ALifeInventoryItem*>(child);

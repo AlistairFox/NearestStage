@@ -1026,6 +1026,8 @@ bool CWeaponMagazined::Action(u16 cmd, u32 flags)
 					if (GetState() == eUnMisfire) // Rietmon: Çàïðåùàåì ïåðåçàðÿäêó, åñëè èãðàåò àíèìà ïåðåäåðãèâàíèÿ çàòâîðà
 						return false;
 
+					if (!Actor())
+						return false;
 					PIItem Det = Actor()->inventory().ItemFromSlot(DETECTOR_SLOT);
 					if (!Det)
 						Reload(); // Rietmon: Åñëè â ñëîòå íåòó äåòåêòîðà, òî îí íå ìîæåò áûòü àêòèâåí

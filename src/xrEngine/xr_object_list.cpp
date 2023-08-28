@@ -208,12 +208,14 @@ void CObjectList::Update		(bool bForce)
 	{
 		// Info
 
+		
 			std::for_each(objects_active.begin(), objects_active.end(), [&](CObject* P) {
 			for (int it = destroy_queue.size() - 1; it >= 0; it--)
 			{
 				P->net_Relcase(destroy_queue[it]);
 			}
 			});
+			
 		for (Objects::iterator oit=objects_sleeping.begin(); oit!=objects_sleeping.end(); oit++)
 			for (int it = destroy_queue.size()-1; it>=0; it--)	(*oit)->net_Relcase	(destroy_queue[it]);
 
