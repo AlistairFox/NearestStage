@@ -5,7 +5,7 @@
 
 // global
 
-static const int syncSamples = 256;
+static const int syncSamples = 0;
 
 //------------------------------------------------------------------------------
 
