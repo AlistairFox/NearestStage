@@ -309,21 +309,28 @@ void game_sv_freemp::OnPlayerDisconnect(ClientID id_who, LPSTR Name, u16 GameID)
 	u_EventSend(P);
 	//---------------------------------------------------
 
-	std::remove_if(save_outfits.begin(), save_outfits.end(), [&](outfits data)
-		{
-			if (strstr(data.player_name, Name))
-				return true;
-			else
-				return false;
-		});
+	auto it =
+		std::find_if(save_outfits.begin(), save_outfits.end(), [&](outfits data)
+			{
+				if (strstr(data.player_name, Name))
+					return true;
+				else
+					return false;
+			});
+	if (it != save_outfits.end())
+		save_outfits.erase(it);
 
-	std::remove_if(save_detectors.begin(), save_detectors.end(), [&](detectors data)
-		{
-			if (strstr(data.player_name, Name))
-				return true;
-			else
-				return false;
-		});
+	auto name =
+		std::find_if(save_detectors.begin(), save_detectors.end(), [&](detectors data)
+			{
+
+				if (strstr(data.player_name, Name))
+					return true;
+				else
+					return false;
+			});
+	if (name != save_detectors.end())
+		save_detectors.erase(name);
 	
 
 //	AllowDeadBodyRemove			(id_who, GameID);

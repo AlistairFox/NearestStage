@@ -127,6 +127,19 @@ void game_sv_freemp::SavePlayerOutfits(game_PlayerState* ps, CInifile* outfsFile
 			else
 				(*PS) = data;
 		}
+		else
+		{
+			auto it =
+			std::find_if(save_outfits.begin(), save_outfits.end(), [&](outfits data)
+				{
+					if (strstr(data.player_name, ps->getName()))
+						return true;
+					else
+						return false;
+				});
+			if (it != save_outfits.end())
+				save_outfits.erase(it);
+		}
 	}
 }
 
@@ -158,6 +171,20 @@ void game_sv_freemp::SavePlayerDetectors(game_PlayerState* ps, CInifile* detsFil
 				save_detectors.push_back(data);
 			else
 				(*DS) = data;
+		}
+		else
+		{
+			auto name = 
+			std::find_if(save_detectors.begin(), save_detectors.end(), [&](detectors data)
+				{
+
+					if (strstr(data.player_name, ps->getName()))
+						return true;
+					else
+						return false;
+				});
+			if(name != save_detectors.end())
+			save_detectors.erase(name);
 		}
 	}
 }
