@@ -8,6 +8,8 @@
 #include "ui/UIMainIngameWnd.h"
 #include "game_news.h"
 #include "Inventory.h"
+#include "ui/UITalkWnd.h"
+#include "ui/UIMessagesWindow.h"
 
 game_cl_freemp::game_cl_freemp()
 {
@@ -340,6 +342,40 @@ void game_cl_freemp::OnChatMessage(NET_Packet* P)
 
 		if (pActor->inventory().m_slots[PDA_SLOT].m_pIItem)
 		Actor()->AddGameNews(news_data);
+	}
+}
+
+void game_cl_freemp::TranslateGameMessage(u32 msg, NET_Packet& P) 
+{
+	switch (msg) {
+
+	case (GAME_EVENT_NEWS_MESSAGE): 
+	{
+		shared_str name, text, icon;
+		P.r_stringZ(name);
+		P.r_stringZ(text);
+		P.r_stringZ(icon);
+		GAME_NEWS_DATA data;
+		data.m_type = data.eNews;
+		data.news_caption = name;
+		data.news_text = text;
+		data.texture_name = icon;
+		data.receive_time = Level().GetGameTime();
+
+		if (CurrentGameUI())
+		{
+			bool talk = CurrentGameUI()->TalkMenu && CurrentGameUI()->TalkMenu->IsShown();
+
+			if (CurrentGameUI()->UIMainIngameWnd && !talk)
+				CurrentGameUI()->m_pMessagesWnd->AddIconedPdaMessage(&data);
+			else
+				if (talk)
+					CurrentGameUI()->TalkMenu->AddIconedMessage(name.c_str(), text.c_str(), icon.c_str(), "iconed_answer_item");
+		}
+	}
+
+	default:
+		inherited::TranslateGameMessage(msg, P);
 	}
 }
 

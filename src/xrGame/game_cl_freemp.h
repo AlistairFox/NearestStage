@@ -21,6 +21,7 @@ public:
 	virtual CUIGameCustom* createGameUI();
 	virtual void SetGameUI(CUIGameCustom*);
 
+	virtual void TranslateGameMessage(u32 msg, NET_Packet& P);
 
 	virtual	void net_import_state(NET_Packet& P);
 	virtual	void net_import_update(NET_Packet& P);

@@ -38,6 +38,7 @@
 #include "alife_object_registry.h"
 #include "xrServer_Objects_ALife_Monsters.h"
 #include "../xrEngine/Rain.h"
+#include "game_sv_freemp.h"
 
 using namespace luabind;
 
@@ -796,6 +797,145 @@ void sv_teleport_player2(u32 clientID, const Fvector3 pos, const Fvector3 dir)
 	}
 }
 
+void give_money_to_actor(u16 gameid, s32 money)
+{
+	if (!OnServer())
+		return;
+
+	game_sv_freemp* freemp = smart_cast<game_sv_freemp*>(Level().Server->game);
+
+	if (freemp)
+	{
+		game_PlayerState* ps = freemp->get_eid(gameid);
+		if (ps)
+			freemp->AddMoneyToPlayer(ps, money);
+
+		xrClientData* data = (xrClientData*)freemp->get_client(gameid);
+		if (data)
+		{
+			string32 tmp = { 0 };
+
+			NET_Packet packet;
+			freemp->GenerateGameMessage(packet);
+			packet.w_u32(GAME_EVENT_NEWS_MESSAGE);
+			shared_str news_name = *CStringTable().translate("general_in_money");
+			packet.w_stringZ(news_name);
+			packet.w_stringZ(itoa(money, tmp, 10));
+			packet.w_stringZ("ui_inGame2_Dengi_polucheni");
+			freemp->server().SendTo(data->ID, packet, net_flags(true));
+		}
+
+	}
+};
+
+void remove_money_to_actor(u16 gameid, s32 money)
+{
+	if (!OnServer())
+		return;
+
+	game_sv_freemp* freemp = smart_cast<game_sv_freemp*>(Level().Server->game);
+
+	if (freemp)
+	{
+		game_PlayerState* ps = freemp->get_eid(gameid);
+		xrClientData* data = (xrClientData*)freemp->get_client(gameid);
+		if (ps)
+			freemp->AddMoneyToPlayer(ps, -money);
+
+		if (data)
+		{
+			string32 tmp = { 0 };
+
+			NET_Packet packet;
+			freemp->GenerateGameMessage(packet);
+			packet.w_u32(GAME_EVENT_NEWS_MESSAGE);
+			shared_str news_name = *CStringTable().translate("general_out_money");
+			packet.w_stringZ(news_name);
+			packet.w_stringZ(itoa(money, tmp, 10));
+			packet.w_stringZ("ui_inGame2_Dengi_otdani");
+			freemp->server().SendTo(data->ID, packet, net_flags(true));
+		}
+	}
+};
+
+#include "actor_mp_client.h"
+
+void object_give_to_actor(u16 gameid, LPCSTR name, u16 count)
+{
+	if (!OnServer())
+		return;
+
+	game_sv_freemp* freemp = smart_cast<game_sv_freemp*>(Level().Server->game);
+
+	if (freemp)
+		for (int i = 0; i != count; i++)
+			freemp->SpawnItemToActor(gameid, name);
+
+	if (freemp)
+	{
+		xrClientData* data = (xrClientData*)freemp->get_client(gameid);
+		if (data)
+		{
+			string32 tmp = { 0 };
+
+			NET_Packet packet;
+			freemp->GenerateGameMessage(packet);
+			packet.w_u32(GAME_EVENT_NEWS_MESSAGE);
+			shared_str news_name = *CStringTable().translate("general_in_item");
+			packet.w_stringZ(news_name);
+			packet.w_stringZ(itoa(count, tmp, 10));
+			packet.w_stringZ("ui_inGame2_Predmet_poluchen");
+			freemp->server().SendTo(data->ID, packet, net_flags(true));
+		}
+	}
+}
+
+void object_destroy(CScriptGameObject* object)
+{
+	if (!OnServer() || !object)
+		return;
+
+	NET_Packet P;
+	P.w_begin(M_EVENT);
+	P.w_u32(Device.dwTimeGlobal - 2 * NET_Latency);
+	P.w_u16(GE_DESTROY);
+	P.w_u16(object->ID());
+	Level().Send(P, net_flags(TRUE, TRUE));
+}
+
+void send_news_item_drop(u16 gameid, LPCSTR name, int count)
+{
+	if (!OnServer())
+		return;
+
+	game_sv_freemp* freemp = smart_cast<game_sv_freemp*>(Level().Server->game);
+
+	if (freemp)
+	{
+		xrClientData* data = (xrClientData*)freemp->get_client(gameid);
+		if (data)
+		{
+			string32 tmp = { 0 };
+
+			NET_Packet packet;
+			freemp->GenerateGameMessage(packet);
+			packet.w_u32(GAME_EVENT_NEWS_MESSAGE);
+			shared_str news_name = *CStringTable().translate("general_out_item");
+			packet.w_stringZ(news_name);
+
+			string128 news_text;
+			itoa(count, tmp, 10);
+			xr_strcpy(news_text, name);
+			xr_strcat(news_text, " кол-во: ");
+			xr_strcat(news_text, tmp);
+
+			packet.w_stringZ(news_text);
+			packet.w_stringZ("ui_inGame2_Predmet_otdan");
+			freemp->server().SendTo(data->ID, packet, net_flags(true));
+		}
+	}
+}
+
 // script events
 
 void send_script_event_to_server(NET_Packet& P)
@@ -994,7 +1134,13 @@ void CLevel::script_register(lua_State *L)
 	module(L, "mp")
 	[
 		def("sv_teleport_player", &sv_teleport_player),
-		def("sv_teleport_player2", &sv_teleport_player2)
+		def("sv_teleport_player2", &sv_teleport_player2),
+
+		def("give_money", &give_money_to_actor),
+		def("remove_money", &remove_money_to_actor),
+		def("object_destroy", object_destroy),
+		def("object_give_to_actor", object_give_to_actor),
+		def("send_news_item_drop", send_news_item_drop)
 	],
 	
 
