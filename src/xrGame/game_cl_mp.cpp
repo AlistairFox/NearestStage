@@ -420,6 +420,7 @@ void game_cl_mp::TranslateGameMessage	(u32 msg, NET_Packet& P)
 		{
 			ProcessPlayersInfoReply(P);
 		}break;
+
 	default:
 		inherited::TranslateGameMessage(msg,P);
 	}

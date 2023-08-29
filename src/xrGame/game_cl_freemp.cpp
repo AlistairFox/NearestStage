@@ -372,7 +372,7 @@ void game_cl_freemp::TranslateGameMessage(u32 msg, NET_Packet& P)
 				if (talk)
 					CurrentGameUI()->TalkMenu->AddIconedMessage(name.c_str(), text.c_str(), icon.c_str(), "iconed_answer_item");
 		}
-	}
+	}break;
 
 	default:
 		inherited::TranslateGameMessage(msg, P);

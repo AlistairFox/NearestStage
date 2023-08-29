@@ -311,6 +311,9 @@ void game_cl_GameState::TranslateGameMessage	(u32 msg, NET_Packet& P)
 			//xr_sprintf(Text, "%s%s %s%s",Color_Teams[0],PlayerName,Color_Main,*st.translate("mp_entered_game"));
 			//if(CurrentGameUI()) CurrentGameUI()->CommonMessageOut(Text);
 		}break;
+	case GAME_EVENT_NEWS_MESSAGE:
+	{
+	}break;
 	default:
 		{
 			R_ASSERT2(0,"Unknown Game Message");

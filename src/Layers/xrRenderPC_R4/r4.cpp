@@ -716,7 +716,7 @@ void					CRender::rmNormal			()
 CRender::CRender()
 :m_bFirstFrameAfterReset(false)
 {
-	init_cascades();
+	init_cacades();
 }
 
 CRender::~CRender()
@@ -1470,6 +1470,27 @@ HRESULT	CRender::shader_compile			(
 		sh_name[len] = '0';
 		++len;
 	}
+
+	if (ps_ssfx_grass_interactive.y > 0)
+	{
+		xr_sprintf(c_inter_grass, "%d", u8(ps_ssfx_grass_interactive.y));
+		defines[def_it].Name = "SSFX_INT_GRASS";
+		defines[def_it].Definition = c_inter_grass;
+		def_it++;
+		xr_strcat(sh_name, c_inter_grass);
+		len += xr_strlen(c_inter_grass);
+	}
+	else
+	{
+		sh_name[len] = '0';
+		++len;
+	}
+
+	defines[def_it].Name = "SSFX_MODEXE";
+	defines[def_it].Definition = "1";
+	def_it++;
+	sh_name[len] = '1';
+	++len;
 
 
 	//Be carefull!!!!! this should be at the end to correctly generate
