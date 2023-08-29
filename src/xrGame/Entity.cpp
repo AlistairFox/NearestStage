@@ -18,7 +18,7 @@
 #include "alife_simulator.h"
 #include "alife_time_manager.h"
 
-#define BODY_REMOVE_TIME		300000
+#define BODY_REMOVE_TIME		500000
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction

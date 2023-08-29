@@ -113,19 +113,15 @@ void CPda::SwitchState(u32 S)
 		{
 		case eHidden:
 		{
-			Msg("eHidden");
 		}break;
 		case eShowing:
 		{
-			Msg("eShowing");
 		}break;
 		case eIdle:
 		{
-			Msg("eIdle");
 		}break;
 		case eHiding:
 		{
-			Msg("eHiding");
 		}break;
 		}
 	}
@@ -133,7 +129,6 @@ void CPda::SwitchState(u32 S)
 
 void CPda::OnStateSwitch(u32 S)
 {
-	Msg("GetState: %d, %d", GetState(), S);
 	inherited::OnStateSwitch(S);
 	if (OnServer())
 	{
@@ -237,13 +232,11 @@ void CPda::OnAnimationEnd(u32 state)
 	{
 	case eShowing:
 	{
-		Msg("eShowing end");
 		SwitchState(eIdle);
 	}
 	break;
 	case eHiding:
 	{
-		Msg("eHiding end");
 		SwitchState(eHidden);
 		g_player_hud->detach_item(this);
 	}
@@ -253,7 +246,6 @@ void CPda::OnAnimationEnd(u32 state)
 
 void CPda::TogglePda()
 {
-	Msg("%d", GetState());
 	u16 slot_to_activate = GetState() == eHidden ? PDA_SLOT:NO_ACTIVE_SLOT;
 	NET_Packet						P;
 	CGameObject::u_EventGen(P, GEG_PDA_ACTIVATED, ID());
@@ -473,7 +465,6 @@ void CPda::OnActiveItem()
 
 void CPda::OnHiddenItem()
 {
-	Msg("OnDeactivateItem");
 	SwitchState(eHiding);
 }
 

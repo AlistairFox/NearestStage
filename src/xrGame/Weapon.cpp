@@ -29,7 +29,7 @@
 #include "ai/stalker/ai_stalker.h"
 #include "../xrEngine/GameMtlLib.h"
 
-#define WEAPON_REMOVE_TIME		60000
+#define WEAPON_REMOVE_TIME		500000
 #define ROTATION_TIME			0.25f
 
 BOOL	b_toggle_weapon_aim		= FALSE;

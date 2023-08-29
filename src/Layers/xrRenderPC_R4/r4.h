@@ -206,7 +206,6 @@ public:
 	void							render_rain					();
 
 	void							render_sun_cascade			(u32 cascade_ind);
-	void							init_cacades				();
 	void							render_sun_cascades			();
 
 public:

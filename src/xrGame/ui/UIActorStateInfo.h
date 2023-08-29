@@ -71,11 +71,22 @@ protected:
 	CUIStatic*				m_static;
 	CUIStatic*				m_static2;
 	CUIStatic*				m_static3;
+	CUIStatic* m_caption;
+	CUITextWnd* m_value;
+	shared_str				m_texture;
 	CUIProgressBar*			m_progress;
 	CUIProgressShape*		m_sensor;
 	UI_Arrow*				m_arrow;
 	UI_Arrow*				m_arrow_shadow;
 	float					m_magnitude;
+	//color
+	u32						m_negative_color;
+	u32						m_neutral_color;
+	u32						m_positive_color;
+	bool					clr_invert;
+	bool					use_color;
+	bool					clr_dynamic;
+
 
 public:
 					ui_actor_state_item		();
@@ -86,6 +97,8 @@ public:
 			void	set_progress			( float value ); // 0..1
 			void	set_progress_shape		( float value ); // 0..1
 			void	set_arrow				( float value ); // 0..1
+			void	set_value(float value); // 0..1
+			void	SetCaption(LPCSTR name);
 			void	show_static				( bool status, u8 number=1 );
 
 }; // class ui_actor_state_item

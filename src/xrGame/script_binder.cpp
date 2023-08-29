@@ -189,7 +189,7 @@ void CScriptBinder::shedule_Update	(u32 time_delta)
 			m_object->shedule_Update	(time_delta);
 		}
 		catch(...) {
-			R_ASSERT3(0, "Script binder crashed during shedule_Update", m_object->m_object->Name());
+			//R_ASSERT3(0, "Script binder crashed during shedule_Update", m_object->m_object->Name());
 			clear			();
 		}
 	}
