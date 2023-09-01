@@ -492,11 +492,13 @@ void CActor::g_cl_Orientate	(u32 mstate_rl, float dt)
 	}
 	
 	// если есть движение - выровнять модель по камере
-	if (mstate_rl&mcAnyMove)	{
+	//if (mstate_rl&mcAnyMove)
+	{
 		r_model_yaw		= angle_normalize(r_torso.yaw);
 		mstate_real		&=~mcTurn;
 	}
-	else 
+
+	/*else
 	{
 		// if camera rotated more than 45 degrees - align model with it
 		float ty = angle_normalize(r_torso.yaw);
@@ -514,6 +516,7 @@ void CActor::g_cl_Orientate	(u32 mstate_rl, float dt)
 		}
 		
 	}
+	*/
 }
 
 void CActor::g_sv_Orientate(u32 /**mstate_rl/**/, float /**dt/**/)
