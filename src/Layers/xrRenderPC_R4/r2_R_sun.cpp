@@ -1007,19 +1007,6 @@ void CRender::render_sun_filtered	()
 	Target->accum_direct				(SE_SUN_LUMINANCE);
 }
 
-void CRender::init_cacades()
-{
-	u32 cascade_count = 3;
-	m_sun_cascades.resize(cascade_count);
-
-	// 	for( u32 i = 0; i < cascade_count; ++i )
-	// 	{
-	// 		m_sun_cascades[i].size = size;
-	// 		size *= MAP_GROW_FACTOR;
-	// 	}
-	/// 	m_sun_cascades[m_sun_cascades.size()-1].size = 80;
-}
-
 void CRender::render_sun_cascades ( )
 {
 	bool b_need_to_render_sunshafts = RImplementation.Target->need_to_render_sunshafts();
@@ -1338,6 +1325,7 @@ void CRender::render_sun_cascade ( u32 cascade_ind )
 void CRender::init_cascades()
 {
 	u32 cascade_count = 3;
+	m_sun_cascades.resize(cascade_count);
 
 	float fBias = -0.0000025f;
 
