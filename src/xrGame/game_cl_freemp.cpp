@@ -10,6 +10,7 @@
 #include "Inventory.h"
 #include "ui/UITalkWnd.h"
 #include "ui/UIMessagesWindow.h"
+#include "string_table.h"
 
 game_cl_freemp::game_cl_freemp()
 {
@@ -351,14 +352,25 @@ void game_cl_freemp::TranslateGameMessage(u32 msg, NET_Packet& P)
 
 	case (GAME_EVENT_NEWS_MESSAGE): 
 	{
-		shared_str name, text, icon;
+		shared_str name, icon, name_item;
+		u16 count;
+
+		P.r_stringZ(name_item);
 		P.r_stringZ(name);
-		P.r_stringZ(text);
+		P.r_u16(count);
 		P.r_stringZ(icon);
+
+		shared_str item_name = pSettings->r_string(name_item, "inv_name");
+		LPCSTR transl_name = CStringTable().translate(item_name).c_str();
+
+		string1024 release_text = {};
+		sprintf(release_text, "%d: x%u",transl_name, count);
+		Msg("release_text: %d", release_text);
+
 		GAME_NEWS_DATA data;
 		data.m_type = data.eNews;
-		data.news_caption = name;
-		data.news_text = text;
+		data.news_caption = name.c_str();
+		data.news_text = release_text;
 		data.texture_name = icon;
 		data.receive_time = Level().GetGameTime();
 
@@ -370,7 +382,7 @@ void game_cl_freemp::TranslateGameMessage(u32 msg, NET_Packet& P)
 				CurrentGameUI()->m_pMessagesWnd->AddIconedPdaMessage(&data);
 			else
 				if (talk)
-					CurrentGameUI()->TalkMenu->AddIconedMessage(name.c_str(), text.c_str(), icon.c_str(), "iconed_answer_item");
+					CurrentGameUI()->TalkMenu->AddIconedMessage(name.c_str(), release_text, icon.c_str(), "iconed_answer_item");
 		}
 	}break;
 

@@ -39,6 +39,8 @@
 #include "xrServer_Objects_ALife_Monsters.h"
 #include "../xrEngine/Rain.h"
 #include "game_sv_freemp.h"
+#include "inventory_item.h"
+#include "Inventory.h"
 
 using namespace luabind;
 
@@ -876,15 +878,18 @@ void object_give_to_actor(u16 gameid, LPCSTR name, u16 count)
 		xrClientData* data = (xrClientData*)freemp->get_client(gameid);
 		if (data)
 		{
-			string32 tmp = { 0 };
+			shared_str news_name;
 
 			NET_Packet packet;
 			freemp->GenerateGameMessage(packet);
 			packet.w_u32(GAME_EVENT_NEWS_MESSAGE);
-			shared_str news_name = *CStringTable().translate("general_in_item");
+			news_name = *CStringTable().translate("general_in_item");
+
+			packet.w_stringZ(name);
 			packet.w_stringZ(news_name);
-			packet.w_stringZ(itoa(count, tmp, 10));
+			packet.w_u16(count);
 			packet.w_stringZ("ui_inGame2_Predmet_poluchen");
+
 			freemp->server().SendTo(data->ID, packet, net_flags(true));
 		}
 	}
@@ -919,16 +924,13 @@ void send_news_item_drop(u16 gameid, LPCSTR name, int count)
 
 			NET_Packet packet;
 			freemp->GenerateGameMessage(packet);
+			string128 news_text;
+			itoa(count, tmp, 10);
+			sprintf(news_text, name, "кол-во: ", tmp);
+			Msg("news_text %d", news_text);
 			packet.w_u32(GAME_EVENT_NEWS_MESSAGE);
 			shared_str news_name = *CStringTable().translate("general_out_item");
 			packet.w_stringZ(news_name);
-
-			string128 news_text;
-			itoa(count, tmp, 10);
-			xr_strcpy(news_text, name);
-			xr_strcat(news_text, " кол-во: ");
-			xr_strcat(news_text, tmp);
-
 			packet.w_stringZ(news_text);
 			packet.w_stringZ("ui_inGame2_Predmet_otdan");
 			freemp->server().SendTo(data->ID, packet, net_flags(true));
