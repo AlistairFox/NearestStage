@@ -359,13 +359,18 @@ void game_cl_freemp::TranslateGameMessage(u32 msg, NET_Packet& P)
 		P.r_stringZ(name);
 		P.r_u16(count);
 		P.r_stringZ(icon);
+		LPCSTR transl_name = {};
+		shared_str item_name = {};
 
-		shared_str item_name = pSettings->r_string(name_item, "inv_name");
-		LPCSTR transl_name = CStringTable().translate(item_name).c_str();
+		if (pSettings->section_exist(name_item))
+		{
+			item_name = pSettings->r_string(name_item, "inv_name");
+			transl_name = CStringTable().translate(item_name).c_str();
+		}
 
 		string1024 release_text = {};
-		sprintf(release_text, "%d: x%u",transl_name, count);
-		Msg("release_text: %d", release_text);
+		sprintf(release_text, "%s - %u",transl_name, count);
+		Msg("release_text: %s", release_text);
 
 		GAME_NEWS_DATA data;
 		data.m_type = data.eNews;
@@ -384,6 +389,31 @@ void game_cl_freemp::TranslateGameMessage(u32 msg, NET_Packet& P)
 				if (talk)
 					CurrentGameUI()->TalkMenu->AddIconedMessage(name.c_str(), release_text, icon.c_str(), "iconed_answer_item");
 		}
+	}break;
+	case GAME_EVENT_NEWS_MONEY_MESSAGE:
+	{
+	shared_str name, text, icon;
+	P.r_stringZ(name);
+	P.r_stringZ(text);
+	P.r_stringZ(icon);
+	GAME_NEWS_DATA data;
+	data.m_type = data.eNews;
+	data.news_caption = name;
+	data.news_text = text;
+	data.texture_name = icon;
+	data.receive_time = Level().GetGameTime();
+
+	if (CurrentGameUI())
+	{
+		bool talk = CurrentGameUI()->TalkMenu && CurrentGameUI()->TalkMenu->IsShown();
+
+		if (CurrentGameUI()->UIMainIngameWnd && !talk)
+			CurrentGameUI()->m_pMessagesWnd->AddIconedPdaMessage(&data);
+		else
+			if (talk)
+				CurrentGameUI()->TalkMenu->AddIconedMessage(name.c_str(), text.c_str(), icon.c_str(), "iconed_answer_item");
+	}
+
 	}break;
 
 	default:

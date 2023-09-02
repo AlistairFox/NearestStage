@@ -314,6 +314,10 @@ void game_cl_GameState::TranslateGameMessage	(u32 msg, NET_Packet& P)
 	case GAME_EVENT_NEWS_MESSAGE:
 	{
 	}break;
+	case GAME_EVENT_NEWS_MONEY_MESSAGE:
+	{
+
+	}break;
 	default:
 		{
 			R_ASSERT2(0,"Unknown Game Message");

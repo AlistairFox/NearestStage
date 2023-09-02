@@ -819,7 +819,7 @@ void give_money_to_actor(u16 gameid, s32 money)
 
 			NET_Packet packet;
 			freemp->GenerateGameMessage(packet);
-			packet.w_u32(GAME_EVENT_NEWS_MESSAGE);
+			packet.w_u32(GAME_EVENT_NEWS_MONEY_MESSAGE);
 			shared_str news_name = *CStringTable().translate("general_in_money");
 			packet.w_stringZ(news_name);
 			packet.w_stringZ(itoa(money, tmp, 10));
@@ -850,7 +850,7 @@ void remove_money_to_actor(u16 gameid, s32 money)
 
 			NET_Packet packet;
 			freemp->GenerateGameMessage(packet);
-			packet.w_u32(GAME_EVENT_NEWS_MESSAGE);
+			packet.w_u32(GAME_EVENT_NEWS_MONEY_MESSAGE);
 			shared_str news_name = *CStringTable().translate("general_out_money");
 			packet.w_stringZ(news_name);
 			packet.w_stringZ(itoa(money, tmp, 10));
@@ -920,18 +920,18 @@ void send_news_item_drop(u16 gameid, LPCSTR name, int count)
 		xrClientData* data = (xrClientData*)freemp->get_client(gameid);
 		if (data)
 		{
-			string32 tmp = { 0 };
-
 			NET_Packet packet;
 			freemp->GenerateGameMessage(packet);
-			string128 news_text;
-			itoa(count, tmp, 10);
-			sprintf(news_text, name, "кол-во: ", tmp);
-			Msg("news_text %d", news_text);
+
 			packet.w_u32(GAME_EVENT_NEWS_MESSAGE);
+
+
 			shared_str news_name = *CStringTable().translate("general_out_item");
+
+
+			packet.w_stringZ(name);
 			packet.w_stringZ(news_name);
-			packet.w_stringZ(news_text);
+			packet.w_u16(count);
 			packet.w_stringZ("ui_inGame2_Predmet_otdan");
 			freemp->server().SendTo(data->ID, packet, net_flags(true));
 		}
