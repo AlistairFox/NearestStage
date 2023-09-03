@@ -10,6 +10,10 @@ void main()
 
 void main_class::starter()
 {
+	starter_c = start + start2 + start5 + start6;
+
+	system(starter_c.c_str());
+	/*
 	std::cout << "input password";
 	std::cin >> incode;
 	if (incode == 1)
@@ -24,6 +28,7 @@ void main_class::starter()
 		std::cin >> incode;
 	}
 	std::cout << starter_c;
+	*/
 }
 
 void main_class::arg1()
