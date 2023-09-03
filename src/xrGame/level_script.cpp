@@ -43,6 +43,7 @@
 #include "Inventory.h"
 
 using namespace luabind;
+extern int g_sv_server_goodwill;
 
 LPCSTR command_line	()
 {
@@ -756,6 +757,19 @@ bool check_params(LPCSTR p)
 	return strstr(Core.Params, p);
 }
 
+int GetGoodwill()
+{
+	if (g_pGamePersistent->GameType() == eGameIDFreeMp)
+		return g_sv_server_goodwill;
+	else
+		return 0;
+}
+
+void ChangeSVGoodwill(int delta)
+{
+	g_sv_server_goodwill += delta;
+}
+
 CScriptGameObject *get_object_by_client(u32 clientID)
 {
 	xrClientData* xrCData = Level().Server->ID_to_client(clientID);
@@ -1179,7 +1193,9 @@ void CLevel::script_register(lua_State *L)
 		def("IsDedicated",						&is_dedicated),
 		def("OnClient",							&OnClient),
 		def("OnServer",							&OnServer),
-		def("CheckParams", 					&check_params)		
+		def("CheckParams", 					&check_params),	
+		def("GetGoodwill",						&GetGoodwill),
+		def("ChangeGoodwill",					&ChangeSVGoodwill)
 	];
 
 	module(L,"relation_registry")
