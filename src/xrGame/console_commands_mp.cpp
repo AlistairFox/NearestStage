@@ -128,6 +128,8 @@ extern u32		g_sv_traffic_optimization_level;
 
 extern BOOL		g_cl_draw_mp_statistic;
 
+extern int		g_sv_server_goodwill;
+
 void XRNETSERVER_API DumpNetCompressorStats	(bool brief);
 BOOL XRNETSERVER_API g_net_compressor_enabled;
 BOOL XRNETSERVER_API g_net_compressor_gather_stats;
@@ -3383,6 +3385,7 @@ void register_mp_console_commands()
 	CMD1(CCC_SaveStatistic,	"sv_statistic_save");
 //	CMD4(CCC_Integer,		"sv_statistic_save_auto", &g_bStatisticSaveAuto, 0, 1);
 	CMD4(CCC_Integer,		"sv_vipemode", &g_SV_IsVipeMode, 0, 1);
+	CMD4(CCC_Integer,		"sv_goodwill_scale", &g_sv_server_goodwill, -1000, 1000);
 #ifndef MASTER_GOLD
 	CMD4(CCC_AuthCheck,		"sv_no_auth_check",		&g_SV_Disable_Auth_Check, 0, 1);
 #endif // MASTER_GOLD

@@ -8,6 +8,7 @@
 #include "CustomOutfit.h"
 
 BOOL g_SV_IsVipeMode = FALSE;
+int g_sv_server_goodwill = 0;
 
 game_sv_freemp::game_sv_freemp()
 	:pure_relcase(&game_sv_freemp::net_Relcase)
