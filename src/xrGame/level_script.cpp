@@ -765,7 +765,7 @@ int GetGoodwill()
 		return 0;
 }
 
-int ChangeSVGoodwill(int delta)
+void ChangeSVGoodwill(int delta)
 {
 	g_sv_server_goodwill += delta;
 }
