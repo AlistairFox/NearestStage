@@ -421,7 +421,7 @@ u32 attachable_hud_item::anim_play(const shared_str& anm_name_b, BOOL bMixIn, co
 			if(bDebug)
 				Msg						("playing item animation [%s]",item_anm_name.c_str());
 		
-		R_ASSERT3(M2.valid(), "model has no motion [idle] ", pSettings->r_string(m_sect_name, "item_visual"));
+		Msg("model has no motion [idle] ", pSettings->r_string(m_sect_name, "item_visual"));
 
 		u16 root_id						= m_model->LL_GetBoneRoot();
 		CBoneInstance& root_binst		= m_model->LL_GetBoneInstance(root_id);
@@ -432,7 +432,7 @@ u32 attachable_hud_item::anim_play(const shared_str& anm_name_b, BOOL bMixIn, co
 		for(u16 pid=0; pid<pc; ++pid)
 		{
 			CBlend* B					= ka->PlayCycle(pid, M2, bMixIn);
-			R_ASSERT					(B);
+			R_ASSERT(B, "cant fint motion file or model");
 			B->speed					*= speed;
 		}
 

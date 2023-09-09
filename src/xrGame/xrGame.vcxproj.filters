@@ -2533,6 +2533,9 @@
     <Filter Include="HudGlass">
       <UniqueIdentifier>{a248309c-97c6-4835-814b-6229799d1051}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI\Common\PDA\Trade Wnd">
+      <UniqueIdentifier>{10b8e80e-6685-4221-bb81-b5316adf65da}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mt_config.h">

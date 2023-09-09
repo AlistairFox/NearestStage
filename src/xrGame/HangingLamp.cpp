@@ -77,7 +77,7 @@ void CHangingLamp::net_Destroy()
 	if(Visual())CPHSkeleton::RespawnInit();
 	inherited::net_Destroy	();
 }
-
+extern float lamp_bright;
 BOOL CHangingLamp::net_Spawn(CSE_Abstract* DC)
 {
 	CSE_Abstract			*e		= (CSE_Abstract*)(DC);
@@ -98,6 +98,8 @@ BOOL CHangingLamp::net_Spawn(CSE_Abstract* DC)
 		collidable.model	= xr_new<CCF_Skeleton>				(this);
 	}
 	fBrightness				= lamp->brightness;
+	fBoostBrightness = fBrightness;
+	CSE_Color.set (lamp->color);
 	clr.set					(lamp->color);						clr.a = 1.f;
 	clr.mul_rgb				(fBrightness);
 
@@ -217,6 +219,11 @@ void CHangingLamp::UpdateCL	()
 
 	if (Alive() && light_render->get_active()){
 		if(Visual())	PKinematics(Visual())->CalculateBones();
+		fBrightness = fBoostBrightness * lamp_bright;
+		Fcolor					clr;
+		clr.set(CSE_Color);						clr.a = 1.f;
+		clr.mul_rgb(fBrightness);
+		light_render->set_color(clr);
 
 		// update T&R from light (main) bone
 		Fmatrix xf;

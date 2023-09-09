@@ -43,7 +43,7 @@ void CObjectAnimator::LoadMotions(LPCSTR fname)
 	string_path			full_path;
 	if (!FS.exist( full_path, "$level$", fname ))
 		if (!FS.exist( full_path, "$game_anims$", fname ))
-            Debug.fatal(DEBUG_INFO, "Can't find motion file '%s'.", fname);
+            Msg("Can't find motion file '%s'.", fname);
             
     LPCSTR  ext			= strext(full_path);
     if (ext){

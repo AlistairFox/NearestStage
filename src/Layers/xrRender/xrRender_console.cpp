@@ -188,7 +188,6 @@ float		ps_r2_ssaLOD_A				= 64.f	;
 float		ps_r2_ssaLOD_B				= 48.f	;
 float		ps_r2_tf_Mipbias			= 0.0f	;
 
-
 //r4 only
 Flags32 ps_r4_ssr_flags = { R4_FLAG_SSR_USE
 };

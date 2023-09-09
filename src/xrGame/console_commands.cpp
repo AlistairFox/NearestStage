@@ -96,6 +96,7 @@ extern	BOOL	b_toggle_weapon_aim;
 extern float	g_smart_cover_factor;
 extern int		g_upgrades_log;
 extern float	g_smart_cover_animation_speed_factor;
+extern float lamp_bright = 1.f;
 
 extern	BOOL	g_ai_use_old_vision;
 float			g_aim_predict_time = 0.44f;
@@ -2013,6 +2014,7 @@ CMD4(CCC_Integer,			"hit_anims_tune",						&tune_hit_anims,		0, 1);
 	//-Alundaio
 	CMD4(CCC_Integer, "savetime_players", &save_time, 1, 1000000);
 	CMD4(CCC_Integer, "savetime_inventory_box", &save_time2, 1, 1000000);
+	CMD4(CCC_Float, "r__lamp_bright", &lamp_bright, 0.5f, 10.0f);
 
 
 	

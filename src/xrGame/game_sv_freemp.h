@@ -81,7 +81,6 @@ public:
 
 	virtual		void				RespawnPlayer(ClientID id_who, bool NoSpectator);
 
-
 	virtual     void				SavePlayer(game_PlayerState* ps, CInifile* file);
 	virtual     void				SavePlayerOutfits(game_PlayerState* ps, CInifile* outfsFile);
 	virtual     void				SavePlayerDetectors(game_PlayerState* ps, CInifile* detsFile);
