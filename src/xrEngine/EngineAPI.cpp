@@ -252,7 +252,7 @@ void CEngineAPI::CreateRendererList()
 
 	if(!bSupports_r1 && !bSupports_r2 && !bSupports_r4)
 		CHECK_OR_EXIT(!FAILED(E_FAIL), 
-			make_string("Ты зачем рендер украл?\n%s:%s\n%s:%s\n%s:%s\n%s:%s", r1_name, "украдено", r2_name, "спизженно", r4_name, "потеряно", "xrRender_R5.dll", "coming soon!"));
+			make_string("Ты зачем рендер украл?\n%s:%s\n%s:%s\n%s:%s\n%s:%s\n%s:%s", r1_name, "украдено", r2_name, "спизженно", r4_name, "потеряно", "xrRender_R5.dll", "coming soon!", "xrRender_R6.dll", "cumming soon!!"));
 
 	vid_quality_token = xr_alloc<xr_token>(size);
 
