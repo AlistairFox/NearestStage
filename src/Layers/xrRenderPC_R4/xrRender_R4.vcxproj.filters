@@ -699,9 +699,6 @@
     <ClInclude Include="..\xrRenderDX10\dx10StateUtils.h">
       <Filter>dx9 to dx10 Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\xrRenderDX10\dx10TextureUtils.h">
-      <Filter>dx9 to dx10 Utils</Filter>
-    </ClInclude>
     <ClInclude Include="..\xrRenderDX10\StateManager\dx10SamplerStateCache.h">
       <Filter>StateManager</Filter>
     </ClInclude>
@@ -1336,9 +1333,6 @@
       <Filter>dx9 to dx10 Utils</Filter>
     </ClCompile>
     <ClCompile Include="..\xrRenderDX10\dx10StateUtils.cpp">
-      <Filter>dx9 to dx10 Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="..\xrRenderDX10\dx10TextureUtils.cpp">
       <Filter>dx9 to dx10 Utils</Filter>
     </ClCompile>
     <ClCompile Include="..\xrRenderDX10\StateManager\dx10SamplerStateCache.cpp">

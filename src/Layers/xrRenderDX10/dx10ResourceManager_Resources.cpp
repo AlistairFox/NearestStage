@@ -452,7 +452,7 @@ void				CResourceManager::_DeleteConstantTable	(const R_constant_table* C)
 
 //--------------------------------------------------------------------------------------------------------------
 #ifdef USE_DX11
-CRT* CResourceManager::_CreateRT(LPCSTR Name, xr_vector<RtCreationParams>& vp_params, D3DFORMAT f, u32 SampleCount, bool useUAV)
+CRT* CResourceManager::_CreateRT(LPCSTR Name, xr_vector<RtCreationParams>& vp_params, DXGI_FORMAT f, VIEW_TYPE view, u32 samples)
 #else
 CRT* CResourceManager::_CreateRT(LPCSTR Name, xr_vector<RtCreationParams>& vp_params, D3DFORMAT f, u32 SampleCount)
 #endif
@@ -469,7 +469,7 @@ CRT* CResourceManager::_CreateRT(LPCSTR Name, xr_vector<RtCreationParams>& vp_pa
 		RT->dwFlags				|=	xr_resource_flagged::RF_REGISTERED;
 		m_rtargets.insert		(mk_pair(RT->set_name(Name),RT));
 #ifdef USE_DX11
-		if (Device.b_is_Ready)	RT->create(Name, vp_params, f, SampleCount, useUAV);
+		if (Device.b_is_Ready)	RT->create(Name, vp_params, f, view, samples);
 #else
 		if (Device.b_is_Ready)	RT->create(Name, vp_params, f, SampleCount);
 #endif

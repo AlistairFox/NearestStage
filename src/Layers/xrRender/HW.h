@@ -56,6 +56,13 @@ class  CHW
 
 		void					CreateD3D();
 		void					DestroyD3D();
+#ifndef USE_DX11
+
+
+		D3DFORMAT				selectDepthStencil(D3DFORMAT);
+		BOOL					support(D3DFORMAT fmt, DWORD type, DWORD usage);
+		u32						selectRefresh(u32 dwWidth, u32 dwHeight, D3DFORMAT fmt);
+#endif // !USE_DX11
 		void					CreateDevice(HWND hw, bool move_window);
 
 		void					DestroyDevice();
@@ -67,12 +74,9 @@ class  CHW
 	#endif	//	USE_DX10
 
 		void					selectResolution(u32& dwWidth, u32& dwHeight, BOOL bWindowed);
-		D3DFORMAT				selectDepthStencil(D3DFORMAT);
 		u32						selectPresentInterval();
 		u32						selectGPU();
-		u32						selectRefresh(u32 dwWidth, u32 dwHeight, D3DFORMAT fmt);
 		void					updateWindowProps(HWND hw);
-		BOOL					support(D3DFORMAT fmt, DWORD type, DWORD usage);
 
 	#ifdef DEBUG
 	#if defined(USE_DX10) || defined(USE_DX11)

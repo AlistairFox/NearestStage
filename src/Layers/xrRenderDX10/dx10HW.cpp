@@ -174,12 +174,12 @@ void CHW::CreateDevice(HWND m_hWnd, bool move_window)
 
 	*/
 	// Select back-buffer & depth-stencil format
-	D3DFORMAT& fTarget = Caps.fTarget;
-	D3DFORMAT& fDepth = Caps.fDepth;
+	//D3DFORMAT& fTarget = Caps.fTarget;
+	//D3DFORMAT& fDepth = Caps.fDepth;
 
 	//	HACK: DX10: Embed hard target format.
-	fTarget = D3DFMT_X8R8G8B8;	//	No match in DX10. D3DFMT_A8B8G8R8->DXGI_FORMAT_R8G8B8A8_UNORM
-	fDepth = selectDepthStencil(fTarget);
+	//fTarget = D3DFMT_X8R8G8B8;	//	No match in DX10. D3DFMT_A8B8G8R8->DXGI_FORMAT_R8G8B8A8_UNORM
+	//fDepth = selectDepthStencil(fTarget);
 	/*
 	if (bWindowed)
 	{
@@ -558,13 +558,14 @@ void CHW::SwitchVP(ViewPort vp)
 	ImGui_ImplDX10_CreateDeviceObjects();
 #endif
 }
-
+/*
 D3DFORMAT CHW::selectDepthStencil(D3DFORMAT fTarget)
 {
 	// R3 hack
 #pragma todo("R3 need to specify depth format")
 	return D3DFMT_D24S8;
 }
+*/
 
 void CHW::selectResolution(u32& dwWidth, u32& dwHeight, BOOL bWindowed)
 {
@@ -703,18 +704,19 @@ DXGI_RATIONAL CHW::selectRefresh(u32 dwWidth, u32 dwHeight, DXGI_FORMAT fmt)
 	return res;
 }
 
+/*
 BOOL CHW::support(D3DFORMAT fmt, DWORD type, DWORD usage)
 {
 	//	TODO: DX10: implement stub for this code.
 	VERIFY(!"Implement CHW::support");
-	/*
+	
 	HRESULT hr		= pD3D->CheckDeviceFormat(DevAdapter,DevT,Caps.fTarget,usage,(D3DRESOURCETYPE)type,fmt);
 	if (FAILED(hr))	return FALSE;
 	else			return TRUE;
-	*/
+	
 	return TRUE;
 }
-
+*/
 void CHW::updateWindowProps(HWND m_hWnd)
 {
 	//	BOOL	bWindowed				= strstr(Core.Params,"-dedicated") ? TRUE : !psDeviceFlags.is	(rsFullscreen);

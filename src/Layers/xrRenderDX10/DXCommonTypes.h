@@ -57,6 +57,7 @@ typedef	ID3D11Resource							ID3DBaseTexture;
 typedef ID3D11Resource							ID3DResource;
 typedef	ID3D11RenderTargetView					ID3DRenderTargetView;
 typedef	ID3D11DepthStencilView					ID3DDepthStencilView;
+typedef	ID3D11UnorderedAccessView				ID3DUnorderedAccessView;
 typedef	ID3D11ShaderResourceView				ID3DShaderResourceView;
 typedef	ID3D11Query								ID3DQuery;
 typedef	ID3D11Device							ID3DDevice;
@@ -244,6 +245,7 @@ typedef D3D11_RESOURCE_DIMENSION	D3D_RESOURCE_DIMENSION;
 #define	D3D_UAV_DIMENSION_TEXTURE2D				D3D11_UAV_DIMENSION_TEXTURE2D
 #define	D3D_UAV_DIMENSION_TEXTURE2DARRAY		D3D11_UAV_DIMENSION_TEXTURE2DARRAY
 #define	D3D_UAV_DIMENSION_TEXTURE3D				D3D11_UAV_DIMENSION_TEXTURE3D
+#define	D3D_UNORDERED_ACCESS_VIEW_DESC			D3D11_UNORDERED_ACCESS_VIEW_DESC
 
 typedef D3D11_SHADER_DESC				D3D_SHADER_DESC;
 typedef	D3D11_SHADER_BUFFER_DESC		D3D_SHADER_BUFFER_DESC;

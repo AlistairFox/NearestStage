@@ -55,10 +55,10 @@ LPCSTR			dx103DFluidRenderer::m_pResourceRTNames[ RRT_NumRT ] =
 dx103DFluidRenderer::dx103DFluidRenderer():
 	m_bInited(false)
 {
-	RTFormats[RRT_RayDataTex] = D3DFMT_A32B32G32R32F;
-	RTFormats[RRT_RayDataTexSmall] = D3DFMT_A32B32G32R32F;
-	RTFormats[RRT_RayCastTex] = D3DFMT_A32B32G32R32F;
-	RTFormats[RRT_EdgeTex] = D3DFMT_R32F;
+	RTFormats[RRT_RayDataTex] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	RTFormats[RRT_RayDataTexSmall] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	RTFormats[RRT_RayCastTex] = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	RTFormats[RRT_EdgeTex] = DXGI_FORMAT_R32_FLOAT;
 }
 
 dx103DFluidRenderer::~dx103DFluidRenderer()
@@ -536,12 +536,12 @@ void dx103DFluidRenderer::CreateRayDataResources( int width, int height )
 	*/
 
 	RT[0] = nullptr;
-	RT[0].create(m_pRTNames[0], RtCreationParams(width, height, MAIN_VIEWPORT), RTFormats[0]);
+	RT[0].create(m_pRTNames[0], RtCreationParams(width, height, MAIN_VIEWPORT), RTFormats[0], SRV_RTV);
 
 	for (int i=1; i<RRT_NumRT; ++i)
 	{
 		RT[i] = 0;
-		RT[i].create(m_pRTNames[i], RtCreationParams(m_iRenderTextureWidth, m_iRenderTextureHeight, MAIN_VIEWPORT), RTFormats[i]);
+		RT[i].create(m_pRTNames[i], RtCreationParams(m_iRenderTextureWidth, m_iRenderTextureHeight, MAIN_VIEWPORT), RTFormats[i], SRV_RTV);
 	}
 }
 

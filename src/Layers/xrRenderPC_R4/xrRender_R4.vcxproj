@@ -108,7 +108,7 @@
       <OmitFramePointers>true</OmitFramePointers>
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>../../../sdk/include/;$(DXSDK_DIR)Include/;../../3rd party/imgui;../../../sdk/include/ssao/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../sdk/include/;$(DXSDK_DIR)Include/;../../3rd party/imgui;../../../sdk/include/ssao/;.;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>USE_DX11;WIN32;NDEBUG;_WINDOWS;_USRDLL;XRRENDER_R4_EXPORTS;_SECURE_SCL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling>
@@ -193,7 +193,6 @@
     <ClInclude Include="..\xrRenderDX10\dx10R_Backend_Runtime.h" />
     <ClInclude Include="..\xrRenderDX10\dx10r_constants_cache.h" />
     <ClInclude Include="..\xrRenderDX10\dx10StateUtils.h" />
-    <ClInclude Include="..\xrRenderDX10\dx10TextureUtils.h" />
     <ClInclude Include="..\xrRenderDX10\DXCommonTypes.h" />
     <ClInclude Include="..\xrRenderDX10\imgui_impl_dx11.h" />
     <ClInclude Include="..\xrRenderDX10\MSAA\dx10MSAABlender.h" />
@@ -373,7 +372,6 @@
     <ClCompile Include="..\xrRenderDX10\dx10SH_Texture.cpp" />
     <ClCompile Include="..\xrRenderDX10\dx10StateUtils.cpp" />
     <ClCompile Include="..\xrRenderDX10\dx10Texture.cpp" />
-    <ClCompile Include="..\xrRenderDX10\dx10TextureUtils.cpp" />
     <ClCompile Include="..\xrRenderDX10\imgui_impl_dx11.cpp" />
     <ClCompile Include="..\xrRenderDX10\MSAA\dx10MSAABlender.cpp" />
     <ClCompile Include="..\xrRenderDX10\StateManager\dx10SamplerStateCache.cpp" />

@@ -44,8 +44,10 @@ public:
 	u32				iGPUNum;
 
 	// device format
+#ifndef  USE_DX11
 	D3DFORMAT		fTarget;
 	D3DFORMAT		fDepth;
+#endif //  USE_DX11
 	u32				dwRefreshRate;
 
 	// caps itself

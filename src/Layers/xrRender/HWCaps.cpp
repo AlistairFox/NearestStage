@@ -213,9 +213,26 @@ void CHWCaps::Update()
 #else	//	USE_DX10
 void CHWCaps::Update()
 {
+	struct sm { u16 major, minor; } version = { 2, 0 };
+
+	switch (HW.FeatureLevel)
+	{
+	case D3D_FEATURE_LEVEL_10_0:
+		version.major = 4;
+		version.minor = 0;
+		break;
+	case D3D_FEATURE_LEVEL_10_1:
+		version.major = 4;
+		version.minor = 1;
+		break;
+	case D3D_FEATURE_LEVEL_11_0:
+		version.major = 5;
+		version.minor = 0;
+		break;
+	}
 	// ***************** GEOMETRY
-	geometry_major				= 4;
-	geometry_minor				= 0;
+	geometry_major = version.major;
+	geometry_minor = version.minor;
 	geometry.bSoftware			= FALSE;
 	geometry.bPointSprites		= FALSE;
 	geometry.bNPatches			= FALSE;
@@ -227,8 +244,8 @@ void CHWCaps::Update()
 	geometry.bVTF				= TRUE;
 
 	// ***************** PIXEL processing
-	raster_major				= 4;
-	raster_minor				= 0;
+	raster_major = version.major;
+	raster_minor = version.minor;
 	raster.dwStages				= 16;
 	raster.bNonPow2				= TRUE;
 	raster.bCubemap				= TRUE;

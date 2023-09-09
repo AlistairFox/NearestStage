@@ -114,7 +114,7 @@ ID3DShaderResourceView* CTexture::CreateShaderRes(ID3DBaseTexture* surf)
 
 			ViewDesc.Format = DXGI_FORMAT_UNKNOWN;
 
-			switch(desc.Format)
+			switch (desc.Format)
 			{
 			case DXGI_FORMAT_R24G8_TYPELESS:
 				ViewDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
@@ -124,10 +124,10 @@ ID3DShaderResourceView* CTexture::CreateShaderRes(ID3DBaseTexture* surf)
 				break;
 			}
 
-			if ((desc.SampleDesc.Count <= 1) || (ViewDesc.Format != DXGI_FORMAT_R24_UNORM_X8_TYPELESS))
+		//	if ((desc.SampleDesc.Count <= 1) || (ViewDesc.Format != DXGI_FORMAT_R24_UNORM_X8_TYPELESS))
 			{
 				R_CHK(HW.pDevice->CreateShaderResourceView(surf, &ViewDesc, &sh_res_view));
-				R_ASSERT(sh_res_view);
+		//		R_ASSERT(sh_res_view);
 			}
 		}
 		else

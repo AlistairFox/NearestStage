@@ -137,7 +137,7 @@ public:
 #endif	//	USE_DX10
 
 #ifdef USE_DX11
-	CRT* _CreateRT(LPCSTR Name, xr_vector<RtCreationParams>& vp_params, D3DFORMAT f, u32 SampleCount = 1, bool useUAV = false);
+	CRT* _CreateRT(LPCSTR name, xr_vector<RtCreationParams>& vp_params, DXGI_FORMAT f, VIEW_TYPE view, u32 samples);
 #elif USE_DX10
 	CRT* _CreateRT(LPCSTR Name, xr_vector<RtCreationParams>& vp_params, D3DFORMAT f, u32 SampleCount = 1);
 #else

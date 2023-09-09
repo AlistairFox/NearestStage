@@ -205,6 +205,7 @@ stats_manager::~stats_manager ()
 #endif 
 }
 
+#ifndef USE_DX11
 u32 get_format_pixel_size( D3DFORMAT format )
 {
 	switch ( format )
@@ -252,8 +253,9 @@ u32 get_format_pixel_size( D3DFORMAT format )
 		return 0;
 	}
 }
+#endif // !USE_DX11
 
-#if defined(USE_DX10) || defined(USE_DX11)
+#if defined(USE_DX11)
 u32 get_format_pixel_size ( DXGI_FORMAT format )
 {
 	if( format >= DXGI_FORMAT_R32G32B32A32_TYPELESS && format <= DXGI_FORMAT_R32G32B32A32_SINT)

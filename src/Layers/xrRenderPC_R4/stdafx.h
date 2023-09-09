@@ -29,6 +29,10 @@
 #define		R_R4	4
 #define		RENDER	R_R4
 
+
+// TODO: delete this after cut dx10TextureUtils
+#define D3DFORMAT R_ASSERT(E_FAIL)
+
 #include "../../xrParticles/psystem.h"
 
 #include "../xrRender/HW.h"
@@ -46,6 +50,7 @@
 #include "../xrRender/blenders\blender_clsid.h"
 #include "../xrRender/xrRender_console.h"
 #include "r4.h"
+
 
 IC	void	jitter(CBlender_Compile& C)
 {
