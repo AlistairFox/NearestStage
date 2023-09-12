@@ -909,6 +909,13 @@ void object_give_to_actor(u16 gameid, LPCSTR name, u16 count)
 	}
 }
 
+void change_team(u32 ClientID, u16 team)
+{
+		if (!OnServer()) return;
+	xrClientData* CL = static_cast<xrClientData*>(Level().Server->GetClientByID(ClientID));
+		CL->ps->team = team;
+}
+
 void object_destroy(CScriptGameObject* object)
 {
 	if (!OnServer() || !object)
@@ -1156,7 +1163,8 @@ def("game_id", &GameID),
 		def("remove_money", &remove_money_to_actor),
 		def("object_destroy", object_destroy),
 		def("object_give_to_actor", object_give_to_actor),
-		def("send_news_item_drop", send_news_item_drop)
+		def("send_news_item_drop", send_news_item_drop),
+		def("change_team", change_team)
 	],
 	
 
