@@ -392,27 +392,27 @@ void game_cl_freemp::TranslateGameMessage(u32 msg, NET_Packet& P)
 	}break;
 	case GAME_EVENT_NEWS_MONEY_MESSAGE:
 	{
-	shared_str name, text, icon;
-	P.r_stringZ(name);
-	P.r_stringZ(text);
-	P.r_stringZ(icon);
-	GAME_NEWS_DATA data;
-	data.m_type = data.eNews;
-	data.news_caption = name;
-	data.news_text = text;
-	data.texture_name = icon;
-	data.receive_time = Level().GetGameTime();
+		shared_str name, text, icon;
+		P.r_stringZ(name);
+		P.r_stringZ(text);
+		P.r_stringZ(icon);
+		GAME_NEWS_DATA data;
+		data.m_type = data.eNews;
+		data.news_caption = name;
+		data.news_text = text;
+		data.texture_name = icon;
+		data.receive_time = Level().GetGameTime();
 
-	if (CurrentGameUI())
-	{
-		bool talk = CurrentGameUI()->TalkMenu && CurrentGameUI()->TalkMenu->IsShown();
+			if (CurrentGameUI())
+			{
+				bool talk = CurrentGameUI()->TalkMenu && CurrentGameUI()->TalkMenu->IsShown();
 
-		if (CurrentGameUI()->UIMainIngameWnd && !talk)
-			CurrentGameUI()->m_pMessagesWnd->AddIconedPdaMessage(&data);
-		else
-			if (talk)
-				CurrentGameUI()->TalkMenu->AddIconedMessage(name.c_str(), text.c_str(), icon.c_str(), "iconed_answer_item");
-	}
+				if (CurrentGameUI()->UIMainIngameWnd && !talk)
+					CurrentGameUI()->m_pMessagesWnd->AddIconedPdaMessage(&data);
+				else
+					if (talk)
+						CurrentGameUI()->TalkMenu->AddIconedMessage(name.c_str(), text.c_str(), icon.c_str(), "iconed_answer_item");
+			}
 
 	}break;
 

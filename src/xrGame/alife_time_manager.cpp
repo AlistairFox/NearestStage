@@ -22,8 +22,30 @@ CALifeTimeManager::~CALifeTimeManager	()
 void CALifeTimeManager::init			(LPCSTR section)
 {
 	u32							years,months,days,hours,minutes,seconds;
-	sscanf						(pSettings->r_string(section,"start_time"),"%d:%d:%d",&hours,&minutes,&seconds);
+
+	string_path save_game_time;
+	FS.update_path(save_game_time, "$global_server_data$", "server_data.ltx");
+	CInifile* global_server_data = xr_new<CInifile>(save_game_time, true);
+
+	if (global_server_data->line_exist("server_time", "time"))
+	{
+		Msg("TIME SET");
+		sscanf(global_server_data->r_string("server_time", "time"), "%d:%d:%d", &hours, &minutes, &seconds);
+	}
+	else
+	{
+		sscanf(pSettings->r_string(section, "start_time"), "%d:%d:%d", &hours, &minutes, &seconds);
+	}
+
+	if (global_server_data->line_exist("server_time", "data"))
+	{
+		sscanf(global_server_data->r_string("server_time", "data"), "%d.%d.%d", &days, &months, &years);
+	}
+	else
 	sscanf						(pSettings->r_string(section,"start_date"),"%d.%d.%d",&days,&months,&years);
+
+	xr_delete(global_server_data);
+
 	m_start_game_time			= generate_time(years,months,days,hours,minutes,seconds);
 	m_time_factor				= pSettings->r_float(section,"time_factor");
 	m_normal_time_factor		= pSettings->r_float(section,"normal_time_factor");

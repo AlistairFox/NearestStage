@@ -65,7 +65,8 @@ enum EDatePrecision
 {
 	edpDateToDay,
 	edpDateToMonth,
-	edpDateToYear
+	edpDateToYear,
+	edpDateToNormal
 };
 
 const shared_str GetGameDateAsString(EDatePrecision datePrec, char dateSeparator = ',');

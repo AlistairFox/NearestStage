@@ -19,6 +19,7 @@ game_sv_freemp::game_sv_freemp()
 	{
 		
 	}
+
 }
 
 game_sv_freemp::~game_sv_freemp()
@@ -49,7 +50,6 @@ void game_sv_freemp::OnAlifeCreate(CSE_Abstract* E)
 		data.entity = E;
 		inventory_boxes_cse[E->ID] = data;
 	}
-
 }
 
 // player connect #1
@@ -384,8 +384,10 @@ void game_sv_freemp::OnEvent(NET_Packet &P, u16 type, u32 time, ClientID sender)
 }
 
 #include "Actor.h"
+#include <ui/UIInventoryUtilities.h>
 extern int save_time;
 extern int save_time2;
+extern int save_time3;
 void game_sv_freemp::Update()
 {
 	inherited::Update();
@@ -435,9 +437,22 @@ void game_sv_freemp::Update()
 		}
 	}
 
+	if (Level().game && Device.dwFrame % save_time3 == 0)
+	{
+		string_path save_game_time;
+		FS.update_path(save_game_time, "$global_server_data$", "server_data.ltx");
+		CInifile* global_server_data = xr_new<CInifile>(save_game_time, false, false);
+
+		LPCSTR time = InventoryUtilities::GetGameTimeAsString(InventoryUtilities::etpTimeToSeconds).c_str();
+		LPCSTR data = InventoryUtilities::GetDateAsString(GetGameTime(), InventoryUtilities::edpDateToNormal).c_str();
+		global_server_data->w_string("server_time", "time", time);
+		global_server_data->w_string("server_time", "data", data);
+		global_server_data->save_as(save_game_time);
+		xr_delete(global_server_data);
+	}
+
 		if (Level().game && Device.dwFrame % save_time2 == 0)
 		{
-		
 		//for (int i = 0; i != server().GetEntitiesNum(); i++)
 			for(auto entity:inventory_boxes_cse)
 		{
