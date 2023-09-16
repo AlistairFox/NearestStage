@@ -209,11 +209,12 @@ void CScriptEngine::lua_error			(lua_State *L)
 
 int  CScriptEngine::lua_pcall_failed	(lua_State *L)
 {
+	printLuaTraceback(L);
 	print_output			(L,"",LUA_ERRRUN);
 	ai().script_engine().on_error	(L);
 
 #if !XRAY_EXCEPTIONS
-	Debug.fatal				(DEBUG_INFO,"LUA error: %s",lua_isstring(L,-1) ? lua_tostring(L,-1) : "");
+	Debug.fatal				(DEBUG_INFO,"LUA pcall error: %s",lua_isstring(L,-1) ? lua_tostring(L,-1) : "");
 #endif
 	if (lua_isstring(L,-1))
 		lua_pop				(L,1);
@@ -222,9 +223,10 @@ int  CScriptEngine::lua_pcall_failed	(lua_State *L)
 
 void lua_cast_failed					(lua_State *L, LUABIND_TYPE_INFO info)
 {
+	printLuaTraceback(L);
 	CScriptEngine::print_output	(L,"",LUA_ERRRUN);
 
-	Debug.fatal				(DEBUG_INFO,"LUA error: cannot cast lua value to %s",info->name());
+	Debug.fatal				(DEBUG_INFO,"LUA cast error: cannot cast lua value to %s",info->name());
 }
 
 void CScriptEngine::setup_callbacks		()
