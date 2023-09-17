@@ -178,6 +178,7 @@ void CSpaceRestrictionHolder::unregister_restrictor			(CSpaceRestrictor *space_r
 	VERIFY					(I != m_restrictions.end());
 
 	CSpaceRestrictionBridge	*bridge	= (*I).second;
+	if(I != m_restrictions.end())
 	m_restrictions.erase	(I);
 
 	if (try_remove_string(m_default_out_restrictions,restrictor_id))
