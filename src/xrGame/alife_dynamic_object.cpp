@@ -55,6 +55,26 @@ void CSE_ALifeDynamicObject::switch_online			()
 	alife().add_online			(this);
 }
 
+float CheckDistanceToActor(Fvector& o_Position, float distance)
+{
+	float d = 10000.0f;
+
+	for (auto player : Level().game->players)
+	{
+		if (player.first.value() == Level().Server->GetServerClient()->ID.value())
+			continue;
+
+		CObject* o = Level().Objects.net_Find(player.second->GameID);
+		if (o && o->Position().distance_to(o_Position) <= distance)
+		{
+			d = o->Position().distance_to(o_Position);
+			break;
+		}
+	}
+
+	return d;
+}
+
 void CSE_ALifeDynamicObject::switch_offline			()
 {
 	R_ASSERT					(m_bOnline);
@@ -138,7 +158,8 @@ void CSE_ALifeDynamicObject::try_switch_online		()
 		return;
 	}
 
-	if (alife().graph().actor()->o_Position.distance_to(o_Position) > alife().online_distance()) {
+	if (CheckDistanceToActor(o_Position, alife().online_distance()) > alife().online_distance())
+	{
 		on_failed_switch_online();
 		return;
 	}
@@ -156,7 +177,10 @@ void CSE_ALifeDynamicObject::try_switch_offline		()
 		return;
 	}
 
-	if (alife().graph().actor()->o_Position.distance_to(o_Position) <= alife().offline_distance())
+	//if (alife().graph().actor()->o_Position.distance_to(o_Position) <= alife().offline_distance())
+	//	return;
+
+	if (CheckDistanceToActor(o_Position, alife().online_distance()) > alife().online_distance())
 		return;
 
 	alife().switch_offline		(this);

@@ -118,6 +118,8 @@ void CSE_ALifeGroupAbstract::try_switch_online		()
 	I->try_switch_online				();
 }
 
+extern float CheckDistanceToActor(Fvector& o_Position, float distance);
+
 void CSE_ALifeGroupAbstract::try_switch_offline		()
 {
 	// checking if group is not empty
@@ -150,7 +152,9 @@ void CSE_ALifeGroupAbstract::try_switch_offline		()
 				// to switch offline
 				break;
 			
-			if (I->alife().graph().actor()->o_Position.distance_to(tpGroupMember->o_Position) <= I->alife().offline_distance())
+			//if (I->alife().graph().actor()->o_Position.distance_to(tpGroupMember->o_Position) <= I->alife().offline_distance())
+
+			if(CheckDistanceToActor(tpGroupMember->o_Position, I->alife().offline_distance()) <= I->alife().offline_distance())
 				// so, it is not ready, breaking a cycle, because we can't 
 				// switch group offline since not all the group members are ready
 				// to switch offline

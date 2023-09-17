@@ -949,6 +949,17 @@ CSE_ALifeItemArtefact::CSE_ALifeItemArtefact(LPCSTR caSection) : CSE_ALifeItem(c
 	m_fAnomalyValue				= 100.f;
 }
 
+bool CSE_ALifeItemArtefact::can_switch_online() const
+{
+	return true;
+}
+
+bool CSE_ALifeItemArtefact::can_switch_offline() const
+{
+	return false;
+}
+
+
 CSE_ALifeItemArtefact::~CSE_ALifeItemArtefact()
 {
 }

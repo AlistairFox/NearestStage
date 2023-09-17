@@ -261,6 +261,8 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemArtefact,CSE_ALifeItem)
 	virtual							~CSE_ALifeItemArtefact	();
 	virtual CSE_ALifeItemArtefact		*cast_item_artefact() { return this; };
 	virtual BOOL					Net_Relevant			();
+	virtual bool					can_switch_online() const;
+	virtual bool					can_switch_offline() const;
 SERVER_ENTITY_DECLARE_END
 add_to_type_list(CSE_ALifeItemArtefact)
 #define script_type_list save_type_list(CSE_ALifeItemArtefact)

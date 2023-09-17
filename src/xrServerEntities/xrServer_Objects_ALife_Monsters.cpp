@@ -1351,6 +1351,16 @@ CSE_ALifeCreatureActor::CSE_ALifeCreatureActor	(LPCSTR caSection) : CSE_ALifeCre
 	mstate						= 0;
 }
 
+bool CSE_ALifeCreatureActor::can_switch_online() const
+{
+	return true;
+}
+
+bool CSE_ALifeCreatureActor::can_switch_offline() const
+{
+	return false;
+}
+
 CSE_ALifeCreatureActor::~CSE_ALifeCreatureActor()
 {
 }

@@ -497,6 +497,8 @@ SERVER_ENTITY_DECLARE_BEGIN2(CSE_ALifeObjectHangingLamp,CSE_ALifeDynamicObjectVi
 	virtual bool					used_ai_locations			() const;
 	virtual bool					match_configuration			() const;
 	virtual bool		__stdcall	validate					();
+	virtual bool					can_switch_online() const;
+	virtual bool					can_switch_offline() const;
 #ifndef XRGAME_EXPORTS
 	virtual void 		__stdcall	on_render					(CDUInterface* du, ISE_AbstractLEOwner* owner, bool bSelected, const Fmatrix& parent,int priority, bool strictB2F);
 #endif // #ifndef XRGAME_EXPORTS

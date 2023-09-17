@@ -563,18 +563,18 @@ extern int alife_on;
 
 bool CSE_ALifeObject::can_switch_online		() const
 {
-	if (g_pGamePersistent->GameType() == eGameIDSingle)
+	//if (g_pGamePersistent->GameType() == eGameIDSingle)
 		return						(match_configuration() && !!m_flags.is(flSwitchOnline));
-	else
-		return alife_on;
+	//else
+	//	return alife_on;
 }
 
 bool CSE_ALifeObject::can_switch_offline	() const
 {
-	if (g_pGamePersistent->GameType() == eGameIDSingle)
+//	if (g_pGamePersistent->GameType() == eGameIDSingle)
 		return						(!match_configuration() || !!m_flags.is(flSwitchOffline));
-	else
-		return !alife_on;
+	//else
+	//	return !alife_on;
 }
 
 bool CSE_ALifeObject::can_save				() const
@@ -1333,6 +1333,16 @@ CSE_ALifeObjectHangingLamp::CSE_ALifeObjectHangingLamp(LPCSTR caSection) : CSE_A
 
 CSE_ALifeObjectHangingLamp::~CSE_ALifeObjectHangingLamp()
 {
+}
+
+bool CSE_ALifeObjectHangingLamp::can_switch_online() const
+{
+	return true;
+}
+
+bool CSE_ALifeObjectHangingLamp::can_switch_offline() const
+{
+	return false;
 }
 
 void CSE_ALifeObjectHangingLamp::STATE_Read	(NET_Packet	&tNetPacket, u16 size)
