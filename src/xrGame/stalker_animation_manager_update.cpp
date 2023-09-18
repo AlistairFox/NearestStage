@@ -233,12 +233,21 @@ void CStalkerAnimationManager::update_impl					()
 void CStalkerAnimationManager::update						()
 {
 	START_PROFILE("stalker/client_update/animations")
-		try {
+	try
+	{
 		update_impl();
 	}
-	catch (...) {
-		Msg("! error in stalker [%s] with visual [%s]", object().cNameSect().c_str(), object().cNameVisual().c_str());
-		throw;
+	catch (...)
+	{
+		Msg("! error in stalker [%s], specChar: [%s], characterID: [%s] with visual [%s]", object().cNameSect().c_str(), object().SpecificCharacter(), object().CharacterId().c_str(), object().cNameVisual().c_str());
+		/* avo: prevent game from crashing */
+		global().reset();
+		head().reset();
+		torso().reset();
+		legs().reset();
+		return;
+		//throw;
+		/* avo: end */
 	}
 	STOP_PROFILE
 }

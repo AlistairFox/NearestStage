@@ -299,10 +299,9 @@ bool CStalkerAnimationPair::use_animation_movement_control	(IKinematicsAnimated 
 
 void CStalkerAnimationPair::reset							()
 {
-#if 0//def DEBUG
-	if (m_animation)
-		Msg						("animation [%s][%s] is reset",m_object_name,m_animation_type_name);
-#endif // DEBUG
+
+	//Msg						("animation reset");
+
 
 	m_animation.invalidate		();
 	m_blend						= 0;

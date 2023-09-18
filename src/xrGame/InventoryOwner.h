@@ -159,6 +159,7 @@ public:
 public:
 	CCharacterInfo&						CharacterInfo		() const {VERIFY(m_pCharacterInfo); return *m_pCharacterInfo;}
 	IC const CSpecificCharacter&		SpecificCharacter	() const {return CharacterInfo().m_SpecificCharacter;};
+	shared_str CharacterId() { return CharacterInfo().m_SpecificCharacterId; };
 	bool								InfinitiveMoney		()	{return CharacterInfo().m_SpecificCharacter.MoneyDef().inf_money;}
 
 	//установка группировки на клиентском и серверном объкте
