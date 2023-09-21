@@ -81,6 +81,7 @@
 #include "game_cl_freemp.h"
 #include "UIGameFMP.h"
 #include "CustomDetector.h"
+#include <PostprocessAnimator.h>
 
 const u32		patch_frames	= 50;
 const float		respawn_delay	= 1.f;
@@ -888,6 +889,10 @@ void CActor::Die	(CObject* who)
 
 	//ANIM MODE 
 	StopAllSNDs();
+
+	CPostprocessAnimator* pp = xr_new<CPostprocessAnimator>(20, true);
+	pp->Load("die.ppe");
+	Actor()->Cameras().AddPPEffector(pp);
 
 	if (OnServer())
 	{	
