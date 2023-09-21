@@ -360,11 +360,10 @@ void CActor::cam_Update(float dt, float fFOV)
 	{
 		IKinematics* k = Visual()->dcast_PKinematics();
 		if (eyeID == NULL)
-			eyeID = k->LL_BoneID("eye_left");
+			eyeID = k->LL_BoneID("eyelid_1");
 		Fmatrix m;
 		m.mul_43(XFORM(), k->LL_GetTransform(eyeID));
 		point = m.c; //Head position
-
 		m.mul_43(XFORM(), k->LL_GetTransform(eyeID));
 		m.getHPB(dangle); //Head direction
 	}
