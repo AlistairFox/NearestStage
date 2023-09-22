@@ -111,15 +111,6 @@ public:
 
 	virtual void			SwitchState			(u32 S);
 
-	float			m_fLR_MovingFactor; // Фактор бокового наклона худа при ходьбе [-1; +1]
-	float			m_fLR_CameraFactor; // Фактор бокового наклона худа при движении камеры [-1; +1]
-	float			m_fLR_InertiaFactor; // Фактор горизонтальной инерции худа при движении камеры [-1; +1]
-	float			m_fUD_InertiaFactor; // Фактор вертикальной инерции худа при движении камеры [-1; +1]
-
-
-
-
-	Fvector			m_strafe_offset[4][2]; //pos,rot,data1,data2/ normal,aim-GL --#SM+#--
 
 
 	virtual void			OnActiveItem		();
@@ -199,6 +190,12 @@ public:
 			void UpdateHUDAddonsVisibility();
 	//инициализация свойств присоединенных аддонов
 	virtual void InitAddons();
+
+	float			m_fLR_MovingFactor; // Фактор бокового наклона худа при ходьбе [-1; +1]
+	float			m_fLR_CameraFactor; // Фактор бокового наклона худа при движении камеры [-1; +1]
+	float			m_fLR_InertiaFactor; // Фактор горизонтальной инерции худа при движении камеры [-1; +1]
+	float			m_fUD_InertiaFactor; // Фактор вертикальной инерции худа при движении камеры [-1; +1]
+	Fvector			m_strafe_offset[4][2]; //pos,rot,data1,data2/ normal,aim-GL --#SM+#--
 
 	//для отоброажения иконок апгрейдов в интерфейсе
 	int GetScopeX();
@@ -331,7 +328,7 @@ protected:
 	virtual void            UpdatePosition(const Fmatrix& transform);
 	virtual void            UpdatePosition_alt(const Fmatrix& transform);
 	virtual void			UpdateXForm				();
-	virtual void			UpdateHudAdditonal		(Fmatrix&);
+	virtual void			UpdateHudAdditional(Fmatrix&);
 	IC		void			UpdateFireDependencies	()			{ if (dwFP_Frame==Device.dwFrame) return; UpdateFireDependencies_internal(); };
 
 	virtual void			LoadFireParams		(LPCSTR section);

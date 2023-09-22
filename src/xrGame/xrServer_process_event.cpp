@@ -327,6 +327,7 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 			VERIFY					(verify_entities());
 #	endif
 		}break;
+	case GEG_PLAYER_START_ANIMATION:
 	case GEG_PLAYER_USE_BOOSTER:
 		{
 			if (receiver && receiver->owner && (receiver->owner != SV_Client))
@@ -336,6 +337,10 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 				SendTo(receiver->owner->ID, P, net_flags(TRUE, TRUE));
 			}
 		}break;
+	case GEG_PLAYER_NEED_EAT_ITEM:
+	{
+		SendTo(SV_Client->ID, P, net_flags(TRUE, TRUE, FALSE, TRUE));
+	}
 	case GEG_PLAYER_ITEM_SELL:
 		{
 			game->OnPlayer_Sell_Item(sender, P);

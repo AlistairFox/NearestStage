@@ -225,6 +225,7 @@ CActor::CActor() : CEntityAlive(),current_ik_cam_shift(0)
 	CurrentHeight = 0.f;
 
 
+	m_bEatAnimActive = false;
 }
 
 
@@ -1678,6 +1679,7 @@ void CActor::shedule_Update	(u32 DT)
 
 	if (Actor())
 		DynamicHudGlass::UpdateDynamicHudGlass();
+
 };
 #include "debug_renderer.h"
 void CActor::renderable_Render	()
@@ -2577,7 +2579,6 @@ void CActor::blockeat()
 		{
 			pDet->HideDetector(true);
 		}
-		Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, true);
 		old_timer = Device.dwTimeGlobal + 3000;
 		need_exit = true;
 	}
@@ -2594,6 +2595,5 @@ void CActor::unblockeat()
 		Actor()->unblock_action(kQUICK_USE_3);
 		Actor()->unblock_action(kQUICK_USE_4);
 		Actor()->set_inventory_disabled(false);
-		Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, false);
 	}
 }

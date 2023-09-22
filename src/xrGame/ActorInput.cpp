@@ -254,16 +254,12 @@ void CActor::IR_OnKeyboardPress(int cmd)
 			if(item_name.size())
 			{
 				PIItem itm = inventory().Get(item_name.c_str(), false);
+				CEatableItem* pItemToEat = smart_cast<CEatableItem*>(itm);
 
 				if(itm)
 				{
-					if (IsGameTypeSingle())
-					{
-						inventory().Eat				(itm);
-					} else
-					{
-						inventory().ClientEat		(itm);
-					}
+
+					pItemToEat->HideWeapon();
 					
 					SDrawStaticStruct* _s		= CurrentGameUI()->AddCustomStatic("item_used", true);
 					string1024					str;
@@ -486,7 +482,9 @@ void CActor::ActorUse()
 		CGameObject::u_EventSend	(P);
 		return;
 	}
-				
+
+	g_player_hud->script_anim_play(1, "fuck_take", "anm_use", true);
+
 	if(character_physics_support()->movement()->PHCapture())
 		character_physics_support()->movement()->PHReleaseObject();
 
@@ -747,6 +745,7 @@ void CActor::SwitchTorch()
 					}
 				}
 			}
+			g_player_hud->script_anim_play(1, "switch_torch_anm", "anm_use", true, 1.0f);
 			torch->Switch();
 			return;
 		}

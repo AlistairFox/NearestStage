@@ -112,7 +112,7 @@ public:
 	virtual void				PlayAnimBore		();
 	bool						TryPlayAnimIdle		();
 	virtual bool				MovingAnimAllowedNow ()				{return true;}
-
+	virtual bool				NeedBlendAnm();
 	virtual void				PlayAnimIdleMoving	();
 	virtual void				PlayAnimIdleSprint	();
 
@@ -120,7 +120,7 @@ public:
 	virtual void				renderable_Render	();
 
 
-	virtual void				UpdateHudAdditonal	(Fmatrix&);
+	virtual void				UpdateHudAdditional(Fmatrix&);
 
 
 	virtual	void				UpdateXForm			()						= 0;

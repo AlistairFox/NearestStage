@@ -115,6 +115,11 @@ inline constexpr T lerp(const T& _val_a, const T& _val_b, const float& _factor)
 	return (_val_a * (1.0 - _factor)) + (_val_b * _factor);
 }
 
+IC float inertion(float _val_cur, float _val_trgt, float _friction)
+{
+	float friction_i = 1.f - _friction;
+	return _val_cur * _friction + _val_trgt * friction_i;
+}
 // pre-definitions
 template <class T> struct _quaternion;
 

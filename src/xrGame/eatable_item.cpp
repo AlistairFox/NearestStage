@@ -15,27 +15,39 @@
 #include "EntityCondition.h"
 #include "InventoryOwner.h"
 #include "Actor.h"
-#include "script_engine.h"
-#include "UIGameCustom.h"
 #include "Inventory.h"
-#include "static_cast_checked.hpp"
-#include "CameraEffector.h"
-#include "ActorEffector.h"
-
+#include "Level.h"
+#include "game_object_space.h"
+#include "ai_object_location.h"
+#include "Weapon.h"
+#include "actorEffector.h"
+#include "HudManager.h"
+#include "UIGameCustom.h"
+#include "player_hud.h"
+#include "../xrPhysics/ElevatorState.h"
+#include <static_cast_checked.hpp>
 
 CEatableItem::CEatableItem()
 {
 	m_iPortionsNum = -1;
-	m_physic_item	= 0;
+	use_cam_effector = nullptr;
+	anim_sect = nullptr;
+	m_bHasAnimation = false;
+	m_physic_item = 0;
+	m_fEffectorIntensity = 1.0f;
+	m_iAnimHandsCnt = 1;
+	m_iAnimLength = 0;
+	m_bActivated = false;
+	m_bItmStartAnim = false;
 }
 
 CEatableItem::~CEatableItem()
 {
 }
 
-DLL_Pure *CEatableItem::_construct	()
+DLL_Pure* CEatableItem::_construct()
 {
-	m_physic_item	= smart_cast<CPhysicItem*>(this);
+	m_physic_item = smart_cast<CPhysicItem*>(this);
 	return			(inherited::_construct());
 }
 
@@ -44,11 +56,14 @@ void CEatableItem::Load(LPCSTR section)
 	inherited::Load(section);
 
 	m_iPortionsNum = pSettings->r_s32(section, "eat_portions_num");
+	m_bHasAnimation = READ_IF_EXISTS(pSettings, r_bool, section, "has_anim", false);
+	anim_sect = READ_IF_EXISTS(pSettings, r_string, section, "hud_section", nullptr);
+	m_fEffectorIntensity = READ_IF_EXISTS(pSettings, r_float, section, "cam_effector_intensity", 1.0f);
 	m_iCamEffector = pSettings->r_string(section, "camera_effector");
-	VERIFY						(m_iPortionsNum<10000);
+	VERIFY(m_iPortionsNum < 10000);
 }
 
-BOOL CEatableItem::net_Spawn				(CSE_Abstract* DC)
+BOOL CEatableItem::net_Spawn(CSE_Abstract* DC)
 {
 	if (!inherited::net_Spawn(DC)) return FALSE;
 
@@ -57,42 +72,73 @@ BOOL CEatableItem::net_Spawn				(CSE_Abstract* DC)
 
 bool CEatableItem::Useful() const
 {
-	if(!inherited::Useful()) return false;
-
+	if (!inherited::Useful()) return false;
 
 	//проверить не все ли еще съедено
-	if(m_iPortionsNum == 0) return false;
+	if (m_iPortionsNum == 0) return false;
 
 	return true;
 }
 
-void CEatableItem::OnH_A_Independent() 
+void CEatableItem::OnH_A_Independent()
 {
 	inherited::OnH_A_Independent();
-	if(!Useful()) {
-		if (object().Local() && OnServer())	object().DestroyObject	();
-	}	
+	if (!Useful()) {
+		if (object().Local() && OnServer())	object().DestroyObject();
+	}
 }
 
 void CEatableItem::OnH_B_Independent(bool just_before_destroy)
 {
-
-	if(!Useful()) 
+	if (!Useful())
 	{
 		object().setVisible(FALSE);
 		object().setEnabled(FALSE);
 		if (m_physic_item)
-			m_physic_item->m_ready_to_destroy	= true;
+			m_physic_item->m_ready_to_destroy = true;
 	}
 	inherited::OnH_B_Independent(just_before_destroy);
 }
 
-bool CEatableItem::UseBy(CEntityAlive* entity_alive)
+void CEatableItem::UpdateCL()
 {
+	inherited::UpdateCL();
+
+	if (!m_bHasAnimation) return;
+	
+
+	if (m_bItmStartAnim && m_pInventory->GetActiveSlot() == NO_ACTIVE_SLOT)
+		StartAnimation();
+
+	if (m_bActivated && OnClient())
+	{
+		if (m_iAnimLength <= Device.dwTimeGlobal)
+		{
+			m_iAnimLength = Device.dwTimeGlobal;
+			m_bActivated = false;
+			Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, false);
+
+
+			NET_Packet P;
+			Game().u_EventGen(P, GEG_PLAYER_NEED_EAT_ITEM, this->object_id());
+			Level().Send(P, net_flags(TRUE, TRUE, FALSE, TRUE));
+
+			m_pInventory->ClientEat(this);
+		}
+	}
+}
+
+
+void CEatableItem::HideWeapon()
+{
+
+	CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
+	if (pActor)
+		pActor->blockeat();
 	CActor* current_actor = static_cast_checked<CActor*>(Level().CurrentControlEntity());
 	if (current_actor && !g_dedicated_server)
 	{
-		CEffectorCam* ec = current_actor->Cameras().GetCamEffector(eCEWeaponAction);
+		CEffectorCam* ec = current_actor->Cameras().GetCamEffector(effUseItem);
 		if (NULL == ec)
 		{
 			string_path			ce_path;
@@ -103,7 +149,7 @@ bool CEatableItem::UseBy(CEntityAlive* entity_alive)
 			if (FS.exist(ce_path, "$game_anims$", anm_name))
 			{
 				CAnimatorCamEffector* e = xr_new<CAnimatorCamEffector>();
-				e->SetType(eCEWeaponAction);
+				e->SetType(effUseItem);
 				e->SetHudAffect(false);
 				e->SetCyclic(false);
 				e->Start(anm_name);
@@ -112,11 +158,77 @@ bool CEatableItem::UseBy(CEntityAlive* entity_alive)
 		}
 	}
 
-	CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
-	if (pActor)
+	Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, true);
+
+	if (OnServer())
 	{
-		pActor->blockeat();
+		NET_Packet				tmp_packet;
+		CGameObject::u_EventGen(tmp_packet, GEG_PLAYER_START_ANIMATION, object().ID());
+		Level().Send(tmp_packet);
 	}
+	else
+		m_bItmStartAnim = true;
+
+
+
+}
+
+void CEatableItem::OnEvent(NET_Packet& P, u16 type)
+{
+	switch (type)
+	{
+	case GEG_PLAYER_START_ANIMATION:
+	{
+		m_bItmStartAnim = true;
+		return;
+	}
+	case GEG_PLAYER_NEED_EAT_ITEM:
+	{
+		if (OnServer)
+		{
+			Msg("server eat item");
+			m_pInventory->Eat(this);
+		}
+	}
+	default:
+		inherited::OnEvent(P, type);
+		break;
+	}
+}
+
+void CEatableItem::StartAnimation()
+{
+	m_bActivated = true;
+
+	CEffectorCam* effector = Actor()->Cameras().GetCamEffector((ECamEffectorType)effUseItem);
+
+	if (pSettings->line_exist(anim_sect, "single_handed_anim"))
+		m_iAnimHandsCnt = pSettings->r_u32(anim_sect, "single_handed_anim");
+
+	m_bItmStartAnim = false;
+
+	if (pSettings->line_exist(anim_sect, "anm_use"))
+	{
+		g_player_hud->script_anim_play(m_iAnimHandsCnt, anim_sect, "anm_use", false, 1.0f);
+		m_iAnimLength = Device.dwTimeGlobal + g_player_hud->motion_length_script(anim_sect, "anm_use", 1.0f);
+	}
+
+	if (!effector && use_cam_effector != nullptr)
+		AddEffector(Actor(), effUseItem, use_cam_effector, m_fEffectorIntensity);
+
+	if (pSettings->line_exist(anim_sect, "snd_using"))
+	{
+		if (m_using_sound._feedback())
+			m_using_sound.stop();
+
+		shared_str snd_name = pSettings->r_string(anim_sect, "snd_using");
+		m_using_sound.create(snd_name.c_str(), st_Effect, sg_SourceType);
+		m_using_sound.play(NULL, sm_2D);
+	}
+}
+
+bool CEatableItem::UseBy(CEntityAlive* entity_alive)
+{
 	SMedicineInfluenceValues	V;
 	V.Load(m_physic_item->cNameSect());
 
@@ -144,11 +256,11 @@ bool CEatableItem::UseBy(CEntityAlive* entity_alive)
 		tmp_packet.w_u16(object_id());
 		Level().Send(tmp_packet);
 	}
-	
+
 	if (m_iPortionsNum > 0)
 		--m_iPortionsNum;
 	else
 		m_iPortionsNum = 0;
 
-		return true;
+	return true;
 }

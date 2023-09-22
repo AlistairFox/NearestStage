@@ -17,6 +17,7 @@
 #include "UIGameCustom.h"
 #include "eatable_item_object.h"
 #include "UIMessageBox.h"
+#include"Inventory.h"
 
 #include "../silencer.h"
 #include "../scope.h"
@@ -814,7 +815,9 @@ bool CUIActorMenu::TryUseItem( CUICellItem* cell_itm )
 	CEatableItem*	pEatableItem	= smart_cast<CEatableItem*>	(item);
 	CBattery* pBattery = smart_cast<CBattery*> (item);
 	CRepairKit* pRepairKit = smart_cast<CRepairKit*>	(item);
-	
+	if (pEatableItem)
+		pEatableItem->HideWeapon();
+
 
 	if ( !(pMedkit || pAntirad || pEatableItem || pBottleItem || pBattery || pRepairKit))
 	{

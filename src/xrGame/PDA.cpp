@@ -255,7 +255,7 @@ void CPda::TogglePda()
 }
 
 // inertion
-IC float inertion(float _val_cur, float _val_trgt, float _friction)
+IC float _inertion(float _val_cur, float _val_trgt, float _friction)
 {
 	float friction_i = 1.f - _friction;
 	return _val_cur * _friction + _val_trgt * friction_i;
@@ -274,7 +274,7 @@ void CPda::JoystickCallback(CBoneInstance* B)
 		return;
 
 	static float fAvgTimeDelta = Device.fTimeDelta;
-	fAvgTimeDelta = inertion(fAvgTimeDelta, Device.fTimeDelta, 0.8f);
+	fAvgTimeDelta = _inertion(fAvgTimeDelta, Device.fTimeDelta, 0.8f);
 
 	Fvector& target = pda->target_joystickrot;
 	Fvector& current = pda->joystickrot;
@@ -342,6 +342,7 @@ void CPda::UpdateCL()
 	const u32 state = GetState();
 	const bool b_main_menu_is_active = (g_pGamePersistent->m_pMainMenu && g_pGamePersistent->m_pMainMenu->IsActive());
 
+	
 	const auto pda = CurrentGameUI() ? &CurrentGameUI()->PdaMenu() : nullptr;
 	if (pda)
 	{
@@ -422,8 +423,9 @@ void CPda::OnMoveToRuck(const SInvItemPlace& prev)
 	SetPending(false);
 }
 
-void CPda::UpdateHudAdditonal(Fmatrix& trans)
+void CPda::UpdateHudAdditional(Fmatrix& trans)
 {
+	Msg("PDA UPDATE");
 	CActor* pActor = smart_cast<CActor*>(H_Parent());
 	if (!pActor)
 		return;
@@ -447,9 +449,15 @@ void CPda::UpdateHudAdditonal(Fmatrix& trans)
 	hud_rotation.translate_over(curr_offs);
 	trans.mulB_43(hud_rotation);
 	if (m_bZoomed)
+	{
+		Msg("m_bZoomed %f", m_fZoomfactor);
 		m_fZoomfactor += Device.fTimeDelta / .25f;
+	}
 	else
+	{
+		Msg("out Zoom %f", m_fZoomfactor);
 		m_fZoomfactor -= Device.fTimeDelta / .25f;
+	}
 	clamp(m_fZoomfactor, 0.f, 1.f);
 }
 

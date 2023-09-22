@@ -17,6 +17,7 @@
 #include "Level.h"
 #include "clsid_game.h"
 #include "hudmanager.h"
+#include "player_hud.h"
 
 #define PICKUP_INFO_COLOR 0xFFDDDDDD
 
@@ -222,12 +223,15 @@ void	CActor::PickupModeUpdate_COD	()
 
 	if (pNearestItem && m_bPickupMode)
 	{
-		CUsableScriptObject*	pUsableObject = smart_cast<CUsableScriptObject*>(pNearestItem);
-		if(pUsableObject && (!m_pUsableObject))
-			pUsableObject->use(this);
+		g_player_hud->script_anim_play(1, "actor_use_anm", "anm_use", true, 1.0f);
 
-		//подбирание объекта
-		Game().SendPickUpEvent(ID(), pNearestItem->object().ID());
+			CUsableScriptObject* pUsableObject = smart_cast<CUsableScriptObject*>(pNearestItem);
+			if (pUsableObject && (!m_pUsableObject))
+				pUsableObject->use(this);
+
+			//подбирание объекта
+			Game().SendPickUpEvent(ID(), pNearestItem->object().ID());
+
 	}
 };
 

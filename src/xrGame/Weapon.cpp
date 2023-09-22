@@ -91,6 +91,10 @@ CWeapon::CWeapon()
 	m_crosshair_inertion	= 0.f;
 	m_cur_scope				= NULL;
 	m_bRememberActorNVisnStatus = false;
+	m_fLR_MovingFactor = 0.f;
+	m_fLR_CameraFactor = 0.f;
+	m_fLR_InertiaFactor = 0.f;
+	m_fUD_InertiaFactor = 0.f;
 
 	//Mortan: new params
 	bUseAltScope = false;
@@ -2079,6 +2083,7 @@ void _inertion(float& _val_cur, const float& _val_trgt, const float& _friction)
 	_val_cur = _val_cur * _friction + _val_trgt * friction_i;
 }
 
+
 float _lerp(const float& _val_a, const float& _val_b, const float& _factor)
 {
 	return (_val_a * (1.0 - _factor)) + (_val_b * _factor);
@@ -2125,7 +2130,7 @@ static float GetRayQueryDist()
 }
 
 
-void CWeapon::UpdateHudAdditonal(Fmatrix& trans)
+void CWeapon::UpdateHudAdditional(Fmatrix& trans)
 {
 	CActor* pActor = smart_cast<CActor*>(H_Parent());
 	if (!pActor)
@@ -2139,18 +2144,17 @@ void CWeapon::UpdateHudAdditonal(Fmatrix& trans)
 	//============= Поворот ствола во время аима =============//
 	if ((IsZoomed() && m_zoom_params.m_fZoomRotationFactor <= 1.f) || (!IsZoomed() && m_zoom_params.m_fZoomRotationFactor > 0.f))
 	{
-		Fvector curr_offs, curr_rot;
-		curr_offs = hi->m_measures.m_hands_offset[0][idx]; //pos,aim
-		curr_rot = hi->m_measures.m_hands_offset[1][idx]; //rot,aim
-
+		Fvector						curr_offs, curr_rot;
+		curr_offs = hi->m_measures.m_hands_offset[0][idx];//pos,aim
+		curr_rot = hi->m_measures.m_hands_offset[1][idx];//rot,aim
 		curr_offs.mul(m_zoom_params.m_fZoomRotationFactor);
 		curr_rot.mul(m_zoom_params.m_fZoomRotationFactor);
 
-		Fmatrix hud_rotation;
+		Fmatrix						hud_rotation;
 		hud_rotation.identity();
 		hud_rotation.rotateX(curr_rot.x);
 
-		Fmatrix hud_rotation_y;
+		Fmatrix						hud_rotation_y;
 		hud_rotation_y.identity();
 		hud_rotation_y.rotateY(curr_rot.y);
 		hud_rotation.mulA_43(hud_rotation_y);
