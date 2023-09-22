@@ -428,9 +428,8 @@ void CInventoryOwner::SetName(LPCSTR name)
 
 LPCSTR	CInventoryOwner::IconName () const
 {
-	return CharacterInfo().IconName().c_str();
+		return CharacterInfo().IconName().c_str();
 }
-
 
 void CInventoryOwner::NewPdaContact		(CInventoryOwner* pInvOwner)
 {

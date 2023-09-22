@@ -422,7 +422,7 @@ u32 attachable_hud_item::anim_play(const shared_str& anm_name_b, BOOL bMixIn, co
 			if(bDebug)
 				Msg						("playing item animation [%s]",item_anm_name.c_str());
 		
-		Msg("model has no motion [idle] ", pSettings->r_string(m_sect_name, "item_visual"));
+		//Msg("model has no motion [idle] ", pSettings->r_string(m_sect_name, "item_visual"));
 
 		u16 root_id						= m_model->LL_GetBoneRoot();
 		CBoneInstance& root_binst		= m_model->LL_GetBoneInstance(root_id);

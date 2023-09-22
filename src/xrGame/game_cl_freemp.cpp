@@ -276,7 +276,13 @@ void game_cl_freemp::OnChatMessage(NET_Packet* P)
 
 		shared_str PlayerTex = "ui_inGame2_Hero";
 
-		if (team == 2)
+		if (xr_strcmp(Nameofplayer, "АлистарФокс") == 0)
+			PlayerTex = "ui_inGame2_player_alistarfox";
+
+		else if (xr_strcmp(Nameofplayer, "lintelli") == 0)
+			PlayerTex = "ui_inGame2_player_lintelli";
+
+		else if (team == 2)
 			PlayerTex = "ui_inGame2_bandit_1";
 
 		else if (team == 3)

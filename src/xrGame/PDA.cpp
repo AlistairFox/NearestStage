@@ -425,7 +425,6 @@ void CPda::OnMoveToRuck(const SInvItemPlace& prev)
 
 void CPda::UpdateHudAdditional(Fmatrix& trans)
 {
-	Msg("PDA UPDATE");
 	CActor* pActor = smart_cast<CActor*>(H_Parent());
 	if (!pActor)
 		return;
@@ -450,12 +449,10 @@ void CPda::UpdateHudAdditional(Fmatrix& trans)
 	trans.mulB_43(hud_rotation);
 	if (m_bZoomed)
 	{
-		Msg("m_bZoomed %f", m_fZoomfactor);
 		m_fZoomfactor += Device.fTimeDelta / .25f;
 	}
 	else
 	{
-		Msg("out Zoom %f", m_fZoomfactor);
 		m_fZoomfactor -= Device.fTimeDelta / .25f;
 	}
 	clamp(m_fZoomfactor, 0.f, 1.f);
