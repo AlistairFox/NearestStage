@@ -287,7 +287,7 @@ extern ECORE_API Flags32 ps_r4_parallax_flags;
 enum
 {
 	R2FLAG_RAIN_DROPS = (1 << 0),
-	R2FLAG_RAIN_DROPS_CONTROL = (1 << 0),
+	R2FLAG_RAIN_DROPS_CONTROL = (1 << 1),
 };
 
 enum

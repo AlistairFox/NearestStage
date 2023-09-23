@@ -369,8 +369,6 @@ Flags32 psDeviceFlags2 = { 0 };
 Flags32		ps_actor_shadow_flags = { 1 };
 
 
-//Flags32		ps_r2_raindrops_flags = { 0 };
-
 Flags32		ps_r2_rain_drops_flags = { R2FLAG_RAIN_DROPS
 	| R2FLAG_RAIN_DROPS_CONTROL
 };
