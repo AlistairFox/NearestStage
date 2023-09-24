@@ -39,6 +39,8 @@ _action  actions[]		= {
 	
 	{ "animation_mode",		kAnimationMode			,_both},
 	{ "safe_mode",			kSafeMode				,_both},
+	{ "swipe_mask", kSwipeMask, _both},
+	{"fuck", kFuck, _both},
 
 
 	{ "wpn_1",				kWPN_1					,_both},	
@@ -91,10 +93,10 @@ _action  actions[]		= {
 	{ "quick_use_2",		kQUICK_USE_2			,_both},
 	{ "quick_use_3",		kQUICK_USE_3			,_both},
 	{ "quick_use_4",		kQUICK_USE_4			,_both},
-	{ "wpn_nv_change",		kWPN_NV_CHANGE			,_both},
 
 	{ "quick_save",			kQUICK_SAVE				,_sp},		
-	{ "quick_load",			kQUICK_LOAD				,_sp},		
+	{ "quick_load",			kQUICK_LOAD				,_sp},	
+	{ "wpn_nv_change",		kWPN_NV_CHANGE			,_both},
 //	{ "alife_command",		kALIFE_CMD				,_sp},		
 	
 																

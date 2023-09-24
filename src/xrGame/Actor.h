@@ -129,9 +129,17 @@ public:
 	bool						MpInvisibility() const;
 	bool						MpSafeMODE() const;
 	bool						MpAnimationMODE() const;
+	u32 maskTimer = 0;
+	u32 oldmaskTimer = 0;
+	bool need_clear_mask = false;
+	bool need_en_raindrops = false;
+	void StartClearMask();
+	void EndClearMask();
+	void PlayAnmSound(shared_str sndname);
+	ref_sound snd;
 
-	void						blockeat();
-	void						unblockeat();
+	void						TimeBlockAction(LPCSTR anim_sect);
+	void						TimeUnblockAction();
 
 
 	bool old_block_state = false;

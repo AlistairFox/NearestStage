@@ -193,7 +193,6 @@ void CActor::IR_OnKeyboardPress(int cmd)
 		}
 	}
 	break;
-
 	case kDETECTOR:
 		{
 			PIItem det_active					= inventory().ItemFromSlot(DETECTOR_SLOT);
@@ -210,25 +209,6 @@ void CActor::IR_OnKeyboardPress(int cmd)
 		if (pda)
 			pda->TogglePda();
 	}break;
-/*
-	case kFLARE:{
-			PIItem fl_active = inventory().ItemFromSlot(FLARE_SLOT);
-			if(fl_active)
-			{
-				CFlare* fl			= smart_cast<CFlare*>(fl_active);
-				fl->DropFlare		();
-				return				;
-			}
-
-			PIItem fli = inventory().Get(CLSID_DEVICE_FLARE, true);
-			if(!fli)			return;
-
-			CFlare* fl			= smart_cast<CFlare*>(fli);
-			
-			if(inventory().Slot(fl))
-				fl->ActivateFlare	();
-		}break;
-*/
 	case kUSE:
 		ActorUse();
 		break;
@@ -244,7 +224,16 @@ void CActor::IR_OnKeyboardPress(int cmd)
 		{
 			OnPrevWeaponSlot();
 		}break;
-
+	case kSwipeMask:
+	{
+		if (need_clear_mask)
+			return;
+		StartClearMask();
+	}break;
+	case kFuck:
+	{
+		g_player_hud->script_anim_play(1, "fuck_take", "anm_use", true);
+	}break;
 	case kQUICK_USE_1:
 	case kQUICK_USE_2:
 	case kQUICK_USE_3:
@@ -407,6 +396,8 @@ void CActor::IR_OnKeyboardHold(int cmd)
 
 void CActor::IR_OnMouseMove(int dx, int dy)
 {
+	if (!g_Alive())
+		return;
 
 	if(hud_adj_mode)
 	{
@@ -482,8 +473,6 @@ void CActor::ActorUse()
 		CGameObject::u_EventSend	(P);
 		return;
 	}
-
-	g_player_hud->script_anim_play(1, "fuck_take", "anm_use", true);
 
 	if(character_physics_support()->movement()->PHCapture())
 		character_physics_support()->movement()->PHReleaseObject();
@@ -798,8 +787,7 @@ void CActor::NoClipFly(int cmd)
 		{
 			SwitchTorch();
 		}
-	}
-		break;
+	}break;
 	case kDETECTOR:
 		{
 			PIItem det_active = inventory().ItemFromSlot(DETECTOR_SLOT);

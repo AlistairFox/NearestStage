@@ -82,6 +82,7 @@
 #include "UIGameFMP.h"
 #include "CustomDetector.h"
 #include <PostprocessAnimator.h>
+#include "../xrEngine/XR_IOConsole.h"
 
 const u32		patch_frames	= 50;
 const float		respawn_delay	= 1.f;
@@ -1127,9 +1128,48 @@ float CActor::currentFOV()
 	}
 }
 
+void CActor::StartClearMask()
+{
+	if (!need_clear_mask)
+	{
+		g_player_hud->script_anim_play(1, "clear_mask_anm", "anm_use", false, 1.0f);
+		PlayAnmSound("drink_roflanebalo");
+
+		oldmaskTimer = Device.dwTimeGlobal + 5000;
+		need_en_raindrops = true;
+		maskTimer = Device.dwTimeGlobal + ((g_player_hud->motion_length_script("clear_mask_anm", "anm_use", 1.0f))/2.5);
+		need_clear_mask = true;
+	}
+}
+
+void CActor::EndClearMask()
+{
+	if (need_clear_mask && maskTimer <= Device.dwTimeGlobal)
+	{
+		Msg("EndMask");
+		Console->Execute("r2_rain_drops_control 0");
+		//Console->Execute("r2_rain_drops_control 1");
+		need_clear_mask = false;
+		maskTimer = 0;
+	}
+
+	if (need_en_raindrops && oldmaskTimer <= Device.dwTimeGlobal)
+	{
+		Console->Execute("r2_rain_drops_control 1");
+	}
+}
+
+void CActor::PlayAnmSound(shared_str sndname)
+{
+	snd.create(sndname.c_str(), st_Effect, sg_SourceType);
+	snd.play(NULL, sm_2D);
+}
+
 void CActor::UpdateCL	()
 {
-	unblockeat();
+	EndClearMask();
+
+	TimeUnblockAction();
 
 	if(g_Alive() && Level().CurrentViewEntity() == this)
 	{
@@ -2560,7 +2600,7 @@ void CActor::unblock_action(EGameActions cmd)
 	}
 }
 
-void CActor::blockeat()
+void CActor::TimeBlockAction(LPCSTR anim_sect)
 {
 	CCustomDetector* pDet = smart_cast<CCustomDetector*>(Actor()->inventory().ItemFromSlot(DETECTOR_SLOT));
 	game_cl_freemp* huita = smart_cast<game_cl_freemp*>(&Game());
@@ -2570,6 +2610,8 @@ void CActor::blockeat()
 	}
 	if (!need_exit)
 	{
+
+		Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, true);
 		Actor()->block_action(kQUICK_USE_1);
 		Actor()->block_action(kQUICK_USE_2);
 		Actor()->block_action(kQUICK_USE_3);
@@ -2579,14 +2621,14 @@ void CActor::blockeat()
 		{
 			pDet->HideDetector(true);
 		}
-		old_timer = Device.dwTimeGlobal + 3000;
+		old_timer = Device.dwTimeGlobal + g_player_hud->motion_length_script(anim_sect, "anm_use", 1.0f);
 		need_exit = true;
 	}
 }
 
-void CActor::unblockeat()
+void CActor::TimeUnblockAction()
 {
-	if (need_exit && old_timer < Device.dwTimeGlobal)
+	if (need_exit && old_timer <= Device.dwTimeGlobal)
 	{
 		need_exit = false;
 		old_timer = 0;
@@ -2595,5 +2637,6 @@ void CActor::unblockeat()
 		Actor()->unblock_action(kQUICK_USE_3);
 		Actor()->unblock_action(kQUICK_USE_4);
 		Actor()->set_inventory_disabled(false);
+		Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, false);
 	}
 }

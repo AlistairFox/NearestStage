@@ -116,7 +116,6 @@ void CEatableItem::UpdateCL()
 		{
 			m_iAnimLength = Device.dwTimeGlobal;
 			m_bActivated = false;
-			Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, false);
 
 
 			NET_Packet P;
@@ -134,7 +133,7 @@ void CEatableItem::HideWeapon()
 
 	CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
 	if (pActor)
-		pActor->blockeat();
+		pActor->TimeBlockAction(anim_sect);
 	CActor* current_actor = static_cast_checked<CActor*>(Level().CurrentControlEntity());
 	if (current_actor && !g_dedicated_server)
 	{
@@ -157,8 +156,6 @@ void CEatableItem::HideWeapon()
 			}
 		}
 	}
-
-	Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, true);
 
 	if (OnServer())
 	{
