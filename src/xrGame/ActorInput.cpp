@@ -211,7 +211,7 @@ void CActor::IR_OnKeyboardPress(int cmd)
 	}break;
 	case kUSE:
 		{
-			if (!need_kuse)
+			if (!use_cool_down)
 			{
 				StartUseTimer();
 			}
@@ -806,7 +806,7 @@ void CActor::NoClipFly(int cmd)
 		}
 		break;
 	case kUSE:
-		if (!need_kuse)
+		if (!use_cool_down)
 		{
 			StartUseTimer();
 		}

@@ -18,6 +18,9 @@ protected:
 public:
 	SDrawStaticStruct* m_game_objective;
 
+	u32 close_time = 0;
+	bool need_close_inventory = false;
+
 	u32 old_timer = 0;
 	bool need_activate_inventory = false;
 				CUIGameFMP();
@@ -30,6 +33,8 @@ public:
 	virtual void HideShownDialogs();
 
 	virtual void	_BCL OnFrame();
+
+	float add_cam_effector(LPCSTR fn, int id, bool cyclic, LPCSTR cb_func);
 
 	virtual bool IR_UIOnKeyboardPress(int dik);
 

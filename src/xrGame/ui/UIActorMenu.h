@@ -326,6 +326,7 @@ public:
 	virtual void				Show						(bool status);
 
 	virtual bool				OnKeyboardAction					(int dik, EUIMessages keyboard_action);
+	float add_cam_effector(LPCSTR fn, int id, bool cyclic, LPCSTR cb_func);
 	virtual bool				OnMouseAction						(float x, float y, EUIMessages mouse_action);
 
 	void						CallMessageBoxYesNo			(LPCSTR text);

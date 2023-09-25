@@ -1174,7 +1174,9 @@ void CActor::StartUseTimer()
 		g_player_hud->script_anim_play(1, "item_ea_take_hud", "anm_ea_take", true, 1.4f);
 		g_player_hud->PlayBlendAnm("camera_effects\\weapon\\two_handed_weapon_effect.anm", 0, 1.4, 1, false);
 		need_kuse = true;
-		useTime = Device.dwTimeGlobal + ((g_player_hud->motion_length_script("item_ea_take_hud", "anm_ea_take", 1.4)) / 2);
+		use_cool_down = true;
+
+		useTime = Device.dwTimeGlobal + ((g_player_hud->motion_length_script("item_ea_take_hud", "anm_ea_take", 1.4)));
 	}
 
 }
@@ -1183,6 +1185,7 @@ void CActor::EndUseTimer()
 {
 	if (need_kuse && useTime <= Device.dwTimeGlobal)
 	{
+		use_cool_down = false;
 		ActorUse();
 		need_kuse = false;
 		useTime = 0;
@@ -1199,13 +1202,15 @@ void CActor::UpdateCL	()
 	{
 		if(CurrentGameUI() && NULL==CurrentGameUI()->TopInputReceiver())
 		{
-			int dik = get_action_dik(kUSE, 0);
-			if(dik && pInput->iGetAsyncKeyState(dik))
-				m_bPickupMode=true;
-			
-			dik = get_action_dik(kUSE, 1);
-			if(dik && pInput->iGetAsyncKeyState(dik))
-				m_bPickupMode=true;
+
+				int dik = get_action_dik(kUSE, 0);
+				if (dik && pInput->iGetAsyncKeyState(dik))
+					m_bPickupMode = true;
+
+				dik = get_action_dik(kUSE, 1);
+				if (dik && pInput->iGetAsyncKeyState(dik))
+					m_bPickupMode = true;
+
 		}
 	}
 
@@ -2645,7 +2650,7 @@ void CActor::TimeBlockAction(LPCSTR anim_sect)
 		{
 			pDet->HideDetector(true);
 		}
-		old_timer = Device.dwTimeGlobal + g_player_hud->motion_length_script(anim_sect, "anm_use", 1.0f);
+		old_timer = Device.dwTimeGlobal + g_player_hud->motion_length_script(anim_sect, "anm_ea_show", 1.0f);
 		need_exit = true;
 	}
 }

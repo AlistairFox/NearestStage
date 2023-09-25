@@ -28,6 +28,7 @@
 #include "UIMessageBoxEx.h"
 #include "UIPropertiesBox.h"
 #include "UIMainIngameWnd.h"
+#include "player_hud.h"
 
 
 bool  CUIActorMenu::AllowItemDrops(EDDListType from, EDDListType to)
@@ -305,6 +306,17 @@ bool CUIActorMenu::OnItemFocusedUpdate(CUICellItem* itm)
 	return true;
 }
 
+#include "actoreffector.h"
+float CUIActorMenu::add_cam_effector(LPCSTR fn, int id, bool cyclic, LPCSTR cb_func)
+{
+	CAnimatorCamEffectorScriptCB* e = xr_new<CAnimatorCamEffectorScriptCB>(cb_func);
+	e->SetType((ECamEffectorType)id);
+	e->SetCyclic(cyclic);
+	e->Start(fn);
+	Actor()->Cameras().AddCamEffector(e);
+	return						e->GetAnimatorLength();
+}
+
 bool CUIActorMenu::OnMouseAction( float x, float y, EUIMessages mouse_action )
 {
 	inherited::OnMouseAction( x, y, mouse_action );
@@ -339,6 +351,10 @@ bool CUIActorMenu::OnKeyboardAction(int dik, EUIMessages keyboard_action)
 	{
 		if ( WINDOW_KEY_PRESSED == keyboard_action )
 		{
+			g_player_hud->script_anim_play(2, "item_ea_backpack_close_hud", "anm_ea_show", false, 1.0f);
+			Actor()->PlayAnmSound("interface\\item_usage\\backpack_close");
+			add_cam_effector("itemuse_anm_effects\\backpack_open.anm", 8555, false, "");
+
 			g_btnHint->Discard();
 			HideDialog();
 		}
@@ -349,6 +365,10 @@ bool CUIActorMenu::OnKeyboardAction(int dik, EUIMessages keyboard_action)
 	{
 		if ( WINDOW_KEY_PRESSED == keyboard_action )
 		{
+			g_player_hud->script_anim_play(2, "item_ea_backpack_close_hud", "anm_ea_show", false, 1.0f);
+			Actor()->PlayAnmSound("interface\\item_usage\\backpack_close");
+			add_cam_effector("itemuse_anm_effects\\backpack_open.anm", 8555, false, "");
+
 			g_btnHint->Discard();
 			HideDialog();
 		}
