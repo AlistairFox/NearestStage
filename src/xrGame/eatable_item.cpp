@@ -32,9 +32,7 @@ CEatableItem::CEatableItem()
 	m_iPortionsNum = -1;
 	use_cam_effector = nullptr;
 	anim_sect = nullptr;
-	m_bHasAnimation = false;
 	m_physic_item = 0;
-	m_fEffectorIntensity = 1.0f;
 	m_iAnimHandsCnt = 1;
 	m_iAnimLength = 0;
 	m_bActivated = false;
@@ -56,10 +54,9 @@ void CEatableItem::Load(LPCSTR section)
 	inherited::Load(section);
 
 	m_iPortionsNum = pSettings->r_s32(section, "eat_portions_num");
-	m_bHasAnimation = READ_IF_EXISTS(pSettings, r_bool, section, "has_anim", false);
-	anim_sect = READ_IF_EXISTS(pSettings, r_string, section, "hud_section", nullptr);
-	m_fEffectorIntensity = READ_IF_EXISTS(pSettings, r_float, section, "cam_effector_intensity", 1.0f);
-	m_iCamEffector = pSettings->r_string(section, "camera_effector");
+	anim_sect = READ_IF_EXISTS(pSettings, r_string, section, "anm", nullptr);
+	m_iCamEffector = pSettings->r_string(section, "cam");
+	//m_iHudAnm = pSettings->r_string(section, "hud_anm");
 	VERIFY(m_iPortionsNum < 10000);
 }
 
@@ -103,8 +100,6 @@ void CEatableItem::OnH_B_Independent(bool just_before_destroy)
 void CEatableItem::UpdateCL()
 {
 	inherited::UpdateCL();
-
-	if (!m_bHasAnimation) return;
 	
 
 	if (m_bItmStartAnim && m_pInventory->GetActiveSlot() == NO_ACTIVE_SLOT)
@@ -134,27 +129,11 @@ void CEatableItem::HideWeapon()
 	CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
 	if (pActor)
 		pActor->TimeBlockAction(anim_sect);
-	CActor* current_actor = static_cast_checked<CActor*>(Level().CurrentControlEntity());
-	if (current_actor && !g_dedicated_server)
+
+	if (OnClient())
 	{
-		CEffectorCam* ec = current_actor->Cameras().GetCamEffector(effUseItem);
-		if (NULL == ec)
-		{
-			string_path			ce_path;
-			string_path			eff_name;
-			xr_sprintf(eff_name, sizeof(eff_name), "%s.anm", m_iCamEffector);
-			string_path			anm_name;
-			strconcat(sizeof(anm_name), anm_name, "camera_effects\\items\\", eff_name);
-			if (FS.exist(ce_path, "$game_anims$", anm_name))
-			{
-				CAnimatorCamEffector* e = xr_new<CAnimatorCamEffector>();
-				e->SetType(effUseItem);
-				e->SetHudAffect(false);
-				e->SetCyclic(false);
-				e->Start(anm_name);
-				current_actor->Cameras().AddCamEffector(e);
-			}
-		}
+		add_cam_effector(m_iCamEffector, 8555, false, "");
+		//g_player_hud->PlayBlendAnm(m_iHudAnm, 0, 1, 1, false);
 	}
 
 	if (OnServer())
@@ -168,6 +147,17 @@ void CEatableItem::HideWeapon()
 
 
 
+}
+
+#include "actoreffector.h"
+float CEatableItem::add_cam_effector(LPCSTR fn, int id, bool cyclic, LPCSTR cb_func)
+{
+	CAnimatorCamEffectorScriptCB* e = xr_new<CAnimatorCamEffectorScriptCB>(cb_func);
+	e->SetType((ECamEffectorType)id);
+	e->SetCyclic(cyclic);
+	e->Start(fn);
+	Actor()->Cameras().AddCamEffector(e);
+	return						e->GetAnimatorLength();
 }
 
 void CEatableItem::OnEvent(NET_Packet& P, u16 type)
@@ -197,28 +187,25 @@ void CEatableItem::StartAnimation()
 {
 	m_bActivated = true;
 
-	CEffectorCam* effector = Actor()->Cameras().GetCamEffector((ECamEffectorType)effUseItem);
 
 	if (pSettings->line_exist(anim_sect, "single_handed_anim"))
 		m_iAnimHandsCnt = pSettings->r_u32(anim_sect, "single_handed_anim");
 
 	m_bItmStartAnim = false;
 
-	if (pSettings->line_exist(anim_sect, "anm_use"))
+	if (pSettings->line_exist(anim_sect, "anm_ea_show"))
 	{
-		g_player_hud->script_anim_play(m_iAnimHandsCnt, anim_sect, "anm_use", false, 1.0f);
-		m_iAnimLength = Device.dwTimeGlobal + g_player_hud->motion_length_script(anim_sect, "anm_use", 1.0f);
+		g_player_hud->script_anim_play(m_iAnimHandsCnt, anim_sect, "anm_ea_show", false, 1.0f);
+		m_iAnimLength = Device.dwTimeGlobal + g_player_hud->motion_length_script(anim_sect, "anm_ea_show", 1.0f);
 	}
 
-	if (!effector && use_cam_effector != nullptr)
-		AddEffector(Actor(), effUseItem, use_cam_effector, m_fEffectorIntensity);
 
-	if (pSettings->line_exist(anim_sect, "snd_using"))
+	if (pSettings->line_exist(anim_sect, "snd"))
 	{
 		if (m_using_sound._feedback())
 			m_using_sound.stop();
 
-		shared_str snd_name = pSettings->r_string(anim_sect, "snd_using");
+		shared_str snd_name = pSettings->r_string(anim_sect, "snd");
 		m_using_sound.create(snd_name.c_str(), st_Effect, sg_SourceType);
 		m_using_sound.play(NULL, sm_2D);
 	}

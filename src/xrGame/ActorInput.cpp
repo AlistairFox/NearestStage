@@ -210,8 +210,14 @@ void CActor::IR_OnKeyboardPress(int cmd)
 			pda->TogglePda();
 	}break;
 	case kUSE:
-		ActorUse();
-		break;
+		{
+			if (!need_kuse)
+			{
+				StartUseTimer();
+			}
+			else
+				return;
+		}break;
 	case kDROP:
 		b_DropActivated			= TRUE;
 		f_DropPower				= 0;
@@ -800,7 +806,12 @@ void CActor::NoClipFly(int cmd)
 		}
 		break;
 	case kUSE:
-		ActorUse();
+		if (!need_kuse)
+		{
+			StartUseTimer();
+		}
+		else
+			return;
 		break;
 	}
 	cur_pos.mul(scale);

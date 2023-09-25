@@ -138,6 +138,11 @@ public:
 	void PlayAnmSound(shared_str sndname);
 	ref_sound snd;
 
+	bool need_kuse = false;
+	u32 useTime = 0;
+	void StartUseTimer();
+	void EndUseTimer();
+
 	void						TimeBlockAction(LPCSTR anim_sect);
 	void						TimeUnblockAction();
 

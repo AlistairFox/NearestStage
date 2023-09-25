@@ -223,8 +223,6 @@ void	CActor::PickupModeUpdate_COD	()
 
 	if (pNearestItem && m_bPickupMode)
 	{
-		g_player_hud->script_anim_play(1, "actor_use_anm", "anm_use", true, 1.0f);
-
 			CUsableScriptObject* pUsableObject = smart_cast<CUsableScriptObject*>(pNearestItem);
 			if (pUsableObject && (!m_pUsableObject))
 				pUsableObject->use(this);

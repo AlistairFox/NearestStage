@@ -36,15 +36,15 @@ public:
 	virtual	bool			Empty() { return PortionsNum() == 0; };
 	int				PortionsNum()	const { return m_iPortionsNum; }
 	int						m_iPortionsNum;
-	bool			m_bHasAnimation;
-	float			m_fEffectorIntensity;
 	bool			m_bActivated;
 	bool			m_bItmStartAnim;
 	int				m_iAnimHandsCnt;
+	float add_cam_effector(LPCSTR fn, int id, bool cyclic, LPCSTR cb_func);
 	int				m_iAnimLength;
 	LPCSTR			anim_sect;
 	shared_str		use_cam_effector;
 	ref_sound		m_using_sound;
 	LPCSTR m_iCamEffector;
+//	LPCSTR m_iHudAnm;
 };
 
