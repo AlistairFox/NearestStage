@@ -91,10 +91,6 @@ CWeapon::CWeapon()
 	m_crosshair_inertion	= 0.f;
 	m_cur_scope				= NULL;
 	m_bRememberActorNVisnStatus = false;
-	m_fLR_MovingFactor = 0.f;
-	m_fLR_CameraFactor = 0.f;
-	m_fLR_InertiaFactor = 0.f;
-	m_fUD_InertiaFactor = 0.f;
 
 	//Mortan: new params
 	bUseAltScope = false;
@@ -605,6 +601,37 @@ void CWeapon::Load		(LPCSTR section)
 
 	m_SuitableRepairKit = READ_IF_EXISTS(pSettings, r_string, section, "suitable_repair_kit", "repair_kit");
 
+
+	// Настройки стрейфа (боковая ходьба)
+	const Fvector vZero = { 0.f, 0.f, 0.f };
+	Fvector vDefStrafeValue;
+	vDefStrafeValue.set(vZero);
+
+	//--> Смещение в стрейфе
+	m_strafe_offset[0][0] = READ_IF_EXISTS(pSettings, r_fvector3, section, "strafe_hud_offset_pos", vDefStrafeValue);
+	m_strafe_offset[1][0] = READ_IF_EXISTS(pSettings, r_fvector3, section, "strafe_hud_offset_rot", vDefStrafeValue);
+
+	//--> Поворот в стрейфе
+	m_strafe_offset[0][1] = READ_IF_EXISTS(pSettings, r_fvector3, section, "strafe_aim_hud_offset_pos", vDefStrafeValue);
+	m_strafe_offset[1][1] = READ_IF_EXISTS(pSettings, r_fvector3, section, "strafe_aim_hud_offset_rot", vDefStrafeValue);
+
+	// Параметры стрейфа
+	bool  bStrafeEnabled = true;
+	bool  bStrafeEnabled_aim = false;
+	float fFullStrafeTime = READ_IF_EXISTS(pSettings, r_float, section, "strafe_transition_time", 0.01f);
+	float fFullStrafeTime_aim = READ_IF_EXISTS(pSettings, r_float, section, "strafe_aim_transition_time", 0.01f);
+	float fStrafeCamLFactor = READ_IF_EXISTS(pSettings, r_float, section, "strafe_cam_limit_factor", 0.5f);
+	float fStrafeCamLFactor_aim = READ_IF_EXISTS(pSettings, r_float, section, "strafe_cam_limit_aim_factor", 1.0f);
+	float fStrafeMinAngle = READ_IF_EXISTS(pSettings, r_float, section, "strafe_cam_min_angle", 0.0f);
+	float fStrafeMinAngle_aim = READ_IF_EXISTS(pSettings, r_float, section, "strafe_cam_aim_min_angle", 7.0f);
+
+	//--> (Data 1)
+	m_strafe_offset[2][0].set((bStrafeEnabled ? 1.0f : 0.0f), fFullStrafeTime, NULL);         // normal
+	m_strafe_offset[2][1].set((bStrafeEnabled_aim ? 1.0f : 0.0f), fFullStrafeTime_aim, NULL); // aim-GL
+
+	//--> (Data 2)
+	m_strafe_offset[3][0].set(fStrafeCamLFactor, fStrafeMinAngle, NULL); // normal
+	m_strafe_offset[3][1].set(fStrafeCamLFactor_aim, fStrafeMinAngle_aim, NULL); // aim-GL
 }
 
 void CWeapon::LoadFireParams		(LPCSTR section)
