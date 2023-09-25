@@ -1156,6 +1156,8 @@ void CActor::EndClearMask()
 	if (need_en_raindrops && oldmaskTimer <= Device.dwTimeGlobal)
 	{
 		Console->Execute("r2_rain_drops_control 1");
+		need_en_raindrops = false;
+		oldmaskTimer = 0;
 	}
 }
 
