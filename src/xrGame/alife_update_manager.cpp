@@ -94,14 +94,19 @@ void CALifeUpdateManager::update_switch	()
 	STOP_PROFILE
 }
 
+extern BOOL Alife_Sheduler;
 void CALifeUpdateManager::update_scheduled	(bool init_ef)
 {
 	if (init_ef)
 		init_ef_storage					();
 
-	START_PROFILE("ALife/scheduled");
-	scheduled().update					();
-	STOP_PROFILE
+	if (Alife_Sheduler)
+	{
+		START_PROFILE("ALife/scheduled");
+		scheduled().update();
+		STOP_PROFILE
+
+	}
 }
 
 void CALifeUpdateManager::update			()

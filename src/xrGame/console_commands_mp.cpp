@@ -130,6 +130,8 @@ extern BOOL		g_cl_draw_mp_statistic;
 
 extern int		g_sv_server_goodwill;
 
+BOOL Alife_Sheduler = FALSE;
+
 void XRNETSERVER_API DumpNetCompressorStats	(bool brief);
 BOOL XRNETSERVER_API g_net_compressor_enabled;
 BOOL XRNETSERVER_API g_net_compressor_gather_stats;
@@ -3330,6 +3332,7 @@ void register_mp_console_commands()
 	CMD4(CCC_Integer,	"g_eventdelay",			&g_dwEventDelay,	0,	1000);
 	CMD4(CCC_Integer,	"g_corpsenum",			(int*)&g_dwMaxCorpses,		0,	100);
 
+	CMD4(CCC_Integer, "g_alife_sheduler", &Alife_Sheduler, FALSE, TRUE);
 
 	CMD1(CCC_KickPlayerByName,	"sv_kick"					);	//saved for backward compatibility
 	CMD1(CCC_KickPlayerByID,	"sv_kick_id"				);
