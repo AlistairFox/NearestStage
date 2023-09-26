@@ -124,6 +124,8 @@ public:
 	bool need_exit;
 	bool CanChange = true;
 
+	void						EventHideState();
+
 	bool						MpGodMode() const;
 	bool						MpNoClip() const;
 	bool						MpInvisibility() const;

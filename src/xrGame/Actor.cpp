@@ -1192,6 +1192,15 @@ void CActor::EndUseTimer()
 	}
 }
 
+void CActor::EventHideState()
+{
+	CActor* pA = smart_cast<CActor*>(Level().CurrentControlEntity());
+
+	NET_Packet packet;
+	u_EventGen(packet, GE_ACTOR_HIDE_ALL_STATE, pA->ID());
+	u_EventSend(packet, net_flags(true, true));
+}
+
 void CActor::UpdateCL	()
 {
 	EndClearMask();

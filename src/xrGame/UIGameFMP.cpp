@@ -22,6 +22,7 @@
 #include "ActorEffector.h"
 #include "player_hud.h"
 #include "Weapon.h"
+#include "Actor.h"
 
 BOOL g_cl_draw_mp_statistic = FALSE;
 
@@ -81,12 +82,21 @@ void CUIGameFMP::HideShownDialogs()
 	inherited::HideShownDialogs();
 }
 
-extern bool g_bDisableAllInput;
-
 void _BCL CUIGameFMP::OnFrame()
 {
 
 	inherited::OnFrame();
+
+	if (hide_wpn && wpnTime <= Device.dwTimeGlobal)
+	{
+		g_player_hud->script_anim_play(2, "item_ea_backpack_open_hud", "anm_ea_show", false, 1.0f);
+		Actor()->PlayAnmSound("interface\\item_usage\\backpack_open");
+		add_cam_effector("itemuse_anm_effects\\backpack_open.anm", 8555, false, "");
+		old_timer = Device.dwTimeGlobal + g_player_hud->motion_length_script("item_ea_backpack_open_hud", "anm_ea_show", 1.0f);
+		need_activate_inventory = true;
+		hide_wpn = false;
+		wpnTime = 0;
+	}
 
 	if (need_activate_inventory && old_timer <= Device.dwTimeGlobal)
 	{
@@ -204,17 +214,14 @@ bool CUIGameFMP::IR_UIOnKeyboardPress(int dik)
 	{
 		if (!need_activate_inventory)
 		{
-			Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, true);
-			CCustomDetector* pDet = smart_cast<CCustomDetector*>(Actor()->inventory().ItemFromSlot(DETECTOR_SLOT));
-
-			if (pDet)
-				pDet->HideDetector(true);
-
-			g_player_hud->script_anim_play(2, "item_ea_backpack_open_hud", "anm_ea_show", false, 1.0f);
-			Actor()->PlayAnmSound("interface\\item_usage\\backpack_open");
-			add_cam_effector("itemuse_anm_effects\\backpack_open.anm", 8555, false, "");
-			old_timer = Device.dwTimeGlobal + g_player_hud->motion_length_script("item_ea_backpack_open_hud", "anm_ea_show", 1.0f);
-			need_activate_inventory = true;
+			CInventoryOwner* pInvOwner = smart_cast<CInventoryOwner*>(Level().CurrentEntity());
+			CActor* pActor = smart_cast<CActor*>(pInvOwner);
+			if (pInvOwner && pActor && pActor->g_Alive())
+			{
+				pActor->EventHideState();
+				wpnTime = Device.dwTimeGlobal + 1000;
+				hide_wpn = true;
+			}
 		}
 	} break;
 

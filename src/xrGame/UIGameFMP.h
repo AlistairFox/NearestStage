@@ -23,6 +23,9 @@ public:
 
 	u32 old_timer = 0;
 	bool need_activate_inventory = false;
+
+	u32 wpnTime = 0;
+	bool hide_wpn = false;
 				CUIGameFMP();
 	virtual		~CUIGameFMP();
 

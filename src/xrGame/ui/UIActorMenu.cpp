@@ -206,15 +206,16 @@ void CUIActorMenu::Show(bool status)
 	inherited::Show							(status);
 	if(status)
 	{
+		Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, true);
 		SetMenuMode							(m_currMenuMode);
 		PlaySnd								(eSndOpen);
 		m_ActorStateInfo->UpdateActorInfo	(m_pActorInvOwner);
 	}
 	else
 	{
+		Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, false);
 		PlaySnd								(eSndClose);
 		SetMenuMode							(mmUndefined);
-		Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, false);
 	}
 	m_ActorStateInfo->Show					(status);
 }
