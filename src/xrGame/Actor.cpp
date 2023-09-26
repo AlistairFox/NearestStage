@@ -2659,7 +2659,7 @@ void CActor::TimeBlockAction(LPCSTR anim_sect)
 		{
 			pDet->HideDetector(true);
 		}
-		old_timer = Device.dwTimeGlobal + g_player_hud->motion_length_script(anim_sect, "anm_ea_show", 1.0f);
+		old_timer = Device.dwTimeGlobal + (g_player_hud->motion_length_script(anim_sect, "anm_ea_show", 1.0f)) + 500;
 		need_exit = true;
 	}
 }
