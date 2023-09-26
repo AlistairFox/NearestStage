@@ -223,7 +223,7 @@ void	CActor::PickupModeUpdate_COD	()
 
 	if (pNearestItem && m_bPickupMode)
 	{
-		Actor()->PlayAnmSound("interface\\pickup");
+		Actor()->PlayAnmSound("interface\\item_usage\\pickup");
 			CUsableScriptObject* pUsableObject = smart_cast<CUsableScriptObject*>(pNearestItem);
 			if (pUsableObject && (!m_pUsableObject))
 				pUsableObject->use(this);

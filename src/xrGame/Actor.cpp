@@ -1133,7 +1133,7 @@ void CActor::StartClearMask()
 	if (!need_clear_mask)
 	{
 		g_player_hud->script_anim_play(1, "clear_mask_anm", "anm_use", false, 1.0f);
-		PlayAnmSound("drink_roflanebalo");
+		PlayAnmSound("interface\\item_usage\\mask_clean");
 
 		oldmaskTimer = Device.dwTimeGlobal + 5000;
 		need_en_raindrops = true;
