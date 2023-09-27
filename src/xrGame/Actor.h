@@ -120,18 +120,13 @@ protected:
 
 
 public:
-	u32 old_timer = 0;
-	bool need_exit;
-	bool CanChange = true;
-
-	void						EventHideState();
-	float add_cam_effector(LPCSTR fn, int id, bool cyclic, LPCSTR cb_func);
-
 	bool						MpGodMode() const;
 	bool						MpNoClip() const;
 	bool						MpInvisibility() const;
 	bool						MpSafeMODE() const;
 	bool						MpAnimationMODE() const;
+
+
 	u32 maskTimer = 0;
 	u32 oldmaskTimer = 0;
 	bool need_clear_mask = false;
@@ -139,10 +134,15 @@ public:
 	void StartClearMask();
 	void EndClearMask();
 	void PlayAnmSound(shared_str sndname);
+	void PlayPPEffect(LPCSTR pp_name);
 	ref_sound snd;
-
+	void						EventHideState();
+	float add_cam_effector(LPCSTR fn, int id, bool cyclic, LPCSTR cb_func);
 	void						TimeBlockAction(LPCSTR anim_sect);
 	void						TimeUnblockAction();
+	u32 old_timer = 0;
+	bool need_exit;
+	bool CanChange = true;
 
 
 	bool old_block_state = false;

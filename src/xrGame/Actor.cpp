@@ -892,9 +892,7 @@ void CActor::Die	(CObject* who)
 	//ANIM MODE 
 	StopAllSNDs();
 
-	CPostprocessAnimator* pp = xr_new<CPostprocessAnimator>(20, true);
-	pp->Load("die.ppe");
-	Actor()->Cameras().AddPPEffector(pp);
+	PlayPPEffect("die.ppe");
 
 	if (OnServer())
 	{	
@@ -1126,54 +1124,6 @@ float CActor::currentFOV()
 	{
 		return g_fov;
 	}
-}
-
-void CActor::StartClearMask()
-{
-	if (!need_clear_mask)
-	{
-		g_player_hud->script_anim_play(1, "clear_mask_anm", "anm_use", false, 1.0f);
-		PlayAnmSound("interface\\item_usage\\mask_clean");
-
-		oldmaskTimer = Device.dwTimeGlobal + 5000;
-		need_en_raindrops = true;
-		maskTimer = Device.dwTimeGlobal + ((g_player_hud->motion_length_script("clear_mask_anm", "anm_use", 1.0f))/2.5);
-		need_clear_mask = true;
-	}
-}
-
-void CActor::EndClearMask()
-{
-	if (need_clear_mask && maskTimer <= Device.dwTimeGlobal)
-	{
-		Msg("EndMask");
-		Console->Execute("r2_rain_drops_control 0");
-		//Console->Execute("r2_rain_drops_control 1");
-		need_clear_mask = false;
-		maskTimer = 0;
-	}
-
-	if (need_en_raindrops && oldmaskTimer <= Device.dwTimeGlobal)
-	{
-		Console->Execute("r2_rain_drops_control 1");
-		need_en_raindrops = false;
-		oldmaskTimer = 0;
-	}
-}
-
-void CActor::PlayAnmSound(shared_str sndname)
-{
-	snd.create(sndname.c_str(), st_Effect, sg_SourceType);
-	snd.play(NULL, sm_2D);
-}
-
-void CActor::EventHideState()
-{
-	CActor* pA = smart_cast<CActor*>(Level().CurrentControlEntity());
-
-	NET_Packet packet;
-	u_EventGen(packet, GE_ACTOR_HIDE_ALL_STATE, pA->ID());
-	u_EventSend(packet, net_flags(true, true));
 }
 
 void CActor::UpdateCL	()
@@ -2610,6 +2560,61 @@ void CActor::unblock_action(EGameActions cmd)
 	{
 		m_blocked_actions.erase(iter);
 	}
+}
+
+void CActor::StartClearMask()
+{
+	if (!need_clear_mask)
+	{
+		g_player_hud->script_anim_play(1, "clear_mask_anm", "anm_use", false, 1.0f);
+		PlayAnmSound("interface\\item_usage\\mask_clean");
+
+		oldmaskTimer = Device.dwTimeGlobal + 5000;
+		need_en_raindrops = true;
+		maskTimer = Device.dwTimeGlobal + ((g_player_hud->motion_length_script("clear_mask_anm", "anm_use", 1.0f)) / 2.5);
+		need_clear_mask = true;
+	}
+}
+
+void CActor::EndClearMask()
+{
+	if (need_clear_mask && maskTimer <= Device.dwTimeGlobal)
+	{
+		Msg("EndMask");
+		Console->Execute("r2_rain_drops_control 0");
+		//Console->Execute("r2_rain_drops_control 1");
+		need_clear_mask = false;
+		maskTimer = 0;
+	}
+
+	if (need_en_raindrops && oldmaskTimer <= Device.dwTimeGlobal)
+	{
+		Console->Execute("r2_rain_drops_control 1");
+		need_en_raindrops = false;
+		oldmaskTimer = 0;
+	}
+}
+
+void CActor::PlayAnmSound(shared_str sndname)
+{
+	snd.create(sndname.c_str(), st_Effect, sg_SourceType);
+	snd.play(NULL, sm_2D);
+}
+
+void CActor::EventHideState()
+{
+	CActor* pA = smart_cast<CActor*>(Level().CurrentControlEntity());
+
+	NET_Packet packet;
+	u_EventGen(packet, GE_ACTOR_HIDE_ALL_STATE, pA->ID());
+	u_EventSend(packet, net_flags(true, true));
+}
+
+void CActor::PlayPPEffect(LPCSTR pp_name)
+{
+	CPostprocessAnimator* pp = xr_new<CPostprocessAnimator>(20, true);
+	pp->Load(pp_name);
+	Actor()->Cameras().AddPPEffector(pp);
 }
 
 void CActor::TimeBlockAction(LPCSTR anim_sect)

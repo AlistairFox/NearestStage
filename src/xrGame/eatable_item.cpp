@@ -208,6 +208,10 @@ void CEatableItem::StartAnimation()
 		m_iAnimLength = Device.dwTimeGlobal + g_player_hud->motion_length_script(anim_sect, "anm_ea_show", 1.0f);
 	}
 
+	if (pSettings->line_exist(anim_sect, "postprocess"))
+	{
+		Actor()->PlayPPEffect(pSettings->r_string(anim_sect, "postprocess"));
+	}
 
 	if (pSettings->line_exist(anim_sect, "snd"))
 	{
