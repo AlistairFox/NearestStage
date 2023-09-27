@@ -211,12 +211,7 @@ void CActor::IR_OnKeyboardPress(int cmd)
 	}break;
 	case kUSE:
 		{
-			if (!use_cool_down)
-			{
-				StartUseTimer();
-			}
-			else
-				return;
+		ActorUse();
 		}break;
 	case kDROP:
 		b_DropActivated			= TRUE;
@@ -522,10 +517,14 @@ void CActor::ActorUse()
 						if (!pEntityAliveWeLookingAt->cast_base_monster())
 						{
 							CurrentGameUI()->StartCarBody(this, m_pPersonWeLookingAt);
+							g_player_hud->script_anim_play(1, "item_ea_take_hud", "anm_ea_take", true, 1.4f);
+							g_player_hud->PlayBlendAnm("camera_effects\\weapon\\two_handed_weapon_effect.anm", 0, 1.4, 1, false);
 						}
 						else if (CheckGameFlag(F_MUTANTS_DEADBODY_SEARCH_ENABLED))
 						{
 							CurrentGameUI()->StartCarBody(this, m_pPersonWeLookingAt);
+							g_player_hud->script_anim_play(1, "item_ea_take_hud", "anm_ea_take", true, 1.4f);
+							g_player_hud->PlayBlendAnm("camera_effects\\weapon\\two_handed_weapon_effect.anm", 0, 1.4, 1, false);
 						}
 					}						
 				}
@@ -806,12 +805,7 @@ void CActor::NoClipFly(int cmd)
 		}
 		break;
 	case kUSE:
-		if (!use_cool_down)
-		{
-			StartUseTimer();
-		}
-		else
-			return;
+		ActorUse();
 		break;
 	}
 	cur_pos.mul(scale);

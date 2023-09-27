@@ -1167,31 +1167,6 @@ void CActor::PlayAnmSound(shared_str sndname)
 	snd.play(NULL, sm_2D);
 }
 
-void CActor::StartUseTimer()
-{
-	if (!need_kuse)
-	{
-		g_player_hud->script_anim_play(1, "item_ea_take_hud", "anm_ea_take", true, 1.4f);
-		g_player_hud->PlayBlendAnm("camera_effects\\weapon\\two_handed_weapon_effect.anm", 0, 1.4, 1, false);
-		need_kuse = true;
-		use_cool_down = true;
-
-		useTime = Device.dwTimeGlobal + ((g_player_hud->motion_length_script("item_ea_take_hud", "anm_ea_take", 1.4)));
-	}
-
-}
-
-void CActor::EndUseTimer()
-{
-	if (need_kuse && useTime <= Device.dwTimeGlobal)
-	{
-		use_cool_down = false;
-		ActorUse();
-		need_kuse = false;
-		useTime = 0;
-	}
-}
-
 void CActor::EventHideState()
 {
 	CActor* pA = smart_cast<CActor*>(Level().CurrentControlEntity());
@@ -1204,7 +1179,6 @@ void CActor::EventHideState()
 void CActor::UpdateCL	()
 {
 	EndClearMask();
-	EndUseTimer();
 	TimeUnblockAction();
 
 	if(g_Alive() && Level().CurrentViewEntity() == this)
@@ -2643,7 +2617,7 @@ void CActor::TimeBlockAction(LPCSTR anim_sect)
 	CCustomDetector* pDet = smart_cast<CCustomDetector*>(Actor()->inventory().ItemFromSlot(DETECTOR_SLOT));
 	if (!need_exit)
 	{
-
+		Actor()->EventHideState();
 		Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, true);
 		Actor()->block_action(kQUICK_USE_1);
 		Actor()->block_action(kQUICK_USE_2);
@@ -2654,7 +2628,7 @@ void CActor::TimeBlockAction(LPCSTR anim_sect)
 		{
 			pDet->HideDetector(true);
 		}
-		old_timer = Device.dwTimeGlobal + (g_player_hud->motion_length_script(anim_sect, "anm_ea_show", 1.0f)) + 500;
+		old_timer = Device.dwTimeGlobal + (g_player_hud->motion_length_script(anim_sect, "anm_ea_show", 1.0f)) + 1000;
 		need_exit = true;
 	}
 }

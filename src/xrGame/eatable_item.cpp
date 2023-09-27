@@ -147,8 +147,8 @@ void CEatableItem::HideWeapon()
 			{
 				huita->m_game_ui->HideActorMenu();
 				g_player_hud->script_anim_play(2, "item_ea_backpack_close_hud", "anm_ea_show", false, 1.0f);
-				Actor()->PlayAnmSound("interface\\item_usage\\backpack_close");
-				Actor()->add_cam_effector("itemuse_anm_effects\\backpack_open.anm", 8555, false, "");
+				pActor->PlayAnmSound("interface\\item_usage\\backpack_close");
+				pActor->add_cam_effector("itemuse_anm_effects\\backpack_open.anm", 8555, false, "");
 				HideTimer = Device.dwTimeGlobal + 1500;
 				need_hide_timer = true;
 			}

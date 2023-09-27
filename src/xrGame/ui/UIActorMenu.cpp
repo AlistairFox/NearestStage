@@ -205,9 +205,10 @@ void CUIActorMenu::SendMessage(CUIWindow* pWnd, s16 msg, void* pData)
 void CUIActorMenu::Show(bool status)
 {
 	inherited::Show							(status);
+	CActor* pActor = smart_cast<CActor*>(Level().CurrentControlEntity());
 	if(status)
 	{
-		Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, true);
+		pActor->SetWeaponHideState(INV_STATE_BLOCK_ALL, true);
 		SetMenuMode							(m_currMenuMode);
 		PlaySnd								(eSndOpen);
 		m_ActorStateInfo->UpdateActorInfo	(m_pActorInvOwner);
@@ -215,9 +216,9 @@ void CUIActorMenu::Show(bool status)
 	else
 	{
 		g_player_hud->script_anim_play(2, "item_ea_backpack_close_hud", "anm_ea_show", false, 1.0f);
-		Actor()->PlayAnmSound("interface\\item_usage\\backpack_close");
-		Actor()->add_cam_effector("itemuse_anm_effects\\backpack_open.anm", 8555, false, "");
-		Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, false);
+		pActor->PlayAnmSound("interface\\item_usage\\backpack_close");
+		pActor->add_cam_effector("itemuse_anm_effects\\backpack_open.anm", 8555, false, "");
+		pActor->SetWeaponHideState(INV_STATE_BLOCK_ALL, false);
 		PlaySnd								(eSndClose);
 		SetMenuMode							(mmUndefined);
 	}
