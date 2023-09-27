@@ -39,6 +39,7 @@
 #include "../Trade.h"
 #include "Backpack.h"
 #include "AnomalyDetector.h"
+#include "player_hud.h"
 
 void CUIActorMenu::SetActor(CInventoryOwner* io)
 {
@@ -213,6 +214,9 @@ void CUIActorMenu::Show(bool status)
 	}
 	else
 	{
+		g_player_hud->script_anim_play(2, "item_ea_backpack_close_hud", "anm_ea_show", false, 1.0f);
+		Actor()->PlayAnmSound("interface\\item_usage\\backpack_close");
+		Actor()->add_cam_effector("itemuse_anm_effects\\backpack_open.anm", 8555, false, "");
 		Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, false);
 		PlaySnd								(eSndClose);
 		SetMenuMode							(mmUndefined);

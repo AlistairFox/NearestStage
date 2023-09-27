@@ -26,6 +26,9 @@
 #include "player_hud.h"
 #include "../xrPhysics/ElevatorState.h"
 #include <static_cast_checked.hpp>
+#include <game_cl_freemp.h>
+#include "UIGameFMP.h"
+#include "ui/UIActorMenu.h"
 
 CEatableItem::CEatableItem()
 {
@@ -100,7 +103,18 @@ void CEatableItem::OnH_B_Independent(bool just_before_destroy)
 void CEatableItem::UpdateCL()
 {
 	inherited::UpdateCL();
-	
+
+	if (need_hide_timer && HideTimer <= Device.dwTimeGlobal)
+	{
+		CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
+		if (pActor)
+			pActor->TimeBlockAction(anim_sect);
+		pActor->add_cam_effector(m_iCamEffector, 8555, false, "");
+		m_bItmStartAnim = true;
+
+		need_hide_timer = false;
+		HideTimer = 0;
+	}
 
 	if (m_bItmStartAnim && m_pInventory->GetActiveSlot() == NO_ACTIVE_SLOT)
 		StartAnimation();
@@ -122,42 +136,37 @@ void CEatableItem::UpdateCL()
 	}
 }
 
-
 void CEatableItem::HideWeapon()
 {
 
-	CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
-	if (pActor)
-		pActor->TimeBlockAction(anim_sect);
+		if (OnClient())
+		{
+			CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
+			game_cl_freemp* huita = smart_cast<game_cl_freemp*>(&Game());
+			if (huita && huita->m_game_ui->ActorMenu().IsShown())
+			{
+				huita->m_game_ui->HideActorMenu();
+				g_player_hud->script_anim_play(2, "item_ea_backpack_close_hud", "anm_ea_show", false, 1.0f);
+				Actor()->PlayAnmSound("interface\\item_usage\\backpack_close");
+				Actor()->add_cam_effector("itemuse_anm_effects\\backpack_open.anm", 8555, false, "");
+				HideTimer = Device.dwTimeGlobal + 1500;
+				need_hide_timer = true;
+			}
+			else
+			{
+				if (pActor)
+					pActor->TimeBlockAction(anim_sect);
+				pActor->add_cam_effector(m_iCamEffector, 8555, false, "");
+				m_bItmStartAnim = true;
+			}
+		}
 
-	if (OnClient())
-	{
-		add_cam_effector(m_iCamEffector, 8555, false, "");
-		//g_player_hud->PlayBlendAnm(m_iHudAnm, 0, 1, 1, false);
-	}
-
-	if (OnServer())
-	{
-		NET_Packet				tmp_packet;
-		CGameObject::u_EventGen(tmp_packet, GEG_PLAYER_START_ANIMATION, object().ID());
-		Level().Send(tmp_packet);
-	}
-	else
-		m_bItmStartAnim = true;
-
-
-
-}
-
-#include "actoreffector.h"
-float CEatableItem::add_cam_effector(LPCSTR fn, int id, bool cyclic, LPCSTR cb_func)
-{
-	CAnimatorCamEffectorScriptCB* e = xr_new<CAnimatorCamEffectorScriptCB>(cb_func);
-	e->SetType((ECamEffectorType)id);
-	e->SetCyclic(cyclic);
-	e->Start(fn);
-	Actor()->Cameras().AddCamEffector(e);
-	return						e->GetAnimatorLength();
+		if (OnServer())
+		{
+			NET_Packet				tmp_packet;
+			CGameObject::u_EventGen(tmp_packet, GEG_PLAYER_START_ANIMATION, object().ID());
+			Level().Send(tmp_packet);
+		}
 }
 
 void CEatableItem::OnEvent(NET_Packet& P, u16 type)

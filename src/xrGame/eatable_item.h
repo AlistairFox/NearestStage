@@ -39,12 +39,13 @@ public:
 	bool			m_bActivated;
 	bool			m_bItmStartAnim;
 	int				m_iAnimHandsCnt;
-	float add_cam_effector(LPCSTR fn, int id, bool cyclic, LPCSTR cb_func);
 	int				m_iAnimLength;
 	LPCSTR			anim_sect;
 	shared_str		use_cam_effector;
 	ref_sound		m_using_sound;
 	LPCSTR m_iCamEffector;
+	u32 HideTimer = 0;
+	bool need_hide_timer = false;
 //	LPCSTR m_iHudAnm;
 };
 

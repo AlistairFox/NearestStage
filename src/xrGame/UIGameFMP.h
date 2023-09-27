@@ -37,8 +37,6 @@ public:
 
 	virtual void	_BCL OnFrame();
 
-	float add_cam_effector(LPCSTR fn, int id, bool cyclic, LPCSTR cb_func);
-
 	virtual bool IR_UIOnKeyboardPress(int dik);
 
 	virtual void StartUpgrade(CInventoryOwner* pActorInv, CInventoryOwner* pMech);

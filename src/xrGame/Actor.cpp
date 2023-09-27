@@ -2641,11 +2641,6 @@ void CActor::unblock_action(EGameActions cmd)
 void CActor::TimeBlockAction(LPCSTR anim_sect)
 {
 	CCustomDetector* pDet = smart_cast<CCustomDetector*>(Actor()->inventory().ItemFromSlot(DETECTOR_SLOT));
-	game_cl_freemp* huita = smart_cast<game_cl_freemp*>(&Game());
-	if (huita)
-	{
-		huita->m_game_ui->HideActorMenu();
-	}
 	if (!need_exit)
 	{
 
@@ -2677,4 +2672,14 @@ void CActor::TimeUnblockAction()
 		Actor()->set_inventory_disabled(false);
 		Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, false);
 	}
+}
+
+float CActor::add_cam_effector(LPCSTR fn, int id, bool cyclic, LPCSTR cb_func)
+{
+	CAnimatorCamEffectorScriptCB* e = xr_new<CAnimatorCamEffectorScriptCB>(cb_func);
+	e->SetType((ECamEffectorType)id);
+	e->SetCyclic(cyclic);
+	e->Start(fn);
+	Actor()->Cameras().AddCamEffector(e);
+	return						e->GetAnimatorLength();
 }

@@ -125,6 +125,7 @@ public:
 	bool CanChange = true;
 
 	void						EventHideState();
+	float add_cam_effector(LPCSTR fn, int id, bool cyclic, LPCSTR cb_func);
 
 	bool						MpGodMode() const;
 	bool						MpNoClip() const;

@@ -91,7 +91,7 @@ void _BCL CUIGameFMP::OnFrame()
 	{
 		g_player_hud->script_anim_play(2, "item_ea_backpack_open_hud", "anm_ea_show", false, 1.0f);
 		Actor()->PlayAnmSound("interface\\item_usage\\backpack_open");
-		add_cam_effector("itemuse_anm_effects\\backpack_open.anm", 8555, false, "");
+		Actor()->add_cam_effector("itemuse_anm_effects\\backpack_open.anm", 8555, false, "");
 		old_timer = Device.dwTimeGlobal + g_player_hud->motion_length_script("item_ea_backpack_open_hud", "anm_ea_show", 1.0f);
 		need_activate_inventory = true;
 		hide_wpn = false;
@@ -179,15 +179,6 @@ void _BCL CUIGameFMP::OnFrame()
 
 #include "actoreffector.h"
 #include <CustomDetector.h>
-float CUIGameFMP::add_cam_effector(LPCSTR fn, int id, bool cyclic, LPCSTR cb_func)
-{
-	CAnimatorCamEffectorScriptCB* e = xr_new<CAnimatorCamEffectorScriptCB>(cb_func);
-	e->SetType((ECamEffectorType)id);
-	e->SetCyclic(cyclic);
-	e->Start(fn);
-	Actor()->Cameras().AddCamEffector(e);
-	return						e->GetAnimatorLength();
-}
 
 
 bool CUIGameFMP::IR_UIOnKeyboardPress(int dik)
