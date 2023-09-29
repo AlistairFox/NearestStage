@@ -2563,6 +2563,8 @@ void CActor::unblock_action(EGameActions cmd)
 	}
 }
 
+/*hud anims system*/
+
 void CActor::StartClearMask()
 {
 	if (!need_clear_mask)

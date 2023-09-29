@@ -126,7 +126,7 @@ public:
 	bool						MpSafeMODE() const;
 	bool						MpAnimationMODE() const;
 
-
+	/* hud anims system*/
 	u32 maskTimer = 0;
 	u32 oldmaskTimer = 0;
 	bool need_clear_mask = false;
@@ -145,6 +145,7 @@ public:
 	void EndTorchAnm();
 	u32 TorchTimer = 0;
 	bool neet_switch_torch = false;
+	/* hud anims system end*/
 
 	u32 old_timer = 0;
 	bool need_exit;
