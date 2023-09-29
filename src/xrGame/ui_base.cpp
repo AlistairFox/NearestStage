@@ -254,7 +254,8 @@ void ui_core::RenderFont()
 
 bool ui_core::is_widescreen()
 {
-	return (Device.dwWidth)/float(Device.dwHeight) > (UI_BASE_WIDTH/UI_BASE_HEIGHT +0.01f);
+	//return (Device.dwWidth)/float(Device.dwHeight) > (UI_BASE_WIDTH/UI_BASE_HEIGHT +0.01f);
+	return true;
 }
 
 float ui_core::get_current_kx()
@@ -269,12 +270,12 @@ float ui_core::get_current_kx()
 shared_str	ui_core::get_xml_name(LPCSTR fn)
 {
 	string_path				str;
-	//if(!is_widescreen()){
-	//	xr_sprintf(str, "%s", fn);
-	//	if ( NULL==strext(fn) ) xr_strcat(str, ".xml");
-	//}
-	//else
-//	{
+	if(!is_widescreen()){
+		xr_sprintf(str, "%s", fn);
+		if ( NULL==strext(fn) ) xr_strcat(str, ".xml");
+	}
+	else
+	{
 
 		string_path			str_;
 		if ( strext(fn) )
@@ -294,6 +295,6 @@ shared_str	ui_core::get_xml_name(LPCSTR fn)
 #ifdef DEBUG
 		Msg("[16-9] get_xml_name for[%s] returns [%s]", fn, str);
 #endif // #ifdef DEBUG
-	//}
+	}
 	return str;
 }
