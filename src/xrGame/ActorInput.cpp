@@ -186,9 +186,9 @@ void CActor::IR_OnKeyboardPress(int cmd)
 	case kTORCH:
 	{
 		PIItem det_active = inventory().ItemFromSlot(TORCH_SLOT);
-		if (det_active)
+		if (det_active && !neet_switch_torch)
 		{
-			SwitchTorch();
+			StartTorchAnm();
 			break;
 		}
 	}
@@ -718,28 +718,6 @@ void CActor::SwitchTorch()
 		CTorch* torch = smart_cast<CTorch*>(*it);
 		if ( torch )
 		{	
-			CActor* current_actor = static_cast_checked<CActor*>(Level().CurrentControlEntity());
-			if (current_actor && !g_dedicated_server)
-			{
-				CEffectorCam* ec = current_actor->Cameras().GetCamEffector(eCEWeaponAction);
-				if (NULL == ec)
-				{
-					string_path			ce_path;
-					string_path			anm_name;
-					string_path			curr_anm = "anm_torch.anm";
-					strconcat(sizeof(anm_name), anm_name, "camera_effects\\activity\\", curr_anm);
-					if (FS.exist(ce_path, "$game_anims$", anm_name))
-					{
-						CAnimatorCamEffector* e = xr_new<CAnimatorCamEffector>();
-						e->SetType(eCEWeaponAction);
-						e->SetHudAffect(false);
-						e->SetCyclic(false);
-						e->Start(anm_name);
-						current_actor->Cameras().AddCamEffector(e);
-					}
-				}
-			}
-			g_player_hud->script_anim_play(1, "switch_torch_anm", "anm_use", true, 1.0f);
 			torch->Switch();
 			return;
 		}
@@ -788,9 +766,9 @@ void CActor::NoClipFly(int cmd)
 	case kTORCH:
 	{
 		PIItem det_active = inventory().ItemFromSlot(TORCH_SLOT);
-		if (det_active)
+		if (det_active && !neet_switch_torch)
 		{
-			SwitchTorch();
+			StartTorchAnm();
 		}
 	}break;
 	case kDETECTOR:

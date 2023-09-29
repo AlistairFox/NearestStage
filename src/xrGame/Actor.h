@@ -140,6 +140,12 @@ public:
 	float add_cam_effector(LPCSTR fn, int id, bool cyclic, LPCSTR cb_func);
 	void						TimeBlockAction(LPCSTR anim_sect);
 	void						TimeUnblockAction();
+
+	void StartTorchAnm();
+	void EndTorchAnm();
+	u32 TorchTimer = 0;
+	bool neet_switch_torch = false;
+
 	u32 old_timer = 0;
 	bool need_exit;
 	bool CanChange = true;

@@ -1130,6 +1130,7 @@ void CActor::UpdateCL	()
 {
 	EndClearMask();
 	TimeUnblockAction();
+	EndTorchAnm();
 
 	if(g_Alive() && Level().CurrentViewEntity() == this)
 	{
@@ -2661,4 +2662,26 @@ float CActor::add_cam_effector(LPCSTR fn, int id, bool cyclic, LPCSTR cb_func)
 	e->Start(fn);
 	Actor()->Cameras().AddCamEffector(e);
 	return						e->GetAnimatorLength();
+}
+
+void CActor::StartTorchAnm()
+{
+	if (!neet_switch_torch)
+	{
+		CActor* pActor = smart_cast<CActor*>(Level().CurrentControlEntity());
+		pActor->add_cam_effector("camera_effects\\activity\\anm_torch.anm", 8555, false, "");
+		g_player_hud->script_anim_play(1, "switch_torch_anm", "anm_use", true, 1.0f);
+		neet_switch_torch = true;
+		TorchTimer = Device.dwTimeGlobal + (g_player_hud->motion_length_script("switch_torch_anm", "anm_use", 1.0f) / 2);
+	}
+}
+
+void CActor::EndTorchAnm()
+{
+	if (neet_switch_torch && TorchTimer <= Device.dwTimeGlobal)
+	{
+		SwitchTorch();
+		neet_switch_torch = false;
+		TorchTimer = 0;
+	}
 }
