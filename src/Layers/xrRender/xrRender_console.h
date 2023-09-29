@@ -13,6 +13,8 @@ extern ECORE_API float ps_r2_tnmp_exposure; // r2-only
 extern ECORE_API float ps_r2_tnmp_gamma; // r2-only
 extern ECORE_API float ps_r2_tnmp_onoff; // r2-only
 
+extern ECORE_API float			ps_r2_reflections_distance;
+
 // SSR quality option
 extern ECORE_API	u32			dt_ssr_samp;
 extern ECORE_API	xr_token	ssr_samp_token[];
