@@ -208,6 +208,7 @@ void CUIActorMenu::Show(bool status)
 	CActor* pActor = smart_cast<CActor*>(Level().CurrentControlEntity());
 	if(status)
 	{
+		pActor->EventHideState();
 		pActor->SetWeaponHideState(INV_STATE_BLOCK_ALL, true);
 		SetMenuMode							(m_currMenuMode);
 		PlaySnd								(eSndOpen);
