@@ -1280,6 +1280,7 @@ T *CLocatorAPI::r_open_impl	(LPCSTR path, LPCSTR _fname)
 	if (m_Flags.test(flDumpFileActivity))
 		_register_open_file	(R,fname);
 
+
 	if (!R)
 		Msg("PIZDA %s, %s", path, _fname);
 

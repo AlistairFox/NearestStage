@@ -31,15 +31,7 @@ u64 timelog_old = 0;
 
 void FlushLog			()
 {
-	if (time_log.GetElapsed_ticks() == 0)
-		time_log.Start();
-
-	if (time_log.GetElapsed_ms() > timelog_old)
-	{
-		timelog_old = time_log.GetElapsed_ms() + 1000;
-		if(writerfile != nullptr)
-		writerfile->flush();
-	}
+ 
 }
 
 void AddOne				(const char *split) 
@@ -204,8 +196,10 @@ void CreateLog			(BOOL nl)
 
 	if (FS.path_exist("$logs$"))
 		FS.update_path	(logFName,"$logs$",log_file_name);
-	
-	if (!no_log)
+			
+	time_log.Start();
+
+	//if (!no_log)
 	{
 		writerfile	= FS.w_open	(logFName);
         if (writerfile==NULL)
