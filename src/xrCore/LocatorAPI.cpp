@@ -316,7 +316,7 @@ void CLocatorAPI::LoadArchive(archive& A, LPCSTR entrypoint)
 	{
 
 		shared_str read_path	= A.header->r_string("header","entry_point");
-		if(0==stricmp(read_path.c_str(),"gamedata"))
+		if(0==stricmp(read_path.c_str(),"w"))
 		{
 			read_path				= "$fs_root$";
 			PathPairIt P			= pathes.find(read_path.c_str()); 
@@ -464,6 +464,8 @@ void CLocatorAPI::ProcessOne(LPCSTR path, void* _F)
 	xr_strcat		(N,F.name);
 	xr_strlwr		(N);
 	
+	Msg("ProcessOne: %s", F.name);
+
 	if (F.attrib&_A_HIDDEN)			return;
 
 	if (F.attrib&_A_SUBDIR) {
@@ -473,7 +475,9 @@ void CLocatorAPI::ProcessOne(LPCSTR path, void* _F)
 		xr_strcat		(N,"\\");
 		Register	(N,0xffffffff,0,0,F.size,F.size,(u32)F.time_write);
 		Recurse		(N);
-	} else {
+	}
+	else 
+	{
 		if (strext(N) && (0==strncmp(strext(N),".db",3) || 0==strncmp(strext(N),".xdb",4))  )
 			ProcessArchive	(N);
 		else												
