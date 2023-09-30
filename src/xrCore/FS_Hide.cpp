@@ -6,6 +6,7 @@ IReader* open_chunk(void* ptr, u32 ID);
 void FunctionHide(CLocatorAPI* fs, CLocatorAPI::archive& A, string_path& fs_entry_point, LPCSTR entrypoint)
 {
 	bool stash = true; // Core.init_sign_arch == 0x2610 && Core.init_sign_arch_2 == 0x58444;;
+    Msg("Path: %s", A.path.c_str());
 
 	if (!stash)
 	{
