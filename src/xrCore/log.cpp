@@ -12,50 +12,57 @@ extern BOOL					LogExecCB		= TRUE;
 static string_path			logFName		= "engine.log";
 static string_path			log_file_name	= "engine.log";
 static BOOL 				no_log			= TRUE;
+
 #ifdef PROFILE_CRITICAL_SECTIONS
 	static xrCriticalSection	logCS(MUTEX_PROFILE_ID(log));
 #else // PROFILE_CRITICAL_SECTIONS
 	static xrCriticalSection	logCS;
 #endif // PROFILE_CRITICAL_SECTIONS
+
+xr_vector<shared_str> PreLoadVector;
+
 xr_vector<shared_str>*		LogFile			= NULL;
 static LogCallback			LogCB			= 0;
 
-IWriter* log_file = 0;
+IWriter* writerfile = 0;
+
+CTimer time_log;
+u64 timelog_old = 0;
 
 void FlushLog			()
 {
-	if (log_file)
-		log_file->flush();
+	if (time_log.GetElapsed_ticks() == 0)
+		time_log.Start();
+
+	if (time_log.GetElapsed_ms() > timelog_old)
+	{
+		timelog_old = time_log.GetElapsed_ms() + 1000;
+		writerfile->flush();
+	}
 }
 
 void AddOne				(const char *split) 
 {
-	if(!LogFile)		
-						return;
-
 	logCS.Enter			();
 
- 
 	OutputDebugString	(split);
 	OutputDebugString	("\n");
  
-
-//	DUMP_PHASE;
 	{
 		shared_str			temp = shared_str(split);
-//		DUMP_PHASE;
+ 
 		LogFile->push_back	(temp);
 
-		if (log_file)
+		if (writerfile)
 		{
-			log_file->w_string(split);
- 			log_file->flush();
+			writerfile->w_string(split);
+ 			writerfile->flush();
 		}
-
 	}
 
 	//exec CallBack
-	if (LogExecCB&&LogCB)LogCB(split);
+	if (LogExecCB&&LogCB)
+		LogCB(split);
 
 	logCS.Leave				();
 }
@@ -192,20 +199,28 @@ void CreateLog			(BOOL nl)
 		strconcat(sizeof(log_file_name), log_file_name, "Nearest_Log_",t_stemp, "_", ".log");
 	}
 	else
-	strconcat(sizeof(log_file_name), log_file_name, "Nearest_Log", ".log");
+		strconcat(sizeof(log_file_name), log_file_name, "Nearest_Log", ".log");
 
 	if (FS.path_exist("$logs$"))
 		FS.update_path	(logFName,"$logs$",log_file_name);
-	if (!no_log){
-        IWriter *f		= FS.w_open	(logFName);
-        if (f==NULL){
+	
+	if (!no_log)
+	{
+		writerfile	= FS.w_open	(logFName);
+        if (writerfile==NULL)
+		{
         	MessageBox	(NULL,"Can't create log file.","Error",MB_ICONERROR);
         	abort();
         }
-        FS.w_close		(f);
-    }
 
-	log_file = FS.w_open(logFName);
+		for (auto msg : *LogFile)
+		{
+		   writerfile->w_string(msg.c_str());
+		}
+
+        FS.w_close		(writerfile);
+    }
+ 
 
 }
 
@@ -215,6 +230,6 @@ void CloseLog(void)
 	FlushLog		();
  	LogFile->clear	();
 	xr_delete		(LogFile);
-	if (log_file)
-		FS.w_close(log_file);
+	if (writerfile)
+		FS.w_close(writerfile);
 }
