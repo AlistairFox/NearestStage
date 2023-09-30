@@ -210,9 +210,9 @@ void CLocatorAPI::Register		(LPCSTR name, u32 vfs, u32 crc, u32 ptr, u32 size_re
 	desc.size_real		= size_real;
 	desc.size_compressed= size_compressed;
     desc.modif			= modif & (~u32(0x3));
-	desc.encripted = encripted;
+	desc.encripted		= encripted;
 
-//	Msg("registering file %s - %d", name, size_real);
+	Msg("registering file %s - %d, encripted: %d", name, size_real, encripted);
  
 //	if file already exist - update info
 	files_it			I = m_files.find(desc);
