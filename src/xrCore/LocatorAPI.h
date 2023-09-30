@@ -14,6 +14,7 @@
 #include "LocatorAPI_defs.h"
 
 class XRCORE_API CStreamReader;
+XRCORE_API extern void encryptDecryptXOR(u8* data, u32 size);
 
 class XRCORE_API CLocatorAPI  
 {
@@ -28,6 +29,7 @@ public:
 		u32						size_real;		// 
 		u32						size_compressed;// if (size_real==size_compressed) - uncompressed
         u32						modif;			// for editor
+		u8						encripted;
 	};
 	struct	archive
 	{
@@ -36,6 +38,9 @@ public:
 		u32						size;
 		CInifile*				header;
 		u32						vfs_idx;
+		bool					encript = false;
+
+
 		archive():hSrcFile(NULL),hSrcMap(NULL),header(NULL),size(0),vfs_idx(u32(-1)){}
 		void					open();
 		void					close();
@@ -67,13 +72,14 @@ private:
 	xrCriticalSection			m_auth_lock		;
 	u64							m_auth_code		;
 
-	void						Register		(LPCSTR name, u32 vfs, u32 crc, u32 ptr, u32 size_real, u32 size_compressed, u32 modif);
 	void						ProcessArchive	(LPCSTR path);
 	void						ProcessOne		(LPCSTR path, void* F);
 	bool						Recurse			(LPCSTR path);	
 
 	files_it					file_find_it	(LPCSTR n);
 public:
+	void						Register		(LPCSTR name, u32 vfs, u32 crc, u32 ptr, u32 size_real, u32 size_compressed, u32 modif, bool encripted = false);
+
 	enum{
 		flNeedRescan			= (1<<0),
 		flBuildCopy				= (1<<1),

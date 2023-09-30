@@ -142,7 +142,7 @@ static lzo_bool basic_integral_check(void)
 #endif
 #if !defined(__LZO_IN_MINILZO)
 #if defined(SIZEOF_SIZE_T)
-	COMPILE_TIME_ASSERT(SIZEOF_SIZE_T == sizeof(size_t));
+	COMPILE_TIME_ASSERT(SIZEOF_SIZE_T == sizeof(unsigned int));
 #endif
 #endif
 

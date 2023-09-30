@@ -8,6 +8,8 @@ class xrCompressor
 	bool						bStoreFiles;
 	IWriter*					fs_pack_writer;
 	CMemoryWriter				fs_desc;
+	CMemoryWriter				fs_encript;
+
 	shared_str					target_name;
 	IReader*					pPackHeader;
 	CInifile*					config_ltx;
@@ -29,11 +31,15 @@ class xrCompressor
 	ALIAS*	testALIAS			(IReader* base, u32 crc, u32& a_tests);
 	bool	testEqual			(LPCSTR path, IReader* base);
 	bool	testVFS				(LPCSTR path);
+	bool	testEncripting		(LPCSTR path);
+
 	bool	IsFolderAccepted	(CInifile& ltx, LPCSTR path, BOOL& recurse);
 	
 	void	GatherFiles			(LPCSTR folder);
 	
-	void	write_file_header	(LPCSTR file_name, const u32 &crc, const u32 &ptr, const u32 &size_real, const u32 &size_compressed);
+	void	write_file_header	(LPCSTR file_name, const u32 &crc, const u32 &ptr, const u32 &size_real, const u32 &size_compressed, bool encripted);
+	void	write_encript_header (u32& ptr, const u8 encripted);
+
 	void	ClosePack			();
 	void	OpenPack			(LPCSTR tgt_folder, int num);
 	
@@ -55,9 +61,14 @@ class xrCompressor
 
 	u32						XRP_MAX_SIZE;
 
+
 public:
+	bool					use_encripting = false;
+	
 			xrCompressor		();
 			~xrCompressor		();
+
+	void	SetUseEncript(bool b) { use_encripting = b; }
 	void	SetFastMode			(bool b)					{bFast=b;}
 	void	SetStoreFiles		(bool b)					{bStoreFiles=b;}
 	void	SetMaxVolumeSize	(u32 sz)					{XRP_MAX_SIZE=sz;}

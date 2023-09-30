@@ -79,6 +79,9 @@
     <Filter Include="Memory manager\POOL">
       <UniqueIdentifier>{072cd367-3d77-46c3-af1e-fac416fd2e89}</UniqueIdentifier>
     </Filter>
+    <Filter Include="FS\encripting">
+      <UniqueIdentifier>{d4f599ff-d54f-4710-a0f8-c9fafe98432a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FTimer.cpp">
@@ -255,6 +258,12 @@
     </ClCompile>
     <ClCompile Include="xrMemory_align.cpp">
       <Filter>Memory manager\POOL</Filter>
+    </ClCompile>
+    <ClCompile Include="FS_Encript.cpp">
+      <Filter>FS\encripting</Filter>
+    </ClCompile>
+    <ClCompile Include="FS_Hide.cpp">
+      <Filter>FS\encripting</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -81,6 +81,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "imgui", "3rd party\imgui\im
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DiscordRPC", "3rd party\DiscordRPC\DiscordRPC.vcxproj", "{464C98E8-CB6D-4DBC-9AC0-275F24C6A987}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "utils", "utils", "{10D51E8A-2A5F-4137-A143-722477CB452E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xrCompress", "utils\xrCompress\xrCompress.vcxproj", "{EF76867B-6EB8-4DC0-A1D6-E964FAD6FC7B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -508,6 +512,19 @@ Global
 		{464C98E8-CB6D-4DBC-9AC0-275F24C6A987}.Release|Win32.Build.0 = Release|Win32
 		{464C98E8-CB6D-4DBC-9AC0-275F24C6A987}.Release|x64.ActiveCfg = Release|x64
 		{464C98E8-CB6D-4DBC-9AC0-275F24C6A987}.Release|x64.Build.0 = Release|x64
+		{EF76867B-6EB8-4DC0-A1D6-E964FAD6FC7B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EF76867B-6EB8-4DC0-A1D6-E964FAD6FC7B}.Debug|Win32.Build.0 = Debug|Win32
+		{EF76867B-6EB8-4DC0-A1D6-E964FAD6FC7B}.Debug|x64.ActiveCfg = Debug|Win32
+		{EF76867B-6EB8-4DC0-A1D6-E964FAD6FC7B}.Mixed|Win32.ActiveCfg = Mixed|Win32
+		{EF76867B-6EB8-4DC0-A1D6-E964FAD6FC7B}.Mixed|Win32.Build.0 = Mixed|Win32
+		{EF76867B-6EB8-4DC0-A1D6-E964FAD6FC7B}.Mixed|x64.ActiveCfg = Mixed|Win32
+		{EF76867B-6EB8-4DC0-A1D6-E964FAD6FC7B}.Release_Dedicated|Win32.ActiveCfg = Release|Win32
+		{EF76867B-6EB8-4DC0-A1D6-E964FAD6FC7B}.Release_Dedicated|Win32.Build.0 = Release|Win32
+		{EF76867B-6EB8-4DC0-A1D6-E964FAD6FC7B}.Release_Dedicated|x64.ActiveCfg = Debug|Win32
+		{EF76867B-6EB8-4DC0-A1D6-E964FAD6FC7B}.Release_Dedicated|x64.Build.0 = Debug|Win32
+		{EF76867B-6EB8-4DC0-A1D6-E964FAD6FC7B}.Release|Win32.ActiveCfg = Release|Win32
+		{EF76867B-6EB8-4DC0-A1D6-E964FAD6FC7B}.Release|Win32.Build.0 = Release|Win32
+		{EF76867B-6EB8-4DC0-A1D6-E964FAD6FC7B}.Release|x64.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -526,6 +543,7 @@ Global
 		{893279CB-0805-405F-B484-9BB728A18261} = {6BE93BFF-E2B4-43F2-ADBB-F8971E43CD5A}
 		{C8FBC3CE-D6DE-4FC3-BC15-7B647614DB09} = {2BFC806B-CE92-4EA4-8FE8-5F2EA54BA348}
 		{464C98E8-CB6D-4DBC-9AC0-275F24C6A987} = {2BFC806B-CE92-4EA4-8FE8-5F2EA54BA348}
+		{EF76867B-6EB8-4DC0-A1D6-E964FAD6FC7B} = {10D51E8A-2A5F-4137-A143-722477CB452E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {01F84216-DBE6-4BCB-A2D6-7E6E456BF3B9}

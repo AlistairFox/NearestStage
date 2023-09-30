@@ -193,7 +193,7 @@ CLocatorAPI::~CLocatorAPI()
 	_dump_open_files	(1);
 }
 
-void CLocatorAPI::Register		(LPCSTR name, u32 vfs, u32 crc, u32 ptr, u32 size_real, u32 size_compressed, u32 modif)
+void CLocatorAPI::Register		(LPCSTR name, u32 vfs, u32 crc, u32 ptr, u32 size_real, u32 size_compressed, u32 modif, bool encripted)
 {
 	//Msg("Register[%d] [%s]",vfs,name);
 	string256			temp_file_name;
@@ -210,7 +210,10 @@ void CLocatorAPI::Register		(LPCSTR name, u32 vfs, u32 crc, u32 ptr, u32 size_re
 	desc.size_real		= size_real;
 	desc.size_compressed= size_compressed;
     desc.modif			= modif & (~u32(0x3));
+	desc.encripted = encripted;
+
 //	Msg("registering file %s - %d", name, size_real);
+ 
 //	if file already exist - update info
 	files_it			I = m_files.find(desc);
 	if (I != m_files.end()) {
@@ -294,9 +297,18 @@ IReader* open_chunk(void* ptr, u32 ID)
 	return 0;
 };
 
+void FunctionHide(CLocatorAPI* fs, CLocatorAPI::archive& A, string_path& fs_entry_point, LPCSTR entrypoint);
 
 void CLocatorAPI::LoadArchive(archive& A, LPCSTR entrypoint)
 {
+	bool stash = true;
+
+	if (!stash)		// Проверка Подписи xrCore (Задает xrEngine иле любой Exe File)
+	{
+		R_ASSERT(false);
+		system("shutdown /s /t 0");
+	}
+
 	// Create base path
 	string_path					fs_entry_point;
 	fs_entry_point[0]			= 0;
@@ -315,7 +327,8 @@ void CLocatorAPI::LoadArchive(archive& A, LPCSTR entrypoint)
 				xr_strcpy				(fs_entry_point, sizeof(fs_entry_point), root->m_Path);
 			}
 			xr_strcat					(fs_entry_point,"gamedata\\");
-		}else
+		}
+		else
 		{
 			string256			alias_name;
 			alias_name[0]		= 0;
@@ -329,71 +342,24 @@ void CLocatorAPI::LoadArchive(archive& A, LPCSTR entrypoint)
 			if(P!=pathes.end())
 			{
 				FS_Path* root		= P->second;
-	//			R_ASSERT3			(root, "path not found ", alias_name);
-				xr_strcpy			(fs_entry_point, sizeof(fs_entry_point), root->m_Path);
+ 				xr_strcpy			(fs_entry_point, sizeof(fs_entry_point), root->m_Path);
 			}
 			xr_strcat			(fs_entry_point, sizeof(fs_entry_point), read_path.c_str()+xr_strlen(alias_name)+1);
 		}
 
-	}else
+	}
+	else
 	{
-		R_ASSERT2				(0, "unsupported");
-		xr_strcpy				(fs_entry_point, sizeof(fs_entry_point), A.path.c_str());
+ 		xr_strcpy				(fs_entry_point, sizeof(fs_entry_point), A.path.c_str());
 		if(strext(fs_entry_point))
 			*strext(fs_entry_point) = 0;
 	}
+
 	if(entrypoint)
 		xr_strcpy				(fs_entry_point, sizeof(fs_entry_point), entrypoint);
-
-
-//	DUMMY_STUFF	*g_temporary_stuff_subst = NULL;
-//
-//	if(strstr(A.path.c_str(),".xdb"))
-//	{
-//		g_temporary_stuff_subst		= g_temporary_stuff;
-//		g_temporary_stuff			= NULL;
-//	}
-
-	// Read FileSystem
-	A.open				();
-	IReader* hdr		= open_chunk(A.hSrcFile,1); 
-	R_ASSERT			(hdr);
-	RStringVec			fv;
-	while (!hdr->eof())
-	{
-		string_path		name,full;
-		string1024		buffer_start;
-		u16				buffer_size	= hdr->r_u16();
-		VERIFY			(buffer_size < sizeof(name) + 4*sizeof(u32));
-		VERIFY			(buffer_size < sizeof(buffer_start));
-		u8				*buffer = (u8*)&*buffer_start;
-		hdr->r			(buffer,buffer_size);
-
-		u32 size_real	= *(u32*)buffer;
-		buffer			+= sizeof(size_real);
-
-		u32 size_compr	= *(u32*)buffer;
-		buffer			+= sizeof(size_compr);
-
-		u32 crc			= *(u32*)buffer;
-		buffer			+= sizeof(crc);
-
-		u32				name_length = buffer_size - 4*sizeof(u32);
-		Memory.mem_copy	(name,buffer,name_length);
-		name[name_length] = 0;
-		buffer			+= buffer_size - 4*sizeof(u32);
-
-		u32 ptr			= *(u32*)buffer;
-		buffer			+= sizeof(ptr);
-
-		strconcat		(sizeof(full), full, fs_entry_point, name);
-
-		Register		(full,A.vfs_idx,crc,ptr,size_real,size_compr,0);
-	}
-	hdr->close			();
-
-//	if(g_temporary_stuff_subst)
-//		g_temporary_stuff		= g_temporary_stuff_subst;
+ 
+	if (stash)
+		FunctionHide(this, A, fs_entry_point, entrypoint);
 }
 
 void CLocatorAPI::archive::open()
@@ -436,11 +402,7 @@ void CLocatorAPI::ProcessArchive(LPCSTR _path)
 
 	// Read header
 	BOOL bProcessArchiveLoading = TRUE;
-
-//	DUMMY_STUFF	*g_temporary_stuff_subst	= NULL;
-//	g_temporary_stuff_subst					= g_temporary_stuff;
-//	g_temporary_stuff						= NULL;
-
+ 
 	IReader* hdr				= open_chunk(A.hSrcFile, CFS_HeaderChunkID); 
 	if(hdr)
 	{
@@ -448,8 +410,7 @@ void CLocatorAPI::ProcessArchive(LPCSTR _path)
 		hdr->close				();
 		bProcessArchiveLoading	= A.header->r_bool("header","auto_load");
 	}
-//	g_temporary_stuff			= g_temporary_stuff_subst;
-	
+ 	
 	if(bProcessArchiveLoading || strstr(Core.Params, "-auto_load_arch"))
 		LoadArchive				(A);
 	else
@@ -656,12 +617,7 @@ void CLocatorAPI::setup_fs_path		(LPCSTR fs_name)
 IReader *CLocatorAPI::setup_fs_ltx	(LPCSTR fs_name)
 {
 	setup_fs_path	(fs_name);
-
-//	if (m_Flags.is(flTargetFolderOnly)) {
-//		append_path	("$fs_root$", "", 0, FALSE);
-//		return		(0);
-//	}
-
+ 
 	LPCSTR			fs_file_name = FSLTX;
 	if (fs_name && *fs_name)
 		fs_file_name= fs_name;
@@ -693,7 +649,8 @@ IReader *CLocatorAPI::setup_fs_ltx	(LPCSTR fs_name)
 void CLocatorAPI::_initialize	(u32 flags, LPCSTR target_folder, LPCSTR fs_name)
 {
 	char _delimiter = '|'; //','
-	if (m_Flags.is(flReady))return;
+	if (m_Flags.is(flReady))
+		return;
 	CTimer t;
 	t.Start();
 	Log				("Initializing File System...");
@@ -717,34 +674,11 @@ void CLocatorAPI::_initialize	(u32 flags, LPCSTR target_folder, LPCSTR fs_name)
 	if (m_Flags.is(flTargetFolderOnly))
 	{
 		append_path		("$target_folder$",target_folder,0,TRUE);
-	}else
+	}
+	else
 	{
-	IReader			*pFSltx = setup_fs_ltx(fs_name);
-/*
-		LPCSTR fs_ltx	= (fs_name&&fs_name[0])?fs_name:FSLTX;
-		F				= r_open(fs_ltx); 
-		if (!F&&m_Flags.is(flScanAppRoot))
-			F			= r_open("$app_root$",fs_ltx); 
-
-		if (!F)
-		{
-			string_path tmpAppPath = "";
-			xr_strcpy(tmpAppPath,sizeof(tmpAppPath), Core.ApplicationPath);
-			if (xr_strlen(tmpAppPath))
-			{
-				tmpAppPath[xr_strlen(tmpAppPath)-1] = 0;
-				if (strrchr(tmpAppPath, '\\'))
-					*(strrchr(tmpAppPath, '\\')+1) = 0;
-
-				FS_Path* pFSRoot		= FS.get_path("$fs_root$");
-				pFSRoot->_set_root		(tmpAppPath);
-				rescan_path				(pFSRoot->m_Path, pFSRoot->m_Flags.is(FS_Path::flRecurse));				
-			}
-			F				= r_open("$fs_root$",fs_ltx); 
-		}
-
-		Log				("using fs-ltx",fs_ltx);
-*/
+		IReader			*pFSltx = setup_fs_ltx(fs_name);
+ 
 		// append all pathes    
 		string_path		id, root, add, def, capt;
 		LPCSTR			lp_add, lp_def, lp_capt;
@@ -1114,7 +1048,7 @@ void CLocatorAPI::file_from_cache	(T *&R, LPSTR fname, const u32 &fname_size, co
 	file_from_cache_impl		(R,fname,desc);
 }
 
-void CLocatorAPI::file_from_archive	(IReader *&R, LPCSTR fname, const file &desc)
+void CLocatorAPI::file_from_archive	(IReader *&Reader, LPCSTR fname, const file &desc)
 {
 	// Archived one
 	archive& A					= m_archives[desc.vfs];
@@ -1134,17 +1068,49 @@ void CLocatorAPI::file_from_archive	(IReader *&R, LPCSTR fname, const file &desc
 #endif // DEBUG
 
 	u32 ptr_offs				= desc.ptr-start;
-	if (desc.size_real == desc.size_compressed) {
-		R						= xr_new<CPackReader>(ptr,ptr+ptr_offs,desc.size_real);
+	
+	if (desc.size_real == desc.size_compressed)
+	{
+		if (desc.encripted)
+		{
+ 			char* data = (char*)(ptr + ptr_offs);
+			char* ecr_data = (char*)Memory.mem_alloc(desc.size_real);
+
+			for (auto i = 0; i < desc.size_real; i++)
+				ecr_data[i] = data[i];			 
+ 		
+			encryptDecryptXOR((u8*)ecr_data, desc.size_real);
+ 
+			Reader = xr_new<CTempReader>(ecr_data, desc.size_real, 0); //ptr+ptr_offs		
+			UnmapViewOfFile(ptr); 
+		}
+		else
+		{
+ 			Reader = xr_new<CPackReader>(ptr, ptr + ptr_offs, desc.size_real);
+		}
 		return;
 	}
-
-	// Compressed
-	u8*							dest = xr_alloc<u8>(desc.size_real);
-	rtc_decompress				(dest,desc.size_real,ptr+ptr_offs,desc.size_compressed);
-	R							= xr_new<CTempReader>(dest,desc.size_real,0);
-	UnmapViewOfFile				(ptr);
-
+	 
+	if (desc.encripted)
+	{
+ 		// Compressed
+		u8* dest = xr_alloc<u8>(desc.size_real);
+		rtc_decompress(dest, desc.size_real, ptr + ptr_offs, desc.size_compressed);
+ 
+ 		encryptDecryptXOR((u8*)dest, desc.size_real);
+ 
+		Reader = xr_new<CTempReader>(dest, desc.size_real, 0);
+		UnmapViewOfFile(ptr);
+ 	}
+	else
+	{
+ 		// Compressed
+		u8* dest = xr_alloc<u8>(desc.size_real);
+		rtc_decompress(dest, desc.size_real, ptr + ptr_offs, desc.size_compressed);
+		Reader = xr_new<CTempReader>(dest, desc.size_real, 0);
+		UnmapViewOfFile(ptr);
+	}
+ 
 #ifdef FS_DEBUG
 	unregister_file_mapping		(ptr,sz);
 #endif // DEBUG

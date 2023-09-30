@@ -12,24 +12,32 @@ void*			FileDownload	(LPCSTR fn, u32* pdwSize=NULL);
 void			FileCompress	(const char *fn, const char* sign, void* data, u32 size);
 void * 			FileDecompress	(const char *fn, const char* sign, u32* size=NULL);
 
+XRCORE_API extern void encryptDecryptXOR(u8* data, u32 size);
+
 class CFileWriter : public IWriter
 {
 private:
 	FILE*			hf;
+	xr_vector<u8>	dataenc_buffer;
+
+
 public:
 	CFileWriter		(const char *name, bool exclusive)
 	{
 		R_ASSERT	(name && name[0]);
 		fName		= name;
 		VerifyPath	(*fName);
-        if (exclusive){
+        if (exclusive)
+		{
     		int handle	= _sopen(*fName,_O_WRONLY|_O_TRUNC|_O_CREAT|_O_BINARY,SH_DENYWR);
 #ifdef _EDITOR
     		if (handle==-1)
     			Msg	("!Can't create file: '%s'. Error: '%s'.",*fName,_sys_errlist[errno]);
 #endif
     		hf		= _fdopen(handle,"wb");
-        }else{
+        }
+		else
+		{
 			hf			= fopen(*fName,"wb");
 			if (hf==0)
 				Msg		("!Can't write file: '%s'. Error: '%s'.",*fName,_sys_errlist[errno]);
@@ -38,7 +46,8 @@ public:
 
 	virtual 		~CFileWriter()
 	{
-		if (0!=hf){	
+		if (0!=hf)
+		{	
         	fclose				(hf);
         	// release RO attrib
 	        DWORD dwAttr 		= GetFileAttributes(*fName);
@@ -51,7 +60,8 @@ public:
 	// kernel
 	virtual void	w			(const void* _ptr, u32 count) 
     { 
-		if ((0!=hf) && (0!=count)){
+		if ((0!=hf) && (0!=count))
+		{
 			const u32 mb_sz = 0x1000000;
 			u8* ptr 		= (u8*)_ptr;
 			int req_size;
@@ -65,10 +75,30 @@ public:
 			}
 		}
     };
+
 	virtual void	seek		(u32 pos)	{	if (0!=hf) fseek(hf,pos,SEEK_SET);		};
 	virtual u32		tell		()			{	return (0!=hf)?ftell(hf):0;				};
 	virtual bool	valid		()			{	return (0!=hf);}
 	virtual	void	flush		()			{	if (hf)	fflush(hf);						};
+
+	// Encripting
+	virtual void w_encrypt(const void* __ptr, u32 count)
+	{
+		if (count)
+		{
+			u8* ptr = (u8*)__ptr;
+			for (auto i = 0; i < count; i++)
+				dataenc_buffer.push_back(ptr[i]);
+		}
+	};
+
+	virtual void data_encript()
+	{
+ 		encryptDecryptXOR(dataenc_buffer.data(), dataenc_buffer.size());
+		w(dataenc_buffer.data(), dataenc_buffer.size());
+	};
+		
+	virtual u32		enc_tell() { return dataenc_buffer.size(); };
 };
 
 // It automatically frees memory after destruction

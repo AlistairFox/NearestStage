@@ -95,6 +95,13 @@ public:
 	void			w_chunk		(u32 type, void* data, u32 size);
 	virtual bool	valid		()									{return true;}
 	virtual	void	flush		() = 0;
+
+
+	// Encripting 
+	virtual void	data_encript()  = 0;
+	virtual u32		enc_tell() = 0;
+	virtual void	w_encrypt(const void* ptr, u32 count) = 0;
+
 };
 
 class XRCORE_API CMemoryWriter : public IWriter
@@ -128,6 +135,11 @@ public:
 #pragma warning(pop)
 	bool			save_to		(LPCSTR fn);
 	virtual	void	flush		()			{ };
+
+	// Encript 
+	virtual void	w_encrypt	(const void* ptr, u32 count);
+	virtual u32		enc_tell() { return position; };
+	virtual void	data_encript();
 };
 
 //------------------------------------------------------------------------------------
