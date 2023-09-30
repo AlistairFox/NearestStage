@@ -58,7 +58,7 @@ void CEatableItem::Load(LPCSTR section)
 
 	m_iPortionsNum = pSettings->r_s32(section, "eat_portions_num");
 	anim_sect = READ_IF_EXISTS(pSettings, r_string, section, "anm", nullptr);
-	m_iCamEffector = pSettings->r_string(section, "cam");
+	m_iCamEffector = READ_IF_EXISTS(pSettings, r_string, section, "cam", nullptr);
 	//m_iHudAnm = pSettings->r_string(section, "hud_anm");
 	VERIFY(m_iPortionsNum < 10000);
 }
@@ -109,7 +109,10 @@ void CEatableItem::UpdateCL()
 		CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
 		if (pActor)
 			pActor->TimeBlockAction(anim_sect);
-		pActor->add_cam_effector(m_iCamEffector, 8555, false, "");
+
+		if(pActor && m_iCamEffector != nullptr)
+			pActor->add_cam_effector(m_iCamEffector, 8555, false, "");
+
 		m_bItmStartAnim = true;
 
 		need_hide_timer = false;
