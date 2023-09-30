@@ -9,27 +9,10 @@ bool CheckForByte(u8 byte)
 		return true;
 }
 
-extern void encryptDecryptXOR_OLD(u8* data, u32 size)
-{
-	// бюфмн ме ялнфел пюяоюйнбюрэ еякх саепел хке онлемъел
-	std::vector<u8> buffer = { 8, 16, 24, 32, 40, 48, 56, 64 };   
-
- 
-	for (size_t i = 0; i < size; ++i)
-	{
-		u8 d = u8(data[i]);
-		u8 encripted = d ^ buffer[i % buffer.size()];
-		
-		if (CheckForByte(d) && CheckForByte(encripted) )
-			data[i] = encripted;
-	}
-}
-
- 
 extern void encryptDecryptXOR(u8* data, u32 size)
 {
 	// бюфмн ме ялнфел пюяоюйнбюрэ еякх саепел хке онлемъел
-	std::vector<u8> buffer = { 8, 16, 24, 32, 40, 48, 56, 64 };   
+	std::vector<u8> buffer = { 8, 9, 2, 4, 1, 0, 5, 95, 73 };
 
  
 	for (size_t i = 0; i < size; ++i)
@@ -38,21 +21,6 @@ extern void encryptDecryptXOR(u8* data, u32 size)
 		u8 encripted = d ^ buffer[i % buffer.size()];
 		
 		if (CheckForByte(d) && CheckForByte(encripted) )
-			data[i] = encripted;
-	}
-}
-
-extern void encryptDecryptXOR_offset(u8* data, u32 size, u32 offset)
-{
-	// бюфмн ме ялнфел пюяоюйнбюрэ еякх саепел хке онлемъел
-	std::vector<u8> buffer = { 8, 16, 24, 32, 40, 48, 56, 64 };
-
-	for (size_t i = 0; i < size; ++i)
-	{
-		u8 d = u8(data[i]);
-		u8 encripted = d ^ buffer[(offset + i) % buffer.size()];
-
-		if (CheckForByte(d) && CheckForByte(encripted))
 			data[i] = encripted;
 	}
 }

@@ -1,8 +1,6 @@
 #include "stdafx.h"
  
 void encryptDecryptXOR(u8* data, u32 size);
-void encryptDecryptXOR_OLD(u8* data, u32 size);
-
 IReader* open_chunk(void* ptr, u32 ID);
 
 void FunctionHide(CLocatorAPI* fs, CLocatorAPI::archive& A, string_path& fs_entry_point, LPCSTR entrypoint)
