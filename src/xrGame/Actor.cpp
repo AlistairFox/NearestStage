@@ -1297,9 +1297,9 @@ void CActor::UpdateCL	()
 
 	// Ascii hud rain drops support
 	
-		float animSpeed = 1.f;
+		float animSpeed = 2.f;
 		float buildSpeed = 2.f;
-		float dryingSpeed = 1.f;
+		float dryingSpeed = 2.f;
 		float rainFactor = g_pGamePersistent->Environment().CurrentEnv->rain_density;
 		float rainHemi{};
 		CEffect_Rain* rain = g_pGamePersistent->pEnvironment->eff_Rain;
