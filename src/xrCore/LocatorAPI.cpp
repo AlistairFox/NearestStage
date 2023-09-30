@@ -30,7 +30,7 @@ CLocatorAPI*		xr_FS = NULL;
 #ifdef _EDITOR
 #	define FSLTX	"fs.ltx"
 #else
-#	define FSLTX	"..//fsgame.ltx"
+#	define FSLTX	"fsgame.ltx"
 #endif
 
 struct _open_file
@@ -212,7 +212,7 @@ void CLocatorAPI::Register		(LPCSTR name, u32 vfs, u32 crc, u32 ptr, u32 size_re
     desc.modif			= modif & (~u32(0x3));
 	desc.encripted		= encripted;
 
-	Msg("registering file %s - %d, encripted: %d", name, size_real, encripted);
+	//Msg("registering file %s - %d, encripted: %d", name, size_real, encripted);
  
 //	if file already exist - update info
 	files_it			I = m_files.find(desc);
@@ -1279,6 +1279,9 @@ T *CLocatorAPI::r_open_impl	(LPCSTR path, LPCSTR _fname)
 
 	if (m_Flags.test(flDumpFileActivity))
 		_register_open_file	(R,fname);
+
+	if (!R)
+		Msg("PIZDA %s, %s", path, _fname);
 
 	return					(R);
 }

@@ -21,21 +21,14 @@ void FunctionHide(CLocatorAPI* fs, CLocatorAPI::archive& A, string_path& fs_entr
 
 		IReader* hdr = hdr = open_chunk(A.hSrcFile, 1);
 		if (hdr)
-			Msg("Load File ARC: %s, HEADER: %d", A.path.c_str(), 1);
+			Msg("Load File ARC: %s", A.path.c_str());
 
 		// NO ENCRIPTION
 		if (!hdr)
 		{
 			hdr = open_chunk(A.hSrcFile, 3001);
 			if (hdr)
-				Msg("Load File ARC: %s, HEADER: %d", A.path.c_str(), 3001);
-		}
-
-		if (!hdr)
-		{
-			hdr = open_chunk(A.hSrcFile, 2222);
-			if (hdr)
-				Msg("Load File ARC: %s, HEADER: %d", A.path.c_str(), 2222);
+				Msg("Load File ARC: %s, no encrypted", A.path.c_str());
 		}
 
 		// ENCRIPT
@@ -103,7 +96,7 @@ void FunctionHide(CLocatorAPI* fs, CLocatorAPI::archive& A, string_path& fs_entr
 
 				log_vminfo();
 
-				Msg("Load File ARC: %s, HEADER: %d", A.path.c_str(), 3000);
+				Msg("Load File ARC: %s, encrypted", A.path.c_str());
 				return;
  			}
 		}
