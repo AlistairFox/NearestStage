@@ -37,6 +37,7 @@ void FlushLog			()
 	if (time_log.GetElapsed_ms() > timelog_old)
 	{
 		timelog_old = time_log.GetElapsed_ms() + 1000;
+		if(writerfile != nullptr)
 		writerfile->flush();
 	}
 }

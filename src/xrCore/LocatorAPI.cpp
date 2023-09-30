@@ -464,7 +464,7 @@ void CLocatorAPI::ProcessOne(LPCSTR path, void* _F)
 	xr_strcat		(N,F.name);
 	xr_strlwr		(N);
 	
-	Msg("ProcessOne: %s", F.name);
+	//Msg("ProcessOne: %s", F.name);
 
 	if (F.attrib&_A_HIDDEN)			return;
 
