@@ -114,9 +114,6 @@ void xrCore::_initialize	(LPCSTR _ApplicationName, LogCallback cb, BOOL init_fs,
 	#endif
 #endif
 		FS._initialize		(flags,0,fs_fname);
-		Msg					("'%s' build %d, %s\n","NearestStage",build_id, build_date);
-		Msg("NearestStage Discord: https://discord.gg/YGUxMg3f");
-		Msg("NearestStage VK: https://vk.com/neareststage ");
 		EFS._initialize		();
 #ifdef DEBUG
     #ifndef	_EDITOR

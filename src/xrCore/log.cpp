@@ -177,7 +177,8 @@ void InitLog()
 	LogFile->reserve	(1000);
 }
 
-
+extern		u32		build_id;
+extern		LPCSTR	build_date;
 void CreateLog			(BOOL nl)
 {
     no_log				= nl;
@@ -196,6 +197,8 @@ void CreateLog			(BOOL nl)
 
 	if (FS.path_exist("$logs$"))
 		FS.update_path	(logFName,"$logs$",log_file_name);
+
+	Msg("log: %s", logFName);
 			
 	time_log.Start();
 
@@ -208,12 +211,15 @@ void CreateLog			(BOOL nl)
         	abort();
         }
 
+		Msg("'%s' build %d, %s\n", "NearestStage", build_id, build_date);
+		Msg("NearestStage Discord: https://discord.gg/YGUxMg3f");
+		Msg("NearestStage VK: https://vk.com/neareststage ");
+
 		for (auto msg : *LogFile)
 		{
 		   writerfile->w_string(msg.c_str());
 		}
 
-        FS.w_close		(writerfile);
     }
  
 
