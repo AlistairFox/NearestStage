@@ -892,7 +892,11 @@ void CActor::Die	(CObject* who)
 	//ANIM MODE 
 	StopAllSNDs();
 
-	PlayPPEffect("die.ppe");
+	CActor* pA = smart_cast<CActor*>(Level().CurrentControlEntity());
+	if (pA && Local())
+	{
+		PlayPPEffect("die.ppe");
+	}
 
 	if (OnServer())
 	{	
