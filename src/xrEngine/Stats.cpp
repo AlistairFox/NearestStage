@@ -385,11 +385,11 @@ void CStats::Show()
 	};
 
 	{
-		pFont->SizeOf_(0.2f);
-		F.SetColor(hex_color(208, 208, 208));
-		F.OutSet(5, 5);
-		F.OutNext("NearestStage DEV-TEST");
-		pFont->OnRender();
+	//	pFont->SizeOf_(0.2f);
+	//	F.SetColor(hex_color(208, 208, 208));
+	//	F.OutSet(5, 5);
+	//	F.OutNext("NearestStage DEV-TEST");
+	//	pFont->OnRender();
 	}
 #ifdef DEBUG
 	//////////////////////////////////////////////////////////////////////////
@@ -523,7 +523,8 @@ void CStats::OnDeviceCreate			()
 //	if (!strstr(Core.Params, "-dedicated"))
 #ifndef DEDICATED_SERVER
 //	pFont	= xr_new<CGameFont>		("stat_font", CGameFont::fsDeviceIndependent);
-	pFont = xr_new<CGameFont>("ui_font_graffiti19_russian", CGameFont::fsDeviceIndependent);
+	//pSFont = xr_new<CGameFont>("ui_font_letterica18_russian", CGameFont::fsDeviceIndependent);
+	pFont = xr_new<CGameFont>("ui_font_letterica18_russian", CGameFont::fsDeviceIndependent);
 #endif
 	
 	if(!pSettings->section_exist("evaluation")
@@ -550,6 +551,20 @@ void CStats::OnDeviceDestroy		()
 
 void CStats::OnRender				()
 {
+#ifndef DEDICATED_SERVER
+	CGameFont& F = *pFont;
+	Fvector2 F_Int = { 1,0.2 };
+	F.SetInterval(F_Int);
+
+	{
+		pFont->SizeOf_(1.5f);
+		F.SetColor(hex_color(208, 208, 208));
+		F.OutSet(5, 5);
+		F.OutNext("NearestStage DEV-TEST  Client Version 3.3");
+		pFont->OnRender();
+	}
+#endif // !DEDICATED_SERVER
+
 #ifdef DEBUG
 	if (g_stats_flags.is(st_sound)){
 		CSound_stats_ext				snd_stat_ext;

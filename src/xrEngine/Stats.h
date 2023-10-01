@@ -27,6 +27,7 @@ class ENGINE_API CStats:
 {
 public:
 	CGameFont*	pFont;
+	//CGameFont* pSFont;
 
 	float		fFPS,fRFPS,fTPS		;			// FPS, RenderFPS, TPS
 	float		fMem_calls			;
