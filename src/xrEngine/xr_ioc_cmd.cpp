@@ -711,7 +711,7 @@ extern int			g_ErrorLineCount;
 ENGINE_API BOOL debugSecondVP = FALSE;
 
 ENGINE_API int			ps_r__Supersample			= 1;
-ENGINE_API int			ps_r__WallmarksOnSkeleton = 1;
+ENGINE_API int			ps_r__WallmarksOnSkeleton = 0;
 
 int ps_framelimiter = 0;
 Fvector3 rsstats_color = Fvector3().set(237, 0, 106);

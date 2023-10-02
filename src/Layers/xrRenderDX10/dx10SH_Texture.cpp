@@ -124,11 +124,11 @@ ID3DShaderResourceView* CTexture::CreateShaderRes(ID3DBaseTexture* surf)
 				break;
 			}
 
-		//	if ((desc.SampleDesc.Count <= 1) || (ViewDesc.Format != DXGI_FORMAT_R24_UNORM_X8_TYPELESS))
-			{
+			if ((desc.SampleDesc.Count <= 1) || (ViewDesc.Format != DXGI_FORMAT_R24_UNORM_X8_TYPELESS))
 				R_CHK(HW.pDevice->CreateShaderResourceView(surf, &ViewDesc, &sh_res_view));
-		//		R_ASSERT(sh_res_view);
-			}
+			else
+				sh_res_view = 0;
+
 		}
 		else
 			R_CHK(HW.pDevice->CreateShaderResourceView(surf, nullptr, &sh_res_view));
