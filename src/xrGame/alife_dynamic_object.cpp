@@ -180,7 +180,7 @@ void CSE_ALifeDynamicObject::try_switch_offline		()
 	//if (alife().graph().actor()->o_Position.distance_to(o_Position) <= alife().offline_distance())
 	//	return;
 
-	if (CheckDistanceToActor(o_Position, alife().online_distance()) > alife().online_distance())
+	if (CheckDistanceToActor(o_Position, alife().offline_distance()) <= alife().offline_distance())
 		return;
 
 	alife().switch_offline		(this);
