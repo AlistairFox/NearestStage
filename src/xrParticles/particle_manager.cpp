@@ -166,12 +166,15 @@ void CParticleManager::Transform(int alist_id, const Fmatrix& full, const Fvecto
 	for(PAVecIt it=pa->begin(); it!=pa->end(); it++){
 		BOOL r 			= (*it)->m_Flags.is(ParticleAction::ALLOW_ROTATE);
 		const Fmatrix& m = r?full:mT;
-        (*it)->Transform(m);
-		switch((*it)->type)
+		if (*it != reinterpret_cast<void*>(0xFFFFFFFFFFFFFFFF))
 		{
-		case PASourceID:
-			static_cast<PASource*>(*it)->parent_vel = pVector(vel.x,vel.y,vel.z)*static_cast<PASource*>(*it)->parent_motion;
-			break;
+			(*it)->Transform(m);
+			switch ((*it)->type)
+			{
+			case PASourceID:
+				static_cast<PASource*>(*it)->parent_vel = pVector(vel.x, vel.y, vel.z) * static_cast<PASource*>(*it)->parent_motion;
+				break;
+			}
 		}
 	}
 	pa->unlock();

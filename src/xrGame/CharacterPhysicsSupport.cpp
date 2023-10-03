@@ -753,6 +753,9 @@ bool CCharacterPhysicsSupport::CollisionCorrectObjPos(const Fvector& start_from,
 			box.set( m_EntityAlife.BoundingBox() );
 	}
 
+	if (!box.is_valid())
+		Msg("!ERROR: box no valid");
+
 	Fvector vbox;Fvector activation_pos;
 	box.get_CD(activation_pos,vbox);
 	shift.add(activation_pos);
