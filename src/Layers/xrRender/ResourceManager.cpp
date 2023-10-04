@@ -491,7 +491,7 @@ void	CResourceManager::ED_UpdateTextures(AStringVec* names)
 }
 #endif
 
-void	CResourceManager::_GetMemoryUsage(u32& m_base, u32& c_base, u32& m_lmaps, u32& c_lmaps)
+void	CResourceManager::_GetMemoryUsage(size_t& m_base, u32& c_base, size_t& m_lmaps, u32& c_lmaps)
 {
 	m_base=c_base=m_lmaps=c_lmaps=0;
 

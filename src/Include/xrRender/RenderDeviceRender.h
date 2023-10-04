@@ -39,7 +39,7 @@ public:
 	//	Resources control
 	virtual void	DeferredLoad(BOOL E) = 0;
 	virtual void	ResourcesDeferredUpload() = 0;
-	virtual void	ResourcesGetMemoryUsage(u32& m_base, u32& c_base, u32& m_lmaps, u32& c_lmaps) = 0;
+	virtual void	ResourcesGetMemoryUsage(size_t& m_base, u32& c_base, size_t& m_lmaps, u32& c_lmaps) = 0;
 	virtual void	ResourcesDestroyNecessaryTextures() = 0;
 	virtual void	ResourcesStoreNecessaryTextures() = 0;
 	virtual void	ResourcesDumpMemoryUsage() = 0;

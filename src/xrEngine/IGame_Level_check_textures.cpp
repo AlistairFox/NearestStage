@@ -4,7 +4,8 @@
 
 void IGame_Level::LL_CheckTextures()
 {
-	u32	m_base,c_base,m_lmaps,c_lmaps;
+	u32	c_base,c_lmaps;
+	size_t m_base, m_lmaps;
 	//Device.Resources->_GetMemoryUsage		(m_base,c_base,m_lmaps,c_lmaps);
 	Device.m_pRender->ResourcesGetMemoryUsage(m_base,c_base,m_lmaps,c_lmaps);
 

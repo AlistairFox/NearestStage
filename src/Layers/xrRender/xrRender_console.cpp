@@ -659,9 +659,9 @@ public		:
 
 	virtual void	Execute	(LPCSTR args)
 	{
-		u32 m_base = 0;
+		size_t m_base = 0;
 		u32 c_base = 0;
-		u32 m_lmaps = 0; 
+		size_t m_lmaps = 0;
 		u32 c_lmaps = 0;
 
 		dxRenderDeviceRender::Instance().ResourcesGetMemoryUsage( m_base, c_base, m_lmaps, c_lmaps );

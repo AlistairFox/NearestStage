@@ -167,8 +167,8 @@ static void full_memory_stats	( )
 #endif // SEVERAL_ALLOCATORS
 	int		_eco_strings	= (int)g_pStringContainer->stat_economy			();
 	int		_eco_smem		= (int)g_pSharedMemoryContainer->stat_economy	();
-	u32		m_base=0,c_base=0,m_lmaps=0,c_lmaps=0;
-
+	u32		c_base=0,c_lmaps=0;
+	size_t m_base = 0, m_lmaps = 0;
 
 	//if (Device.Resources)	Device.Resources->_GetMemoryUsage	(m_base,c_base,m_lmaps,c_lmaps);
 	//	Resource check moved to m_pRender
