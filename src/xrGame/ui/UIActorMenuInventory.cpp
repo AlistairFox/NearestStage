@@ -830,8 +830,11 @@ bool CUIActorMenu::TryUseItem( CUICellItem* cell_itm )
 	u16 recipient = m_pActorInvOwner->object_id();
 	if ( item->parent_id() != recipient )
 	{
-		//move_item_from_to	(itm->parent_id(), recipient, itm->object_id());
+
+		if(cell_itm->OwnerList() != nullptr)
 		cell_itm->OwnerList()->RemoveItem( cell_itm, false );
+		else
+		move_item_from_to(item->parent_id(), recipient, item->object_id());
 	}
 
 	SendEvent_Item_Eat		( item, recipient );
@@ -1185,6 +1188,10 @@ void CUIActorMenu::PropertiesBoxForUsing( PIItem item, bool& b_show )
 	if ((pRepairKit && !pRepairKit->UseAllowed()) || (pBattery && !pBattery->UseAllowed()))
 		return;
 
+	if(item)
+	if (item->object().H_Parent() != Actor())
+		return;
+
 	if ( pMedkit || pAntirad )
 	{
 		act_str = "st_use";
@@ -1288,8 +1295,8 @@ void CUIActorMenu::PropertiesBoxForUsing( PIItem item, bool& b_show )
 	}
 	if ( act_str )
 	{
-		m_UIPropertiesBox->AddItem( act_str,  NULL, INVENTORY_EAT_ACTION );
-		b_show			= true;
+			m_UIPropertiesBox->AddItem(act_str, NULL, INVENTORY_EAT_ACTION);
+			b_show = true;
 	}
 }
 
