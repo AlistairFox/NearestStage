@@ -217,11 +217,12 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 
 	u8 reg;
 
-	shared_str login, password, comp_name;  
+	shared_str login, password, comp_name, descript;  
 	P.r_stringZ(login);
 	P.r_stringZ(password);
 	P.r_stringZ(comp_name);
 	P.r_u8(reg);
+	P.r_stringZ(descript);
 
 	string_path denied_reg;// filtering names
 	string_path path_xray; // logins
@@ -374,6 +375,7 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 								regacc->w_string("user_data", "username", username);
 								regacc->w_string("user_data", "user_password", password.c_str());
 								regacc->w_string("user_data", "hwid", comp_name.c_str());
+								regacc->w_string("user_data", "description", descript.c_str());
 								regacc->save_as(path_registered);
 								Msg("~ ѕользователь %s подал запрос на регистрацию!", username);
 							}

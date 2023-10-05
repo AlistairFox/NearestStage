@@ -458,6 +458,7 @@ BOOL			CLevel::Connect2Server				(LPCSTR options)
 	return TRUE;
 };
 
+extern LPCSTR Descript_name;
 extern bool registration;
 void			CLevel::OnBuildVersionChallenge		()
 {
@@ -484,6 +485,7 @@ void			CLevel::OnBuildVersionChallenge		()
 	P.w_stringZ(Core.Password);
 	P.w_stringZ(h);
 	P.w_u8(registration);
+	P.w_stringZ(Descript_name);
 	registration = false;
 
 

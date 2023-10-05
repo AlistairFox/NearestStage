@@ -138,6 +138,12 @@ public:
 	~CAuthForm() {};
 };
 
+extern LPCSTR Descript_name = "";
+void TakeDescript(LPCSTR descr)
+{
+	Descript_name = descr;
+}
+
 void SetLoginAuth(LPCSTR login, LPCSTR pass, LPCSTR ip, LPCSTR port)
 {
 	string_path p;
@@ -320,4 +326,5 @@ void CScriptEngine::script_register(lua_State *L)
 	function(L, "save_auth", SetLoginAuth);
 	function(L, "load_auth", GetLoginAuth);
 	function(L, "registration_switch", SwitchRegistration);
+	function(L, "take_description", TakeDescript);
 }
