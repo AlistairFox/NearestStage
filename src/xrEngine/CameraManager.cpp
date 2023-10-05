@@ -397,22 +397,26 @@ void CCameraManager::UpdatePPEffectors()
 		{
 			CEffectorPP* eff	= m_EffectorsPP[i];
 			SPPInfo l_PPInf		= pp_zero;
-			if(eff->Valid() && eff->Process(l_PPInf))
+			if (eff != nullptr)
 			{
-				++_count;
-				if(!b)
+				if (eff->Valid() && eff->Process(l_PPInf))
 				{
-					pp_affected.add		(l_PPInf);
-					pp_affected.sub		(pp_identity);
-					pp_affected.validate("in cycle");
+					++_count;
+					if (!b)
+					{
+						pp_affected.add(l_PPInf);
+						pp_affected.sub(pp_identity);
+						pp_affected.validate("in cycle");
+					}
+					if (!eff->bOverlap)
+					{
+						b = true;
+						pp_affected = l_PPInf;
+					}
 				}
-				if(!eff->bOverlap)
-				{
-					b				= true;
-					pp_affected		= l_PPInf;
-				}
-			}else 
-				RemovePPEffector	(eff->Type());
+				else
+					RemovePPEffector(eff->Type());
+			}
 		}
 		if (0==_count)	
 			pp_affected				= pp_identity;
