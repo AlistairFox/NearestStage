@@ -40,6 +40,7 @@ static const float			MAX_NOISE_FREQ	= 0.03f;
 #define WFX_TRANS_TIME		5.f
 
 const float MAX_DIST_FACTOR = 0.95f;
+ENGINE_API extern bool IsWeatherEditor;
 
 //////////////////////////////////////////////////////////////////////////
 // environment
@@ -455,6 +456,9 @@ int get_ref_count(IUnknown* ii)
 
 void CEnvironment::lerp		(float& current_weight)
 {
+	if (IsWeatherEditor)
+		return;
+
 
 	if (bWFX&&(wfx_time<=0.f)) StopWFX();
 
@@ -487,24 +491,11 @@ void CEnvironment::lerp		(float& current_weight)
 
 void CEnvironment::OnFrame()
 {
-#ifdef _EDITOR
-	SetGameTime				(fGameTime+Device.fTimeDelta*fTimeFactor,fTimeFactor);
-    if (fsimilar(ed_to_time,DAY_LENGTH)&&fsimilar(ed_from_time,0.f)){
-	    if (fGameTime>DAY_LENGTH)	fGameTime-=DAY_LENGTH;
-    }else{
-	    if (fGameTime>ed_to_time){	
-        	fGameTime=fGameTime-ed_to_time+ed_from_time;
-            Current[0]=Current[1]=0;
-        }
-    	if (fGameTime<ed_from_time){	
-        	fGameTime=ed_from_time;
-            Current[0]=Current[1]=0;
-        }
-    }
-	if (!psDeviceFlags.is(rsEnvironment))		return;
-#else
+	if (IsWeatherEditor)
+		return;
+
 	if (!g_pGameLevel)		return;
-#endif
+
 
 //	if (pInput->iGetAsyncKeyState(DIK_O))		SetWeatherFX("surge_day"); 
 	float					current_weight;

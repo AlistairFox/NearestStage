@@ -263,11 +263,13 @@ void CGamePersistent::OnGameEnd	()
 	xr_delete							(g_stalker_animation_data_storage);
 	xr_delete							(g_stalker_velocity_holder);
 }
-
+ENGINE_API extern bool IsWeatherEditor;
 void CGamePersistent::WeathersUpdate()
 {
 	if (g_pGameLevel && !g_dedicated_server)
 	{
+		if (IsWeatherEditor)
+			return;
 		CActor* actor = smart_cast<CActor*>(Level().CurrentViewEntity());
 		BOOL bIndoor				= TRUE;
 		if (actor) bIndoor			= actor->renderable_ROS()->get_luminocity_hemi()<0.05f; 
@@ -317,24 +319,7 @@ void CGamePersistent::WeathersUpdate()
 //					Msg("- Playing ambient sound channel [%s] file[%s]",ch.m_load_section.c_str(),snd._handle()->file_name());
 				}
 			}
-/*
-			if (Device.dwTimeGlobal > ambient_sound_next_time)
-			{
-				ref_sound* snd			= env_amb->get_rnd_sound();
-				ambient_sound_next_time	= Device.dwTimeGlobal + env_amb->get_rnd_sound_time();
-				if (snd)
-				{
-					Fvector	pos;
-					float	angle		= ::Random.randF(PI_MUL_2);
-					pos.x				= _cos(angle);
-					pos.y				= 0;
-					pos.z				= _sin(angle);
-					pos.normalize		().mul(env_amb->get_rnd_sound_dist()).add(Device.vCameraPosition);
-					pos.y				+= 10.f;
-					snd->play_at_pos	(0,pos);
-				}
-			}
-*/
+
 			// start effect
 			if ((FALSE==bIndoor) && (0==ambient_particles) && Device.dwTimeGlobal>ambient_effect_next_time){
 				CEnvAmbient::SEffect* eff			= env_amb->get_rnd_effect(); 

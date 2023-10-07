@@ -141,6 +141,8 @@ public:
 	void						TimeBlockAction(LPCSTR anim_sect);
 	void						TimeUnblockAction();
 
+	bool DontInv = false;
+
 	void StartTorchAnm();
 	void EndTorchAnm();
 	u32 TorchTimer = 0;

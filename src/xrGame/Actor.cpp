@@ -2641,6 +2641,7 @@ void CActor::TimeBlockAction(LPCSTR anim_sect)
 		}
 		old_timer = Device.dwTimeGlobal + (g_player_hud->motion_length_script(anim_sect, "anm_ea_show", 1.0f)) + 1000;
 		need_exit = true;
+		DontInv = true;
 	}
 }
 
@@ -2656,6 +2657,7 @@ void CActor::TimeUnblockAction()
 		Actor()->unblock_action(kQUICK_USE_4);
 		Actor()->set_inventory_disabled(false);
 		Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, false);
+		DontInv = false;
 	}
 }
 

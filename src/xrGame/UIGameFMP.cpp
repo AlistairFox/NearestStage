@@ -203,10 +203,11 @@ bool CUIGameFMP::IR_UIOnKeyboardPress(int dik)
 	{
 	case kINVENTORY:
 	{
-		if (!need_activate_inventory)
+		CInventoryOwner* pInvOwner = smart_cast<CInventoryOwner*>(Level().CurrentEntity());
+		CActor* pActor = smart_cast<CActor*>(pInvOwner);
+
+		if (!need_activate_inventory && !pActor->DontInv)
 		{
-			CInventoryOwner* pInvOwner = smart_cast<CInventoryOwner*>(Level().CurrentEntity());
-			CActor* pActor = smart_cast<CActor*>(pInvOwner);
 			if (pInvOwner && pActor && pActor->g_Alive())
 			{
 				pActor->EventHideState();

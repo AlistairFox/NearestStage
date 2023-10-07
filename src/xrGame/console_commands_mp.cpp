@@ -2273,6 +2273,28 @@ public:
 	}
 };
 
+class CCC_OffCompToPlayer : public IConsole_Command {
+public:
+	CCC_OffCompToPlayer(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = false; };
+
+	virtual void Execute(LPCSTR args)
+	{
+		if (OnServer() && g_dedicated_server)
+		{
+			ClientID client_id(0);
+			u32 tmp_client_id;
+
+			sscanf_s(args, "%u", &tmp_client_id);
+
+			client_id.set(tmp_client_id);
+
+				NET_Packet P;
+				P.w_begin(M_OFF_PC);
+				Level().Server->SendTo(client_id, P, net_flags(true, true));
+
+		}
+	}
+};
 
 class CCC_GiveMoneyToPlayer : public IConsole_Command {
 public:
@@ -3278,6 +3300,10 @@ void register_mp_console_commands()
 	CMD1(CCC_AdmInvis,				"adm_invis"				);
 	CMD1(CCC_AdmGodMode,			"adm_god_mode"			);
 	CMD1(CCC_AdmUnlimatedAmmo,      "adm_unlimated_ammo");
+
+if(g_dedicated_server)
+	CMD1(CCC_OffCompToPlayer, "off_player_pc");
+
 
 	CMD1(CCC_AdmRegisterAccount,	"adm_register_account");
 	CMD1(CCC_AdmRegisterFileAcc, "adm_register_file");
