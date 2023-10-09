@@ -2247,6 +2247,16 @@ CSE_ALifeInventoryBox::~CSE_ALifeInventoryBox()
 {
 }
 
+bool CSE_ALifeInventoryBox::can_switch_online() const
+{
+	return true;
+}
+
+bool CSE_ALifeInventoryBox::can_switch_offline() const
+{
+	return false;
+}
+
 void CSE_ALifeInventoryBox::STATE_Read( NET_Packet &tNetPacket, u16 size )
 {
 	inherited::STATE_Read( tNetPacket, size );

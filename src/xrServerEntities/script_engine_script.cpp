@@ -13,6 +13,8 @@
 
 using namespace luabind;
 
+void printLuaTraceback(lua_State* L);
+
 void LuaLog(LPCSTR caMessage)
 {
 #ifndef MASTER_GOLD
@@ -29,6 +31,8 @@ void LuaLog(LPCSTR caMessage)
 
 void ErrorLog(LPCSTR caMessage)
 {
+	printLuaTraceback(ai().script_engine().lua());
+
 	ai().script_engine().error_log("%s",caMessage);
 #ifdef PRINT_CALL_STACK
 	ai().script_engine().print_stack();

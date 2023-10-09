@@ -620,6 +620,8 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeInventoryBox,CSE_ALifeDynamicObjectVisual)
 
 						CSE_ALifeInventoryBox	(LPCSTR caSection);
 	virtual				~CSE_ALifeInventoryBox	();
+	virtual bool					can_switch_online() const;
+	virtual bool					can_switch_offline() const;
 #ifdef XRGAME_EXPORTS
 	virtual void		add_offline				(const xr_vector<ALife::_OBJECT_ID> &saved_children, const bool &update_registries);
 	virtual void		add_online				(const bool &update_registries);

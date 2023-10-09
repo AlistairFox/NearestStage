@@ -75,6 +75,13 @@ public:
 	virtual		BOOL				OnTouch(u16 eid_who, u16 eid_what, BOOL bForced = FALSE);
 
 	virtual		void				on_death(CSE_Abstract* e_dest, CSE_Abstract* e_src);
+	CInifile* spawn_trash;
+	CInifile* spawn_boosters;
+	CInifile* spawn_weapons_devices;
+	CInifile* spawn_ammo;
+	CInifile* spawn_explosive;
+	CInifile* spawn_weapons;
+	virtual void	SpawnInvBoxesItems(CSE_ALifeInventoryBox *box);
 
 	virtual		void				OnPlayerTrade(NET_Packet &P, ClientID const & clientID);
 	virtual		void				OnTransferMoney(NET_Packet &P, ClientID const & clientID);
