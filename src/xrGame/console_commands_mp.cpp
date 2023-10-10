@@ -2952,12 +2952,14 @@ public:
 					{
 						badreg_list_file->w_string("bad_registration", user_hwid, "0");
 						badreg_list_file->save_as(badreg_list);
+						FS.file_delete(registered_file);
 					}
 					else
 					{
 						Msg("!!!ERROR: User already in BadRegister List!");
 						return;
 					}
+					xr_delete(badreg_list_file);
 				}
 			}
 			else
@@ -2965,6 +2967,8 @@ public:
 				Msg("!!!ERROR: Uncorrect file name");
 				return;
 			}
+
+			xr_delete(registr_file);
 		}
 		else
 		{
@@ -3015,12 +3019,14 @@ public:
 					{
 						badreg_list_file->w_string("bad_registration", user_hwid, "1");
 						badreg_list_file->save_as(badreg_list);
+						FS.file_delete(registered_file);
 					}
 					else
 					{
 						Msg("!!!ERROR: User already in BadRegister List!");
 						return;
 					}
+					xr_delete(badreg_list_file);
 				}
 			}
 			else
@@ -3028,6 +3034,7 @@ public:
 				Msg("!!!ERROR: Uncorrect file name");
 				return;
 			}
+			xr_delete(registr_file);
 		}
 		else
 		{
