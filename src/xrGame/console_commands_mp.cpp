@@ -2814,9 +2814,10 @@ public:
 			CInifile* file = xr_new<CInifile>(filepath, false, true);
 
 			string256 tmp, login, password, comp_name;
+			u8 kit;
 			exclude_raid_from_args(args, tmp, sizeof(tmp));
 
-			sscanf(tmp, "%s %s %s", &login, &password, &comp_name);
+			sscanf(tmp, "%s %s %s %d", &login, &password, &comp_name, &kit);
 
 			LPCSTR hwid = comp_name;
 			string_path reg_data;
@@ -2833,6 +2834,7 @@ public:
 				reg_data_file->w_string("hwbuffer", comp_name, comp_name);
 				file->w_string(login, "password", password);
 				file->w_string(login, "hwid", comp_name);
+				file->w_u8(login, "kit_number", kit);
 			}
 
 			Msg("--Complete! User: %s has been registered.", login);
@@ -2868,6 +2870,7 @@ public:
 			xr_strcat(regfile_name, ".ltx");
 
 			LPCSTR login, password, comp_name;
+			u8 kit;
 			FS.update_path(registered_file, "$mp_acces_reg$", regfile_name);
 			CInifile* registr_file = xr_new<CInifile>(registered_file,true);
 
@@ -2880,14 +2883,18 @@ public:
 						login = registr_file->r_string("user_data", "username");
 						password = registr_file->r_string("user_data", "user_password");
 						comp_name = registr_file->r_string("user_data", "hwid");
+						kit = registr_file->r_u8("user_data", "kit_numb");
 						Msg("* User Login: %s.", login);
 						Msg("* User password: %s.", password);
 						Msg("* User HWid: %s.", comp_name);
 
 						string_path regdata;
-						sprintf(regdata, "adm_register_account %s %s %s", login, password, comp_name);
+						sprintf(regdata, "adm_register_account %s %s %s %d", login, password, comp_name, kit);
 
 						Console->Execute(regdata);
+
+						xr_delete(registr_file);
+						FS.file_delete(registered_file);
 					}
 				}
 				else

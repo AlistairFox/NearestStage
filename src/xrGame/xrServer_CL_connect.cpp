@@ -215,7 +215,7 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 	u64 _our		=	FS.auth_get();
 	u64 _him		=	P.r_u64();
 
-	u8 reg;
+	u8 reg, kit;
 
 	shared_str login, password, comp_name, descript;  
 	P.r_stringZ(login);
@@ -223,6 +223,7 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 	P.r_stringZ(comp_name);
 	P.r_u8(reg);
 	P.r_stringZ(descript);
+	P.r_u8(kit);
 
 	string_path denied_reg;// filtering names
 	string_path path_xray; // logins
@@ -375,6 +376,7 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 								regacc->w_string("user_data", "username", username);
 								regacc->w_string("user_data", "user_password", password.c_str());
 								regacc->w_string("user_data", "hwid", comp_name.c_str());
+								regacc->w_u8("user_data", "kit_numb", kit);
 								regacc->w_string("user_data", "description", descript.c_str());
 								regacc->save_as(path_registered);
 								Msg("~ ѕользователь %s подал запрос на регистрацию!", username);

@@ -142,6 +142,13 @@ public:
 	~CAuthForm() {};
 };
 
+extern u8 kit_numb = 1;
+
+void GetStartKit(u8 kit)
+{
+	kit_numb = kit;
+}
+
 extern LPCSTR Descript_name = "";
 void TakeDescript(LPCSTR descr)
 {
@@ -331,4 +338,5 @@ void CScriptEngine::script_register(lua_State *L)
 	function(L, "load_auth", GetLoginAuth);
 	function(L, "registration_switch", SwitchRegistration);
 	function(L, "take_description", TakeDescript);
+	function(L, "SetKit", GetStartKit);
 }

@@ -246,25 +246,51 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 
  	game_PlayerState* ps = get_id(id_who);
 
-	/*string_path file_out;
-	FS.update_path(file_out, "$mp_saves_players_outfits$", "players_outfits.ltx");
-	CInifile* filoutf = xr_new<CInifile>(file_out, true);
-	if (filoutf)
-	LoadPlayerOtfits(ps, nullptr);
-	xr_delete(filoutf);
-	
-	string_path file_det;
-	FS.update_path(file_det, "$mp_saves_players_detectors$", "players_detectors.ltx");
-	CInifile* filedet = xr_new<CInifile>(file_det, true);
-	if (filedet)
-	LoadPlayerDetectors(ps, nullptr);
-	xr_delete(filedet);
-	*/
 
 	if (ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
 	{
 		LoadPlayerOtfits(ps, nullptr);
 		LoadPlayerDetectors(ps, nullptr);
+	}
+
+	string32 filename;
+	xr_strcpy(filename, ps->getName());
+	xr_strcat(filename, ".ltx");
+
+	if (!FS.exist("$mp_saves$", filename))
+	{
+		string_path filepath;
+		FS.update_path(filepath, "$mp_saves_logins$", "logins.ltx");
+		CInifile* file = xr_new<CInifile>(filepath, true, true);
+
+		LPCSTR loginname = ps->getName();
+		u8 kit_numb = file->r_u8(loginname, "kit_number");
+
+		string_path spawn_config;
+		FS.update_path(spawn_config, "$game_config$", "alife\\start_stuf.ltx");
+		CInifile* spawn_file = xr_new<CInifile>(spawn_config, true, true);
+		LPCSTR N, V;
+		s32 money;
+
+		LPCSTR spawn_section;
+		if (kit_numb == 1)
+			spawn_section = "spawn_kit_1";
+		else if (kit_numb == 2)
+			spawn_section = "spawn_kit_2";
+		else if (kit_numb == 3)
+			spawn_section = "spawn_kit_3";
+		else if (kit_numb == 4)
+			spawn_section = "spawn_kit_4";
+
+		money = spawn_file->r_s32("start_money", "money");
+		xrCData->ps->money_for_round = money;
+
+		for (u32 k = 0; spawn_file->r_line(spawn_section, k, &N, &V); k++)
+		{
+			SpawnItemToActor(ps->GameID, N);
+		}
+
+		xr_delete(spawn_file);
 	}
 
 	if (ps)
@@ -447,7 +473,6 @@ void game_sv_freemp::SpawnInvBoxesItems(CSE_ALifeInventoryBox* box)
 
 	if (tmp != nullptr)
 	{
-		Msg("tmp != nullptr");
 		LPCSTR					N, V;
 		float					p;
 
