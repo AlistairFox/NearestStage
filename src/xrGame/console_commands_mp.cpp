@@ -3049,6 +3049,127 @@ public:
 
 };
 
+class CCC_write_sect_items : public IConsole_Command
+{
+public:
+	CCC_write_sect_items(LPCSTR N) :IConsole_Command(N) { bEmptyArgsHandled = true; };
+	virtual void Execute(LPCSTR args)
+	{
+
+		string_path p;
+		FS.update_path(p, "$game_config$", "trade_section.ltx");
+		CInifile* file = xr_new<CInifile>(p, false, false, false);
+
+		if (file)
+			for (auto sect : pSettings->sections())
+			{
+				//sect->line_exist("description") && !sect->line_exist("value") && !sect->line_exist("scheme_index") && !sect->line_exist("ignore_spawn") ) || sect->line_exist("species") || sect->line_exist("script_binding")
+
+				if (sect->line_exist("class") && sect->line_exist("cost") && !sect->line_exist("ignore_spawn"))
+				{
+					CSE_Abstract* E = F_entity_Create(sect->Name.c_str());
+					CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>(E);
+
+					CSE_ALifeItemAmmo* ammo = smart_cast<CSE_ALifeItemAmmo*>(E);
+					CSE_ALifeItemArtefact* art = smart_cast<CSE_ALifeItemArtefact*>(E);
+					CSE_ALifeItemDetector* det = smart_cast<CSE_ALifeItemDetector*>(E);
+					CSE_ALifeItemDocument* doc = smart_cast<CSE_ALifeItemDocument*>(E);
+					CSE_ALifeItemHelmet* helmet = smart_cast<CSE_ALifeItemHelmet*>(E);
+					CSE_ALifeItemCustomOutfit* outfit = smart_cast<CSE_ALifeItemCustomOutfit*>(E);
+
+					CSE_ALifeItemWeapon* wpn = smart_cast<CSE_ALifeItemWeapon*>(E);
+
+					CSE_ALifeItemWeaponMagazined* wpn_magazined = smart_cast<CSE_ALifeItemWeaponMagazined*>(E);
+					CSE_ALifeItemWeaponShotGun* wpn_ShotGun = smart_cast<CSE_ALifeItemWeaponShotGun*>(E);
+					CSE_ALifeItemWeaponAutoShotGun* wpn_AutoShotGun = smart_cast<CSE_ALifeItemWeaponAutoShotGun*>(E);
+
+					CSE_ALifeItemGrenade* grnd = smart_cast<CSE_ALifeItemGrenade*>(E);
+					CSE_ALifeItemExplosive* explosive = smart_cast<CSE_ALifeItemExplosive*>(E);
+					CSE_ALifeItemPDA* PDA = smart_cast<CSE_ALifeItemPDA*>(E);
+
+					bool description = false;// pSettings->line_exist(sect->Name, "description");
+					LPCSTR des_text_ru = 0;
+					if (description)
+					{
+						des_text_ru = (*CStringTable().translate(pSettings->r_string(sect->Name, "description")));
+					}
+
+					if (wpn_AutoShotGun)
+					{
+						file->w_string("Weapons_AutoShotguns", wpn_AutoShotGun->s_name.c_str(), description ? des_text_ru : "1, 1");
+					}
+					else if (wpn_ShotGun)
+					{
+						file->w_string("Weapons_Shotguns", wpn_ShotGun->s_name.c_str(), description ? des_text_ru : "1, 1");
+					}
+					else if (wpn_magazined)
+					{
+						file->w_string("Weapons_Magazined", wpn_magazined->s_name.c_str(), description ? des_text_ru : "1, 1");
+					}
+					else if (wpn)
+					{
+						file->w_string("Weapons", wpn->s_name.c_str(), description ? des_text_ru : "1, 1");
+					}
+					else if (ammo)
+					{
+						file->w_string("Ammos", ammo->s_name.c_str(), description ? des_text_ru : "1, 1");
+					}
+					else if (art)
+					{
+						file->w_string("Artefacts", art->s_name.c_str(), description ? des_text_ru : "1, 1");
+					}
+					else if (det)
+					{
+						file->w_string("Detectors", det->s_name.c_str(), description ? des_text_ru : "1, 1");
+					}
+					else if (doc)
+					{
+						file->w_string("Documents", doc->s_name.c_str(), description ? des_text_ru : "1, 1");
+					}
+					else if (helmet)
+					{
+						file->w_string("Helmets", helmet->s_name.c_str(), description ? des_text_ru : "1, 1");
+					}
+					else if (outfit)
+					{
+						file->w_string("Outfits", outfit->s_name.c_str(), description ? des_text_ru : "1, 1");
+					}
+					else if (PDA)
+					{
+						file->w_string("PDA", PDA->s_name.c_str(), description ? des_text_ru : "1, 1");
+					}
+					else if (grnd)
+					{
+						file->w_string("Grenades", grnd->s_name.c_str(), description ? des_text_ru : "1, 1");
+					}
+					else if (explosive)
+					{
+						file->w_string("Explosive", explosive->s_name.c_str(), description ? des_text_ru : "1, 1");
+					}
+
+					else if (item)
+					{
+						string128 t;
+						sprintf(t, "Items_%s", pSettings->r_string(sect->Name, "class"));
+						file->w_string(t, item->m_self->s_name.c_str(), description ? des_text_ru : "1, 1");
+					}
+					else if (E)
+					{
+						string128 t;
+						sprintf(t, "Others_%s", pSettings->r_string(sect->Name, "class"));
+						file->w_string(t, E->s_name.c_str(), description ? des_text_ru : "1, 1");
+					}
+
+					if (E)
+						F_entity_Destroy(E);
+				}
+			}
+
+		file->save_as(p);
+
+	}
+};
+
 class CCC_AdminAccount : public IConsole_Command
 {
 public:
@@ -3342,6 +3463,7 @@ if(g_dedicated_server)
 	CMD1(CCC_Restart,				"g_restart"				);
 	CMD1(CCC_RestartFast,			"g_restart_fast"		);
 	CMD1(CCC_Kill,					"g_kill"				);
+	CMD1(CCC_write_sect_items, "write_full_items_list");
 
 	// Net Interpolation
 	CMD4(CCC_Float,					"net_cl_interpolation",		&g_cl_lvInterp,				-1,1);
