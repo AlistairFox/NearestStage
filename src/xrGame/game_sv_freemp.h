@@ -82,6 +82,7 @@ public:
 	CInifile* spawn_explosive;
 	CInifile* spawn_weapons;
 	virtual void	SpawnInvBoxesItems(CSE_ALifeInventoryBox *box);
+	virtual void	OnStartSpawnInvBoxesItems(CSE_ALifeInventoryBox* box);
 
 	virtual		void				OnPlayerTrade(NET_Packet &P, ClientID const & clientID);
 	virtual		void				OnTransferMoney(NET_Packet &P, ClientID const & clientID);

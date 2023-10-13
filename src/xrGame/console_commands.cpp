@@ -104,6 +104,7 @@ int				g_keypress_on_start	= 1;
 extern int save_time = 60;
 extern int save_time2 = 60;
 extern int save_time3 = 600;
+extern int box_respawn_time = 100000;
 
 ENGINE_API extern float	g_console_sensitive;
 
@@ -2017,6 +2018,9 @@ CMD4(CCC_Integer,			"hit_anims_tune",						&tune_hit_anims,		0, 1);
 	CMD4(CCC_Integer, "savetime_inventory_box", &save_time2, 1, 1000000);
 	CMD4(CCC_Integer, "savetime_server_time", &save_time3, 1, 10000000);
 	CMD4(CCC_Float, "r__lamp_bright", &lamp_bright, 0.5f, 10.0f);
+
+
+	CMD4(CCC_Integer, "box_respawn_time", &box_respawn_time, 1, 1000000000);
 
 
 	
