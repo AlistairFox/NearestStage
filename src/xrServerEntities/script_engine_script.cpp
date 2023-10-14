@@ -157,6 +157,12 @@ void TakeDescript(LPCSTR descr)
 
 void SetLoginAuth(LPCSTR login, LPCSTR pass, LPCSTR ip, LPCSTR port)
 {
+	if (xr_strcmp(login, "") == 0 || xr_strcmp(pass, "") == 0 || xr_strcmp(ip, "") == 0 || xr_strcmp(port, "") == 0)
+	{
+		Msg("Auth == null");
+		return;
+	}
+
 	string_path p;
 	FS.update_path(p, "$mp_saves$", "loginsave.ltx");
 	CInifile* file = xr_new<CInifile>(p,false,false);
