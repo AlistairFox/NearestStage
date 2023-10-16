@@ -266,34 +266,37 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 		CInifile* file = xr_new<CInifile>(filepath, true, true);
 
 		LPCSTR loginname = ps->getName();
-		u8 kit_numb = file->r_u8(loginname, "kit_number");
 
-		string_path spawn_config;
-		FS.update_path(spawn_config, "$game_config$", "alife\\start_stuf.ltx");
-		CInifile* spawn_file = xr_new<CInifile>(spawn_config, true, true);
-		LPCSTR N, V;
-		s32 money;
-
-		LPCSTR spawn_section;
-		if (kit_numb == 1)
-			spawn_section = "spawn_kit_1";
-		else if (kit_numb == 2)
-			spawn_section = "spawn_kit_2";
-		else if (kit_numb == 3)
-			spawn_section = "spawn_kit_3";
-		else if (kit_numb == 4)
-			spawn_section = "spawn_kit_4";
-
-		money = spawn_file->r_s32("start_money", "money");
-		xrCData->ps->money_for_round = money;
-
-		for (u32 k = 0; spawn_file->r_line(spawn_section, k, &N, &V); k++)
+		if (file->section_exist(loginname))
 		{
-			SpawnItemToActor(ps->GameID, N);
-		}
+			u8 kit_numb = file->r_u8(loginname, "kit_number");
 
+			string_path spawn_config;
+			FS.update_path(spawn_config, "$game_config$", "alife\\start_stuf.ltx");
+			CInifile* spawn_file = xr_new<CInifile>(spawn_config, true, true);
+			LPCSTR N, V;
+			s32 money;
+
+			LPCSTR spawn_section;
+			if (kit_numb == 1)
+				spawn_section = "spawn_kit_1";
+			else if (kit_numb == 2)
+				spawn_section = "spawn_kit_2";
+			else if (kit_numb == 3)
+				spawn_section = "spawn_kit_3";
+			else if (kit_numb == 4)
+				spawn_section = "spawn_kit_4";
+
+			money = spawn_file->r_s32("start_money", "money");
+			xrCData->ps->money_for_round = money;
+
+			for (u32 k = 0; spawn_file->r_line(spawn_section, k, &N, &V); k++)
+			{
+				SpawnItemToActor(ps->GameID, N);
+			}
+			xr_delete(spawn_file);
+		}
 		xr_delete(file);
-		xr_delete(spawn_file);
 	}
 
 	if (ps)

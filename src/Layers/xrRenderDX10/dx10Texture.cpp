@@ -505,10 +505,10 @@ _DDS:
 			LoadInfo.Width = IMG.Width;
 			LoadInfo.Height = IMG.Height;
 
-			//if (img_loaded_lod)
-			//{
-			//	Reduce(LoadInfo.Width, LoadInfo.Height, IMG.MipLevels, img_loaded_lod);
-			//}
+			if (img_loaded_lod)
+			{
+				Reduce(LoadInfo.Width, LoadInfo.Height, IMG.MipLevels, img_loaded_lod);
+			}
 
 			//LoadInfo.Usage = D3D_USAGE_IMMUTABLE;
 			if (bStaging)
