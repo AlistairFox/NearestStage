@@ -529,6 +529,18 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 		SendBroadcast(sender, P, net_flags(true, true));
 	}break;
 
+	case GE_ACTOR_WOUND_SCRIPT:
+	{
+		SendBroadcast(sender, P, net_flags(true, true));
+	}break;
+
+	case GE_HEALTH_PLAYER:
+	{
+		Msg("Server Event");
+		SendBroadcast(sender, P, net_flags(true, true));
+		SendTo(sender, P, net_flags(true, true));
+	}break;
+
 	case GE_ACTOR_HIDE_ALL_STATE:
 	{
 		SendTo(SV_Client->ID, P, net_flags(true, true));

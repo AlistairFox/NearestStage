@@ -206,7 +206,7 @@ bool CUIGameFMP::IR_UIOnKeyboardPress(int dik)
 		CInventoryOwner* pInvOwner = smart_cast<CInventoryOwner*>(Level().CurrentEntity());
 		CActor* pActor = smart_cast<CActor*>(pInvOwner);
 
-		if (!need_activate_inventory && !pActor->DontInv)
+		if (!need_activate_inventory && !pActor->DontInv && !pActor->MpWoundMODE())
 		{
 			if (pInvOwner && pActor && pActor->g_Alive())
 			{
@@ -219,6 +219,10 @@ bool CUIGameFMP::IR_UIOnKeyboardPress(int dik)
 
 		case kAnimationMode:
 		{
+			CActor* pA = smart_cast<CActor*>(Level().CurrentControlEntity());
+
+			if (pA->MpWoundMODE())
+				return false;
 			CUIPdaWnd* pda = CurrentGameUI() && &CurrentGameUI()->PdaMenu() ? &CurrentGameUI()->PdaMenu() : nullptr;
 
 			if (!m_anims->IsShown() && !pda->IsShown())
@@ -228,6 +232,10 @@ bool CUIGameFMP::IR_UIOnKeyboardPress(int dik)
 
 		default:
 			break;
+
+
+
+
 //	case kSCORES:
 //		if (!pActor->inventory_disabled())
 //		{

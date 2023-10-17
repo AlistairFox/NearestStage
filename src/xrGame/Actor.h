@@ -97,20 +97,38 @@ protected:
 	bool MidPlay = true;
 	bool NEED_EXIT = false;
 
+	u32 selectedWoundID = 0;
+	int oldWoundAnim = 0;
+	int InputWoundAnim = 0;
+	int OutWoundAnim = 0;
+	int MidWoundAnim = 0;
+
+	bool start_wound_sel = false;
+	bool InWoundPlay = true;
+	bool OutWoundPlay = true;
+	bool MidWoundPlay = true;
+	bool NEED_WOUND_EXIT = false;
+	void					HealthActorInWound(CActor* p);
 
 	void					SelectScriptAnimation();
+	void					SelectScriptWoundAnimation();
 	void					soundPlay();
 	void					StopAllSNDs();
 	void					StopAnims();
 	void					StartExit();
+	void					StopWoundAnims();
+	void					StartWoundExit();
 	void					FastExit();
 	void					ReciveSoundPlay(NET_Packet packet);
 	void					ReciveAnimationPacket(NET_Packet& packet);
+	void					ReciveWoundAnimationPacket(NET_Packet& packet);
 	void					ReciveActivateItem(NET_Packet& packet);
 	void					SendSoundPlay(u32 ID, bool Activate);
 	void					SendAnimationToServer(MotionID motion);
+	void					SendWoundAnimationToServer(MotionID motion);
 	void					SendActivateItem(shared_str item, bool activate);
 	void					script_anim(MotionID exit_animation, PlayCallback Callback, LPVOID CallbackParam);
+	void					script_wound_anim(MotionID exit_animation, PlayCallback Callback, LPVOID CallbackParam);
 
 
 	//Script Animation
@@ -125,6 +143,10 @@ public:
 	bool						MpInvisibility() const;
 	bool						MpSafeMODE() const;
 	bool						MpAnimationMODE() const;
+	bool						MpWoundMODE() const;
+
+	int ANIM_WOUND = 0;
+	bool need_ex_wound = false;
 
 	/* hud anims system*/
 	u32 maskTimer = 0;
@@ -152,6 +174,7 @@ public:
 	u32 old_timer = 0;
 	bool need_exit;
 	bool CanChange = true;
+	bool CanWoundChange = true;
 
 
 	bool old_block_state = false;

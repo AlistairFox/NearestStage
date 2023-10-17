@@ -333,10 +333,21 @@ void CActor::OnEvent(NET_Packet& P, u16 type)
 		ReciveAnimationPacket(P);
 	}break;
 
+	case GE_ACTOR_WOUND_SCRIPT:
+	{
+		ReciveWoundAnimationPacket(P);
+	}
+
 	case GE_ACTOR_HIDE_ALL_STATE:
 	{
 		inventory().Activate(NO_ACTIVE_SLOT);
 
+	}break;
+
+	case GE_HEALTH_PLAYER:
+	{
+		Msg("Actor_Event");
+		SetfHealth(0.21);
 	}break;
 
 	case GE_ACTOR_ITEM_ACTIVATE:

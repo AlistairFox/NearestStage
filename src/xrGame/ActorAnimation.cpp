@@ -295,6 +295,7 @@ void SActorMotions::Create(IKinematicsAnimated* V)
 
 	// SE7KILLS
 	m_script.CreateAnimationsScripted(V);
+	m_script.CreateWoundAnimationScripted(V);
 	m_safe_mode.CreateSafeAnims(V, "norm");
 }
 
@@ -562,9 +563,28 @@ void CActor::g_SetAnimation(u32 mstate_rl)
 			return;
 	}
 
+	if (Level().CurrentControlEntity() == this)
+	{
+		if (MpWoundMODE() || NEED_WOUND_EXIT)
+		{
+			m_bAnimTorsoPlayed = false;
+			m_current_torso.invalidate();
+			SelectScriptWoundAnimation();
+			return;
+		}
+	}
+	else
+	{
+		if (MpWoundMODE())
+			return;
+	}
+
 	InputAnim = 0;
 	OutAnim = 0;
 	MidAnim = 0;
+	InputWoundAnim = 0;
+	OutWoundAnim = 0;
+	MidWoundAnim = 0;
 
 	if (!M_torso)
 	{

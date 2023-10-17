@@ -8,11 +8,17 @@
 #include "Level.h"
 #include "UICursor.h"
 #include <string_table.h>
+#include "Actor.h"
 
 extern int ANIM_SELECTED = 0;
 
 bool CUIAMode::OnMouseAction(float x, float y, EUIMessages mouse_action)
 {
+    CActor* pA = smart_cast<CActor*>(Level().CurrentControlEntity());
+
+    if (pA->MpWoundMODE())
+        return false;
+
     if (mouse_action == WINDOW_LBUTTON_DOWN)
     {
         auto child = list_anims->Items();
@@ -108,6 +114,11 @@ void CUIAMode::Update()
 
 bool CUIAMode::OnKeyboardAction(int dik, EUIMessages keyboard_action)
 {
+    CActor* pA = smart_cast<CActor*>(Level().CurrentControlEntity());
+
+    if (pA->MpWoundMODE())
+        return false;
+
     if (is_binded(kAnimationMode, dik))
         HideDialog();
 

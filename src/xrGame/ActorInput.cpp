@@ -122,7 +122,7 @@ void CActor::IR_OnKeyboardPress(int cmd)
 	}
 	else
 	{
-		if (MpSafeMODE() || MpAnimationMODE())
+		if (MpSafeMODE() || MpAnimationMODE() || MpWoundMODE())
 			return;
 
 		if (inventory().Action((u16)cmd, CMD_START))	
@@ -432,6 +432,7 @@ void CActor::IR_OnMouseMove(int dx, int dy)
 	}
 }
 #include "HudItem.h"
+#include <medkit.h>
 bool CActor::use_Holder				(CHolderCustom* holder)
 {
 
@@ -478,7 +479,6 @@ void CActor::ActorUse()
 	if(character_physics_support()->movement()->PHCapture())
 		character_physics_support()->movement()->PHReleaseObject();
 
-	
 
 	if(m_pUsableObject && NULL==m_pObjectWeLookingAt->cast_inventory_item())
 	{
@@ -492,6 +492,12 @@ void CActor::ActorUse()
 			CurrentGameUI()->StartCarBody(this, m_pInvBoxWeLookingAt);
 		}
 		return;
+	}
+
+	CActor* pActor = smart_cast<CActor*>(m_pPersonWeLookingAt);
+	if (Actor() && pActor && pActor->g_Alive() && pActor->MpWoundMODE())
+	{
+		Actor()->HealthActorInWound(pActor);
 	}
 
 	if(!m_pUsableObject||m_pUsableObject->nonscript_usable())

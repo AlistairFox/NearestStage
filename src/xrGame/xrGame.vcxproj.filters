@@ -11216,6 +11216,9 @@
     <ClCompile Include="DynamicHudGlass.cpp">
       <Filter>HudGlass</Filter>
     </ClCompile>
+    <ClCompile Include="ActorMpWound_Script.cpp">
+      <Filter>AnimationMode</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="ai\monsters\chimera\chimera_attack_state.h">

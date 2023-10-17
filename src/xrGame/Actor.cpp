@@ -66,6 +66,7 @@
 #include "location_manager.h"
 #include "player_hud.h"
 #include "ai/monsters/basemonster/base_monster.h"
+#include "medkit.h"
 
 #include "../Include/xrRender/UIRender.h"
 
@@ -83,6 +84,7 @@
 #include "CustomDetector.h"
 #include <PostprocessAnimator.h>
 #include "../xrEngine/XR_IOConsole.h"
+#include "Inventory.h"
 
 const u32		patch_frames	= 50;
 const float		respawn_delay	= 1.f;
@@ -895,6 +897,7 @@ void CActor::Die	(CObject* who)
 	CActor* pA = smart_cast<CActor*>(Level().CurrentControlEntity());
 	if (pA && Local())
 	{
+		cam_Set(eacFirstEye);
 		PlayPPEffect("die.ppe");
 	}
 
@@ -1152,6 +1155,25 @@ void CActor::UpdateCL	()
 		}
 	}
 
+	if (g_Alive() && Level().CurrentControlEntity() == this)
+	{
+		CActor* pActor = smart_cast<CActor*>(Level().CurrentControlEntity());
+		if (pActor->GetfHealth() <= 0.2 && g_Alive())
+		{
+			ANIM_WOUND = 1;
+			need_ex_wound = true;
+		}
+		else
+		{
+			if (ANIM_WOUND > 0 && need_ex_wound)
+			{
+				StartWoundExit();
+				need_ex_wound = false;
+			}
+		}
+
+	}
+
 	UpdateInventoryOwner			(Device.dwTimeDelta);
 
 	if(m_feel_touch_characters>0)
@@ -1294,7 +1316,7 @@ void CActor::UpdateCL	()
 		g_player_hud->update(trans);
 	}
 
-	if (cam_Active() != cam_FirstEye() && (!MpAnimationMODE())) //разблокировать все камеры
+	if (cam_Active() != cam_FirstEye() && (!MpAnimationMODE()) && (!MpWoundMODE())) //разблокировать все камеры
 		cam_Set(eacFirstEye);
 
 	m_bPickupMode=false;
@@ -1353,6 +1375,14 @@ void CActor::UpdateCL	()
 
 		ps_ssfx_hud_drops_1.x = m_dropsAnimIncrementor;
 		ps_ssfx_hud_drops_1.y = m_dropsIntensity;
+}
+
+void CActor::HealthActorInWound(CActor* p)
+{
+	Msg("try health");
+	NET_Packet P;
+	u_EventGen(P, GE_HEALTH_PLAYER, p->ID());
+	Level().Send(P, true, true);
 }
 
 float	NET_Jump = 0;
@@ -1584,7 +1614,7 @@ void CActor::shedule_Update	(u32 DT)
 	if (MpInvisibility())
 		setVisible(false);
 
-	if (MpAnimationMODE())
+	if (MpAnimationMODE() || MpWoundMODE())
 		cam_Set(eacLookAt);
 
 	//else
@@ -1604,6 +1634,7 @@ void CActor::shedule_Update	(u32 DT)
 		m_pInvBoxWeLookingAt			= smart_cast<CInventoryBox*>(game_object);
 		m_pPersonWeLookingAt			= smart_cast<CInventoryOwner*>(game_object);
 		m_pVehicleWeLookingAt			= smart_cast<CHolderCustom*>(game_object);
+		CActor* cA = smart_cast<CActor*>(m_pPersonWeLookingAt);
 		CEntityAlive* pEntityAlive		= smart_cast<CEntityAlive*>(game_object);
 		
 		if ( /*GameID() == eGameIDSingle*/ true )
@@ -1614,6 +1645,11 @@ void CActor::shedule_Update	(u32 DT)
 			}
 			else
 			{
+				if (cA && cA->MpWoundMODE())
+				{
+					m_sDefaultObjAction = CStringTable().translate("st_help_player");
+				}
+				else
 				if (m_pPersonWeLookingAt && pEntityAlive->g_Alive() && m_pPersonWeLookingAt->IsTalkEnabled() && !pEntityAlive->cast_actor())
 				{
 					m_sDefaultObjAction = m_sCharacterUseAction;

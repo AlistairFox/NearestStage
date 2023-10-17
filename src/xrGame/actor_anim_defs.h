@@ -104,6 +104,8 @@ struct SActorStateAnimation
 	shared_str m_animation_attach[32];
 
 	void CreateAnimationsScripted(IKinematicsAnimated* K);
+
+	void CreateWoundAnimationScripted(IKinematicsAnimated* K);
 };
 
 
