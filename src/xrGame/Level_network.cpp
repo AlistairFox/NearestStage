@@ -475,7 +475,7 @@ void			CLevel::OnBuildVersionChallenge		()
 	u64 auth = MP_DEBUG_AUTH;
 	Msg("* Sending auth value ...");
 #else
-	u64 auth = FS.auth_get();
+	u64 auth = 23;
 #endif //#ifdef DEBUG
 
 	if (registration)

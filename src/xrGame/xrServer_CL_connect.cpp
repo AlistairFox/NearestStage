@@ -212,7 +212,7 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 {
 	u16 Type;
 	P.r_begin( Type );
-	u64 _our		=	FS.auth_get();
+	u64 _our		=	23;
 	u64 _him		=	P.r_u64();
 
 	u8 reg, kit;
@@ -224,6 +224,9 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 	P.r_u8(reg);
 	P.r_stringZ(descript);
 	P.r_u8(kit);
+
+	string256 game_version;
+	sprintf(game_version, "Различные версии движка! Ваша: %d | Сервер: %d", _him, _our);
 
 	string_path denied_reg;// filtering names
 	string_path path_xray; // logins
@@ -244,7 +247,15 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 
 	if (!CL->flags.bLocal)
 	{
+
 		Msg("--User HWID: %s, User Login: %s ", comp_name.c_str(), login.c_str());
+
+		if (_our != _him)
+		{
+			SendConnectResult(CL, 0, ecr_data_verification_failed, game_version);
+			Msg("!!ERROR Попытка входа с другой версии! Севрер: %d | Клиент: %d", _our, _him);
+			return;
+		}
 
 		if (banlist->line_exist("blocklist", comp_name.c_str()))
 		{
