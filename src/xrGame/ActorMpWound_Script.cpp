@@ -59,30 +59,30 @@ void SActorStateAnimation::CreateWoundAnimationScripted(IKinematicsAnimated* K)
 				u32 countOUT = _GetItemCount(anims_out, ',');
 				u32 countMID = _GetItemCount(anims_middle, ',');
 
-				in_anims.count[i] = countIN;
-				out_anims.count[i] = countOUT;
-				middle_anims.count[i] = countMID;
+				in_woundanims.count[i] = countIN;
+				out_woundanims.count[i] = countOUT;
+				middle_woundanims.count[i] = countMID;
 
 				for (int id = 0; id != countIN; id++)
 				{
 					string64 anim = { 0 };
 					_GetItem(anims_in, id, anim, ',');
 					MotionID motionAnim = K->ID_Cycle_Safe(anim);
-					in_anims.m_animation_in[i][id] = motionAnim;
+					in_woundanims.m_wound_animation_in[i][id] = motionAnim;
 				}
 				for (int id = 0; id != countOUT; id++)
 				{
 					string64 anim = { 0 };
 					_GetItem(anims_out, id, anim, ',');
 					MotionID motionAnim = K->ID_Cycle_Safe(anim);
-					out_anims.m_animation_out[i][id] = motionAnim;
+					out_woundanims.m_wound_animation_out[i][id] = motionAnim;
 				}
 				for (int id = 0; id != countMID; id++)
 				{
 					string64 anim = { 0 };
 					_GetItem(anims_middle, id, anim, ',');
 					MotionID motionAnim = K->ID_Cycle_Safe(anim);
-					middle_anims.m_animation[i][id] = motionAnim;
+					middle_woundanims.m_wound_animation[i][id] = motionAnim;
 				}
 			}
 		}
@@ -163,7 +163,7 @@ void CActor::SelectScriptWoundAnimation()
 	selectedWoundID = selectedAnimation;
 
 
-	u32 countIN = m_anims->m_script.in_anims.count[selectedAnimation];
+	u32 countIN = m_anims->m_script.in_woundanims.count[selectedAnimation];
 
 	MidWoundPlay = false;
 	OutWoundPlay = false;
@@ -182,7 +182,7 @@ void CActor::SelectScriptWoundAnimation()
 
 	if (!InWoundPlay)
 	{
-		script_BODY = m_anims->m_script.in_anims.m_animation_in[selectedAnimation][InputWoundAnim];
+		script_BODY = m_anims->m_script.in_woundanims.m_wound_animation_in[selectedAnimation][InputWoundAnim];
 		script_wound_anim(script_BODY, callbackWoundAnim, this);
 		InputWoundAnim += 1;
 		NEED_WOUND_EXIT = true;
@@ -200,7 +200,7 @@ void CActor::SelectScriptWoundAnimation()
 	if (!InWoundPlay)
 		return;
 
-	u32 countMid = m_anims->m_script.middle_anims.count[selectedAnimation];
+	u32 countMid = m_anims->m_script.middle_woundanims.count[selectedAnimation];
 
 	if (MidWoundAnim >= countMid)
 	{
@@ -228,7 +228,7 @@ void CActor::SelectScriptWoundAnimation()
 
 	if (!MidWoundPlay)
 	{
-		script_BODY = m_anims->m_script.middle_anims.m_animation[selectedAnimation][MidWoundAnim];
+		script_BODY = m_anims->m_script.middle_woundanims.m_wound_animation[selectedAnimation][MidWoundAnim];
 		script_wound_anim(script_BODY, callbackWoundAnim, this);
 		MidWoundAnim += 1;
 	}
@@ -236,7 +236,7 @@ void CActor::SelectScriptWoundAnimation()
 	if (!MidWoundPlay)
 		return;
 
-	u32 countOUT = m_anims->m_script.out_anims.count[selectedAnimation];
+	u32 countOUT = m_anims->m_script.out_woundanims.count[selectedAnimation];
 
 	if (countOUT == 0)
 		OutWoundPlay = true;
@@ -248,7 +248,7 @@ void CActor::SelectScriptWoundAnimation()
 
 	if (!OutWoundPlay)
 	{
-		script_BODY = m_anims->m_script.out_anims.m_animation_out[selectedAnimation][OutWoundAnim];
+		script_BODY = m_anims->m_script.out_woundanims.m_wound_animation_out[selectedAnimation][OutWoundAnim];
 		script_wound_anim(script_BODY, callbackWoundAnim, this);
 		OutWoundAnim += 1;
 	}

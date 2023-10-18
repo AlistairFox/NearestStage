@@ -73,18 +73,21 @@ struct SActorSprintState
 struct SScript_AnimInput
 {
 	MotionID m_animation_in[32][32];
+	MotionID m_wound_animation_in[32][32];
 	u32 count[32];
 };
 
 struct SScript_AnimOut
 {
 	MotionID m_animation_out[32][32];
+	MotionID m_wound_animation_out[32][32];
 	u32 count[32];
 };
 
 struct SScript_AnimMiddle
 {
 	MotionID m_animation[32][32];
+	MotionID m_wound_animation[32][32];
 	u32 count[32];
 };
 
@@ -96,6 +99,10 @@ struct SActorStateAnimation
 	SScript_AnimInput  in_anims;
 	SScript_AnimOut    out_anims;
 	SScript_AnimMiddle middle_anims;
+
+	SScript_AnimInput in_woundanims;
+	SScript_AnimOut    out_woundanims;
+	SScript_AnimMiddle middle_woundanims;
 
 	bool m_animation_loop[32];
 	u32	 m_rnd_snds[32];

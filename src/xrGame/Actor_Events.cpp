@@ -336,7 +336,7 @@ void CActor::OnEvent(NET_Packet& P, u16 type)
 	case GE_ACTOR_WOUND_SCRIPT:
 	{
 		ReciveWoundAnimationPacket(P);
-	}
+	}break;
 
 	case GE_ACTOR_HIDE_ALL_STATE:
 	{

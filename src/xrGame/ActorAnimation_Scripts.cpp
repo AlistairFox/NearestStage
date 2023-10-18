@@ -203,6 +203,9 @@ void CActor::ReciveSoundPlay(NET_Packet packet)
 				selected.stop();
 			}
 
+		if (snd_id == 0)
+			return;
+
 		ref_sound snd_sel = m_anims->m_script.m_sound_Animation[selectedID][snd_id];
 
 		if (!snd_sel._feedback())

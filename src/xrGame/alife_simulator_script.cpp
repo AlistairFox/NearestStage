@@ -61,7 +61,7 @@ CSE_ALifeDynamicObject *alife_object		(const CALifeSimulator *self, LPCSTR name)
 }
 #endif // #ifdef DEBUG
 
-CSE_ALifeDynamicObject *alife_object		(const CALifeSimulator *self, ALife::_OBJECT_ID id, bool no_assert)
+CSE_ALifeDynamicObject *alife_object		(const CALifeSimulator *self, ALife::_OBJECT_ID id, bool no_assert)//
 {
 	VERIFY			(self);
 	return			(self->objects().object(id,no_assert));
@@ -252,7 +252,7 @@ ALife::_SPAWN_ID CALifeSimulator__spawn_id		(CALifeSimulator *self, ALife::_SPAW
 
 void CALifeSimulator__release					(CALifeSimulator *self, CSE_Abstract *object, bool)
 {
-	VERIFY								(self);
+	VERIFY								(self);//
 //	self->release						(object,true);
 
 	THROW								(object);
