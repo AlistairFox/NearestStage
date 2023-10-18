@@ -255,21 +255,26 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 		LoadPlayerDetectors(ps, nullptr);
 	}
 
-	string32 filename;
-	xr_strcpy(filename, ps->getName());
-	xr_strcat(filename, ".ltx");
+	string_path filepath;
+	string_path login_path;
 
-	if (!FS.exist("$mp_saves$", filename))
+
+	FS.update_path(login_path, "$mp_saves_logins$", "logins.ltx"); // file with player logins
+
+	FS.update_path(filepath, "$mp_saves_logins$", "checkstuf.ltx"); // file for check on first connect player or not
+
+
+	CInifile* checkstuf_file = xr_new<CInifile>(filepath, false, true); // inifile for check on first connect player
+
+	LPCSTR loginname = ps->getName();
+
+	if (checkstuf_file && !checkstuf_file->line_exist(loginname, "staf_load"))
 	{
-		string_path filepath;
-		FS.update_path(filepath, "$mp_saves_logins$", "logins.ltx");
-		CInifile* file = xr_new<CInifile>(filepath, true, true);
+		CInifile* login_file = xr_new<CInifile>(login_path, true, true);
 
-		LPCSTR loginname = ps->getName();
-
-		if (file->section_exist(loginname))
+		if (login_file->section_exist(loginname))
 		{
-			u8 kit_numb = file->r_u8(loginname, "kit_number");
+			u8 kit_numb = login_file->r_u8(loginname, "kit_number");
 
 			string_path spawn_config;
 			FS.update_path(spawn_config, "$game_config$", "alife\\start_stuf.ltx");
@@ -295,9 +300,13 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 				SpawnItemToActor(ps->GameID, N);
 			}
 			xr_delete(spawn_file);
+
+			checkstuf_file->w_bool(loginname, "staf_load", true);
+			checkstuf_file->save_as(filepath);
 		}
-		xr_delete(file);
+		xr_delete(login_file);
 	}
+	xr_delete(checkstuf_file);
 
 	if (ps)
 	{
