@@ -214,16 +214,20 @@ void	CKinematicsAnimated::LL_FadeCycle(u16 part, float falloff, u8 mask_channel 
 {
 	BlendSVec&	Blend		= blend_cycles[part];
 	
-	for (u32 I=0; I<Blend.size(); I++)
+	if (!Blend.empty())
 	{
-		CBlend& B			= *Blend[I];
-		if(!(mask_channel&(1<<B.channel)))
-			continue;
-		//B.blend				= CBlend::eFalloff;
-		B.set_falloff_state();
-		B.blendFalloff		= falloff;
-		//B.blendAccrue		= B.timeCurrent;
-		if (B.stop_at_end)  B.stop_at_end_callback = FALSE;		// callback не должен приходить!
+
+		for (u32 I = 0; I < Blend.size(); I++)
+		{
+			CBlend& B = *Blend[I];
+			if (!(mask_channel & (1 << B.channel)))
+				continue;
+			//B.blend				= CBlend::eFalloff;
+			B.set_falloff_state();
+			B.blendFalloff = falloff;
+			//B.blendAccrue		= B.timeCurrent;
+			if (B.stop_at_end)  B.stop_at_end_callback = FALSE;		// callback не должен приходить!
+		}
 	}
 }
 void	CKinematicsAnimated::LL_CloseCycle(u16 part, u8 mask_channel /*= (1<<0)*/)
