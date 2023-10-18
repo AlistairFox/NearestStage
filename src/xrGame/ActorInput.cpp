@@ -570,8 +570,13 @@ void CActor::ActorUse()
 
 BOOL CActor::HUDview				( )const 
 { 
-	return IsFocused() && (cam_active==eacFirstEye)&&
-		((!m_holder) || (m_holder && m_holder->allowWeapon() && m_holder->HUDView() ) ); 
+	if (!g_Alive())
+		return FALSE;
+	else
+	{
+		return IsFocused() && (cam_active == eacFirstEye) &&
+			((!m_holder) || (m_holder && m_holder->allowWeapon() && m_holder->HUDView()));
+	}
 }
 
 static	u16 SlotsToCheck [] = {
