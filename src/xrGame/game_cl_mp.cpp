@@ -1473,10 +1473,10 @@ void game_cl_mp::OnRadminMessage(u16 type, NET_Packet* P)
 					if(!m_pAdminMenuWindow)
 						m_pAdminMenuWindow = xr_new<CUIMpAdminMenu>();
 
-					if(0==stricmp(buff,"Access permitted."))
-						m_pAdminMenuWindow->ShowDialog(true);
-					else
-						m_pAdminMenuWindow->ShowMessageBox(CUIMessageBox::MESSAGEBOX_OK, buff);
+					//if(0==stricmp(buff,"Access permitted."))
+					//	m_pAdminMenuWindow->ShowDialog(true);
+				//	else
+			//			m_pAdminMenuWindow->ShowMessageBox(CUIMessageBox::MESSAGEBOX_OK, buff);
 				}
 
 				Msg				("# srv: %s",buff);

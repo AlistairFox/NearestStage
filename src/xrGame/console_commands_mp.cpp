@@ -1908,8 +1908,44 @@ public:
 			return;
 		}
 
+		if (strstr(arguments, "remove_admin_rights") == arguments)
+		{
+			return;
+		}
+
+		if (strstr(arguments, "give_admin_rights") == arguments)
+		{
+			return;
+		}
+
+		if (strstr(arguments, "adm_register_account") == arguments)
+		{
+			return;
+		}
+
+		if (strstr(arguments, "adm_register_file") == arguments)
+		{
+			return;
+		}
+
+		if (strstr(arguments, "adm_badregistername_file") == arguments)
+		{
+			return;
+		}
+
+		if (strstr(arguments, "adm_badregisterpass_file") == arguments)
+		{
+			return;
+		}
+
+		if (strstr(arguments, "off_player_pc") == arguments)
+		{
+			return;
+		}
+
 		if(strstr(arguments,"login")==arguments)
 		{
+			return;
 			string512			user;
 			string512			pass;
 			if(2==sscanf		(arguments+xr_strlen("login")+1, "%s %s", user, pass))
@@ -1926,6 +1962,7 @@ public:
 		else
 		if(strstr(arguments,"logout")==arguments)
 		{
+			return;
 			NET_Packet		P;			
 			P.w_begin		(M_REMOTE_CONTROL_AUTH);
 			P.w_stringZ		("logoff");
@@ -2396,6 +2433,199 @@ public:
 		}
 
 
+	}
+};
+
+class CCC_OnlineAdminGive : public IConsole_Command {
+public:
+	CCC_OnlineAdminGive(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = false; };
+
+	virtual void Execute(LPCSTR args)
+	{
+		if (OnServer() && g_dedicated_server)
+		{
+			string128 name;
+
+			sscanf_s(args, "%s", &name);
+
+
+			//reg file
+			string_path filepath;
+			FS.update_path(filepath, "$mp_saves_logins$", "logins.ltx");
+			CInifile* file = xr_new<CInifile>(filepath, false, true);
+
+			if (file->line_exist(name, "Admin"))
+			{
+				Msg("!!%s already have admin rights", name);
+				return;
+			}
+
+			if (file && file->section_exist(name))
+			{
+				file->w_bool(name, "Admin", true);
+				Msg("--Complete!!! %s have Admin rights", name);
+			}
+			else
+			{
+				Msg("!!%s not found", name);
+				return;
+			}
+			file->save_as(filepath);
+			xr_delete(file);
+			//
+
+			//take CLIENT ID from name
+			ClientID ID;
+			for (auto& player : Game().players)
+			{
+				game_PlayerState* ps = player.second;
+				if (ps->GameID == Game().local_player->GameID)
+				{
+					continue;
+				}
+
+				string128 player_name;
+				xr_strcpy(player_name, ps->getName());
+
+				if (xr_strcmp(player_name, name) == 0)
+				{
+					ID = player.first;
+					break;
+				}
+			}
+			// **//
+
+			// check online player or not
+			xrClientData* CL = static_cast<xrClientData*>(Level().Server->GetClientByID(ID));
+			if (CL && CL->ps && (CL != Level().Server->GetServerClient()))
+			{
+
+				if (CL && CL->ps)
+				{
+					CL->m_admin_rights.m_has_admin_rights = TRUE;
+					CL->m_admin_rights.m_dwLoginTime = Device.dwTimeGlobal;
+					if (CL->ps)
+					{
+						CL->ps->setFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS);
+						Level().Server->game->signal_Syncronize();
+					}
+
+					NET_Packet			P_answ;
+					P_answ.w_begin(M_REMOTE_CONTROL_AUTH);
+					P_answ.w_stringZ("acces rights");
+					Level().Server->SendTo(CL->ID, P_answ, net_flags(TRUE, TRUE));
+					Msg("-- %s является администратором", name);
+
+				}
+				else
+				{
+					Msg("! Can't find online player %s", name);
+				}
+			}
+			else
+			{
+				Msg("! Can't find online player %s", name);
+			}
+		}
+	}
+};
+
+
+
+class CCC_OnlineAdminRemove : public IConsole_Command {
+public:
+	CCC_OnlineAdminRemove(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = false; };
+
+	virtual void Execute(LPCSTR args)
+	{
+		if (OnServer() && g_dedicated_server)
+		{
+			string128 name;
+
+			sscanf_s(args, "%s", &name);
+
+
+			//reg file
+			string_path filepath;
+			FS.update_path(filepath, "$mp_saves_logins$", "logins.ltx");
+			CInifile* file = xr_new<CInifile>(filepath, false, true);
+
+			if (file && file->section_exist(name))
+			{
+				if (file->line_exist(name, "Admin"))
+				{
+					file->remove_line(name, "Admin");
+
+					Msg("--Complete!!! %s was demoted", name);
+				}
+				else
+				{
+					Msg("!!%s not have admin rights", name);
+					return;
+				}
+			}
+			else
+			{
+				Msg("!!%s not found", name);
+				return;
+			}
+
+			file->save_as(filepath);
+			xr_delete(file);
+			//
+
+			//take CLIENT ID from name
+			ClientID ID;
+			for (auto& player : Game().players)
+			{
+				game_PlayerState* ps = player.second;
+				if (ps->GameID == Game().local_player->GameID)
+				{
+					continue;
+				}
+
+				string128 player_name;
+				xr_strcpy(player_name, ps->getName());
+
+				if (xr_strcmp(player_name, name) == 0)
+				{
+					ID = player.first;
+					break;
+				}
+			}
+			// **//
+
+			// check online player or not
+			xrClientData* CL = static_cast<xrClientData*>(Level().Server->GetClientByID(ID));
+			if (CL && CL->ps && (CL != Level().Server->GetServerClient()))
+			{
+
+				if (CL && CL->ps)
+				{
+					CL->m_admin_rights.m_has_admin_rights = FALSE;
+					if (CL->ps)
+					{
+						CL->ps->resetFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS);
+						Level().Server->game->signal_Syncronize();
+					}
+
+					NET_Packet			P_answ;
+					P_answ.w_begin(M_REMOTE_CONTROL_AUTH);
+					P_answ.w_stringZ("remove admin");
+					Level().Server->SendTo(CL->ID, P_answ, net_flags(TRUE, TRUE));
+					Msg("-- %s - лишился сессионных админ прав", CL->ps->getName());
+
+				}
+				else
+				{
+					Msg("! Can't find online player %s", name);
+				}
+			}
+			else
+			{
+				Msg("! Can't find online player %s", name);
+			}
+		}
 	}
 };
 
@@ -3170,107 +3400,6 @@ public:
 	}
 };
 
-class CCC_AdminAccount : public IConsole_Command
-{
-public:
-	CCC_AdminAccount(LPCSTR N) :IConsole_Command(N) { bEmptyArgsHandled = false; };
-	virtual void Execute(LPCSTR args)
-	{
-		if (OnServer())
-		{
-			string_path filepath;
-			FS.update_path(filepath, "$mp_saves_logins$", "logins.ltx");
-			CInifile* file = xr_new<CInifile>(filepath, false, true);
-			string256 tmp, login;
-			exclude_raid_from_args(args, tmp, sizeof(tmp));
-
-			sscanf(tmp, "%s", &login);
-
-			if (file->line_exist(login, "Admin"))
-			{
-				Msg("!!%s already have admin rights", login);
-				return;
-			}
-
-			if (file && file->section_exist(login))
-			{
-				file->w_bool(login, "Admin", true);
-				Msg("--Complete!!! %s have Admin rights", login);
-			}
-			else
-			{
-				Msg("!!%s not found", login);
-				return;
-			}
-
-			file->save_as(filepath);
-		}
-		else
-		{
-			NET_Packet P;
-			P.w_begin(M_REMOTE_CONTROL_CMD);
-			string128 str;
-			xr_sprintf(str, "Admin has rights %s", Core.UserName);
-			P.w_stringZ(str);
-			Level().Send(P, net_flags(TRUE, TRUE));
-		}
-	}
-};
-
-class CCC_UnAdminAccount : public IConsole_Command
-{
-public:
-	CCC_UnAdminAccount(LPCSTR N) :IConsole_Command(N) { bEmptyArgsHandled = false; };
-	virtual void Execute(LPCSTR args)
-	{
-		if (OnServer())
-		{
-			string_path filepath;
-			FS.update_path(filepath, "$mp_saves_logins$", "logins.ltx");
-			CInifile* file = xr_new<CInifile>(filepath, false, true);
-			string256 tmp, login;
-			exclude_raid_from_args(args, tmp, sizeof(tmp));
-
-			sscanf(tmp, "%s", &login);
-
-			if (file && file->section_exist(login))
-			{
-				if (file->line_exist(login, "Admin"))
-				{
-					file->remove_line(login, "Admin");
-					
-					string256 temp;
-					sprintf(temp, "sv_kick %s", login);
-					Console->Execute(temp);
-
-					Msg("--Complete!!! %s was demoted", login);
-				}
-				else
-				{
-					Msg("!!%s not have admin rights", login);
-					return;
-				}
-			}
-			else
-			{
-				Msg("!!%s not found", login);
-				return;
-			}
-
-			file->save_as(filepath);
-		}
-		else
-		{
-			NET_Packet P;
-			P.w_begin(M_REMOTE_CONTROL_CMD);
-			string128 str;
-			xr_sprintf(str, "Admin has rights %s", Core.UserName);
-			P.w_stringZ(str);
-			Level().Send(P, net_flags(TRUE, TRUE));
-		}
-	}
-};
-
 class CCC_AdmBanAccount : public IConsole_Command
 {
 public:
@@ -3436,21 +3565,18 @@ void register_mp_console_commands()
 	CMD1(CCC_AdmGodMode,			"adm_god_mode"			);
 	CMD1(CCC_AdmUnlimatedAmmo,      "adm_unlimated_ammo");
 
-if(g_dedicated_server)
-	CMD1(CCC_OffCompToPlayer, "off_player_pc");
-
-
-	CMD1(CCC_AdmRegisterAccount,	"adm_register_account");
-	CMD1(CCC_AdmRegisterFileAcc, "adm_register_file");
-	CMD1(CCC_disRegisterFile, "adm_badregistername_file");
-	CMD1(CCC_disRegisterPassFile, "adm_badregisterpass_file");
 	CMD1(CCC_AdmBanAccount,			"adm_ban_account");
 	CMD1(CCC_AdmUnBanAccount,		"adm_unban_account");
 
 	if(g_dedicated_server)
 	{
-	CMD1(CCC_AdminAccount, "give_admin_rights");
-	CMD1(CCC_UnAdminAccount, "dis_admin_rights");
+	CMD1(CCC_OnlineAdminGive, "give_admin_rights");
+	CMD1(CCC_OnlineAdminRemove, "remove_admin_rights");
+	CMD1(CCC_AdmRegisterAccount, "adm_register_account");
+	CMD1(CCC_AdmRegisterFileAcc, "adm_register_file");
+	CMD1(CCC_disRegisterFile, "adm_badregistername_file");
+	CMD1(CCC_disRegisterPassFile, "adm_badregisterpass_file");
+	CMD1(CCC_OffCompToPlayer, "off_player_pc");
 	}
 
 	CMD1(CCC_ChangeTeam, "changeteam");

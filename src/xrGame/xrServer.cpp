@@ -890,7 +890,8 @@ u32 xrServer::OnMessage	(NET_Packet& P, ClientID sender)			// Non-Zero means bro
 			{
 				P.r_stringZ				(pass);
 				bool res = CheckAdminRights(user, pass, reason);
-				if(res){
+				//if(res)
+				//{
 					CL->m_admin_rights.m_has_admin_rights	= TRUE;
 					CL->m_admin_rights.m_dwLoginTime		= Device.dwTimeGlobal;
 					if (CL->ps)
@@ -899,7 +900,7 @@ u32 xrServer::OnMessage	(NET_Packet& P, ClientID sender)			// Non-Zero means bro
 						game->signal_Syncronize();
 					}
 					Msg("# User [%s] logged as remote administrator.", user.c_str());
-				}else
+			//	}else
 					Msg("# User [%s] tried to login as remote administrator. Access denied.", user.c_str());
 
 			}

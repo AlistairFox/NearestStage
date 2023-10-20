@@ -298,19 +298,6 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 						if (file->line_exist(login, "password"))
 						{
 							pass_check = file->r_string(login, "password");
-							if (file->line_exist(login, "Admin"))
-							{
-								if (file->r_bool(login, "Admin"))
-								{
-									xrClientData* data = ID_to_client(CL->ID);
-									if (data && data->ps)
-									{
-										Msg("-- %s является администратором", login.c_str());
-										data->ps->setFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS);
-										data->m_admin_rights.m_has_admin_rights = true;
-									}
-								}
-							}
 
 						}
 

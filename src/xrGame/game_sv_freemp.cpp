@@ -96,6 +96,38 @@ void game_sv_freemp::OnPlayerConnect(ClientID id_who)
 
 	ps_who->resetFlag(GAME_PLAYER_FLAG_SKIP);
 
+
+	{
+		string_path path_xray; // logins
+		FS.update_path(path_xray, "$mp_saves_logins$", "logins.ltx"); // logins
+		CInifile* file = xr_new<CInifile>(path_xray, true); // logins
+
+		if (file->section_exist(ps_who->getName()))
+		{
+			if (file->line_exist(ps_who->getName(), "Admin"))
+			{
+				if (file->r_bool(ps_who->getName(), "Admin"))
+				{
+					Msg("-- %s является администратором", ps_who->getName());
+
+					xrCData->m_admin_rights.m_has_admin_rights = TRUE;
+					xrCData->m_admin_rights.m_dwLoginTime = Device.dwTimeGlobal;
+					if (xrCData->ps)
+					{
+						xrCData->ps->setFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS);
+						m_server->game->signal_Syncronize();
+					}
+
+					NET_Packet			P_answ;
+					P_answ.w_begin(M_REMOTE_CONTROL_AUTH);
+					P_answ.w_stringZ("acces");
+					m_server->SendTo(xrCData->ID, P_answ, net_flags(TRUE, TRUE));
+				}
+			}
+		}
+		xr_delete(file);
+	}
+
 	if (g_dedicated_server && (xrCData == m_server->GetServerClient()))
 	{
 		ps_who->setFlag(GAME_PLAYER_FLAG_SKIP);
