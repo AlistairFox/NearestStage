@@ -96,12 +96,19 @@ void CAI_Space::load				(LPCSTR level_name)
 
 	unload					(true);
 
-#ifdef DEBUG
+	size_t _free;
+	size_t reserved;
+	size_t committed;
+	float GB = 1048576.0;
+
+	vminfo(&_free, &reserved, &committed);
+	Msg("Memory Free: %f Mb, Reserved: %f Mb, Committed: %f Mb", float(_free / GB), float(reserved / GB), float(committed / GB));
+
 	Memory.mem_compact		();
 	u32						mem_usage = Memory.mem_usage();
 	CTimer					timer;
 	timer.Start				();
-#endif
+
 
 	const CGameGraph::SLevel &current_level = game_graph().header().level(level_name);
 
@@ -138,9 +145,10 @@ void CAI_Space::load				(LPCSTR level_name)
 	VERIFY					(!m_doors_manager);
 	m_doors_manager			= xr_new<::doors::manager>( ai().level_graph().header().box() );
 
-#ifdef DEBUG
+	vminfo(&_free, &reserved, &committed);
+	Msg("Memory Free: %f Mb, Reserved: %f Mb, Committed: %f Mb", float(_free / GB), float(reserved / GB), float(committed / GB));
+
 	Msg						("* Loading ai space is successfully completed (%.3fs, %7.3f Mb)",timer.GetElapsed_sec(),float(Memory.mem_usage() - mem_usage)/1048576.0);
-#endif
 }
 
 void CAI_Space::unload				(bool reload)

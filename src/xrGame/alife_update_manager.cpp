@@ -268,10 +268,17 @@ void CALifeUpdateManager::load			(LPCSTR game_name, bool no_assert, bool new_onl
 	g_pGamePersistent->SetLoadStageTitle("st_loading_alife_simulator");
 	g_pGamePersistent->LoadTitle();
 
-#ifdef DEBUG
+	size_t _free;
+	size_t reserved;
+	size_t committed;
+	float GB = 1048576.0;
+
+	vminfo(&_free, &reserved, &committed);
+	Msg("Memory Free: %f Mb, Reserved: %f Mb, Committed: %f Mb", float(_free / GB), float(reserved / GB), float(committed / GB));
+
 	Memory.mem_compact					();
 	u32									memory_usage = Memory.mem_usage();
-#endif
+
 
 	xr_strcpy								(g_last_saved_game,game_name);
 
@@ -283,9 +290,14 @@ void CALifeUpdateManager::load			(LPCSTR game_name, bool no_assert, bool new_onl
 	if(g_pGameLevel)
 		Level().OnAlifeSimulatorLoaded();
 
-#ifdef DEBUG
+
 	Msg									("* Loading alife simulator is successfully completed (%7.3f Mb)",float(Memory.mem_usage() - memory_usage)/1048576.0);
-#endif
+
+
+	vminfo(&_free, &reserved, &committed);
+
+	Msg("Memory Free: %f Mb, Reserved: %f Mb, Committed: %f Mb", float(_free / GB), float(reserved / GB), float(committed / GB));
+
 	g_pGamePersistent->SetLoadStageTitle("st_server_connecting");
 	g_pGamePersistent->LoadTitle		(true, g_pGameLevel->name());
 }

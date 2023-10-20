@@ -515,6 +515,7 @@ void	CResourceManager::_DumpMemoryUsage		()
 	xr_multimap<u32,std::pair<u32,shared_str> >		mtex	;
 
 	// sort
+	if(false)
 	{
 		map_Texture::iterator I = m_textures.begin	();
 		map_Texture::iterator E = m_textures.end	();
