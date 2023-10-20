@@ -120,7 +120,7 @@ void game_sv_freemp::OnPlayerConnect(ClientID id_who)
 
 					NET_Packet			P_answ;
 					P_answ.w_begin(M_REMOTE_CONTROL_AUTH);
-					P_answ.w_stringZ("acces");
+					P_answ.w_stringZ("admin rights acces");
 					m_server->SendTo(xrCData->ID, P_answ, net_flags(TRUE, TRUE));
 				}
 			}
