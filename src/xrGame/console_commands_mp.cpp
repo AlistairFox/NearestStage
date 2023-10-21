@@ -2348,16 +2348,34 @@ public:
 		exclude_raid_from_args(args, buff, sizeof(buff));
 
 		ClientID client_id(0);
-		u32 tmp_client_id;
+		string256 name;
 		s32 money;
 
-		if (sscanf_s(buff, "%u %d", &tmp_client_id, &money) != 2)
+		if (sscanf_s(buff, "%s %d", &name, &money) != 2)
 		{
 			Msg("! ERROR: bad command parameters.");
-			Msg("Give money to player. Format: \"sv_give_money <player session id> <money>\"");
+			Msg("Give money to player. Format: \"sv_give_money <player name> <money>\"");
 			return;
 		}
-		client_id.set(tmp_client_id);
+
+
+		for (auto& player : Game().players)
+		{
+			game_PlayerState* ps = player.second;
+			if (ps->GameID == Game().local_player->GameID)
+			{
+				continue;
+			}
+
+			string128 player_name;
+			xr_strcpy(player_name, ps->getName());
+
+			if (xr_strcmp(player_name, name) == 0)
+			{
+				client_id = player.first;
+				break;
+			}
+		}
 
 		xrClientData* CL = static_cast<xrClientData*>(Level().Server->GetClientByID(client_id));
 
@@ -2380,7 +2398,7 @@ public:
 		}
 		else
 		{
-			Msg("! Can't give money to client %u", client_id.value());
+			Msg("! Can't give money to client %d", name);
 		}
 	}
 };
@@ -2400,16 +2418,33 @@ public:
 		exclude_raid_from_args(args, buff, sizeof(buff));
 
 		ClientID client_id(0);
-		u32 tmp_client_id;
+		string256 name;
 		u8 team;
 
-		if (sscanf_s(buff, "%u %d", &tmp_client_id, &team), team > 10 || team <0)
+		if (sscanf_s(buff, "%s %d", &name, &team), team > 10 || team < 0)
 		{
 			Msg("! ERROR: bad command parameters.");
-			Msg("player change team: \"changeteam <player session id> <team 0 - 10>\"");
+			Msg("player change team: \"changeteam <player name> <team 0 - 10>\"");
 			return;
 		}
-		client_id.set(tmp_client_id);
+
+		for (auto& player : Game().players)
+		{
+			game_PlayerState* ps = player.second;
+			if (ps->GameID == Game().local_player->GameID)
+			{
+				continue;
+			}
+
+			string128 player_name;
+			xr_strcpy(player_name, ps->getName());
+
+			if (xr_strcmp(player_name, name) == 0)
+			{
+				client_id = player.first;
+				break;
+			}
+		}
 
 		xrClientData* CL = static_cast<xrClientData*>(Level().Server->GetClientByID(client_id));
 
@@ -2429,7 +2464,7 @@ public:
 		}
 		else
 		{
-			Msg("! Can't change team to client %u", client_id.value());
+			Msg("! Can't change team to client %s", name);
 		}
 
 
