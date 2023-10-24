@@ -261,14 +261,6 @@ enum
 };
 //end ogse sunshafts
 
-
-extern ECORE_API Flags32 ps_actor_shadow_flags;
-
-enum
-{
-	RFLAG_ACTOR_SHADOW = (1 << 0),
-};
-
 enum
 {
 	R4_FLAG_SSR_USE = (1<<0),

@@ -369,9 +369,6 @@ Flags32	ps_r2_static_flags = { R2FLAG_USE_BUMP
 Flags32 psDeviceFlags2 = { 0 };
 
 
-Flags32		ps_actor_shadow_flags = { 1 };
-
-
 Flags32		ps_r2_rain_drops_flags = { R2FLAG_RAIN_DROPS
 	| R2FLAG_RAIN_DROPS_CONTROL
 };
@@ -991,8 +988,6 @@ void		xrRender_initconsole	()
 	CMD3(CCC_Mask,		"r2_zfill",				&ps_r2_ls_flags,			R2FLAG_ZFILL	);
 	CMD4(CCC_Float,		"r2_zfill_depth",		&ps_r2_zfill,				.001f,	.5f		);
 	CMD3(CCC_Mask,		"r2_allow_r1_lights",	&ps_r2_ls_flags,			R2FLAG_R1LIGHTS	);
-
-	CMD3(CCC_Mask, "r__actor_shadow", &ps_actor_shadow_flags, RFLAG_ACTOR_SHADOW);  //Swartz
 
 	tw_min.set(0, 0, 0);
 	tw_max.set(1, 1, 1);
