@@ -30,21 +30,17 @@ void fix_texture_name(LPSTR fn)
 int get_texture_load_lod(LPCSTR fn)
 {
 	CInifile::Sect& sect = pSettings->r_section("reduce_lod_texture_list");
-	CInifile::SectCIt it_ = sect.Data.begin();
-	CInifile::SectCIt it_e_ = sect.Data.end();
+	CInifile::SectCIt it = sect.Data.begin();
+	CInifile::SectCIt it_e = sect.Data.end();
 
 	ENGINE_API bool is_enough_address_space_available();
 	static bool enough_address_space_available = is_enough_address_space_available();
-
-	CInifile::SectCIt it = it_;
-	CInifile::SectCIt it_e = it_e_;
 
 	for (; it != it_e; ++it)
 	{
 		if (strstr(fn, it->first.c_str()))
 		{
-			if (psTextureLOD < 1)
-			{
+			if (psTextureLOD < 1) {
 				if (enough_address_space_available)
 					return 0;
 				else
@@ -86,7 +82,6 @@ u32 calc_texture_size(int lod, u32 mip_cnt, u32 orig_size)
 	return iFloor(res);
 }
 
-const float _BUMPHEIGH = 8.f;
 //////////////////////////////////////////////////////////////////////
 // Utility pack
 //////////////////////////////////////////////////////////////////////
@@ -321,13 +316,11 @@ ID3DBaseTexture* CRender::texture_load(LPCSTR fRName, u32& ret_msize, bool bStag
 	bStaging &= bAllowStaging;
 
 	ID3DBaseTexture* pTexture2D = NULL;
-	//IDirect3DCubeTexture9*	pTextureCUBE	= NULL;
 	string_path fn;
-	//u32						dwWidth,dwHeight;
 	u32 img_size = 0;
 	int img_loaded_lod = 0;
-	//D3DFORMAT				fmt;
 	u32 mip_cnt = u32(-1);
+
 	// validation
 	R_ASSERT(fRName);
 	R_ASSERT(fRName[0]);

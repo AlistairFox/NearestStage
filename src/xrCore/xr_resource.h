@@ -1,9 +1,10 @@
-#ifndef xr_resourceH
-#define xr_resourceH
+
 #pragma once
 
+#include <imdexlib\fast_dynamic_cast.hpp>
 // resource itself, the base class for all derived resources
-class	XRCORE_API	xr_resource	{
+class	XRCORE_API	xr_resource
+{
 public:
 	enum			{RF_REGISTERED=1<<0 };
 public:
@@ -103,7 +104,5 @@ template<class T, typename D> void swap	(resptr_core<T,D> & lhs, resptr_core<T,D
 template<class T, typename D> T * get_pointer(resptr_core<T,D> const & p)													{ return p.get();	}
 
 // casting
-template<class T, class U, typename D> resptr_core<T,D> static_pointer_cast(resptr_core<U,D> const & p)						{ return static_cast<T *>(p.get());				}
-template<class T, class U, typename D> resptr_core<T,D> dynamic_pointer_cast(resptr_core<U,D> const & p)					{ return dynamic_cast<T *>(p.get());			}
-
-#endif //xr_resourceH
+template<class T, class U, typename D> resptr_core<T, D> static_pointer_cast(resptr_core<U, D> const& p) { return static_cast<T*>(p.get()); }
+template<class T, class U, typename D> resptr_core<T, D> dynamic_pointer_cast(resptr_core<U, D> const& p) { return imdexlib::fast_dynamic_cast<T*>(p.get()); }

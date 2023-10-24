@@ -52,10 +52,10 @@ public:
 	NvEdgeInfo (int v0, int v1){
 		m_v0       = v0;
 		m_v1       = v1;
-		m_face0    = NULL;
-		m_face1    = NULL;
-		m_nextV0   = NULL;
-		m_nextV1   = NULL;
+		m_face0 = nullptr;
+		m_face1 = nullptr;
+		m_nextV0 = nullptr;
+		m_nextV1 = nullptr;
 		
 		// we will appear in 2 lists.  this is a good
 		// way to make sure we _delete it the second time
@@ -67,7 +67,7 @@ public:
 	void Unref ()	{ 
 		if (--m_refCount == 0) 
 		{
-			Memory.mem_free	(this);
+			delete this;
 		}
 	}
 	

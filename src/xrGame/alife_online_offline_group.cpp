@@ -65,7 +65,7 @@ void CSE_ALifeOnlineOfflineGroup::update	()
 
 	brain().update					();
 
-	for (auto it : m_members)
+	for (auto& it : m_members)
 	{
 		(it.second)->o_Position = o_Position;
 		(it.second)->m_tNodeID = m_tNodeID;
@@ -181,7 +181,7 @@ void CSE_ALifeOnlineOfflineGroup::try_switch_online		()
 		return;
 	}
 
-	for (auto it : m_members)
+	for (auto& it : m_members)
 	{
 		VERIFY3(it.second->g_Alive(), "Incorrect situation : some of the OnlineOffline group members is dead", it.second->name_replace());
 		VERIFY3(it.second->can_switch_online(), "Incorrect situation : some of the OnlineOffline group members cannot be switched online due to their personal properties", it.second->name_replace());
@@ -210,7 +210,7 @@ void CSE_ALifeOnlineOfflineGroup::try_switch_offline	()
 		return;
 	}
 	
-	for (auto it : m_members)
+	for (auto& it : m_members)
 	{
 		VERIFY3(it.second->g_Alive(), "Incorrect situation : some of the OnlineOffline group members is dead", it.second->name_replace());
 		VERIFY3(it.second->can_switch_offline(), "Incorrect situation : some of the OnlineOffline group members cannot be switched online due to their personal properties", it.second->name_replace());
@@ -228,7 +228,7 @@ void CSE_ALifeOnlineOfflineGroup::switch_online			()
 	R_ASSERT(!m_bOnline);
 	m_bOnline = true;
 
-	for (auto it : m_members)
+	for (auto& it : m_members)
 	{
 		if (!it.second->m_bOnline)
 			alife().add_online(it.second, false);
@@ -254,7 +254,7 @@ void CSE_ALifeOnlineOfflineGroup::switch_offline		()
 		m_fDistance				= member->m_fDistance;
 	}
 
-	for (auto it : m_members)
+	for (auto& it : m_members)
 	{
 		if (it.second->m_bOnline)
 		{
@@ -295,6 +295,7 @@ void CSE_ALifeOnlineOfflineGroup::on_after_game_load	()
 	{
 		VERIFY(!it.second);
 		*i = it.first;
+		++i;
 	}
 
 	m_members.clear				();
@@ -321,7 +322,7 @@ u32 CSE_ALifeOnlineOfflineGroup::npc_count( ) const
 }
 void CSE_ALifeOnlineOfflineGroup::clear_location_types		(){
 	m_tpaTerrain.clear();
-	for (auto it : m_members)
+	for (auto& it : m_members)
 	{
 		it.second->m_tpaTerrain.clear();
 	}
@@ -330,7 +331,7 @@ void CSE_ALifeOnlineOfflineGroup::clear_location_types		(){
 
 void CSE_ALifeOnlineOfflineGroup::add_location_type		(LPCSTR mask){
 	setup_location_types_line(m_tpaTerrain, mask);	
-	for (auto it : m_members)
+	for (auto& it : m_members)
 	{
 		setup_location_types_line(it.second->m_tpaTerrain, mask);
 	}
@@ -352,7 +353,7 @@ void CSE_ALifeOnlineOfflineGroup::force_change_position(Fvector position)
 
 void CSE_ALifeOnlineOfflineGroup::on_failed_switch_online()
 {
-	for (auto it : m_members)
+	for (auto& it : m_members)
 	{
 		it.second->clear_client_data();
 	}
