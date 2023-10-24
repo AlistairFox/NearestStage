@@ -83,13 +83,10 @@ void CWalmarkManager::PlaceWallmark(const Fvector& dir, const Fvector& start_pos
 
 void CWalmarkManager::PlaceWallmarks( const Fvector& start_pos)
 {
-	m_pos				= start_pos;
-//.	LPCSTR				sect				= pSettings->r_string(m_owner->cNameSect(), "wallmark_section");
-	Load				("explosion_marks");
+    m_pos = start_pos;
+    Load("explosion_marks");
 
-//.	Device.seqParallel.push_back	(fastdelegate::FastDelegate0<>(this,&CWalmarkManager::StartWorkflow));
-
-	StartWorkflow		();
+    Device.seqParallel.push_back(fastdelegate::FastDelegate0<>(this, &CWalmarkManager::StartWorkflow));
 }
 
 float Distance (const Fvector& rkPoint, const Fvector rkTri[3], float& pfSParam, float& pfTParam, Fvector& closest, Fvector& dir);
@@ -211,28 +208,25 @@ void CWalmarkManager::Load (LPCSTR section)
 float Distance (const Fvector& rkPoint, const Fvector rkTri[3], float& pfSParam, float& pfTParam, Fvector& closest, Fvector& dir)
 {
 	
-//.    Fvector kDiff = rkTri.Origin() - rkPoint;
-    Fvector kDiff;		kDiff.sub	( rkTri[0], rkPoint); //
+    Fvector kDiff; kDiff.sub(rkTri[0], rkPoint);
 
-	Fvector Edge0; Edge0.sub(rkTri[1], rkTri[0]); //
-	Fvector Edge1; Edge1.sub(rkTri[2], rkTri[0]); //
-
-//.    float fA00 = rkTri.Edge0().SquaredLength();
+    Fvector Edge0; Edge0.sub(rkTri[1], rkTri[0]);
+    Fvector Edge1; Edge1.sub(rkTri[2], rkTri[0]);
     float fA00 = Edge0.square_magnitude();
 
-//.    float fA01 = rkTri.Edge0().Dot(rkTri.Edge1());
+
     float fA01 = Edge0.dotproduct(Edge1);
 
-//.    float fA11 = rkTri.Edge1().SquaredLength();
+
     float fA11 = Edge1.square_magnitude();
 
-//.    float fB0 = kDiff.Dot(rkTri.Edge0());
+
     float fB0 = kDiff.dotproduct(Edge0);
 
-//.	float fB1 = kDiff.Dot(rkTri.Edge1());
+
 	float fB1 = kDiff.dotproduct(Edge1);
 
-//.    float fC = kDiff.SquaredLength();
+
     float fC = kDiff.square_magnitude();
 
     float fDet = _abs(fA00*fA11-fA01*fA01);
