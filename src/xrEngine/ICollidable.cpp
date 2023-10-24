@@ -6,7 +6,7 @@
 ICollidable::ICollidable()		
 {
 	collidable.model = nullptr;
-	ISpatial* self = imdexlib::fast_dynamic_cast<ISpatial*>(this);
+	ISpatial* self = dynamic_cast<ISpatial*>(this);
 
 	if (self)
 	{
