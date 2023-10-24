@@ -357,15 +357,11 @@ void CGamePersistent::WeathersUpdate()
 		if (Device.fTimeGlobal>=ambient_effect_wind_start && Device.fTimeGlobal<=ambient_effect_wind_in_time && ambient_effect_wind_on)
 		{
 			float delta=ambient_effect_wind_in_time-ambient_effect_wind_start;
-			float t;
+			float t = 0;
 			if (delta!=0.f)
 			{
-				float cur_in=Device.fTimeGlobal-ambient_effect_wind_start;
-				t=cur_in/delta;
-			}
-			else
-			{
-				t=0.f;
+				float cur_in = Device.fTimeGlobal - ambient_effect_wind_start;
+				t = cur_in / delta;
 			}
 			Environment().wind_blast_current.slerp(Environment().wind_blast_start_time,Environment().wind_blast_stop_time,t);
 

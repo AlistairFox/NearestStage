@@ -173,7 +173,6 @@ static void full_memory_stats	( )
 
 	//if (Device.Resources)	Device.Resources->_GetMemoryUsage	(m_base,c_base,m_lmaps,c_lmaps);
 	//	Resource check moved to m_pRender
-	if (Device.m_pRender) Device.m_pRender->ResourcesGetMemoryUsage(m_base,c_base,m_lmaps,c_lmaps);
 
 	log_vminfo	();
 

@@ -239,8 +239,11 @@ Shader*	CResourceManager::_cpp_Create	(IBlender* B, LPCSTR s_shader, LPCSTR s_te
 	}
 
 	// Search equal in shaders array
-	for (u32 it=0; it<v_shaders.size(); it++)
-		if (S.equal(v_shaders[it]))	return v_shaders[it];
+	for (Shader* it : v_shaders)
+	{
+		if (S.equal(it))
+			return it;
+	}
 
 	// Create _new_ entry
 	Shader*		N			=	xr_new<Shader>(S);
@@ -490,51 +493,6 @@ void	CResourceManager::ED_UpdateTextures(AStringVec* names)
 	// DeferredUpload	();
 }
 #endif
-
-void	CResourceManager::_GetMemoryUsage(size_t& m_base, u32& c_base, size_t& m_lmaps, u32& c_lmaps)
-{
-	m_base=c_base=m_lmaps=c_lmaps=0;
-
-	map_Texture::iterator I = m_textures.begin	();
-	map_Texture::iterator E = m_textures.end	();
-	for (; I!=E; I++)
-	{
-		u32 m = I->second->flags.MemoryUsage;
-		if (strstr(I->first,"lmap"))
-		{
-			c_lmaps	++;
-			m_lmaps	+= m;
-		} else {
-			c_base	++;
-			m_base	+= m;
-		}
-	}
-}
-void	CResourceManager::_DumpMemoryUsage		()
-{
-	xr_multimap<u32,std::pair<u32,shared_str> >		mtex	;
-
-	// sort
-	if(false)
-	{
-		map_Texture::iterator I = m_textures.begin	();
-		map_Texture::iterator E = m_textures.end	();
-		for (; I!=E; I++)
-		{
-			u32			m = I->second->flags.MemoryUsage;
-			shared_str	n = I->second->cName;
-			mtex.insert (mk_pair(m,mk_pair(I->second->dwReference,n) ));
-		}
-	}
-
-	// dump
-	{
-		//xr_multimap<u32,std::pair<u32,shared_str> >::iterator I = mtex.begin	();
-		//xr_multimap<u32,std::pair<u32,shared_str> >::iterator E = mtex.end		();
-		//for (; I!=E; I++)
-		//	Msg			("* %4.1f : [%4d] %s",float(I->first)/1024.f, I->second.first, I->second.second.c_str());
-	}
-}
 
 void	CResourceManager::Evict()
 {

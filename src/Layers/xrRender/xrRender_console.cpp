@@ -201,7 +201,7 @@ Flags32		ps_r2_ls_flags				= { R2FLAG_SUN
 	//| R2FLAG_SUN_IGNORE_PORTALS
 	| R2FLAG_EXP_DONT_TEST_UNSHADOWED 
 	| R2FLAG_USE_NVSTENCIL | R2FLAG_EXP_SPLIT_SCENE 
-	| R2FLAG_EXP_MT_CALC | R3FLAG_DYN_WET_SURF
+	| R3FLAG_DYN_WET_SURF
 	| R3FLAG_VOLUMETRIC_SMOKE
 	//| R3FLAG_MSAA 
 	//| R3FLAG_MSAA_OPT
@@ -645,50 +645,6 @@ public:
 	}
 };
 
-
-class CCC_memory_stats : public IConsole_Command
-{
-protected	:
-
-public		:
-
-	CCC_memory_stats(LPCSTR N) :	IConsole_Command(N)	{ bEmptyArgsHandled = true; };
-
-	virtual void	Execute	(LPCSTR args)
-	{
-		size_t m_base = 0;
-		u32 c_base = 0;
-		size_t m_lmaps = 0;
-		u32 c_lmaps = 0;
-
-		dxRenderDeviceRender::Instance().ResourcesGetMemoryUsage( m_base, c_base, m_lmaps, c_lmaps );
-
-		Msg		("memory usage  mb \t \t video    \t managed      \t system \n" );
-
-		float vb_video		= (float)HW.stats_manager.memory_usage_summary[enum_stats_buffer_type_vertex][D3DPOOL_DEFAULT]/1024/1024;
-		float vb_managed	= (float)HW.stats_manager.memory_usage_summary[enum_stats_buffer_type_vertex][D3DPOOL_MANAGED]/1024/1024;
-		float vb_system		= (float)HW.stats_manager.memory_usage_summary[enum_stats_buffer_type_vertex][D3DPOOL_SYSTEMMEM]/1024/1024;
-		Msg		("vertex buffer      \t \t %f \t %f \t %f ",	vb_video, vb_managed, vb_system);
-
-		float ib_video		= (float)HW.stats_manager.memory_usage_summary[enum_stats_buffer_type_index][D3DPOOL_DEFAULT]/1024/1024; 
-		float ib_managed	= (float)HW.stats_manager.memory_usage_summary[enum_stats_buffer_type_index][D3DPOOL_MANAGED]/1024/1024; 
-		float ib_system		= (float)HW.stats_manager.memory_usage_summary[enum_stats_buffer_type_index][D3DPOOL_SYSTEMMEM]/1024/1024; 
-		Msg		("index buffer      \t \t %f \t %f \t %f ",	ib_video, ib_managed, ib_system);
-		
-		float textures_managed = (float)(m_base+m_lmaps)/1024/1024;
-		Msg		("textures          \t \t %f \t %f \t %f ",	0.f, textures_managed, 0.f);
-
-		float rt_video		= (float)HW.stats_manager.memory_usage_summary[enum_stats_buffer_type_rtarget][D3DPOOL_DEFAULT]/1024/1024;
-		float rt_managed	= (float)HW.stats_manager.memory_usage_summary[enum_stats_buffer_type_rtarget][D3DPOOL_MANAGED]/1024/1024;
-		float rt_system		= (float)HW.stats_manager.memory_usage_summary[enum_stats_buffer_type_rtarget][D3DPOOL_SYSTEMMEM]/1024/1024;
-		Msg		("R-Targets         \t \t %f \t %f \t %f ",	rt_video, rt_managed, rt_system);									
-
-		Msg		("\nTotal             \t \t %f \t %f \t %f ",	vb_video+ib_video+rt_video,
-																textures_managed + vb_managed+ib_managed+rt_managed,
-																vb_system+ib_system+rt_system);
-	}
-
-};
 
 
 #if RENDER!=R_R1
@@ -1185,7 +1141,6 @@ void		xrRender_initconsole	()
 	CMD4(CCC_Integer,	"r3_dynamic_wet_surfaces_sm_res",&ps_r3_dyn_wet_surf_sm_res,64,	2048	);
 
 	CMD3(CCC_Mask,			"r3_volumetric_smoke",			&ps_r2_ls_flags,			R3FLAG_VOLUMETRIC_SMOKE);
-	CMD1(CCC_memory_stats,	"render_memory_stats" );
 
 
 	// Screen Space Shaders

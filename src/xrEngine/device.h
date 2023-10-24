@@ -190,7 +190,6 @@ public:
 		//RCache.set_xform_project			(mProject);
 	}
 
-	void									DumpResourcesMemoryUsage() { m_pRender->ResourcesDumpMemoryUsage();}
 public:
 	// Registrators
 
