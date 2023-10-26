@@ -307,13 +307,7 @@ extern ENGINE_API Fvector4 ps_ssfx_rain_3;
 
 int ps_screen_space_shaders = 0;
 
-//extern ENGINE_API Fvector4 ps_ssfx_wpn_dof_1;
-//extern ENGINE_API float ps_ssfx_wpn_dof_2;
 
-//Fvector4 ps_ssfx_wpn_dof_1 = { .0f, .0f, .0f, .0f };
-
-
-//	x - min (0), y - focus (1.4), z - max (100)
 Fvector3	ps_r2_dof					= Fvector3().set(-1.25f, 1.4f, 10000.f);
 float		ps_r2_dof_sky				= 30;				//	distance to sky
 float		ps_r2_dof_kernel_size		= 5.0f;						//	7.0f
@@ -981,7 +975,6 @@ void		xrRender_initconsole	()
 
 #ifdef DEBUG
 	CMD3(CCC_Mask,		"r2_use_nvdbt",			&ps_r2_ls_flags,			R2FLAG_USE_NVDBT);
-	CMD3(CCC_Mask,		"r2_mt",				&ps_r2_ls_flags,			R2FLAG_EXP_MT_CALC);
 #endif // DEBUG
 
 	CMD3(CCC_Mask, "SSR_ON", &ps_r4_ssr_flags, R4_FLAG_SSR_USE);

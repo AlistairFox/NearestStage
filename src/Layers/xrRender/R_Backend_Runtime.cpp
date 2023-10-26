@@ -39,12 +39,10 @@ void CBackend::OnFrameEnd	()
 
 void CBackend::OnFrameBegin	()
 {
-//#ifndef DEDICATED_SERVER
 #ifndef _EDITOR
 	if (!g_dedicated_server)
-#endif    
+#endif   
 	{
-		PGO					(Msg("PGO:*****frame[%d]*****",RDEVICE.dwFrame));
 #if defined(USE_DX10) || defined(USE_DX11)
 		Invalidate();
 
@@ -53,11 +51,10 @@ void CBackend::OnFrameBegin	()
 		// Below are just in case
 		RImplementation.Target->u_setrt(Device.dwWidth, Device.dwHeight, HW.pBaseRT, NULL, NULL, HW.pBaseZB); // Set up HW base as RT and ZB
 
-		//	DX9 sets base rt nd base zb by default
+
 		RImplementation.rmNormal();
-		//set_RT				(HW.pBaseRT);
-		//set_ZB				(HW.pBaseZB);
-#endif	//	USE_DX10
+#endif
+
 		Memory.mem_fill		(&stat,0,sizeof(stat));
 		Vertex.Flush		();
 		Index.Flush			();
@@ -83,11 +80,13 @@ void CBackend::Invalidate	()
 	ps							= NULL;
 	vs							= NULL;
 DX10_ONLY(gs					= NULL);
-#ifdef USE_DX11
+
+#ifdef  USE_DX11
 	hs = 0;
 	ds = 0;
 	cs = 0;
 #endif
+
 	ctable						= NULL;
 
 	T							= NULL;
@@ -128,6 +127,7 @@ DX10_ONLY(gs					= NULL);
 		m_aComputeConstants[i] = 0;
 #endif
 	}
+
 	StateManager.Reset();
 	//	Redundant call. Just no note that we need to unmap const
 	//	if we create dedicated class.
@@ -146,16 +146,13 @@ DX10_ONLY(gs					= NULL);
 	for (u32 ps_it =0; ps_it < mtMaxPixelShaderTextures;)	textures_ps	[ps_it++]	= 0;
 	for (u32 vs_it =0; vs_it < mtMaxVertexShaderTextures;)	textures_vs	[vs_it++]	= 0;
 #ifdef _EDITOR
-	for (u32 m_it =0; m_it< 8;)		matrices	[m_it++]	= 0;
+	for (u32 m_it = 0; m_it < 8;)		matrices[m_it++] = 0;
 #endif
 }
 
 void	CBackend::set_ClipPlanes	(u32 _enable, Fplane*	_planes /*=NULL */, u32 count/* =0*/)
 {
 #if defined(USE_DX10) || defined(USE_DX11)
-	//	TODO: DX10: Implement in the corresponding vertex shaders
-	//	Use this to set up location, were shader setup code will get data
-	//VERIFY(!"CBackend::set_ClipPlanes not implemented!");
 	return;
 #else	//	USE_DX10
 	if (0==HW.Caps.geometry.dwClipPlanes)	return;
@@ -191,9 +188,7 @@ void	CBackend::set_ClipPlanes	(u32 _enable, Fmatrix*	_xform  /*=NULL */, u32 fma
 	if (0==HW.Caps.geometry.dwClipPlanes)	return;
 	if (!_enable)	{
 #if defined(USE_DX10) || defined(USE_DX11)
-		//	TODO: DX10: Implement in the corresponding vertex shaders
-		//	Use this to set up location, were shader setup code will get data
-		//VERIFY(!"CBackend::set_ClipPlanes not implemented!");
+
 #else	//	USE_DX10
 		CHK_DX	(HW.pDevice->SetRenderState(D3DRS_CLIPPLANEENABLE,FALSE));
 #endif	//	USE_DX10
@@ -243,7 +238,6 @@ void CBackend::set_Textures			(STextureList* _T)
 #endif
 				if (load_surf)			
 				{
-					PGO					(Msg("PGO:tex%d:%s",load_id,load_surf->cName.c_str()));
 					load_surf->bind		(load_id);
 //					load_surf->Apply	(load_id);
 				}
@@ -267,7 +261,6 @@ void CBackend::set_Textures			(STextureList* _T)
 #endif
 				if (load_surf)
 				{
-					PGO					(Msg("PGO:tex%d:%s",load_id,load_surf->cName.c_str()));
 					load_surf->bind		(load_id);
 //					load_surf->Apply	(load_id);
 				}
@@ -290,7 +283,6 @@ void CBackend::set_Textures			(STextureList* _T)
 #endif
 				if (load_surf)
 				{
-					PGO					(Msg("PGO:tex%d:%s",load_id,load_surf->cName.c_str()));
 					load_surf->bind		(load_id);
 					//					load_surf->Apply	(load_id);
 				}
@@ -313,7 +305,6 @@ void CBackend::set_Textures			(STextureList* _T)
 #endif
 				if (load_surf)
 				{
-					PGO					(Msg("PGO:tex%d:%s",load_id,load_surf->cName.c_str()));
 					load_surf->bind		(load_id);
 					//					load_surf->Apply	(load_id);
 				}
@@ -335,7 +326,6 @@ void CBackend::set_Textures			(STextureList* _T)
 #endif
 				if (load_surf)
 				{
-					PGO					(Msg("PGO:tex%d:%s",load_id,load_surf->cName.c_str()));
 					load_surf->bind		(load_id);
 					//					load_surf->Apply	(load_id);
 				}
@@ -357,7 +347,6 @@ void CBackend::set_Textures			(STextureList* _T)
 #endif
 				if (load_surf)
 				{
-					PGO					(Msg("PGO:tex%d:%s",load_id,load_surf->cName.c_str()));
 					load_surf->bind		(load_id);
 					//					load_surf->Apply	(load_id);
 				}

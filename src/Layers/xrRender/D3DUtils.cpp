@@ -875,9 +875,15 @@ void CDrawUtilities::DrawPlane	(const Fvector& p, const Fvector& n, const Fvecto
         pv->set		(+scale.x, 0, -scale.y, clr_s); mR.transform_tiny(pv->p); pv++;
         pv->set		(*(pv-4));
         Stream->Unlock(5,vs_L->vb_stride);
-        if (!bCull) DU_DRAW_RS(D3DRS_CULLMODE,D3DCULL_NONE);
-        DU_DRAW_DP		(D3DPT_TRIANGLEFAN,vs_L,vBase,2);
-        if (!bCull) DU_DRAW_RS(D3DRS_CULLMODE,D3DCULL_CCW);
+#ifdef USE_DX11
+        if (!bCull) DU_DRAW_RS(D3DRS_CULLMODE, D3D11_CULL_NONE);
+        DU_DRAW_DP(D3DPT_TRIANGLEFAN, vs_L, vBase, 2);
+        if (!bCull) DU_DRAW_RS(D3DRS_CULLMODE, D3D11_CULL_BACK);
+#else
+        if (!bCull) DU_DRAW_RS(D3DRS_CULLMODE, D3DCULL_NONE);
+        DU_DRAW_DP(D3DPT_TRIANGLEFAN, vs_L, vBase, 2);
+        if (!bCull) DU_DRAW_RS(D3DRS_CULLMODE, D3DCULL_CCW);
+#endif // USE_DX11
     }
 
     if (bWire){
@@ -912,9 +918,17 @@ void CDrawUtilities::DrawPlane  (const Fvector& center, const Fvector2& scale, c
         pv->set		(+scale.x, 0, -scale.y, clr_s); M.transform_tiny(pv->p); pv++;
         pv->set		(*(pv-4));
         Stream->Unlock(5,vs_L->vb_stride);
-        if (!bCull) DU_DRAW_RS(D3DRS_CULLMODE,D3DCULL_NONE);
-        DU_DRAW_DP		(D3DPT_TRIANGLEFAN,vs_L,vBase,2);
-        if (!bCull) DU_DRAW_RS(D3DRS_CULLMODE,D3DCULL_CCW);
+
+#ifdef USE_DX11
+        if (!bCull) DU_DRAW_RS(D3DRS_CULLMODE, D3D11_CULL_NONE);
+        DU_DRAW_DP(D3DPT_TRIANGLEFAN, vs_L, vBase, 2);
+        if (!bCull) DU_DRAW_RS(D3DRS_CULLMODE, D3D11_CULL_BACK);
+#else
+        if (!bCull) DU_DRAW_RS(D3DRS_CULLMODE, D3DCULL_NONE);
+        DU_DRAW_DP(D3DPT_TRIANGLEFAN, vs_L, vBase, 2);
+        if (!bCull) DU_DRAW_RS(D3DRS_CULLMODE, D3DCULL_CCW);
+#endif // USE_DX11
+
     }
 
     if (bWire){
@@ -1115,10 +1129,18 @@ void CDrawUtilities::DrawSelectionRect(const Ivector2& m_SelStart, const Ivector
     pv->set(m_SelEnd.x*SCREEN_QUALITY,   m_SelStart.y*SCREEN_QUALITY, m_SelectionRect,0.f,0.f); pv++;
 	Stream->Unlock(4,vs_TL->vb_stride);
 	// Render it as triangle list
-    DU_DRAW_RS(D3DRS_CULLMODE,D3DCULL_NONE);
-	DU_DRAW_SH(dxRenderDeviceRender::Instance().m_SelectionShader);
-    DU_DRAW_DP(D3DPT_TRIANGLEFAN,vs_TL,vBase,2);
-    DU_DRAW_RS(D3DRS_CULLMODE,D3DCULL_CCW);
+#ifdef USE_DX11
+    DU_DRAW_RS(D3DRS_CULLMODE, D3D11_CULL_NONE);
+    DU_DRAW_SH(dxRenderDeviceRender::Instance().m_SelectionShader);
+    DU_DRAW_DP(D3DPT_TRIANGLEFAN, vs_TL, vBase, 2);
+    DU_DRAW_RS(D3DRS_CULLMODE, D3D11_CULL_BACK);
+#else
+    DU_DRAW_RS(D3DRS_CULLMODE, D3DCULL_NONE);
+    DU_DRAW_SH(dxRenderDeviceRender::Instance().m_SelectionShader);
+    DU_DRAW_DP(D3DPT_TRIANGLEFAN, vs_TL, vBase, 2);
+    DU_DRAW_RS(D3DRS_CULLMODE, D3DCULL_CCW);
+#endif // USE_DX11
+
 }
 
 void CDrawUtilities::DrawPrimitiveL	(D3DPRIMITIVETYPE pt, u32 pc, Fvector* vertices, int vc, u32 color, BOOL bCull, BOOL bCycle)
@@ -1132,9 +1154,15 @@ void CDrawUtilities::DrawPrimitiveL	(D3DPRIMITIVETYPE pt, u32 pc, Fvector* verti
     if (bCycle)		pv->set(*(pv-vc));
 	Stream->Unlock(dwNeed,vs_L->vb_stride);
 
-    if (!bCull) DU_DRAW_RS(D3DRS_CULLMODE,D3DCULL_NONE);
-    DU_DRAW_DP		(pt,vs_L,vBase,pc);
-    if (!bCull) DU_DRAW_RS(D3DRS_CULLMODE,D3DCULL_CCW);
+#ifdef USE_DX11
+    if (!bCull) DU_DRAW_RS(D3DRS_CULLMODE, D3D11_CULL_NONE);
+    DU_DRAW_DP(pt, vs_L, vBase, pc);
+    if (!bCull) DU_DRAW_RS(D3DRS_CULLMODE, D3D11_CULL_BACK);
+#else
+    if (!bCull) DU_DRAW_RS(D3DRS_CULLMODE, D3DCULL_NONE);
+    DU_DRAW_DP(pt, vs_L, vBase, pc);
+    if (!bCull) DU_DRAW_RS(D3DRS_CULLMODE, D3DCULL_CCW);
+#endif // USE_DX11
 }
 
 void CDrawUtilities::DrawPrimitiveTL(D3DPRIMITIVETYPE pt, u32 pc, FVF::TL* vertices, int vc, BOOL bCull, BOOL bCycle)
@@ -1147,10 +1175,17 @@ void CDrawUtilities::DrawPrimitiveTL(D3DPRIMITIVETYPE pt, u32 pc, FVF::TL* verti
     	pv->set		(vertices[k]);
     if (bCycle)		pv->set(*(pv-vc));
 	Stream->Unlock(dwNeed,vs_TL->vb_stride);
+#ifdef USE_DX11
+    if (!bCull) 	DU_DRAW_RS(D3DRS_CULLMODE, D3D11_CULL_NONE);
+    DU_DRAW_DP(pt, vs_TL, vBase, pc);
+    if (!bCull) 	DU_DRAW_RS(D3DRS_CULLMODE, D3D11_CULL_BACK);
+#else
+    if (!bCull) 	DU_DRAW_RS(D3DRS_CULLMODE, D3DCULL_NONE);
+    DU_DRAW_DP(pt, vs_TL, vBase, pc);
+    if (!bCull) 	DU_DRAW_RS(D3DRS_CULLMODE, D3DCULL_CCW);
+#endif // USE_DX11
 
-    if (!bCull) 	DU_DRAW_RS(D3DRS_CULLMODE,D3DCULL_NONE);
-    DU_DRAW_DP		(pt,vs_TL,vBase,pc);
-    if (!bCull) 	DU_DRAW_RS(D3DRS_CULLMODE,D3DCULL_CCW);
+
 }
 
 void CDrawUtilities::DrawPrimitiveLIT(D3DPRIMITIVETYPE pt, u32 pc, FVF::LIT* vertices, int vc, BOOL bCull, BOOL bCycle)
@@ -1164,9 +1199,15 @@ void CDrawUtilities::DrawPrimitiveLIT(D3DPRIMITIVETYPE pt, u32 pc, FVF::LIT* ver
     if (bCycle)		pv->set(*(pv-vc));
 	Stream->Unlock(dwNeed,vs_LIT->vb_stride);
 
-    if (!bCull) DU_DRAW_RS(D3DRS_CULLMODE,D3DCULL_NONE);
-    DU_DRAW_DP		(pt,vs_LIT,vBase,pc);
-    if (!bCull) DU_DRAW_RS(D3DRS_CULLMODE,D3DCULL_CCW);
+#ifdef USE_DX11
+    if (!bCull) DU_DRAW_RS(D3DRS_CULLMODE, D3D11_CULL_NONE);
+    DU_DRAW_DP(pt, vs_LIT, vBase, pc);
+    if (!bCull) DU_DRAW_RS(D3DRS_CULLMODE, D3D11_CULL_BACK);
+#else
+    if (!bCull) DU_DRAW_RS(D3DRS_CULLMODE, D3DCULL_NONE);
+    DU_DRAW_DP(pt, vs_LIT, vBase, pc);
+    if (!bCull) DU_DRAW_RS(D3DRS_CULLMODE, D3DCULL_CCW);
+#endif // USE_DX11
 }
 
 void CDrawUtilities::DrawLink(const Fvector& p0, const Fvector& p1, float sz, u32 clr)

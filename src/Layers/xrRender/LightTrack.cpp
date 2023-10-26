@@ -60,8 +60,7 @@ void	CROS_impl::add		(light* source)
 		if (source == I->source)	{ I->frame_touched = Device.dwFrame; return; }
 
 	// Register _new_
-	track.push_back		(Item());
-	Item&	L			= track.back();
+	Item& L = Item();
 	L.frame_touched		= Device.dwFrame;
 	L.source			= source;
 	L.cache.verts[0].set(0,0,0);
@@ -69,6 +68,7 @@ void	CROS_impl::add		(light* source)
 	L.cache.verts[2].set(0,0,0);
 	L.test				= 0.f;
 	L.energy			= 0.f;
+	track.emplace_back(L);
 }
 
 IC bool	pred_energy			(const CROS_impl::Light& L1, const CROS_impl::Light& L2)	{ return L1.energy>L2.energy; }

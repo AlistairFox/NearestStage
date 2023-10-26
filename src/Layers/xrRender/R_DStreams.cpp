@@ -54,11 +54,7 @@ void* _VertexStream::Lock	( u32 vl_Count, u32 Stride, u32& vOffset )
 	D3D11_MAPPED_SUBRESOURCE MappedSubRes;
 #endif
 
-#ifdef DEBUG
-	PGO					(Msg("PGO:VB_LOCK:%d",vl_Count));
-	VERIFY				(0==dbg_lock);
-	dbg_lock			++;
-#endif
+
 
 	// Ensure there is enough space in the VB for this data
 	u32	bytes_need		= vl_Count*Stride;
@@ -81,9 +77,6 @@ void* _VertexStream::Lock	( u32 vl_Count, u32 Stride, u32& vOffset )
 		HW.pContext->Map(pVB, 0, D3D_MAP_WRITE_DISCARD, 0, &MappedSubRes);
 		pData=(BYTE*)MappedSubRes.pData;
 		pData += vOffset;
-#elif defined(USE_DX10)
-		pVB->Map(D3D_MAP_WRITE_DISCARD, 0, (void**)&pData);
-		pData += vOffset;
 #else	//	USE_DX10
 		HRESULT res = pVB->Lock( mPosition, bytes_need, (void**)&pData, LOCKFLAGS_FLUSH);
 
@@ -99,9 +92,6 @@ void* _VertexStream::Lock	( u32 vl_Count, u32 Stride, u32& vOffset )
 #if defined(USE_DX11)
 		HW.pContext->Map(pVB, 0, D3D_MAP_WRITE_NO_OVERWRITE, 0, &MappedSubRes);
 		pData=(BYTE*)MappedSubRes.pData;
-		pData += vOffset*Stride;
-#elif defined(USE_DX10)
-		pVB->Map(D3D_MAP_WRITE_NO_OVERWRITE, 0, (void**)&pData);
 		pData += vOffset*Stride;
 #else	//	USE_DX10
 		HRESULT res = pVB->Lock			( mPosition, bytes_need, (void**)&pData, LOCKFLAGS_APPEND);
@@ -205,7 +195,6 @@ u16*	_IndexStream::Lock	( u32 Count, u32& vOffset )
 #ifdef USE_DX11
 	D3D11_MAPPED_SUBRESOURCE MappedSubRes;
 #endif
-	PGO						(Msg("PGO:IB_LOCK:%d",Count));
 	vOffset					= 0;
 	BYTE* pLockedData		= 0;
 
@@ -246,7 +235,6 @@ u16*	_IndexStream::Lock	( u32 Count, u32& vOffset )
 
 void	_IndexStream::Unlock(u32 RealCount)
 {
-	PGO						(Msg("PGO:IB_UNLOCK:%d",RealCount));
 	mPosition				+=	RealCount;
 	VERIFY					(pIB);
 #if defined(USE_DX11)

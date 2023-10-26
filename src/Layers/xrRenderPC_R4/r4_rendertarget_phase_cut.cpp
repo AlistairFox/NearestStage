@@ -40,7 +40,7 @@ void CRenderTarget::phase_cut()
 	RCache.set_Geometry(g_combine);
 
 	// draw
-	StateManager.SetDepthFunc(D3DCMP_ALWAYS);
+	StateManager.SetDepthFunc(D3D11_COMPARISON_ALWAYS);
 	StateManager.SetDepthEnable(TRUE);
 	RCache.Render(D3DPT_TRIANGLELIST, Offset, 0, 4, 0, 2);
 	if (RImplementation.o.dx10_msaa)

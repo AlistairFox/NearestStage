@@ -14,7 +14,7 @@ public:
 
 	virtual		void		Compile			(CBlender_Compile& C)
 	{
-		C.r_Pass			("sky2",		"sky2",			FALSE,	TRUE, FALSE);
+		C.r_Pass			("sky2",		"sky2",			false,	TRUE, false);
 #if defined(USE_DX10) || defined(USE_DX11)
 		//C.r_Sampler_clf		("s_sky0",		"$null"			);
 		//C.r_Sampler_clf		("s_sky1",		"$null"			);

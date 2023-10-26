@@ -4,10 +4,7 @@
 
 namespace dx10StateUtils
 {
-	D3D_CULL_MODE				ConvertCullMode(D3DCULL Mode);
-	D3D_COMPARISON_FUNC			ConvertCmpFunction(D3DCMPFUNC Func);
-	D3D_STENCIL_OP				ConvertStencilOp(D3DSTENCILOP Op);
-	D3D_BLEND					ConvertBlendArg(D3DBLEND Arg);
+	D3D_BLEND					ConvertBlendArg(D3D11_BLEND Arg);
 	D3D_BLEND_OP				ConvertBlendOp(D3DBLENDOP Op);
 	D3D_TEXTURE_ADDRESS_MODE	ConvertTextureAddressMode(D3DTEXTUREADDRESS Mode);
 

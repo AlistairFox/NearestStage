@@ -244,13 +244,13 @@ void CRenderTarget::draw_rain( light &RainSetup )
 		RCache.set_c				("RainFallof",			ps_r3_dyn_wet_surf_near, ps_r3_dyn_wet_surf_far, 0, 0			);
 		if( !RImplementation.o.dx10_msaa )
 		{
-			RCache.set_Stencil( TRUE, D3DCMP_EQUAL, 0x01, 0x01, 0 );
+			RCache.set_Stencil(TRUE, D3D11_COMPARISON_EQUAL, 0x01, 0x01, 0);
 			RCache.Render		(D3DPT_TRIANGLELIST,Offset,0,4,0,2);
 		}
 		else 
 		{
 			// per pixel execution
-			RCache.set_Stencil( TRUE, D3DCMP_EQUAL, 0x01, 0x81, 0 );
+			RCache.set_Stencil(TRUE, D3D11_COMPARISON_EQUAL, 0x01, 0x81, 0);
 			RCache.Render		( D3DPT_TRIANGLELIST,Offset,0,4,0,2);
       		
 			// per sample
@@ -264,7 +264,7 @@ void CRenderTarget::draw_rain( light &RainSetup )
 				RCache.set_c				("m_sunmask",			m_clouds_shadow					);
 				RCache.set_c				("RainDensity",			fRainFactor, 0, 0, 0			);
 				RCache.set_CullMode(CULL_NONE	);
-				RCache.set_Stencil( TRUE, D3DCMP_EQUAL, 0x81, 0x81, 0  );
+				RCache.set_Stencil(TRUE, D3D11_COMPARISON_EQUAL, 0x81, 0x81, 0);
 				RCache.Render		( D3DPT_TRIANGLELIST,Offset,0,4,0,2);
 			}
 			else
@@ -280,7 +280,7 @@ void CRenderTarget::draw_rain( light &RainSetup )
 					RCache.set_c				("RainDensity",			fRainFactor, 0, 0, 0			);
 					StateManager.SetSampleMask ( u32(1) << i );
 					RCache.set_CullMode(CULL_NONE	);
-					RCache.set_Stencil         ( TRUE, D3DCMP_EQUAL, 0x81, 0x81, 0  );
+					RCache.set_Stencil(TRUE, D3D11_COMPARISON_EQUAL, 0x81, 0x81, 0);
 					RCache.Render					( D3DPT_TRIANGLELIST,Offset,0,4,0,2);
 				}
 				StateManager.SetSampleMask( 0xffffffff );
@@ -313,20 +313,20 @@ void CRenderTarget::draw_rain( light &RainSetup )
 
 		if( ! RImplementation.o.dx10_msaa )
 		{
-			RCache.set_Stencil( TRUE, D3DCMP_EQUAL, 0x01, 0x01, 0 );
+			RCache.set_Stencil(TRUE, D3D11_COMPARISON_EQUAL, 0x01, 0x01, 0);
 			RCache.Render		(D3DPT_TRIANGLELIST,Offset,0,4,0,2);
 		}
 		else 
 		{
 			// per pixel execution
-			RCache.set_Stencil( TRUE, D3DCMP_EQUAL, 0x01, 0x81, 0 );
+			RCache.set_Stencil(TRUE, D3D11_COMPARISON_EQUAL, 0x01, 0x81, 0);
 			RCache.Render		( D3DPT_TRIANGLELIST,Offset,0,4,0,2);
 
 			// per sample
 			if( RImplementation.o.dx10_msaa_opt )
 			{
 				RCache.set_Element	( s_rain_msaa[0]->E[1]);
-				RCache.set_Stencil   ( TRUE, D3DCMP_EQUAL, 0x81, 0x81, 0 );
+				RCache.set_Stencil(TRUE, D3D11_COMPARISON_EQUAL, 0x81, 0x81, 0);
 				RCache.set_CullMode(CULL_NONE	);
 				RCache.Render			( D3DPT_TRIANGLELIST,Offset,0,4,0,2);
 			}
@@ -336,7 +336,7 @@ void CRenderTarget::draw_rain( light &RainSetup )
 				{
 					RCache.set_Element			(s_rain_msaa[i]->E[1]);
 					StateManager.SetSampleMask ( u32(1) << i );
-					RCache.set_Stencil         ( TRUE, D3DCMP_EQUAL, 0x81, 0x81, 0 );
+					RCache.set_Stencil(TRUE, D3D11_COMPARISON_EQUAL, 0x81, 0x81, 0);
 					RCache.set_CullMode(CULL_NONE	);
 					RCache.Render					(D3DPT_TRIANGLELIST,Offset,0,4,0,2);
 				}
@@ -359,20 +359,20 @@ void CRenderTarget::draw_rain( light &RainSetup )
 
 		if( ! RImplementation.o.dx10_msaa )
 		{
-			RCache.set_Stencil( TRUE, D3DCMP_EQUAL, 0x01, 0x01, 0 );
+			RCache.set_Stencil(TRUE, D3D11_COMPARISON_EQUAL, 0x01, 0x01, 0);
 			RCache.Render		(D3DPT_TRIANGLELIST,Offset,0,4,0,2);
 		}
 		else 
 		{
 			// per pixel execution
-			RCache.set_Stencil( TRUE, D3DCMP_EQUAL, 0x01, 0x81, 0 );
+			RCache.set_Stencil(TRUE, D3D11_COMPARISON_EQUAL, 0x01, 0x81, 0);
 			RCache.Render		( D3DPT_TRIANGLELIST,Offset,0,4,0,2);
 
 			// per sample
 			if( RImplementation.o.dx10_msaa_opt )
 			{
 				RCache.set_Element(s_rain_msaa[0]->E[2]);
-				RCache.set_Stencil( TRUE, D3DCMP_EQUAL, 0x81, 0x81, 0 );
+				RCache.set_Stencil(TRUE, D3D11_COMPARISON_EQUAL, 0x81, 0x81, 0);
 				RCache.Render		(D3DPT_TRIANGLELIST,Offset,0,4,0,2);
 			}
 			else 
@@ -380,7 +380,7 @@ void CRenderTarget::draw_rain( light &RainSetup )
 				for( u32 i = 0; i < RImplementation.o.dx10_msaa_samples; ++i )
 				{
 					RCache.set_Element		   (s_rain_msaa[i]->E[2]);
-					RCache.set_Stencil         ( TRUE, D3DCMP_EQUAL, 0x81, 0x81, 0 );
+					RCache.set_Stencil(TRUE, D3D11_COMPARISON_EQUAL, 0x81, 0x81, 0);
 					StateManager.SetSampleMask ( u32(1) << i );
 					RCache.Render					(D3DPT_TRIANGLELIST,Offset,0,4,0,2);
 				}

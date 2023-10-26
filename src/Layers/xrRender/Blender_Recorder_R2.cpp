@@ -9,14 +9,18 @@
 
 void fix_texture_name(LPSTR fn);
 
-void	CBlender_Compile::r_Pass		(LPCSTR _vs, LPCSTR _ps, bool bFog, BOOL bZtest, BOOL bZwrite,	BOOL bABlend, D3DBLEND abSRC, D3DBLEND abDST, BOOL aTest, u32 aRef)
+#ifdef USE_DX11
+
+void	CBlender_Compile::r_Pass(LPCSTR _vs, LPCSTR _ps, bool bFog, bool bZtest, bool bZwrite, bool bABlend, D3D11_BLEND abSRC, D3D11_BLEND abDST, bool aTest, u32 aRef)
 {
 	RS.Invalidate			();
 	ctable.clear			();
 	passTextures.clear		();
 	passMatrices.clear		();
 	passConstants.clear		();
-	dwStage					= 0;
+#ifdef USE_DX11
+	dwStage = 0;
+#endif // USE_DX11
 
 	// Setup FF-units (Z-buffer, blender)
 	PassSET_ZB				(bZtest,bZwrite);
@@ -46,6 +50,39 @@ void	CBlender_Compile::r_Pass		(LPCSTR _vs, LPCSTR _ps, bool bFog, BOOL bZtest, 
 		RS.SetTSS				(0,D3DTSS_ALPHAOP,D3DTOP_DISABLE);
 	}
 }
+
+#else
+void	CBlender_Compile::r_Pass(LPCSTR _vs, LPCSTR _ps, bool bFog, BOOL bZtest, BOOL bZwrite, BOOL bABlend, D3DBLEND abSRC, D3DBLEND abDST, BOOL aTest, u32 aRef)
+{
+	RS.Invalidate();
+	ctable.clear();
+	passTextures.clear();
+	passMatrices.clear();
+	passConstants.clear();
+
+
+	// Setup FF-units (Z-buffer, blender)
+	PassSET_ZB(bZtest, bZwrite);
+	PassSET_Blend(bABlend, abSRC, abDST, aTest, aRef);
+	PassSET_LightFog(FALSE, bFog);
+
+	// Create shaders
+	SPS* ps = DEV->_CreatePS(_ps);
+	SVS* vs = DEV->_CreateVS(_vs);
+	dest.ps = ps;
+	dest.vs = vs;
+
+	ctable.merge(&ps->constants);
+	ctable.merge(&vs->constants);
+
+	// Last Stage - disable
+	if (0 == stricmp(_ps, "null")) {
+		RS.SetTSS(0, D3DTSS_COLOROP, D3DTOP_DISABLE);
+		RS.SetTSS(0, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
+	}
+}
+
+#endif // USE_DX11
 
 void	CBlender_Compile::r_Constant	(LPCSTR name, R_constant_setup* s)
 {

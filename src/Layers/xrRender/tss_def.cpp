@@ -134,16 +134,16 @@ void SimulatorStates::UpdateDesc( D3D_RASTERIZER_DESC &desc ) const
 			{
 			case D3DRS_FILLMODE:
 				if (S.v2==D3DFILL_SOLID)
-					desc.FillMode = D3D_FILL_SOLID;
+					desc.FillMode = D3D11_FILL_SOLID;
 				else
 				{
 					VERIFY(S.v2==D3DFILL_WIREFRAME);
-					desc.FillMode = D3D_FILL_WIREFRAME;
+					desc.FillMode = D3D11_FILL_WIREFRAME;
 				}
 				break;
 
 			case D3DRS_CULLMODE:
-				desc.CullMode = dx10StateUtils::ConvertCullMode((D3DCULL)S.v2);
+				desc.CullMode = (D3D11_CULL_MODE)S.v2;
 				break;
 				/*
 				switch (S.v2)
@@ -212,11 +212,11 @@ void SimulatorStates::UpdateDesc( D3D_DEPTH_STENCIL_DESC &desc ) const
 				break;
 
 			case D3DRS_ZWRITEENABLE:
-				desc.DepthWriteMask = S.v2 ? D3D_DEPTH_WRITE_MASK_ALL : D3D_DEPTH_WRITE_MASK_ZERO;
+				desc.DepthWriteMask = S.v2 ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
 				break;
 
 			case D3DRS_ZFUNC:
-				desc.DepthFunc = dx10StateUtils::ConvertCmpFunction((D3DCMPFUNC)S.v2);
+				desc.DepthFunc = ((D3D11_COMPARISON_FUNC)S.v2);
 				break;
 
 			case D3DRS_STENCILENABLE:
@@ -232,35 +232,35 @@ void SimulatorStates::UpdateDesc( D3D_DEPTH_STENCIL_DESC &desc ) const
 				break;
 
 			case D3DRS_STENCILFAIL:
-				desc.FrontFace.StencilFailOp = dx10StateUtils::ConvertStencilOp((D3DSTENCILOP)S.v2);
+				desc.FrontFace.StencilFailOp = ((D3D11_STENCIL_OP)S.v2);
 				break;
 
 			case D3DRS_STENCILZFAIL:
-				desc.FrontFace.StencilDepthFailOp = dx10StateUtils::ConvertStencilOp((D3DSTENCILOP)S.v2);
+				desc.FrontFace.StencilDepthFailOp = ((D3D11_STENCIL_OP)S.v2);
 				break;
 
 			case D3DRS_STENCILPASS:
-				desc.FrontFace.StencilPassOp = dx10StateUtils::ConvertStencilOp((D3DSTENCILOP)S.v2);
+				desc.FrontFace.StencilPassOp = ((D3D11_STENCIL_OP)S.v2);
 				break;
 
 			case D3DRS_STENCILFUNC:
-				desc.FrontFace.StencilFunc = dx10StateUtils::ConvertCmpFunction((D3DCMPFUNC)S.v2);
+				desc.FrontFace.StencilFunc = ((D3D11_COMPARISON_FUNC)S.v2);
 				break;
 
 			case D3DRS_CCW_STENCILFAIL:
-				desc.BackFace.StencilFailOp = dx10StateUtils::ConvertStencilOp((D3DSTENCILOP)S.v2);
+				desc.BackFace.StencilFailOp = ((D3D11_STENCIL_OP)S.v2);
 				break;
 
 			case D3DRS_CCW_STENCILZFAIL:
-				desc.BackFace.StencilDepthFailOp = dx10StateUtils::ConvertStencilOp((D3DSTENCILOP)S.v2);
+				desc.BackFace.StencilDepthFailOp = ((D3D11_STENCIL_OP)S.v2);
 				break;
 
 			case D3DRS_CCW_STENCILPASS:
-				desc.BackFace.StencilPassOp = dx10StateUtils::ConvertStencilOp((D3DSTENCILOP)S.v2);
+				desc.BackFace.StencilPassOp = ((D3D11_STENCIL_OP)S.v2);
 				break;
 
 			case D3DRS_CCW_STENCILFUNC:
-				desc.BackFace.StencilFunc = dx10StateUtils::ConvertCmpFunction((D3DCMPFUNC)S.v2);
+				desc.BackFace.StencilFunc = ((D3D11_COMPARISON_FUNC)S.v2);
 				break;
 			}
 		}
@@ -284,12 +284,12 @@ void SimulatorStates::UpdateDesc( D3D_BLEND_DESC &desc ) const
 				
 			case D3DRS_SRCBLEND:
 				for ( int i=0; i<8; ++i)
-					desc.RenderTarget[i].SrcBlend = dx10StateUtils::ConvertBlendArg((D3DBLEND)S.v2);
+					desc.RenderTarget[i].SrcBlend = dx10StateUtils::ConvertBlendArg((D3D11_BLEND)S.v2);
 				break;
 
 			case D3DRS_DESTBLEND:
 				for ( int i=0; i<8; ++i)
-					desc.RenderTarget[i].DestBlend = dx10StateUtils::ConvertBlendArg((D3DBLEND)S.v2);
+					desc.RenderTarget[i].DestBlend = dx10StateUtils::ConvertBlendArg((D3D11_BLEND)S.v2);
 				break;
 			
 				//D3DRS_ALPHAFUNC
@@ -301,12 +301,12 @@ void SimulatorStates::UpdateDesc( D3D_BLEND_DESC &desc ) const
 
 			case D3DRS_SRCBLENDALPHA:
 				for ( int i=0; i<8; ++i)
-					desc.RenderTarget[i].SrcBlendAlpha = dx10StateUtils::ConvertBlendArg((D3DBLEND)S.v2);
+					desc.RenderTarget[i].SrcBlendAlpha = dx10StateUtils::ConvertBlendArg((D3D11_BLEND)S.v2);
 				break;
 
 			case D3DRS_DESTBLENDALPHA:
 				for ( int i=0; i<8; ++i)
-					desc.RenderTarget[i].DestBlendAlpha = dx10StateUtils::ConvertBlendArg((D3DBLEND)S.v2);
+					desc.RenderTarget[i].DestBlendAlpha = dx10StateUtils::ConvertBlendArg((D3D11_BLEND)S.v2);
 				break;
 
 			case D3DRS_BLENDOPALPHA:

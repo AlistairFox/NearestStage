@@ -12,19 +12,19 @@ void	CBlender_accum_direct::Compile(CBlender_Compile& C)
 
 //	BOOL	b_HW_smap		= RImplementation.o.HW_smap;
 //	BOOL	b_HW_PCF		= RImplementation.o.HW_smap_PCF;
-	BOOL		blend		= FALSE;	//RImplementation.o.fp16_blend;
-	D3DBLEND	dest		= blend?D3DBLEND_ONE:D3DBLEND_ZERO;
-	if (RImplementation.o.sunfilter)	{ blend = FALSE; dest = D3DBLEND_ZERO; }
+	BOOL		blend		= false;	//RImplementation.o.fp16_blend;
+	D3D11_BLEND	dest = blend ? D3D11_BLEND_ONE : D3D11_BLEND_ZERO;
+	if (RImplementation.o.sunfilter)	{ blend = false;}
 
 	switch (C.iElement)
 	{
 	case SE_SUN_NEAR:		// near pass - enable Z-test to perform depth-clipping
 	case SE_SUN_MIDDLE:		// middle pass - enable Z-test to perform depth-clipping
 		//	FVF::TL2uv
-		C.r_Pass			("accum_sun","accum_sun_near_nomsaa_nominmax",	false,	TRUE,	FALSE,blend,D3DBLEND_ONE,dest);
+		C.r_Pass("accum_sun", "accum_sun_near_nomsaa_nominmax", false, true, false, blend, D3D11_BLEND_ONE, dest);
 
-		C.r_CullMode		(D3DCULL_NONE);
-		C.PassSET_ZB		(TRUE,FALSE,TRUE	);	// force inverted Z-Buffer
+		C.r_CullMode(D3D11_CULL_NONE);
+		C.PassSET_ZB		(true,false,true	);	// force inverted Z-Buffer
 
 		C.r_dx10Texture		("s_position",		r2_RT_P);
 		C.r_dx10Texture		("s_normal",		r2_RT_N);
@@ -44,9 +44,9 @@ void	CBlender_accum_direct::Compile(CBlender_Compile& C)
 		break;
 	case SE_SUN_FAR:		// far pass, only stencil clipping performed
 		//	FVF::TL2uv
-		//C.r_Pass			("null",			"accum_sun_far",	false,	TRUE,	FALSE,blend,D3DBLEND_ONE,dest);
-		C.r_Pass			("accum_sun","accum_sun_far_nomsaa",	false,	TRUE,	FALSE,blend,D3DBLEND_ONE,dest);
-		C.r_CullMode		(D3DCULL_NONE);
+		//C.r_Pass			("null",			"accum_sun_far",	false,	true,	false,blend,D3DBLEND_ONE,dest);
+		C.r_Pass("accum_sun", "accum_sun_far_nomsaa", false, true, false, blend, D3D11_BLEND_ONE, dest);
+		C.r_CullMode(D3D11_CULL_NONE);
 		//C.r_Sampler_rtf		("s_position",		r2_RT_P			);
 		//C.r_Sampler_rtf		("s_normal",		r2_RT_N			);
 		//C.r_Sampler_clw		("s_material",		r2_material		);
@@ -81,9 +81,9 @@ void	CBlender_accum_direct::Compile(CBlender_Compile& C)
 		C.r_End				();
 		break;
 	case SE_SUN_LUMINANCE:	// luminance pass
-		//C.r_Pass			("null",			"accum_sun",		false,	FALSE,	FALSE);
-		C.r_Pass			("stub_notransform_aa_AA","accum_sun_nomsaa",		false,	FALSE,	FALSE);
-		C.r_CullMode		(D3DCULL_NONE);
+		//C.r_Pass			("null",			"accum_sun",		false,	false,	false);
+		C.r_Pass			("stub_notransform_aa_AA","accum_sun_nomsaa",		false,	false,	false);
+		C.r_CullMode		(D3D11_CULL_NONE);
 		//C.r_Sampler_rtf		("s_position",		r2_RT_P			);
 		//C.r_Sampler_rtf		("s_normal",		r2_RT_N			);
 		//C.r_Sampler_clw		("s_material",		r2_material		);
@@ -104,9 +104,9 @@ void	CBlender_accum_direct::Compile(CBlender_Compile& C)
 		//	SE_SUN_NEAR for min/max
 	case SE_SUN_NEAR_MINMAX:		// near pass - enable Z-test to perform depth-clipping
 		//	FVF::TL2uv
-		C.r_Pass			("accum_sun","accum_sun_near_nomsaa_minmax",	false,	TRUE,	FALSE,blend,D3DBLEND_ONE,dest);
-		C.r_CullMode		(D3DCULL_NONE);
-		C.PassSET_ZB		(TRUE,FALSE,TRUE	);	// force inverted Z-Buffer
+		C.r_Pass("accum_sun", "accum_sun_near_nomsaa_minmax", false, true, false, blend, D3D11_BLEND_ONE, dest);
+		C.r_CullMode(D3D11_CULL_NONE);
+		C.PassSET_ZB		(true,false,true	);	// force inverted Z-Buffer
 
 		C.r_dx10Texture		("s_position",		r2_RT_P);
 		C.r_dx10Texture		("s_normal",		r2_RT_N);
@@ -128,7 +128,7 @@ void	CBlender_accum_direct::Compile(CBlender_Compile& C)
 	//	SE_SUN_FAR for min/max
 	case 5:		// far pass, only stencil clipping performed
 		//	FVF::TL2uv
-		C.r_Pass			("stub_notransform_2uv","accum_sun_far_nomsaa",	false,	TRUE,	FALSE,blend,D3DBLEND_ONE,dest);
+		C.r_Pass			("stub_notransform_2uv","accum_sun_far_nomsaa",	false,	true,	false,blend,D3DBLEND_ONE,dest);
 		C.r_CullMode		(D3DCULL_NONE);
 
 		C.r_dx10Texture		("s_position",		r2_RT_P);
@@ -166,19 +166,19 @@ void	CBlender_accum_direct_msaa::Compile(CBlender_Compile& C)
 
 //	BOOL	b_HW_smap		= RImplementation.o.HW_smap;
 //	BOOL	b_HW_PCF		= RImplementation.o.HW_smap_PCF;
-	BOOL		blend		= FALSE;	//RImplementation.o.fp16_blend;
-	D3DBLEND	dest		= blend?D3DBLEND_ONE:D3DBLEND_ZERO;
-	if (RImplementation.o.sunfilter)	{ blend = FALSE; dest = D3DBLEND_ZERO; }
+	BOOL		blend		= false;	//RImplementation.o.fp16_blend;
+	D3D11_BLEND	dest = blend ? D3D11_BLEND_ONE : D3D11_BLEND_ZERO;
+	if (RImplementation.o.sunfilter) { blend = false; }
 
 	switch (C.iElement)
 	{
 	case SE_SUN_NEAR:		// near pass - enable Z-test to perform depth-clipping
 	case SE_SUN_MIDDLE:		// middle pass - enable Z-test to perform depth-clipping
 		//	FVF::TL2uv
-		//C.r_Pass			("null",			"accum_sun_near",	false,	TRUE,	FALSE,blend,D3DBLEND_ONE,dest);
-		C.r_Pass			("accum_sun","accum_sun_near_msaa_nominmax",	false,	TRUE,	FALSE,blend,D3DBLEND_ONE,dest);
-		C.r_CullMode		(D3DCULL_NONE);
-		C.PassSET_ZB		(TRUE,FALSE,TRUE	);	// force inverted Z-Buffer
+		//C.r_Pass			("null",			"accum_sun_near",	false,	true,	false,blend,D3DBLEND_ONE,dest);
+		C.r_Pass("accum_sun", "accum_sun_near_msaa_nominmax", false, true, false, blend, D3D11_BLEND_ONE, dest);
+		C.r_CullMode(D3D11_CULL_NONE);
+		C.PassSET_ZB		(true,false,true	);	// force inverted Z-Buffer
 		//C.r_Sampler_rtf		("s_position",		r2_RT_P			);
 		//C.r_Sampler_rtf		("s_normal",		r2_RT_N			);
 		//C.r_Sampler_clw		("s_material",		r2_material		);
@@ -210,9 +210,9 @@ void	CBlender_accum_direct_msaa::Compile(CBlender_Compile& C)
 		break;
 	case SE_SUN_FAR:		// far pass, only stencil clipping performed
 		//	FVF::TL2uv
-		//C.r_Pass			("null",			"accum_sun_far",	false,	TRUE,	FALSE,blend,D3DBLEND_ONE,dest);
-		C.r_Pass			("accum_sun","accum_sun_far_msaa",	false,	TRUE,	FALSE,blend,D3DBLEND_ONE,dest);
-		C.r_CullMode		(D3DCULL_NONE);
+		//C.r_Pass			("null",			"accum_sun_far",	false,	true,	false,blend,D3DBLEND_ONE,dest);
+		C.r_Pass("accum_sun", "accum_sun_far_msaa", false, true, false, blend, D3D11_BLEND_ONE, dest);
+		C.r_CullMode(D3D11_CULL_NONE);
 		//C.r_Sampler_rtf		("s_position",		r2_RT_P			);
 		//C.r_Sampler_rtf		("s_normal",		r2_RT_N			);
 		//C.r_Sampler_clw		("s_material",		r2_material		);
@@ -247,9 +247,9 @@ void	CBlender_accum_direct_msaa::Compile(CBlender_Compile& C)
 		C.r_End				();
 		break;
 	case SE_SUN_LUMINANCE:	// luminance pass
-		//C.r_Pass			("null",			"accum_sun",		false,	FALSE,	FALSE);
-		C.r_Pass			("stub_notransform_aa_AA","accum_sun_msaa",		false,	FALSE,	FALSE);
-		C.r_CullMode		(D3DCULL_NONE);
+		//C.r_Pass			("null",			"accum_sun",		false,	false,	false);
+		C.r_Pass			("stub_notransform_aa_AA","accum_sun_msaa",		false,	false,	false);
+		C.r_CullMode		(D3D11_CULL_NONE);
 		//C.r_Sampler_rtf		("s_position",		r2_RT_P			);
 		//C.r_Sampler_rtf		("s_normal",		r2_RT_N			);
 		//C.r_Sampler_clw		("s_material",		r2_material		);
@@ -271,9 +271,9 @@ void	CBlender_accum_direct_msaa::Compile(CBlender_Compile& C)
 		//	SE_SUN_NEAR for minmax
 	case SE_SUN_NEAR_MINMAX:		// near pass - enable Z-test to perform depth-clipping
 		//	FVF::TL2uv
-		C.r_Pass			("accum_sun","accum_sun_near_msaa_minmax",	false,	TRUE,	FALSE,blend,D3DBLEND_ONE,dest);
-		C.r_CullMode		(D3DCULL_NONE);
-		C.PassSET_ZB		(TRUE,FALSE,TRUE	);	// force inverted Z-Buffer
+		C.r_Pass("accum_sun", "accum_sun_near_msaa_minmax", false, true, false, blend, D3D11_BLEND_ONE, dest);
+		C.r_CullMode(D3D11_CULL_NONE);
+		C.PassSET_ZB		(true,false,true	);	// force inverted Z-Buffer
 
 		C.r_dx10Texture		("s_position",		r2_RT_P);
 		C.r_dx10Texture		("s_normal",		r2_RT_N);
@@ -311,14 +311,14 @@ void	CBlender_accum_direct_volumetric_msaa::Compile(CBlender_Compile& C)
 
 	//	BOOL	b_HW_smap		= RImplementation.o.HW_smap;
 	//	BOOL	b_HW_PCF		= RImplementation.o.HW_smap_PCF;
-	BOOL		blend		= FALSE;	//RImplementation.o.fp16_blend;
-	D3DBLEND	dest		= blend?D3DBLEND_ONE:D3DBLEND_ZERO;
-	if (RImplementation.o.sunfilter)	{ blend = FALSE; dest = D3DBLEND_ZERO; }
+	BOOL		blend		= false;	//RImplementation.o.fp16_blend;
+	D3D11_BLEND	dest = blend ? D3D11_BLEND_ONE : D3D11_BLEND_ZERO;
+	if (RImplementation.o.sunfilter)	{ blend = false; }
 
 	switch (C.iElement)
 		{
 		case 0:		// near pass - enable Z-test to perform depth-clipping
-			C.r_Pass			("accum_sun","accum_volumetric_sun_msaa",	false,	TRUE,	FALSE,blend,D3DBLEND_ONE,dest);
+			C.r_Pass("accum_sun", "accum_volumetric_sun_msaa", false, true, false, blend, D3D11_BLEND_ONE, dest);
 				C.r_dx10Texture		("s_lmap",			C.L_textures[0]);
 				C.r_dx10Texture	("s_smap",			r2_RT_smap_depth);
 				 C.r_dx10Texture	("s_noise", "fx\\fx_noise");
@@ -348,7 +348,7 @@ void	CBlender_accum_direct_volumetric_sun_msaa::Compile(CBlender_Compile& C)
 	switch (C.iElement)
 		{
 		case 0:		// near pass - enable Z-test to perform depth-clipping
-			C.r_Pass			("accum_sun","accum_volumetric_sun_msaa",	false,	false,	false, true,D3DBLEND_ONE,D3DBLEND_ONE,false,0);
+			C.r_Pass("accum_sun", "accum_volumetric_sun_msaa", false, false, false, true, D3D11_BLEND_ONE, D3D11_BLEND_ONE, false, 0);
          C.r_dx10Texture		("s_smap",			r2_RT_smap_depth);
          C.r_dx10Texture		("s_position",		r2_RT_P);
          jitter				(C);

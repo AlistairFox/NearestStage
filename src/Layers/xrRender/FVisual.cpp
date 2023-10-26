@@ -44,8 +44,8 @@ void Fvisual::Load		(const char* N, IReader *data, u32 dwFlags)
 	dwPrimitives				= 0;
 	BOOL				loaded_v=false;
 
-	if (data->find_chunk(OGF_GCONTAINER)) {
-#ifndef _EDITOR
+	if (data->find_chunk(OGF_GCONTAINER))
+	{
 		// verts
 		u32 ID				= data->r_u32					();
 		vBase				= data->r_u32					();
@@ -67,7 +67,6 @@ void Fvisual::Load		(const char* N, IReader *data, u32 dwFlags)
 		VERIFY				(NULL==p_rm_Indices);
 		p_rm_Indices		= RImplementation.getIB		(ID);
 		p_rm_Indices->AddRef();
-#endif
 #if (RENDER==R_R2) || (RENDER==R_R4)
 		// check for fast-vertices
 		if (data->find_chunk(OGF_FASTPATH))		{

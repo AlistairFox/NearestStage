@@ -278,8 +278,8 @@ void CHWCaps::Update()
 	bScissor	= TRUE;
 
 	// Stencil relative caps
-	soInc=D3DSTENCILOP_INCRSAT;
-	soDec=D3DSTENCILOP_DECRSAT;
+	soInc = D3D11_STENCIL_OP_INCR_SAT;
+	soDec = D3D11_STENCIL_OP_DECR_SAT;
 	dwMaxStencilValue=(1<<8)-1;
 
 	// DEV INFO

@@ -12,7 +12,7 @@ void CBlender_LFX::Compile(CBlender_Compile& C)
 	switch (C.iElement)
 	{
 	case 0:
-		C.r_Pass("lfx_main", "lfx_main", false, FALSE, FALSE, TRUE, D3DBLEND_ONE, D3DBLEND_ONE);
+		C.r_Pass("lfx_main", "lfx_main", false, false, false, true, D3D11_BLEND_ONE, D3D11_BLEND_ONE);
 		C.r_dx10Texture("s_base0", r2_RT_generic0);
 		C.r_dx10Sampler("smp_rtlinear");
 		C.r_End();

@@ -210,22 +210,19 @@ void dx10StateManager::SetStencil(u32 Enable, u32 Func, u32 Ref, u32 Mask, u32 W
 	ValidateDSDesc();
 
 	// Simple filter
-	//if (stencil_enable		!= _enable)		{ stencil_enable=_enable;		CHK_DX(HW.pDevice->SetRenderState	( D3DRS_STENCILENABLE,		_enable				)); }
-	BOOL	BEnable = (BOOL)Enable;
-	if (m_DSDesc.StencilEnable!=BEnable)
+	bool BEnable = !!Enable;
+	if (!!m_DSDesc.StencilEnable != BEnable)
 	{
 		m_bDSSChanged = true;
 		m_DSDesc.StencilEnable = BEnable;
 	}
 	
-	if (!m_DSDesc.StencilEnable)	return;
+	if (!BEnable)	return;
 
-	//if (stencil_func		!= _func)		{ stencil_func=_func;			CHK_DX(HW.pDevice->SetRenderState	( D3DRS_STENCILFUNC,		_func				)); }
-	D3D_COMPARISON_FUNC	SFunc = 
-		dx10StateUtils::ConvertCmpFunction(D3DCMPFUNC(Func));
+	D3D_COMPARISON_FUNC	SFunc = D3D_COMPARISON_FUNC(Func);
 
-	if ((m_DSDesc.FrontFace.StencilFunc!=SFunc)
-		|| (m_DSDesc.BackFace.StencilFunc!=SFunc))
+	if ((m_DSDesc.FrontFace.StencilFunc != SFunc)
+		|| (m_DSDesc.BackFace.StencilFunc != SFunc))
 	{
 		m_bDSSChanged = true;
 		m_DSDesc.FrontFace.StencilFunc = SFunc;
@@ -251,31 +248,24 @@ void dx10StateManager::SetStencil(u32 Enable, u32 Func, u32 Ref, u32 Mask, u32 W
       m_DSDesc.StencilWriteMask = SMask;
 	}
 
-	//if (stencil_fail		!= _fail)		{ stencil_fail=_fail;			CHK_DX(HW.pDevice->SetRenderState	( D3DRS_STENCILFAIL,		_fail				)); }
-	D3D_STENCIL_OP	SOp = 
-		dx10StateUtils::ConvertStencilOp(D3DSTENCILOP(Fail));
-	if ((m_DSDesc.FrontFace.StencilFailOp!=SOp)
-		|| (m_DSDesc.BackFace.StencilFailOp!=SOp))
+	D3D_STENCIL_OP SOp = D3D_STENCIL_OP(Fail);
+	if ((m_DSDesc.FrontFace.StencilFailOp != SOp) || (m_DSDesc.BackFace.StencilFailOp != SOp))
 	{
 		m_bDSSChanged = true;
 		m_DSDesc.FrontFace.StencilFailOp = SOp;
 		m_DSDesc.BackFace.StencilFailOp = SOp;
 	}
 
-	//if (stencil_pass		!= _pass)		{ stencil_pass=_pass;			CHK_DX(HW.pDevice->SetRenderState	( D3DRS_STENCILPASS,		_pass				)); }
-	SOp = dx10StateUtils::ConvertStencilOp(D3DSTENCILOP(Pass));
-	if ((m_DSDesc.FrontFace.StencilPassOp!=SOp)
-		|| (m_DSDesc.BackFace.StencilPassOp!=SOp))
+	SOp = D3D_STENCIL_OP(Pass);
+	if ((m_DSDesc.FrontFace.StencilPassOp != SOp) || (m_DSDesc.BackFace.StencilPassOp != SOp))
 	{
 		m_bDSSChanged = true;
 		m_DSDesc.FrontFace.StencilPassOp = SOp;
 		m_DSDesc.BackFace.StencilPassOp = SOp;
 	}
 
-	//if (stencil_zfail		!= _zfail)		{ stencil_zfail=_zfail;			CHK_DX(HW.pDevice->SetRenderState	( D3DRS_STENCILZFAIL,		_zfail				)); }
-	SOp = dx10StateUtils::ConvertStencilOp(D3DSTENCILOP(ZFail));
-	if ((m_DSDesc.FrontFace.StencilDepthFailOp!=SOp)
-		|| (m_DSDesc.BackFace.StencilDepthFailOp!=SOp))
+	SOp = D3D_STENCIL_OP(ZFail);
+	if ((m_DSDesc.FrontFace.StencilDepthFailOp != SOp) || (m_DSDesc.BackFace.StencilDepthFailOp != SOp))
 	{
 		m_bDSSChanged = true;
 		m_DSDesc.FrontFace.StencilDepthFailOp = SOp;
@@ -288,14 +278,7 @@ void dx10StateManager::SetDepthFunc(u32 Func)
 {
 	ValidateDSDesc();
 
-	//if (z_func!=_func)
-	//{
-	//	z_func = _func;
-	//	CHK_DX(HW.pDevice->SetRenderState( D3DRS_ZFUNC, _func));
-	//}
-
-	D3D_COMPARISON_FUNC	DFunc = 
-		dx10StateUtils::ConvertCmpFunction(D3DCMPFUNC(Func));
+	D3D_COMPARISON_FUNC	DFunc = D3D_COMPARISON_FUNC(Func);
 	if (m_DSDesc.DepthFunc!=DFunc)
 	{
 		m_bDSSChanged = true;
@@ -308,14 +291,8 @@ void dx10StateManager::SetDepthEnable(u32 Enable)
 {
 	ValidateDSDesc();
 
-	//if (z_enable != _enable)
-	//{ 
-	//	z_enable=_enable;
-	//	CHK_DX(HW.pDevice->SetRenderState	( D3DRS_ZENABLE, _enable )); 
-	//}
-
-	BOOL	BEnable = (BOOL)Enable;
-	if (m_DSDesc.DepthEnable!=BEnable)
+	bool BEnable = !!Enable;
+	if (!!m_DSDesc.DepthEnable != BEnable)
 	{
 		m_bDSSChanged = true;
 		m_DSDesc.DepthEnable = BEnable;
@@ -326,18 +303,10 @@ void dx10StateManager::SetColorWriteEnable(u32 WriteMask)
 {
 	ValidateBDesc();
 
-	//if (colorwrite_mask		!= _mask)		{ 
-	//	colorwrite_mask=_mask;		
-	//	CHK_DX(HW.pDevice->SetRenderState	( D3DRS_COLORWRITEENABLE,	_mask	));	
-	//	CHK_DX(HW.pDevice->SetRenderState	( D3DRS_COLORWRITEENABLE1,	_mask	));	
-	//	CHK_DX(HW.pDevice->SetRenderState	( D3DRS_COLORWRITEENABLE2,	_mask	));	
-	//	CHK_DX(HW.pDevice->SetRenderState	( D3DRS_COLORWRITEENABLE3,	_mask	));	
-	//}
-
 	UINT8	WMask = (UINT8)WriteMask;
 
 	bool	bNeedUpdate = false;
-	for (int i=0; i<4; ++i)
+	for (u32 i=0; i<4; ++i)
 	{
 #ifdef USE_DX11
 		if (m_BDesc.RenderTarget[i].RenderTargetWriteMask!=WMask)
@@ -373,12 +342,10 @@ void dx10StateManager::SetCullMode(u32 Mode)
 	ValidateRDesc();
 	//if (cull_mode		!= _mode)		{ cull_mode = _mode;			CHK_DX(HW.pDevice->SetRenderState	( D3DRS_CULLMODE,			_mode				)); }
 
-	D3D_CULL_MODE	CMode = 
-		dx10StateUtils::ConvertCullMode((D3DCULL)Mode);
-	if (m_RDesc.CullMode!=CMode)
+	if (m_RDesc.CullMode != Mode)
 	{
 		m_bRSChanged = true;
-		m_RDesc.CullMode = CMode;
+		m_RDesc.CullMode = (D3D11_CULL_MODE)Mode;
 	}
 }
 

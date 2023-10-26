@@ -228,7 +228,7 @@ void CBlender_fluid_advect::Compile(CBlender_Compile& C)
 		break;
 	}
 
-	C.r_CullMode(D3DCULL_NONE);
+	C.r_CullMode(D3D11_CULL_NONE);
 
 	BindConstants(C);
 	SetupSamplers(C);
@@ -252,7 +252,7 @@ void CBlender_fluid_advect_velocity::Compile(CBlender_Compile& C)
 		break;
 	}
 
-	C.r_CullMode(D3DCULL_NONE);
+	C.r_CullMode(D3D11_CULL_NONE);
 
 	BindConstants(C);
 	SetupSamplers(C);
@@ -273,7 +273,7 @@ void CBlender_fluid_simulate::Compile(CBlender_Compile& C)
 		break;
 	case 1:			// Confinement
 		//	Use additive blending
-		C.r_Pass	("fluid_grid", "fluid_array", "fluid_confinement", false,FALSE,FALSE,TRUE, D3DBLEND_ONE, D3DBLEND_ONE);
+		C.r_Pass	("fluid_grid", "fluid_array", "fluid_confinement", false,FALSE,FALSE,TRUE, D3D11_BLEND_ONE, D3D11_BLEND_ONE);
 		break;
 	case 2:			// Divergence
 		C.r_Pass	("fluid_grid", "fluid_array", "fluid_divergence", false,FALSE,FALSE,FALSE);
@@ -286,7 +286,7 @@ void CBlender_fluid_simulate::Compile(CBlender_Compile& C)
 		break;
 	}
 
-	C.r_CullMode(D3DCULL_NONE);
+	C.r_CullMode(D3D11_CULL_NONE);
 
 	BindConstants(C);
 	SetupSamplers(C);
@@ -314,7 +314,7 @@ void CBlender_fluid_obst::Compile(CBlender_Compile& C)
 			break;		
 	}
 
-	C.r_CullMode(D3DCULL_NONE);
+	C.r_CullMode(D3D11_CULL_NONE);
 
 	BindConstants(C);
 	SetupSamplers(C);
@@ -331,13 +331,13 @@ void CBlender_fluid_emitter::Compile(CBlender_Compile& C)
 	switch (C.iElement) 
 	{
 	case 0:			// ET_SimpleGausian
-		C.r_Pass	("fluid_grid", "fluid_array", "fluid_gaussian", false,FALSE,FALSE,TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
-		C.RS.SetRS(D3DRS_DESTBLENDALPHA,	D3DBLEND_ONE	);
-		C.RS.SetRS(D3DRS_SRCBLENDALPHA,		D3DBLEND_ONE	);
+		C.r_Pass("fluid_grid", "fluid_array", "fluid_gaussian", false, FALSE, FALSE, TRUE, D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA);
+		C.RS.SetRS(D3DRS_DESTBLENDALPHA, D3D11_BLEND_ONE);
+		C.RS.SetRS(D3DRS_SRCBLENDALPHA, D3D11_BLEND_ONE);
 		break;		
 	}
 
-	C.r_CullMode(D3DCULL_NONE);
+	C.r_CullMode(D3D11_CULL_NONE);
 
 	BindConstants(C);
 	SetupSamplers(C);
@@ -361,7 +361,7 @@ void CBlender_fluid_obstdraw::Compile(CBlender_Compile& C)
 //		TechniqueDrawBox = pEffect->GetTechniqueByName( "DrawBox" );
 	}
 
-	C.r_CullMode(D3DCULL_NONE);
+	C.r_CullMode(D3D11_CULL_NONE);
 
 	BindConstants(C);
 	SetupSamplers(C);
@@ -379,11 +379,11 @@ void CBlender_fluid_raydata::Compile(CBlender_Compile& C)
 	{
 	case 0:			// CompRayData_Back
 		C.r_Pass	("fluid_raydata_back", "null", "fluid_raydata_back", false,FALSE,FALSE,FALSE);
-		C.r_CullMode(D3DCULL_CW);	//	Front
+		C.r_CullMode(D3D11_CULL_FRONT);	//	Front
 		//C.r_CullMode(D3DCULL_CCW);	//	Front
 		break;
 	case 1:			// CompRayData_Front
-		C.r_Pass	("fluid_raydata_front", "null", "fluid_raydata_front", false,FALSE,FALSE,TRUE,D3DBLEND_ONE,D3DBLEND_ONE);
+		C.r_Pass("fluid_raydata_front", "null", "fluid_raydata_front", false, FALSE, FALSE, TRUE, D3D11_BLEND_ONE, D3D11_BLEND_ONE);
 		//RS.SetRS(D3DRS_SRCBLENDALPHA,		bABlend?abSRC:D3DBLEND_ONE	);
 		//	We need different blend arguments for color and alpha
 		//	One Zero for color
@@ -391,17 +391,17 @@ void CBlender_fluid_raydata::Compile(CBlender_Compile& C)
 		//	so patch dest color.
 		//	Note: You can't set up dest blend to zero in r_pass
 		//	since r_pass would disable blend if src=one and blend - zero.
-		C.RS.SetRS(D3DRS_DESTBLEND,		D3DBLEND_ZERO	);
+		C.RS.SetRS(D3DRS_DESTBLEND, D3D11_BLEND_ZERO);
 
 		C.RS.SetRS(D3DRS_BLENDOP,				D3DBLENDOP_REVSUBTRACT	); // DST - SRC
 		C.RS.SetRS(D3DRS_BLENDOPALPHA,			D3DBLENDOP_REVSUBTRACT	); // DST - SRC
 
-		C.r_CullMode(D3DCULL_CCW);	//	Back
-		//C.r_CullMode(D3DCULL_CW);	//	Back
+		C.r_CullMode(D3D11_CULL_BACK);	//	Back
+		//C.r_CullMode(D3D11_CULL_CW);	//	Back
 		break;
 	case 2:			// QuadDownSampleRayDataTexture
 		C.r_Pass	("fluid_raycast_quad", "null", "fluid_raydatacopy_quad", false,FALSE,FALSE,FALSE);
-		C.r_CullMode(D3DCULL_CCW);	//	Back
+		C.r_CullMode(D3D11_CULL_BACK);	//	Back
 		break;
 	}
 
@@ -423,25 +423,25 @@ void CBlender_fluid_raycast::Compile(CBlender_Compile& C)
 	{
 	case 0:			// QuadEdgeDetect
 		C.r_Pass	("fluid_edge_detect", "null", "fluid_edge_detect", false,FALSE,FALSE,FALSE);
-		C.r_CullMode(D3DCULL_NONE);	//	Back
+		C.r_CullMode(D3D11_CULL_NONE);	//	Back
 		break;
 	case 1:			// QuadRaycastFog
 		C.r_Pass	("fluid_raycast_quad", "null", "fluid_raycast_quad", false,FALSE,FALSE,FALSE);
-		C.r_CullMode(D3DCULL_CCW);	//	Back
+		C.r_CullMode(D3D11_CULL_BACK);	//	Back
 		break;
 	case 2:			// QuadRaycastCopyFog
-		C.r_Pass	("fluid_raycast_quad", "null", "fluid_raycastcopy_quad", false,FALSE,FALSE,TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
+		C.r_Pass("fluid_raycast_quad", "null", "fluid_raycastcopy_quad", false, FALSE, FALSE, TRUE, D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA);
 		C.r_ColorWriteEnable(true, true, true, false);
-		C.r_CullMode(D3DCULL_CCW);	//	Back
+		C.r_CullMode(D3D11_CULL_BACK);	//	Back
 		break;
 	case 3:			// QuadRaycastFire
 		C.r_Pass	("fluid_raycast_quad", "null", "fluid_raycast_quad_fire", false,FALSE,FALSE,FALSE);
-		C.r_CullMode(D3DCULL_CCW);	//	Back
+		C.r_CullMode(D3D11_CULL_BACK);	//	Back
 		break;
 	case 4:			// QuadRaycastCopyFire
-		C.r_Pass	("fluid_raycast_quad", "null", "fluid_raycastcopy_quad_fire", false,FALSE,FALSE,TRUE, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA);
+		C.r_Pass("fluid_raycast_quad", "null", "fluid_raycastcopy_quad_fire", false, FALSE, FALSE, TRUE, D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA);
 		C.r_ColorWriteEnable(true, true, true, false);
-		C.r_CullMode(D3DCULL_CCW);	//	Back
+		C.r_CullMode(D3D11_CULL_BACK);	//	Back
 		break;
 	}
 

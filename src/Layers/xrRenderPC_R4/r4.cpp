@@ -668,7 +668,7 @@ void					CRender::set_Object				(IRenderable*	O )
 void					CRender::rmNear				()
 {
 	IRender_Target* T	=	getTarget	();
-	D3D_VIEWPORT VP		=	{0,0,(float)T->get_width(),(float)T->get_height(),0,0.02f };
+	D3D11_VIEWPORT VP		=	{0,0,(float)T->get_width(),(float)T->get_height(),0,0.02f };
 
 	HW.pContext->RSSetViewports(1, &VP);
 	//CHK_DX				(HW.pDevice->SetViewport(&VP));
@@ -676,7 +676,7 @@ void					CRender::rmNear				()
 void					CRender::rmFar				()
 {
 	IRender_Target* T	=	getTarget	();
-	D3D_VIEWPORT VP		=	{0,0,(float)T->get_width(),(float)T->get_height(),0.99999f,1.f };
+	D3D11_VIEWPORT VP		=	{0,0,(float)T->get_width(),(float)T->get_height(),0.99999f,1.f };
 
 	HW.pContext->RSSetViewports(1, &VP);
 	//CHK_DX				(HW.pDevice->SetViewport(&VP));
@@ -684,7 +684,7 @@ void					CRender::rmFar				()
 void					CRender::rmNormal			()
 {
 	IRender_Target* T	=	getTarget	();
-	D3D_VIEWPORT VP		= {0,0,(float)T->get_width(),(float)T->get_height(),0,1.f };
+	D3D11_VIEWPORT VP		= {0,0,(float)T->get_width(),(float)T->get_height(),0,1.f };
 
 	HW.pContext->RSSetViewports(1, &VP);
 	//CHK_DX				(HW.pDevice->SetViewport(&VP));

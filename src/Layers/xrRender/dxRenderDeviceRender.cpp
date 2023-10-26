@@ -107,7 +107,7 @@ void dxRenderDeviceRender::SetupStates()
 {
 	HW.Caps.Update			();
 
-#if defined(USE_DX10) || defined(USE_DX11)
+#if defined(USE_DX11)
 	//	TODO: DX10: Implement Resetting of render states into default mode
 	//VERIFY(!"dxRenderDeviceRender::SetupStates not implemented.");
 #else	//	USE_DX10

@@ -141,7 +141,7 @@ void uber_deffer(CBlender_Compile& C, bool hq, LPCSTR _vspec, LPCSTR _pspec, BOO
 
 		VERIFY(strstr(vs, "bump") != 0);
 		VERIFY(strstr(ps, "bump") != 0);
-		C.r_TessPass(vs, hs, ds, "null", ps, FALSE);
+		C.r_TessPass(vs, hs, ds, "null", ps, false);
 		RImplementation.clearAllShaderOptions();
 		u32 stage = C.r_dx10Sampler("smp_bump_ds");
 		if (stage != -1)
@@ -160,8 +160,8 @@ void uber_deffer(CBlender_Compile& C, bool hq, LPCSTR _vspec, LPCSTR _pspec, BOO
 	}
 	else
 #	endif
-		if (DO_NOT_WRITE) C.r_Pass(vs, ps, FALSE, TRUE, FALSE);
-		else C.r_Pass(vs, ps, FALSE);
+		if (DO_NOT_WRITE) C.r_Pass(vs, ps, false, TRUE, false);
+		else C.r_Pass(vs, ps, false);
 	//C.r_Sampler		("s_base",		C.L_textures[0],	false,	D3DTADDRESS_WRAP,	D3DTEXF_ANISOTROPIC,D3DTEXF_LINEAR,	D3DTEXF_ANISOTROPIC);
 	//C.r_Sampler		("s_bumpX",		fnameB,				false,	D3DTADDRESS_WRAP,	D3DTEXF_ANISOTROPIC,D3DTEXF_LINEAR,	D3DTEXF_ANISOTROPIC);	// should be before base bump
 	//C.r_Sampler		("s_bump",		fnameA,				false,	D3DTADDRESS_WRAP,	D3DTEXF_ANISOTROPIC,D3DTEXF_LINEAR,	D3DTEXF_ANISOTROPIC);
@@ -186,8 +186,8 @@ void uber_deffer(CBlender_Compile& C, bool hq, LPCSTR _vspec, LPCSTR _pspec, BOO
 		C.r_dx10Sampler("smp_rtlinear");
 	}
 #else	//	USE_DX10
-	if (DO_NOT_WRITE) C.r_Pass(vs, ps, FALSE, TRUE, FALSE);
-	else C.r_Pass(vs, ps, FALSE);
+	if (DO_NOT_WRITE) C.r_Pass(vs, ps, false, TRUE, false);
+	else C.r_Pass(vs, ps, false);
 	VERIFY(C.L_textures[0].size());
 	if (bump)
 	{
@@ -314,7 +314,7 @@ void uber_shadow(CBlender_Compile& C, LPCSTR _vspec)
 		strconcat(sizeof(hs), hs, "DX11\\tess", params);
 		strconcat(sizeof(ds), ds, "DX11\\tess_shadow", params);
 
-		C.r_TessPass(vs, hs, ds, "null", "dumb", FALSE, TRUE, TRUE, FALSE);
+		C.r_TessPass(vs, hs, ds, "null", "dumb", false, TRUE, TRUE, false);
 		RImplementation.clearAllShaderOptions();
 		C.r_dx10Texture("s_base", C.L_textures[0]);
 		C.r_dx10Texture("s_bumpX", fnameB); // should be before base bump
@@ -334,6 +334,6 @@ void uber_shadow(CBlender_Compile& C, LPCSTR _vspec)
 			C.R().SetRS(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
 	}
 	else
-		C.r_Pass("shadow_direct_base", "dumb", FALSE, TRUE, TRUE, FALSE);
+		C.r_Pass("shadow_direct_base", "dumb", false, TRUE, TRUE, false);
 }
 #endif

@@ -41,17 +41,17 @@ void CRenderTarget::accum_point		(light* L)
 	// backfaces: if (1<=stencil && zfail)	stencil = light_id
 	RCache.set_CullMode				(CULL_CW);
    if( ! RImplementation.o.dx10_msaa )
-   	RCache.set_Stencil				(TRUE,D3DCMP_LESSEQUAL,dwLightMarkerID,0x01,0xff,D3DSTENCILOP_KEEP,D3DSTENCILOP_KEEP,D3DSTENCILOP_REPLACE);
+	   RCache.set_Stencil(TRUE, D3D11_COMPARISON_LESS_EQUAL, dwLightMarkerID, 0x01, 0xff, D3D11_STENCIL_OP_KEEP, D3D11_STENCIL_OP_KEEP, D3D11_STENCIL_OP_REPLACE);
    else
-	   RCache.set_Stencil				(TRUE,D3DCMP_LESSEQUAL,dwLightMarkerID,0x01,0x7f,D3DSTENCILOP_KEEP,D3DSTENCILOP_KEEP,D3DSTENCILOP_REPLACE);
+	   RCache.set_Stencil(TRUE, D3D11_COMPARISON_LESS_EQUAL, dwLightMarkerID, 0x01, 0x7f, D3D11_STENCIL_OP_KEEP, D3D11_STENCIL_OP_KEEP, D3D11_STENCIL_OP_REPLACE);
 	draw_volume						(L);
 
 	// frontfaces: if (1<=stencil && zfail)	stencil = 0x1
 	RCache.set_CullMode				(CULL_CCW);
    if( ! RImplementation.o.dx10_msaa )
-	   RCache.set_Stencil				(TRUE,D3DCMP_LESSEQUAL,0x01,0xff,0xff,D3DSTENCILOP_KEEP,D3DSTENCILOP_KEEP,D3DSTENCILOP_REPLACE);
+	   RCache.set_Stencil(TRUE, D3D11_COMPARISON_LESS_EQUAL, 0x01, 0xff, 0xff, D3D11_STENCIL_OP_KEEP, D3D11_STENCIL_OP_KEEP, D3D11_STENCIL_OP_REPLACE);
    else
-	   RCache.set_Stencil				(TRUE,D3DCMP_LESSEQUAL,0x01,0x7f,0x7f,D3DSTENCILOP_KEEP,D3DSTENCILOP_KEEP,D3DSTENCILOP_REPLACE);
+	   RCache.set_Stencil(TRUE, D3D11_COMPARISON_LESS_EQUAL, 0x01, 0x7f, 0x7f, D3D11_STENCIL_OP_KEEP, D3D11_STENCIL_OP_KEEP, D3D11_STENCIL_OP_REPLACE);
 	draw_volume						(L);
 
 	// nv-stencil recompression
@@ -101,21 +101,21 @@ void CRenderTarget::accum_point		(light* L)
 		// Render if (light_id <= stencil && z-pass)
       if( ! RImplementation.o.dx10_msaa )
       {
-		   RCache.set_Stencil(TRUE,D3DCMP_EQUAL,dwLightMarkerID,0xff,0x00);
+		  RCache.set_Stencil(TRUE, D3D11_COMPARISON_EQUAL, dwLightMarkerID, 0xff, 0x00);
 		   draw_volume			(L);
       }
       else // checked Holger
       {
 		   // per pixel
-		   RCache.set_Stencil(TRUE,D3DCMP_EQUAL,dwLightMarkerID,0xff,0x00);
+		  RCache.set_Stencil(TRUE, D3D11_COMPARISON_EQUAL, dwLightMarkerID, 0xff, 0x00);
 		   draw_volume			(L);
 
 		   // per sample
          if( RImplementation.o.dx10_msaa_opt )
          {
 		      RCache.set_Element(shader_msaa[0]->E[ _id ]	);
-            RCache.set_Stencil(TRUE,D3DCMP_EQUAL,dwLightMarkerID|0x80,0xff,0x00);
-            RCache.set_CullMode( D3DCULL_CW );
+			  RCache.set_Stencil(TRUE, D3D11_COMPARISON_EQUAL, dwLightMarkerID | 0x80, 0xff, 0x00);
+            RCache.set_CullMode( CULL_CW );
             draw_volume			(L);
          }
          else // checked Holger
@@ -124,13 +124,13 @@ void CRenderTarget::accum_point		(light* L)
 		      {
 			      RCache.set_Element		   (shader_msaa[i]->E[ _id ]	);
                StateManager.SetSampleMask (u32(1)<<i);
-               RCache.set_Stencil         (TRUE,D3DCMP_EQUAL,dwLightMarkerID|0x80,0xff,0x00);
-               RCache.set_CullMode        ( D3DCULL_CW );
+			   RCache.set_Stencil(TRUE, D3D11_COMPARISON_EQUAL, dwLightMarkerID | 0x80, 0xff, 0x00);
+               RCache.set_CullMode        ( CULL_CW );
                draw_volume						(L);			
 		      }
 		      StateManager.SetSampleMask(0xffffffff);
          }
-		   RCache.set_Stencil(TRUE,D3DCMP_EQUAL,dwLightMarkerID,0xff,0x00);
+		 RCache.set_Stencil(TRUE, D3D11_COMPARISON_EQUAL, dwLightMarkerID, 0xff, 0x00);
       }
 
 		// Fetch4 : disable
@@ -151,21 +151,21 @@ void CRenderTarget::accum_point		(light* L)
 		RCache.set_c				("m_texgen",		m_Texgen);
       if( ! RImplementation.o.dx10_msaa )
       {
-         RCache.set_Stencil(TRUE,D3DCMP_LESSEQUAL,dwLightMarkerID,0xff,0x00);
+		  RCache.set_Stencil(TRUE, D3D11_COMPARISON_LESS_EQUAL, dwLightMarkerID, 0xff, 0x00);
          draw_volume			(L);
       }
       else // checked Holger
       {
          // per pixel
-         RCache.set_CullMode( D3DCULL_CW );
-         RCache.set_Stencil(TRUE,D3DCMP_EQUAL,dwLightMarkerID,0xff,0x00);		
+         RCache.set_CullMode( CULL_CW );
+		 RCache.set_Stencil(TRUE, D3D11_COMPARISON_EQUAL, dwLightMarkerID, 0xff, 0x00);
          draw_volume			(L);
          if( RImplementation.o.dx10_msaa_opt )
          {
             // per sample
 		      RCache.set_Element(s_accum_mask_msaa[0]->E[SE_MASK_ACCUM_VOL]	);
-            RCache.set_CullMode( D3DCULL_CW );
-            RCache.set_Stencil(TRUE,D3DCMP_EQUAL,dwLightMarkerID|0x80,0xff,0x00);		
+            RCache.set_CullMode( CULL_CW );
+			RCache.set_Stencil(TRUE, D3D11_COMPARISON_EQUAL, dwLightMarkerID | 0x80, 0xff, 0x00);
 		      draw_volume			(L);
          }
          else // checked Holger	
@@ -173,14 +173,14 @@ void CRenderTarget::accum_point		(light* L)
 		      for( u32 i = 0; i < RImplementation.o.dx10_msaa_samples; ++i )
 		      {
 			      RCache.set_Element	      (s_accum_mask_msaa[i]->E[SE_MASK_ACCUM_VOL]	);
-               RCache.set_CullMode        ( D3DCULL_CW );
+               RCache.set_CullMode        ( CULL_CW );
                StateManager.SetSampleMask ( u32(1) << i );
-               RCache.set_Stencil         (TRUE,D3DCMP_EQUAL,dwLightMarkerID|0x80,0xff,0x00);		
+			   RCache.set_Stencil(TRUE, D3D11_COMPARISON_EQUAL, dwLightMarkerID | 0x80, 0xff, 0x00);
                draw_volume					   (L);
 		      }
 		      StateManager.SetSampleMask( 0xffffffff );
          }
-         RCache.set_Stencil(TRUE,D3DCMP_LESSEQUAL,dwLightMarkerID,0xff,0x00);
+		 RCache.set_Stencil(TRUE, D3D11_COMPARISON_LESS_EQUAL, dwLightMarkerID, 0xff, 0x00);
       }
 	}
 
