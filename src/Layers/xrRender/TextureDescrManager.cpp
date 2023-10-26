@@ -28,36 +28,26 @@ void fix_texture_thm_name(LPSTR fn)
 		*_ext = 0;
 }
 
-struct TH_LoadTHM
-{
-	using map_TD = xr_map<shared_str, CTextureDescrMngr::texture_desc>;
-	using map_CS = xr_map<shared_str, cl_dt_scaler*>;
-
-	LPCSTR initial;
-	map_TD& s_texture_details;
-	map_CS& s_detail_scalers;
-};
-
-void CTextureDescrMngr::LoadTHMThread(void* args)
-{
-	TH_LoadTHM* p = (TH_LoadTHM*)args;
-	LoadTHM(p->initial, p->s_texture_details, p->s_detail_scalers);
-}
-
-void CTextureDescrMngr::LoadTHM(LPCSTR initial, map_TD& s_texture_details, map_CS& s_detail_scalers)
+void CTextureDescrMngr::LoadTHM(LPCSTR initial)
 {
 	FS_FileSet				flist;
 	FS.file_list			(flist, initial, FS_ListFiles, "*.thm");
 
+#ifdef DEBUG
+	Msg("count of .thm files=%d", flist.size());
+#endif // #ifdef DEBUG
+	FS_FileSetIt It = flist.begin();
+	FS_FileSetIt It_e = flist.end();
+
 	STextureParams			tp;
 	string_path				fn;
 
-	for (const FS_File& fs_iter : flist)
+	for (;It != It_e;++It)
 	{
 		
-		FS.update_path(fn, initial, fs_iter.name.c_str());
+		FS.update_path(fn, initial, (*It).name.c_str());
 		IReader* F			= FS.r_open(fn);
-		xr_strcpy(fn, fs_iter.name.c_str());
+		xr_strcpy(fn, (*It).name.c_str());
 		fix_texture_thm_name(fn);
 
 		R_ASSERT			(F->find_chunk(THM_CHUNK_TYPE));
@@ -65,12 +55,15 @@ void CTextureDescrMngr::LoadTHM(LPCSTR initial, map_TD& s_texture_details, map_C
 		tp.Clear			();
 		tp.Load				(*F);
 		FS.r_close			(F);
-		if (STextureParams::ttImage == tp.type || STextureParams::ttTerrain == tp.type || STextureParams::ttNormalMap == tp.type)
+		if (STextureParams::ttImage == tp.type ||
+			STextureParams::ttTerrain == tp.type ||
+			STextureParams::ttNormalMap == tp.type)
 		{
-			texture_desc& desc = s_texture_details[fn];
-			cl_dt_scaler*& dts = s_detail_scalers[fn];
+			texture_desc& desc = m_texture_details[fn];
+			cl_dt_scaler*& dts = m_detail_scalers[fn];
 
-			if (tp.detail_name.size() && tp.flags.is_any(STextureParams::flDiffuseDetail | STextureParams::flBumpDetail))
+			if (tp.detail_name.size() &&
+				tp.flags.is_any(STextureParams::flDiffuseDetail | STextureParams::flBumpDetail))
 			{
 				if(desc.m_assoc)
 					xr_delete				(desc.m_assoc);
@@ -114,21 +107,27 @@ void CTextureDescrMngr::LoadTHM(LPCSTR initial, map_TD& s_texture_details, map_C
 
 void CTextureDescrMngr::Load()
 {
-	TH_LoadTHM* gtex = new TH_LoadTHM({ "$game_textures$", m_texture_details, m_detail_scalers });
-	TH_LoadTHM* lvl = new TH_LoadTHM({ "$level$", m_texture_details, m_detail_scalers });
-	thread_spawn(LoadTHMThread, "X-Ray THM Loader 1", 0, gtex);
-	thread_spawn(LoadTHMThread, "X-Ray THM Loader 2", 0, lvl);
-	Sleep(5);
-	//	LoadTHM("$game_textures$");
-	//	LoadTHM("$level$");
+#ifdef DEBUG
+	CTimer					TT;
+	TT.Start();
+#endif // #ifdef DEBUG
+
+	LoadTHM("$game_textures$");
+	LoadTHM("$level$");
+
+#ifdef DEBUG
+	Msg("load time=%d ms", TT.GetElapsed_ms());
+#endif // #ifdef DEBUG
 }
 
 void CTextureDescrMngr::UnLoad()
 {
-	for (auto& it : m_texture_details)
+	map_TD::iterator I = m_texture_details.begin();
+	map_TD::iterator E = m_texture_details.end();
+	for (;I != E;++I)
 	{
-		xr_delete(it.second.m_assoc);
-		xr_delete(it.second.m_spec);
+		xr_delete(I->second.m_assoc);
+		xr_delete(I->second.m_spec);
 	}
 	m_texture_details.clear	();
 }

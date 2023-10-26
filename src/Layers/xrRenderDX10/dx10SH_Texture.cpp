@@ -459,8 +459,8 @@ void CTexture::Load		()
 			}
 
 		}
-	} else
-		if (FS.exist(fn,"$game_textures$",*cName,".avi")){
+	}
+	else if (FS.exist(fn,"$game_textures$",*cName,".avi")){
 			// AVI
 			pAVI = xr_new<CAviPlayerCustom>();
 
