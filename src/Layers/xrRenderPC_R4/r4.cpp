@@ -976,9 +976,6 @@ HRESULT	CRender::shader_compile			(
 	char							c_inter_grass	[32];
 	char							c_rain_quality[32];
 
-	//For SSR setting's
-	char							c_dt_ssr_samp[32];
-
 	char	sh_name[MAX_PATH] = "";
 	
 	for (u32 i=0; i<m_ShaderOptions.size(); ++i)
@@ -1298,6 +1295,8 @@ HRESULT	CRender::shader_compile			(
 		sh_name[len]='0'; ++len;
 	}
 
+
+	/////////////////////SHADERS PARAMS////////////////////
 	if (ps_r4_ssr_flags.test(R4_FLAG_SSR_USE))
 	{
 		defines[def_it].Name = "USE_SSR";
@@ -1305,15 +1304,22 @@ HRESULT	CRender::shader_compile			(
 		def_it++;
 		sh_name[len] = '1'; ++len;
 	}
-
-	if (ps_r4_parallax_flags.test(R4_USE_FULL_PARALLAX))
+	if (ps_r4_ssr_flags.test(R4_FLAG_MAX_QUALITY_SHADERS))
 	{
-		defines[def_it].Name = "TERRAIN_PARALLAX_FULL";
+		defines[def_it].Name = "MAX_QUALITY_SHADERS";
+		defines[def_it].Definition = "1";
+		def_it++;
+		sh_name[len] = '1'; ++len;
+	}
+	if (ps_r4_ssr_flags.test(R4_FLAG_USE_ADVANCED_SHADERS))
+	{
+		defines[def_it].Name = "USE_ADVANCED_SHADERS";
 		defines[def_it].Definition = "1";
 		def_it++;
 		sh_name[len] = '1'; ++len;
 	}
 
+	/////////////////////////////SHADERS PARAMS END////////////////////////
 	if (RImplementation.o.advancedpp && ps_r2_ls_flags.test(R2FLAG_STEEP_PARALLAX))
 	{
 		defines[def_it].Name		=	"ALLOW_STEEPPARALLAX";
@@ -1333,17 +1339,6 @@ HRESULT	CRender::shader_compile			(
 		def_it						++;
 	}
 	sh_name[len]='0'+char(o.dx10_gbuffer_opt); ++len;
-
-	// DWM: For SSR setting's
-	{
-		sprintf_s(c_dt_ssr_samp, "%d", dt_ssr_samp);
-		defines[def_it].Name = "G_SSR_QUALITY";
-		defines[def_it].Definition = c_dt_ssr_samp;
-		def_it++;
-		sh_name[len] = '0' + char(dt_ssr_samp); ++len;
-	}
-
-
 
    //R_ASSERT						( !o.dx10_sm4_1 );
    if( o.dx10_sm4_1 )

@@ -15,9 +15,6 @@ extern ECORE_API float ps_r2_tnmp_onoff; // r2-only
 
 extern ECORE_API float			ps_r2_reflections_distance;
 
-// SSR quality option
-extern ECORE_API	u32			dt_ssr_samp;
-extern ECORE_API	xr_token	ssr_samp_token[];
 
 // SMAP Control
 
@@ -271,19 +268,14 @@ enum
 enum
 {
 	R4_FLAG_SSR_USE = (1<<0),
-};
-
-enum
-{
-	R4_USE_FULL_PARALLAX = (1<<0),
+	R4_FLAG_MAX_QUALITY_SHADERS = (1<<1),
+	R4_FLAG_USE_ADVANCED_SHADERS = (1<<2),
 };
 
 
 extern ECORE_API Flags32 ps_r4_ssr_flags;
 
 extern ECORE_API Flags32 ps_r2_rain_drops_flags;
-
-extern ECORE_API Flags32 ps_r4_parallax_flags;
 
 enum
 {

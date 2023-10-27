@@ -17,7 +17,7 @@ dxWallMarkArray::~dxWallMarkArray()
 void dxWallMarkArray::AppendMark(LPCSTR s_textures)
 {
 	ref_shader	s;
-#if defined(USE_DX11)
+
 
 	LPCSTR sh_name = "effects\\wallmark";
 
@@ -28,9 +28,7 @@ void dxWallMarkArray::AppendMark(LPCSTR s_textures)
 	}
 
 	s.create(sh_name, s_textures);
-#else
-	s.create("effects\\wallmark",s_textures);
-#endif
+
 	m_CollideMarks.push_back(s);
 }
 

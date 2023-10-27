@@ -3,12 +3,7 @@
 
 #include "ParticleEffectDef.h"
 #include "ParticleEffect.h"
-#ifdef _EDITOR
-	#include "UI_ToolsCustom.h"
-	#include "ParticleEffectActions.h"
-#else
 
-#endif
 
 //---------------------------------------------------------------------------
 using namespace PAPI;
@@ -55,50 +50,6 @@ void CPEDef::SetName(LPCSTR name)
     m_Name				= name;
 }
 
-/*
-void CPEDef::pAlignToPath(float rot_x, float rot_y, float rot_z)
-{
-	m_Flags.set			(dfAlignToPath,TRUE);
-	m_APDefaultRotation.set(rot_x,rot_y,rot_z);
-}
-void CPEDef::pVelocityScale(float scale_x, float scale_y, float scale_z)
-{
-	m_Flags.set			(dfVelocityScale,TRUE);
-	m_VelocityScale.set	(scale_x, scale_y, scale_z);
-}
-void CPEDef::pCollision(float friction, float resilience, float cutoff, BOOL destroy_on_contact)
-{
-	m_fCollideOneMinusFriction 	= 1.f-friction;
-	m_fCollideResilience		= resilience;
-	m_fCollideSqrCutoff			= cutoff*cutoff;
-	m_Flags.set					(dfCollision,TRUE);
-	m_Flags.set					(dfCollisionDel,destroy_on_contact);
-}
-
-void CPEDef::pSprite(string128& sh_name, string128& tex_name)
-{
-	xr_free(m_ShaderName);	m_ShaderName	= xr_strdup(sh_name);
-	xr_free(m_TextureName);	m_TextureName	= xr_strdup(tex_name);
-	m_Flags.set	(dfSprite,TRUE);
-}
-void CPEDef::pFrame(BOOL random_frame, u32 frame_count, u32 tex_width, u32 tex_height, u32 frame_width, u32 frame_height)
-{
-	m_Flags.set			(dfFramed,TRUE);
-	m_Flags.set			(dfRandomFrame,random_frame);
-	m_Frame.Set			(frame_count, (float)tex_width, (float)tex_height, (float)frame_width, (float)frame_height);
-}
-void CPEDef::pAnimate(float speed, BOOL random_playback)
-{
-	m_Frame.m_fSpeed	= speed;
-	m_Flags.set			(dfAnimated,TRUE);
-	m_Flags.set			(dfRandomPlayback,random_playback);
-}
-void CPEDef::pTimeLimit(float time_limit)
-{
-	m_Flags.set			(dfTimeLimit,TRUE);
-	m_fTimeLimit		= time_limit;
-}
-*/
 void CPEDef::ExecuteAnimate(Particle *particles, u32 p_cnt, float dt)
 {
 	float speedFac = m_Frame.m_fSpeed * dt;
@@ -235,20 +186,6 @@ BOOL CPEDef::Load(IReader& F)
 		}
 	}
 
-#ifdef _EDITOR
-    if (pCreateEAction&&F.find_chunk(PED_CHUNK_EDATA))
-	{
-        m_EActionList.resize(F.r_u32());
-        for (EPAVecIt it=m_EActionList.begin(); it!=m_EActionList.end(); ++it)
-		{
-            PAPI::PActionEnum type		= (PAPI::PActionEnum)F.r_u32();
-            (*it)						= pCreateEAction(type);
-            (*it)->Load					(F);
-        }
-		Compile							(m_EActionList);
-    } 
-#endif
-
 	return TRUE;
 }
 
@@ -294,23 +231,6 @@ BOOL CPEDef::Load2(CInifile& ini)
 	{
 		m_APDefaultRotation			= ini.r_fvector3	("align_to_path", "default_rotation");
 	}
-#ifdef _EDITOR
-	if(pCreateEAction)
-	{
-		u32 count		= ini.r_u32("_effect", "action_count");
-        m_EActionList.resize(count);
-		u32 action_id	= 0;
-        for (EPAVecIt it=m_EActionList.begin(); it!=m_EActionList.end(); ++it,++action_id)
-		{
-			string256					sect;
-			xr_sprintf					(sect, sizeof(sect), "action_%04d", action_id);
-            PAPI::PActionEnum type		= (PAPI::PActionEnum)(ini.r_u32(sect,"action_type"));
-            (*it)						= pCreateEAction(type);
-            (*it)->Load2				(ini, sect);
-        }
-		Compile							(m_EActionList);
-    }
-#endif
 
 	return TRUE;
 }
@@ -359,17 +279,6 @@ void CPEDef::Save2(CInifile& ini)
 	{
 		ini.w_fvector3	("align_to_path", "default_rotation", m_APDefaultRotation);
 	}
-#ifdef _EDITOR
-    ini.w_u32			("_effect", "action_count", m_EActionList.size());
-    u32					action_id = 0;
-	for (EPAVecIt it=m_EActionList.begin(); it!=m_EActionList.end(); ++it,++action_id)
-	{
-		string256		sect;
-		xr_sprintf		(sect, sizeof(sect), "action_%04d", action_id);
-		ini.w_u32		(sect, "action_type", (*it)->type);
-    	(*it)->Save2	(ini, sect);
-    }
-#endif
 }
 
 void CPEDef::Save(IWriter& F)
@@ -436,36 +345,7 @@ void CPEDef::Save(IWriter& F)
 		F.w_fvector3	(m_APDefaultRotation);
 		F.close_chunk	();
 	}
-#ifdef _EDITOR
-	F.open_chunk	(PED_CHUNK_EDATA);
-    F.w_u32			(m_EActionList.size());
-    for (EPAVecIt it=m_EActionList.begin(); it!=m_EActionList.end(); it++){
-        F.w_u32		((*it)->type);
-    	(*it)->Save	(F);
-    }
-	F.close_chunk	();
-#endif
+
 }
 
-#ifdef _EDITOR
-void PS::CPEDef::Compile(EPAVec& v)
-{
-	m_Actions.clear	();
-    m_Actions.w_u32	(v.size());
-    int cnt			= 0;
-	EPAVecIt it		= v.begin();
-	EPAVecIt it_e	= v.end();
-    
-	for(; it!=it_e; ++it)
-	{
-		if ((*it)->flags.is(EParticleAction::flEnabled))
-		{
-    	    (*it)->Compile(m_Actions);
-            cnt++;
-        }
-    }
-    m_Actions.seek	(0);
-    m_Actions.w_u32 (cnt);
-}
-#endif
 

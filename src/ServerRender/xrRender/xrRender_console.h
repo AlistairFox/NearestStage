@@ -278,13 +278,6 @@ enum
 	R4_USE_FULL_PARALLAX = (1<<0),
 };
 
-
-extern ECORE_API Flags32 ps_r4_ssr_flags;
-
-extern ECORE_API Flags32 ps_r2_rain_drops_flags;
-
-extern ECORE_API Flags32 ps_r4_parallax_flags;
-
 enum
 {
 	R2FLAG_RAIN_DROPS = (1 << 0),

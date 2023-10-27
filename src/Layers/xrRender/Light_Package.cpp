@@ -8,7 +8,6 @@ void	light_Package::clear	()
 	v_shadowed.clear	();
 }
 
-#if (RENDER==R_R2) || (RENDER==R_R4)
 IC bool pred_light_cmp(light* _1, light* _2) {
 	return _1->range > _2->range; // sort by range
 }
@@ -63,5 +62,3 @@ void light_Package::vis_update() {
         }
     }
 }
-
-#endif // (RENDER==R_R2) || (RENDER==R_R3) || (RENDER==R_R4)
