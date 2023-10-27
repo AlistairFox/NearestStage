@@ -49,7 +49,7 @@ ENGINE_API bool is_enough_address_space_available	()
 	return			(*(u32*)&system_info.lpMaximumApplicationAddress) > 0x90000000;	
 }
 
-LPCSTR r1_name = "xrRender_R1.dll";
+LPCSTR r1_name = "xrServerRender.dll";
 LPCSTR r2_name = "xrRender_R2.dll";
 LPCSTR r4_name = "xrRender_R4.dll";
 
