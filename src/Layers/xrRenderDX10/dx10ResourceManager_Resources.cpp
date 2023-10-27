@@ -79,11 +79,9 @@ SState*		CResourceManager::_CreateState		(SimulatorStates& state_code)
 	// Create New
 	v_states.push_back				(xr_new<SState>());
 	v_states.back()->dwFlags		|= xr_resource_flagged::RF_REGISTERED;
-#if defined(USE_DX10) || defined(USE_DX11)
+
 	v_states.back()->state			= ID3DState::Create(state_code);
-#else	//	USE_DX10
-	v_states.back()->state			= state_code.record();
-#endif	//	USE_DX10
+
 	v_states.back()->state_code		= state_code;
 	return v_states.back();
 }
@@ -107,16 +105,12 @@ SPass*		CResourceManager::_CreatePass			(const SPass& proto)
 	P->ps						=	proto.ps;
 	P->vs						=	proto.vs;
 	P->gs						=	proto.gs;
-#ifdef USE_DX11
 	P->hs						=	proto.hs;
 	P->ds						=	proto.ds;
 	P->cs						=	proto.cs;
-#endif
 	P->constants				=	proto.constants;
 	P->T						=	proto.T;
-#ifdef _EDITOR
-	P->M						=	proto.M;
-#endif
+
 	P->C						=	proto.C;
 
 	v_passes.push_back			(P);
@@ -305,10 +299,7 @@ SPS*	CResourceManager::_CreatePS			(LPCSTR _name)
 		
 		VERIFY(SUCCEEDED(_hr));
 
-	//	CHECK_OR_EXIT		(
-	//	!FAILED(_hr),
-	//		make_string("Your video card doesn't meet game requirements.\n\nTry to lower game settings.")
-	//		);
+
 
 		return			_ps;
 	}
@@ -374,11 +365,6 @@ SGS*	CResourceManager::_CreateGS			(LPCSTR name)
 
 		FS.r_close				( file );
 
-	//	CHECK_OR_EXIT			(
-	//		!FAILED(_hr),
-	//		make_string("Your video card doesn't meet game requirements.\n\nTry to lower game settings.")
-	//	);
-
 		return					_gs;
 	}
 }
@@ -416,8 +402,7 @@ SDeclaration*	CResourceManager::_CreateDecl	(D3DVERTEXELEMENT9* dcl)
 	// Create _new
 	SDeclaration* D			= xr_new<SDeclaration>();
 	u32 dcl_size			= D3DXGetDeclLength(dcl)+1;
-	//	Don't need it for DirectX 10 here
-	//CHK_DX					(HW.pDevice->CreateVertexDeclaration(dcl,&D->dcl));
+
 	D->dcl_code.assign		(dcl,dcl+dcl_size);
 	dx10BufferUtils::ConvertVertexDeclaration(D->dcl_code, D->dx10_dcl_code);
 	D->dwFlags				|= xr_resource_flagged::RF_REGISTERED;
@@ -451,11 +436,7 @@ void				CResourceManager::_DeleteConstantTable	(const R_constant_table* C)
 }
 
 //--------------------------------------------------------------------------------------------------------------
-#ifdef USE_DX11
 CRT* CResourceManager::_CreateRT(LPCSTR Name, xr_vector<RtCreationParams>& vp_params, DXGI_FORMAT f, VIEW_TYPE view, u32 samples)
-#else
-CRT* CResourceManager::_CreateRT(LPCSTR Name, xr_vector<RtCreationParams>& vp_params, D3DFORMAT f, u32 SampleCount)
-#endif
 {
 	R_ASSERT(Name && Name[0]);
 
@@ -468,11 +449,8 @@ CRT* CResourceManager::_CreateRT(LPCSTR Name, xr_vector<RtCreationParams>& vp_pa
 		CRT *RT					=	xr_new<CRT>();
 		RT->dwFlags				|=	xr_resource_flagged::RF_REGISTERED;
 		m_rtargets.insert		(mk_pair(RT->set_name(Name),RT));
-#ifdef USE_DX11
+
 		if (Device.b_is_Ready)	RT->create(Name, vp_params, f, view, samples);
-#else
-		if (Device.b_is_Ready)	RT->create(Name, vp_params, f, SampleCount);
-#endif
 		return					RT;
 	}
 }
@@ -565,21 +543,6 @@ void	CResourceManager::_DeleteTexture		(const CTexture* T)
 	}
 	Msg	("! ERROR: Failed to find texture surface '%s'",*T->cName);
 }
-
-#ifdef DEBUG
-void	CResourceManager::DBG_VerifyTextures	()
-{
-	map_Texture::iterator I		= m_textures.begin	();
-	map_Texture::iterator E		= m_textures.end	();
-	for (; I!=E; I++) 
-	{
-		R_ASSERT(I->first);
-		R_ASSERT(I->second);
-		R_ASSERT(I->second->cName);
-		R_ASSERT(0==xr_strcmp(I->first,*I->second->cName));
-	}
-}
-#endif
 
 //--------------------------------------------------------------------------------------------------------------
 CMatrix*	CResourceManager::_CreateMatrix	(LPCSTR Name)

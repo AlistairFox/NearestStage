@@ -6,30 +6,10 @@
 IDirect3DStateBlock9* SimulatorStates::record	()
 {
 //	TODO: DX10: Implement equivalent for SimulatorStates::record for DX10
-#if defined(USE_DX10) || defined(USE_DX11)
+
 	//VERIFY(!"SimulatorStates::record not implemented!");
 	return 0;
-#else	//	USE_DX10
-	CHK_DX(HW.pDevice->BeginStateBlock());
-	for (u32 it=0; it<States.size(); it++)
-	{
-		State& S	= States[it];
-		switch (S.type)
-		{
-		case 0:	CHK_DX(HW.pDevice->SetRenderState		((D3DRENDERSTATETYPE)S.v1,S.v2));				break;
-		case 1: CHK_DX(HW.pDevice->SetTextureStageState	(S.v1,(D3DTEXTURESTAGESTATETYPE)S.v2,S.v3));	break;
-		case 2: 
-			{
-				CHK_DX(HW.pDevice->SetSamplerState		(S.v1,
-														(D3DSAMPLERSTATETYPE)S.v2,
-														((D3DSAMPLERSTATETYPE)S.v2==D3DSAMP_MAGFILTER&&S.v3==D3DTEXF_ANISOTROPIC)?D3DTEXF_LINEAR:S.v3));
-			}break;
-		}
-	}
-	IDirect3DStateBlock9*	SB = 0;
-	CHK_DX	(HW.pDevice->EndStateBlock(&SB));
-	return	SB;
-#endif	//	USE_DX10
+
 }
 
 void	SimulatorStates::set_RS	(u32 a, u32 b)
@@ -98,7 +78,6 @@ void	SimulatorStates::clear	()
 	States.clear();
 }
 
-#if defined(USE_DX10) || defined(USE_DX11)
 
 #include "../xrRenderDX10/dx10StateUtils.h"
 
@@ -267,7 +246,6 @@ void SimulatorStates::UpdateDesc( D3D_DEPTH_STENCIL_DESC &desc ) const
 	}
 }
 
-#ifdef USE_DX11
 void SimulatorStates::UpdateDesc( D3D_BLEND_DESC &desc ) const
 {
 	for (u32 it=0; it<States.size(); it++)
@@ -338,71 +316,6 @@ void SimulatorStates::UpdateDesc( D3D_BLEND_DESC &desc ) const
 		}
 	}
 }
-#else
-void SimulatorStates::UpdateDesc( D3D_BLEND_DESC &desc ) const
-{
-	for (u32 it=0; it<States.size(); it++)
-	{
-		const State& S	= States[it];
-		if (S.type==0)
-		{
-			switch (S.v1)
-			{
-			case XRDX10RS_ALPHATOCOVERAGE:
-				desc.AlphaToCoverageEnable = S.v2?1:0;
-				break;
-				
-			case D3DRS_SRCBLEND:
-				desc.SrcBlend = dx10StateUtils::ConvertBlendArg((D3DBLEND)S.v2);
-				break;
-
-			case D3DRS_DESTBLEND:
-				desc.DestBlend = dx10StateUtils::ConvertBlendArg((D3DBLEND)S.v2);
-				break;
-			
-				//D3DRS_ALPHAFUNC
-
-			case D3DRS_BLENDOP:
-				desc.BlendOp = dx10StateUtils::ConvertBlendOp((D3DBLENDOP)S.v2);
-				break;
-
-			case D3DRS_SRCBLENDALPHA:
-				desc.SrcBlendAlpha = dx10StateUtils::ConvertBlendArg((D3DBLEND)S.v2);
-				break;
-
-			case D3DRS_DESTBLENDALPHA:
-				desc.DestBlendAlpha = dx10StateUtils::ConvertBlendArg((D3DBLEND)S.v2);
-				break;
-
-			case D3DRS_BLENDOPALPHA:
-				desc.BlendOpAlpha = dx10StateUtils::ConvertBlendOp((D3DBLENDOP)S.v2);
-				break;
-
-			case D3DRS_ALPHABLENDENABLE:
-				for ( int i=0; i<8; ++i)
-					desc.BlendEnable[i] = S.v2?1:0;
-				break;
-
-			case D3DRS_COLORWRITEENABLE:
-				desc.RenderTargetWriteMask[0] = (u8)S.v2;
-				break;
-
-			case D3DRS_COLORWRITEENABLE1:
-				desc.RenderTargetWriteMask[1] = (u8)S.v2;
-				break;
-
-			case D3DRS_COLORWRITEENABLE2:
-				desc.RenderTargetWriteMask[2] = (u8)S.v2;
-				break;
-
-			case D3DRS_COLORWRITEENABLE3:
-				desc.RenderTargetWriteMask[3] = (u8)S.v2;
-				break;
-			}
-		}
-	}
-}
-#endif
 
 void SimulatorStates::UpdateDesc( D3D_SAMPLER_DESC descArray[D3D_COMMONSHADER_SAMPLER_SLOT_COUNT], bool SamplerUsed[D3D_COMMONSHADER_SAMPLER_SLOT_COUNT], int iBaseSamplerIndex ) const
 {
@@ -565,5 +478,3 @@ void SimulatorStates::UpdateDesc( D3D_SAMPLER_DESC descArray[D3D_COMMONSHADER_SA
 			desc.MaxLOD = desc.MinLOD;
 	}
 }
-
-#endif	//	USE_DX10
