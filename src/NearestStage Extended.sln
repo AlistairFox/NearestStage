@@ -501,7 +501,6 @@ Global
 		{22A606CC-6D0D-44F9-8795-2314D334BB4D}.Release|Win32.ActiveCfg = Release|Win32
 		{22A606CC-6D0D-44F9-8795-2314D334BB4D}.Release|Win32.Build.0 = Release|Win32
 		{22A606CC-6D0D-44F9-8795-2314D334BB4D}.Release|x64.ActiveCfg = Release|x64
-		{22A606CC-6D0D-44F9-8795-2314D334BB4D}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
