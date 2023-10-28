@@ -2345,13 +2345,14 @@ public:
 		if (!srv) return;
 
 		string1024 buff;
+		xr_strcpy(buff, args);
 		exclude_raid_from_args(args, buff, sizeof(buff));
 
 		ClientID client_id(0);
 		string256 name;
 		s32 money;
 
-		if (sscanf_s(buff, "%s %d", &name, &money) != 2)
+		if (sscanf_s(buff, "%s %d", &name, sizeof(name), &money) != 2)
 		{
 			Msg("! ERROR: bad command parameters.");
 			Msg("Give money to player. Format: \"sv_give_money <player name> <money>\"");
@@ -2421,12 +2422,12 @@ public:
 		string256 name;
 		u8 team;
 
-		if (sscanf_s(buff, "%s %d", &name, &team), team > 10 || team < 0)
+		if (sscanf_s(args, "%s %d", &name, sizeof(name), &team) != 2)
 		{
-			Msg("! ERROR: bad command parameters.");
-			Msg("player change team: \"changeteam <player name> <team 0 - 10>\"");
+			Msg("! changeteam. Format: \"changeteam <player name> <team>\"");
 			return;
 		}
+
 
 		for (auto& player : Game().players)
 		{
@@ -2448,9 +2449,12 @@ public:
 
 		xrClientData* CL = static_cast<xrClientData*>(Level().Server->GetClientByID(client_id));
 
+		Msg("Player name: %s", name);
+		Msg("Player ID: %u", client_id);
+		Msg("Team: %u", team);
+
 		if (CL && CL->ps && (CL != Level().Server->GetServerClient()))
 		{
-
 			if (team > 10 || team < 0)
 			{
 				Msg("uncorrected team");
