@@ -341,8 +341,8 @@ int ps_r2_lfx = 0;
 float ps_r2_reflections_distance = 300.0f;
 
 //Static on dx11
-Flags32	ps_r2_static_flags = { R2FLAG_USE_BUMP
-	| R2FLAG_STATIC_SUN
+Flags32	ps_r2_static_flags = {
+	R2FLAG_USE_BUMP
 };
 
 Flags32 psDeviceFlags2 = { 0 };
@@ -1057,7 +1057,6 @@ void		xrRender_initconsole	()
 
 	//Static on R2+
 	CMD3(CCC_Mask, "r2_use_bump", &ps_r2_static_flags, R2FLAG_USE_BUMP);//Need restart
-	CMD3(CCC_Mask, "r2_static_sun", &ps_r2_static_flags, R2FLAG_STATIC_SUN);//Need restart
 
 	CMD3(CCC_Token,		"r2_sun_quality",				&ps_r_sun_quality,			qsun_quality_token);
 
@@ -1123,8 +1122,8 @@ void		xrRender_initconsole	()
 	// Geometry optimization
 	CMD4(CCC_Integer, "r__optimize_static_geom", &opt_static, 0, 4);
 	CMD4(CCC_Integer, "r__optimize_dynamic_geom", &opt_dynamic, 0, 4);
-	psDeviceFlags2.set(rsOptShadowGeom, TRUE);
-	CMD3(CCC_Mask, "r__optimize_shadow_geom", &psDeviceFlags2, rsOptShadowGeom);
+	psDeviceFlags2.set(rsOptShadowGeom, FALSE);
+//	CMD3(CCC_Mask, "r__optimize_shadow_geom", &psDeviceFlags2, rsOptShadowGeom);
 	CMD4(CCC_Integer, "r2_lfx", &ps_r2_lfx, 0, 1); //SFZ Lens Flares
 
 	CMD4(CCC_Float, "r3_reflections_dist", &ps_r2_reflections_distance, 10.f, 1000.f); //Дальность отражений

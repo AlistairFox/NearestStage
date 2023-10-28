@@ -183,7 +183,6 @@ enum
 enum
 {
 	R2FLAG_USE_BUMP = (1 << 0),
-	R2FLAG_STATIC_SUN = (1 << 1),
 };
 
 enum
