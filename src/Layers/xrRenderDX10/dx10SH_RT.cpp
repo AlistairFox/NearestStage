@@ -10,11 +10,8 @@ CRT::CRT			()
 	pSurface		= NULL;
 	pRT				= NULL;
 	pZRT			= NULL;
-#ifdef USE_DX11
 	pUAView			= NULL;
-#endif
-	//dwWidth		= 0;
-	//dwHeight		= 0;
+
 	rtWidth = 0;
 	rtHeight = 0;
 	format				= DXGI_FORMAT_UNKNOWN;
@@ -29,11 +26,7 @@ CRT::~CRT			()
 	DEV->_DeleteRT	(this);
 }
 
-#ifdef USE_DX11
 void CRT::create(LPCSTR Name, xr_vector<RtCreationParams>& vp_params, DXGI_FORMAT f, VIEW_TYPE view, u32 s)
-#else
-void CRT::create	(LPCSTR Name, u32 w, u32 h,	D3DFORMAT f, u32 SampleCount )
-#endif
 {
 	if (valid()) return;
 
@@ -42,43 +35,12 @@ void CRT::create	(LPCSTR Name, u32 w, u32 h,	D3DFORMAT f, u32 SampleCount )
 	R_ASSERT(HW.pDevice && Name && Name[0]);
 	_order = CPU::GetCLK();	//Device.GetTimerGlobal()->GetElapsed_clk();
 
-	//HRESULT		_hr;
 
 	creationParams = vp_params; // for device reset
 
-	//dwWidth	= w;
-	//dwHeight	= h;
 	format = f;
 	samples = s;
 
-
-	// Check width-and-height of render target surface
-	//if (w>D3D_REQ_TEXTURE2D_U_OR_V_DIMENSION)		return;
-	//if (h>D3D_REQ_TEXTURE2D_U_OR_V_DIMENSION)		return;
-
-	// Select usage
-	//u32 usage	= 0;
-	//if (D3DFMT_D24X8==fmt)									usage = D3DUSAGE_DEPTHSTENCIL;
-	//else if (D3DFMT_D24S8		==fmt)						usage = D3DUSAGE_DEPTHSTENCIL;
-	//else if (D3DFMT_D15S1		==fmt)						usage = D3DUSAGE_DEPTHSTENCIL;
-	//else if (D3DFMT_D16			==fmt)						usage = D3DUSAGE_DEPTHSTENCIL;
-	//else if (D3DFMT_D16_LOCKABLE==fmt)						usage = D3DUSAGE_DEPTHSTENCIL;
-	//else if (D3DFMT_D32F_LOCKABLE==fmt)						usage = D3DUSAGE_DEPTHSTENCIL;
-	//else if ((D3DFORMAT)MAKEFOURCC('D','F','2','4') == fmt)	usage = D3DUSAGE_DEPTHSTENCIL;
-	//else													usage = D3DUSAGE_RENDERTARGET;
-
-
-
-//	DXGI_FORMAT dx10FMT;
-//   
-//   if( fmt != D3DFMT_D24S8 )
-//      dx10FMT = dx10TextureUtils::ConvertTextureFormat(fmt);
-//   else
-//      {
-//      dx10FMT = DXGI_FORMAT_R24G8_TYPELESS;
-//      usage = D3DUSAGE_DEPTHSTENCIL;
-//      }
-//
 	DXGI_FORMAT dx10FMT = f;
 	switch (dx10FMT)
 	{
@@ -368,14 +330,7 @@ void CRT::SwitchViewPortResources(ViewPort vp)
 	pTexture->SurfaceSetRT(value.textureSurface, value.shaderResView);
 }
 
-#ifdef USE_DX11
 void resptrcode_crt::create(LPCSTR Name, xr_vector<RtCreationParams>& vp_params, DXGI_FORMAT f, VIEW_TYPE view, u32 samples)
 {
 	_set(DEV->_CreateRT(Name, vp_params, f, view, samples));
 }
-#else
-void resptrcode_crt::create(LPCSTR Name, xr_vector<RtCreationParams>& vp_params, D3DFORMAT f, u32 SampleCount)
-{
-	_set(DEV->_CreateRT(Name, vp_params, f, SampleCount));
-}
-#endif
