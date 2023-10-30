@@ -359,7 +359,6 @@ public:
 	u16						m_holderID;
 	bool					use_Holder(CHolderCustom* holder);
 
-	virtual void ActorEnterCar();
 protected:
 
 	bool					use_MountedWeapon		(CHolderCustom* object);

@@ -14,7 +14,6 @@ enum{
 		AF_DISPLAY_VOICE_ICON = (1 << 11),
 		AF_SPAWN_ANTIFREEZE = (1 << 11),		//Alundaio
 		AF_USE_3D_SCOPES = (1<<12),
-		AF_ACTOR_IN_CAR = (1<<13),
 };
 
 extern Flags32	psActorFlags;

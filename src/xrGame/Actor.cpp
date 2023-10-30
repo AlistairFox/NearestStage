@@ -104,7 +104,7 @@ static Fbox		bbCrouchBox;
 static Fvector	vFootCenter;
 static Fvector	vFootExt;
 
-Flags32			psActorFlags = { AF_GODMODE_RT | AF_AUTOPICKUP | AF_RUN_BACKWARD | AF_IMPORTANT_SAVE | AF_DISPLAY_VOICE_ICON | AF_ACTOR_IN_CAR };
+Flags32			psActorFlags = { AF_GODMODE_RT | AF_AUTOPICKUP | AF_RUN_BACKWARD | AF_IMPORTANT_SAVE | AF_DISPLAY_VOICE_ICON};
 int				psActorSleepTime = 1;
 
 extern ENGINE_API Fvector4 ps_ssfx_hud_drops_1;
@@ -292,26 +292,6 @@ bool CActor::MpSafeMODE() const
 	game_PlayerState* ps = Game().GetPlayerByGameID(ID());
 
 	return (ps && ps->testFlag(GAME_PLAYER_MP_SAFE_MODE));
-}
-
-
-void CActor::ActorEnterCar()
-{
-	if (OnClient() && Local() && Level().CurrentControlEntity() == this)
-	{
-		game_PlayerState* ps = Game().GetPlayerByGameID(ID());
-
-		if (ps)
-		{
-			bool mode = ps->testFlag(GAME_PLAYER_MP_INPUT_CAR);
-			Msg("safe mode [%s]", !mode ? "true" : "false");
-		}
-
-		NET_Packet packet;
-		Level().game->u_EventGen(packet, GE_ACTOR_ENTER_CAR, this->ID());
-		Level().game->u_EventSend(packet);
-	}
-
 }
 
 void CActor::reinit	()
