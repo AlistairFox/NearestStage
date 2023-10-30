@@ -1779,7 +1779,7 @@ CSE_ALifeCar::CSE_ALifeCar				(LPCSTR caSection) : CSE_ALifeDynamicObjectVisual(
     	set_visual				(pSettings->r_string(caSection,"visual"));
 	m_flags.set					(flUseSwitches,FALSE);
 	m_flags.set					(flSwitchOffline,FALSE);
-	health						=1.0f;
+	m_health =1.0f;
 }
 
 CSE_ALifeCar::~CSE_ALifeCar				()
@@ -1795,28 +1795,72 @@ void CSE_ALifeCar::STATE_Read			(NET_Packet	&tNetPacket, u16 size)
 		if ((m_wVersion > 52) && (m_wVersion < 55))
 		tNetPacket.r_float		();
 	if(m_wVersion>92)
-			health=tNetPacket.r_float();
-	if(health>1.0f) health/=100.0f;
+		m_health =tNetPacket.r_float();
+	if(m_health>1.0f) m_health /=100.0f;
 }
 
 void CSE_ALifeCar::STATE_Write			(NET_Packet	&tNetPacket)
 {
 	inherited1::STATE_Write		(tNetPacket);
 	inherited2::STATE_Write		(tNetPacket);
-	tNetPacket.w_float(health);
+	tNetPacket.w_float(m_health);
 }
 
 void CSE_ALifeCar::UPDATE_Read			(NET_Packet	&tNetPacket)
 {
 	inherited1::UPDATE_Read		(tNetPacket);
 	inherited2::UPDATE_Read		(tNetPacket);
+
+
+	tNetPacket.r_u8(engine);
+	tNetPacket.r_u8(light);
+	tNetPacket.r_float(m_health);
+	tNetPacket.r_u16(owner);
+
+	StateVec.clear();
+	u16 cnt;
+	tNetPacket.r_u16(cnt);
+
+	for (int i = 0; i < cnt; i++)
+	{
+		SPHNetState State;
+		tNetPacket.r_vec3(State.position);
+
+		tNetPacket.r_float_q8(State.quaternion.x, -1.0, 1.0);
+		tNetPacket.r_float_q8(State.quaternion.y, -1.0, 1.0);
+		tNetPacket.r_float_q8(State.quaternion.z, -1.0, 1.0);
+		tNetPacket.r_float_q8(State.quaternion.w, -1.0, 1.0);
+
+		StateVec.push_back(State);
+	}
 }
 
 void CSE_ALifeCar::UPDATE_Write			(NET_Packet	&tNetPacket)
 {
 	inherited1::UPDATE_Write		(tNetPacket);
 	inherited2::UPDATE_Write		(tNetPacket);
+
+	tNetPacket.w_u8(engine);
+	tNetPacket.w_u8(light);
+	tNetPacket.w_float(m_health);
+	tNetPacket.w_u16(owner);
+
+	u16 cnt = StateVec.size();
+	tNetPacket.w_u16(cnt);
+
+	for (int i = 0; i < cnt; i++)
+	{
+		SPHNetState State = StateVec[i];
+		tNetPacket.w_vec3(State.position);
+
+		tNetPacket.w_float_q8(State.quaternion.x, -1.0, 1.0);
+		tNetPacket.w_float_q8(State.quaternion.y, -1.0, 1.0);
+		tNetPacket.w_float_q8(State.quaternion.z, -1.0, 1.0);
+		tNetPacket.w_float_q8(State.quaternion.w, -1.0, 1.0);
+	}
 }
+
+
 
 bool CSE_ALifeCar::used_ai_locations() const
 {
@@ -1858,7 +1902,7 @@ void CSE_ALifeCar::data_load(NET_Packet	&tNetPacket)
 		SWheelState ws;ws.read(tNetPacket);
 		wheel_states.push_back(ws);
 	}
-	health=tNetPacket.r_float();
+	m_health=tNetPacket.r_float();
 }
 void CSE_ALifeCar::data_save(NET_Packet &tNetPacket)
 {
@@ -1884,7 +1928,12 @@ void CSE_ALifeCar::data_save(NET_Packet &tNetPacket)
 		}
 		//wheel_states.clear();
 	}
-	tNetPacket.w_float(health);
+	tNetPacket.w_float(m_health);
+}
+
+BOOL CSE_ALifeCar::Net_Relevant()
+{
+	return true;
 }
 void CSE_ALifeCar::SDoorState::read(NET_Packet& P)
 {

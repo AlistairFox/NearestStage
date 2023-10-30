@@ -10,8 +10,7 @@ public:
 protected:
 	virtual ~IPHWorldUpdateCallbck() {}
 };
-
-class IPHWorld:
+class XRPHYSICS_API IPHWorld:
 	public iphysics_scripted_class
 {
 	public:

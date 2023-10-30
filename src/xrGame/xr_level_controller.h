@@ -81,7 +81,8 @@ enum	EGameActions
 	kQUICK_USE_1,
 	kQUICK_USE_2,		
 	kQUICK_USE_3,		
-	kQUICK_USE_4,		
+	kQUICK_USE_4,	
+	KENGINE,
 	
 	kQUICK_SAVE,
 	kQUICK_LOAD,

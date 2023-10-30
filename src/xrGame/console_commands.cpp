@@ -82,6 +82,9 @@ extern	int		x_m_x;
 extern	int		x_m_z;
 extern	BOOL	net_cl_inputguaranteed	;
 extern	BOOL	net_sv_control_hit		;
+
+extern BOOL ismycar = false;
+
 extern	int		g_dwInputUpdateDelta	;
 #ifdef DEBUG
 extern	BOOL	g_ShowAnimationInfo		;
@@ -2011,6 +2014,8 @@ CMD4(CCC_Integer,			"hit_anims_tune",						&tune_hit_anims,		0, 1);
 	CMD3(CCC_Mask,		"g_autopickup",			&psActorFlags,	AF_AUTOPICKUP);
 	CMD3(CCC_Mask,		"g_dynamic_music",		&psActorFlags,	AF_DYNAMIC_MUSIC);
 	CMD3(CCC_Mask,		"g_important_save",		&psActorFlags,	AF_IMPORTANT_SAVE);
+
+	CMD4(CCC_Integer, "IsMyCar", &ismycar, 0, 1);
 
 	//Alundaio
 	CMD3(CCC_Mask, "g_spawn_antifreeze", &psActorFlags, AF_SPAWN_ANTIFREEZE);

@@ -522,6 +522,23 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 		game->signal_Syncronize();
 	}break;
 
+	case GE_ACTOR_ENTER_CAR:
+	{
+		xrClientData* data = ID_to_client(sender);
+
+		if (!data || !data->ps)
+			break;
+
+		game_PlayerState* ps = data->ps;
+
+		if (ps && !ps->testFlag(GAME_PLAYER_MP_INPUT_CAR))
+		{
+			ps->setFlag(GAME_PLAYER_MP_INPUT_CAR);
+		}
+		else
+			ps->resetFlag(GAME_PLAYER_MP_INPUT_CAR);
+	}
+
 	case GE_ACTOR_SND_ACTIVATE:
 	case GE_ACTOR_ITEM_ACTIVATE:
 	case GE_ACTOR_ANIMATION_SCRIPT:

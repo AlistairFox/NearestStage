@@ -97,7 +97,7 @@ void CActor::IR_OnKeyboardPress(int cmd)
 			if (ps)
 			{
 				bool mode = ps->testFlag(GAME_PLAYER_MP_SAFE_MODE);
-				Msg("safe mode [%s]", !mode ? "true" : "false");
+				Msg("car mode [%s]", !mode ? "true" : "false");
 			}
 
 			NET_Packet packet;
@@ -438,6 +438,10 @@ bool CActor::use_Holder				(CHolderCustom* holder)
 
 	if(m_holder){
 		bool b = use_HolderEx(0, false);
+	//	CGameObject* holderGO = smart_cast<CGameObject*>(m_holder);
+
+	//	if (smart_cast<CCar*>(holderGO))
+	//		b = use_Vehicle(0);
 		if(inventory().ActiveItem()){
 			CHudItem* hi = smart_cast<CHudItem*>(inventory().ActiveItem());
 			if(hi) hi->OnAnimationEnd(hi->GetState());
@@ -446,6 +450,9 @@ bool CActor::use_Holder				(CHolderCustom* holder)
 		return b;
 	}else{
 		bool b = use_HolderEx(holder, false);
+	//	CGameObject* holderGO = smart_cast<CGameObject*>(holder);
+	//	if (smart_cast<CCar*>(holder))
+	//		b = use_Vehicle(holder);
 		if(b){//used succesfully
 			// switch off torch...
 			CAttachableItem *I = CAttachmentOwner::attachedItem(CLSID_DEVICE_TORCH);
@@ -463,6 +470,7 @@ bool CActor::use_Holder				(CHolderCustom* holder)
 		return b;
 	}
 }
+
 
 void CActor::ActorUse()
 {

@@ -38,6 +38,12 @@ struct						dSurfaceParameters;
 class CScriptEntityAction;
 class car_memory;
 
+struct SCarNetUpdate
+{
+	u32	TimeStamp;
+	std::vector<SPHNetState> StateVec;
+};
+
 class CCar : 
 	public CEntity, 
 	public CScriptEntity,
@@ -52,20 +58,14 @@ class CCar :
 	public CDelayedActionFuse
 {
 private:
-	collide::rq_results		RQR;
+	collide::rq_results RQR;
+	xr_deque<SCarNetUpdate> m_CarNetUpdates;
+	u32 m_InterpolationStartTime;
+	bool m_FirstInterpolation;
 
-#ifdef DEBUG
-	CFunctionGraph 					m_dbg_power_rpm			;
-	CFunctionGraph 					m_dbg_torque_rpm		;
-	CStatGraph	   					*m_dbg_dynamic_plot		;
-	bool							b_plots					;
-	float _stdcall			TorqueRpmFun		(float rpm)		{return Parabola(rpm)/rpm;}
-	void 					InitDebug			()				;
-	void 					DbgSheduleUpdate	()				;
-	void 					DbgUbdateCl			()				;
-	void 					DbgCreatePlots		()				;
-	void 					DBgClearPlots		()				;
-#endif
+	SCarNetUpdate* m_Update1;
+	SCarNetUpdate* m_Update2;
+	float m_LerpMul;
 ////////////////////////////////////////////////////////////////////	
 	Flags16						async_calls						;
 static	const u16				cAsCallsnum						=3;
@@ -433,6 +433,7 @@ private:
 	size_t					m_current_transmission_num;
 	///////////////////////////////////////////////////
 	CCarLights				m_lights;
+	SCarLight				m_car_lights;
 	////////////////////////////////////////////////////
 	/////////////////////////////////////////////////
 	void				InitParabola();
@@ -583,8 +584,11 @@ public:
 	virtual void			GetRayExplosionSourcePos	(Fvector &pos);
 	virtual void			ActivateExplosionBox		(const Fvector &size,Fvector &in_out_pos){};
 	virtual void			ResetScriptData				(void *P=0);
+	void NextUpdate();
+	void Interpolate();
+	void InterpolateStates(const float& factor);
 
-	virtual void			Action						(u16 id, u32 flags);
+	virtual void			Action(int id, u32 flags);
 	virtual void			SetParam					(int id, Fvector2 val);
 	virtual void			SetParam					(int id, Fvector val);
 			bool			HasWeapon					();
@@ -628,6 +632,8 @@ public:
 
 public:
 	virtual CEntity*					cast_entity				()						{return this;}
+	void Teleport(Fvector outPos);
+	bool IsMyCar();
 private:
 	template <class T> IC void fill_wheel_vector(LPCSTR S,xr_vector<T>& type_wheels);
 	IC void fill_exhaust_vector(LPCSTR S,xr_vector<SExhaust>& exhausts);

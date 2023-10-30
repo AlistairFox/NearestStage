@@ -104,7 +104,7 @@ static Fbox		bbCrouchBox;
 static Fvector	vFootCenter;
 static Fvector	vFootExt;
 
-Flags32			psActorFlags = { AF_GODMODE_RT | AF_AUTOPICKUP | AF_RUN_BACKWARD | AF_IMPORTANT_SAVE | AF_DISPLAY_VOICE_ICON };
+Flags32			psActorFlags = { AF_GODMODE_RT | AF_AUTOPICKUP | AF_RUN_BACKWARD | AF_IMPORTANT_SAVE | AF_DISPLAY_VOICE_ICON | AF_ACTOR_IN_CAR };
 int				psActorSleepTime = 1;
 
 extern ENGINE_API Fvector4 ps_ssfx_hud_drops_1;
@@ -292,6 +292,26 @@ bool CActor::MpSafeMODE() const
 	game_PlayerState* ps = Game().GetPlayerByGameID(ID());
 
 	return (ps && ps->testFlag(GAME_PLAYER_MP_SAFE_MODE));
+}
+
+
+void CActor::ActorEnterCar()
+{
+	if (OnClient() && Local() && Level().CurrentControlEntity() == this)
+	{
+		game_PlayerState* ps = Game().GetPlayerByGameID(ID());
+
+		if (ps)
+		{
+			bool mode = ps->testFlag(GAME_PLAYER_MP_INPUT_CAR);
+			Msg("safe mode [%s]", !mode ? "true" : "false");
+		}
+
+		NET_Packet packet;
+		Level().game->u_EventGen(packet, GE_ACTOR_ENTER_CAR, this->ID());
+		Level().game->u_EventSend(packet);
+	}
+
 }
 
 void CActor::reinit	()
@@ -2432,12 +2452,12 @@ bool CActor::use_HolderEx(CHolderCustom* object, bool bForce)
 	if (m_holder)
 	{
 		
-//		CCar* car = smart_cast<CCar*>(m_holder);
-//		if (car)
-//		{
-//			use_HolderEx(0, false);
-//			return true;
-//		}
+	//	CCar* car = smart_cast<CCar*>(m_holder);
+	//	if (car)
+	//	{
+	//		use_HolderEx(0, false);
+	//		return true;
+	//	}
 		
 
 			if (true) { //(!object || (m_holder == object)) {
@@ -2490,13 +2510,13 @@ bool CActor::use_HolderEx(CHolderCustom* object, bool bForce)
 	}
 	else
 	{
-		
-//		CCar* car = smart_cast<CCar*>(object);
-//		if (car)
-//		{
-//			use_HolderEx(object, false);
-//			return true;
-//		}
+	
+	//	CCar* car = smart_cast<CCar*>(object);
+	//	if (car)
+	//	{
+	//		use_HolderEx(object, false);
+	//		return true;
+		//}
 		
 		if (object)
 		{
@@ -2569,6 +2589,10 @@ void CActor::on_requested_spawn(CObject* object) {
 	character_physics_support()->movement()->CreateCharacter();
 	character_physics_support()->movement()->SetPosition(oHolder->ExitPosition());
 	character_physics_support()->movement()->SetVelocity(oHolder->ExitVelocity());
+
+	CCar* car = smart_cast<CCar*>(object);
+	if(car)
+		attach_Vehicle(car);
 
 	m_holder = NULL;
 	m_holderID = (u16)(-1);
