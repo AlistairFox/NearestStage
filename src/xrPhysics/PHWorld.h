@@ -28,7 +28,7 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 class	CObjectSpace;
 class	CObjectList;
-class 	XRPHYSICS_API CPHWorld	:	public	pureFrame,
+class CPHWorld	:	public	pureFrame,
 					public	IPHWorld,
 					public	cphysics_scripted,
 					private	boost::noncopyable

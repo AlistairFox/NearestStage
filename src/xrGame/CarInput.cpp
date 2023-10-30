@@ -25,9 +25,9 @@ void CCar::OnMouseMove(int dx, int dy)
 	if (!IsMyCar() && !GetScriptControl())
 		return;
 
-	CCameraBase* C = active_camera;
+	CCameraBase *C = active_camera;
 	float scale = (C->f_fov / g_fov) * psMouseSens * psMouseSensScale / 50.f;
-
+	
 	if (dx)
 	{
 		float d = float(dx) * scale;
@@ -41,7 +41,7 @@ void CCar::OnMouseMove(int dx, int dy)
 	}
 }
 
-bool CCar::bfAssignMovement(CScriptEntityAction* tpEntityAction)
+bool CCar::bfAssignMovement(CScriptEntityAction *tpEntityAction)
 {
 	if (tpEntityAction->m_tMovementAction.m_bCompleted)
 		return (false);
@@ -65,14 +65,13 @@ bool CCar::bfAssignMovement(CScriptEntityAction* tpEntityAction)
 	return (true);
 }
 
-bool CCar::bfAssignObject(CScriptEntityAction* tpEntityAction)
+bool CCar::bfAssignObject(CScriptEntityAction *tpEntityAction)
 {
-	CScriptObjectAction& l_tObjectAction = tpEntityAction->m_tObjectAction;
+	CScriptObjectAction &l_tObjectAction = tpEntityAction->m_tObjectAction;
 	if (l_tObjectAction.m_bCompleted || !xr_strlen(l_tObjectAction.m_caBoneName))
 		return ((l_tObjectAction.m_bCompleted = true) == false);
 
-	s16 l_sBoneID = smart_cast<IKinematics*>(Visual())->LL_BoneID(l_tObjectAction.m_caBoneName);
-
+	s16 l_sBoneID = smart_cast<IKinematics *>(Visual())->LL_BoneID(l_tObjectAction.m_caBoneName);
 	if (is_Door(l_sBoneID))
 	{
 		switch (l_tObjectAction.m_tGoalType)
@@ -100,8 +99,7 @@ bool CCar::bfAssignObject(CScriptEntityAction* tpEntityAction)
 		}
 		return (false);
 	}
-
-	SCarLight* light = NULL;
+	SCarLight *light = NULL;
 	if (m_lights.findLight(l_sBoneID, light))
 	{
 		switch (l_tObjectAction.m_tGoalType)
@@ -142,8 +140,6 @@ void CCar::OnKeyboardPress(int cmd)
 	if (!IsMyCar() && !GetScriptControl())
 		return;
 
-	Msg("cmd %d", cmd);
-
 	switch (cmd)
 	{
 	case kCAM_1:
@@ -167,15 +163,13 @@ void CCar::OnKeyboardPress(int cmd)
 	case kBACK:
 		PressBack();
 		break;
-
-	//case kCarBeep:
-//	{
-//		NET_Packet P;
-	//	CGameObject::u_EventGen(P, GE_CAR_BEEP, ID());
-//		CGameObject::u_EventSend(P);
-//		break;
-//	}
-
+	case kCarBeep:
+	{
+		NET_Packet P;
+		CGameObject::u_EventGen(P, GE_CAR_BEEP, ID());
+		CGameObject::u_EventSend(P);
+		break;
+	}
 	case kR_STRAFE:
 		PressRight();
 		if (OwnerActor())
@@ -202,8 +196,8 @@ void CCar::OnKeyboardPress(int cmd)
 
 void CCar::OnKeyboardRelease(int cmd)
 {
-	//if (!IsMyCar() && !GetScriptControl())
-	//	return;
+	if (!IsMyCar() && !GetScriptControl())
+		return;
 
 	switch (cmd)
 	{

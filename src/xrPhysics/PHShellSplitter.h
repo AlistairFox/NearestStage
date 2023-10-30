@@ -31,7 +31,7 @@ DEFINE_VECTOR(CPHShellSplitter,SPLITTER_STORAGE,SPLITTER_I)
 typedef		xr_vector<CPHShellSplitter>::reverse_iterator	SPLITTER_RI;
 
 
-class XRPHYSICS_API CPHShellSplitterHolder : public CPHUpdateObject			//call all Fractures and Breakable Joints Updates
+class CPHShellSplitterHolder : public CPHUpdateObject			//call all Fractures and Breakable Joints Updates
 {
 friend class CPHShell;
 bool							m_has_breaks																																;
@@ -48,7 +48,6 @@ virtual void					PhDataUpdate				(dReal step)																									;				//cal
 		void					PassEndSplitters			(const CShellSplitInfo& spl_inf,CPHShell* dest,u16 jt_add_shift,u16 el_add_shift)								;
 		void					InitNewShell				(CPHShell* shell)																								;			//inits new active shell
 public:
-
 								CPHShellSplitterHolder		(CPHShell* shell)																								;
 virtual							~CPHShellSplitterHolder		()																												;
 		void					Activate					()																												;
