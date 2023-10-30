@@ -7491,6 +7491,9 @@
     <ClInclude Include="DynamicHudGlass.h">
       <Filter>HudGlass</Filter>
     </ClInclude>
+    <ClInclude Include="car_net_update.h">
+      <Filter>Core\Client\Objects\vehicles\Car</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -11219,6 +11222,7 @@
     <ClCompile Include="ActorMpWound_Script.cpp">
       <Filter>AnimationMode</Filter>
     </ClCompile>
+    <ClCompile Include="ActorVehicle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="ai\monsters\chimera\chimera_attack_state.h">

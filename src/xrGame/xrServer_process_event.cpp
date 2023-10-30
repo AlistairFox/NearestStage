@@ -69,6 +69,7 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 	case GE_GRENADE_EXPLODE:
 	case GE_WPN_UNLOAD_AMMO:
 	case GE_WPN_UPDATE_AMMO:
+	case GE_CAR_BEEP:
 		{
 		SendBroadcast			(BroadcastCID,P,MODE);
 		}break;
