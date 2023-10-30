@@ -145,23 +145,7 @@ void CHW::CreateDevice(HWND m_hWnd, bool move_window)
 	R_CHK(m_pAdapter->GetDesc(&Desc));
 	//	Warning: Desc.Description is wide string
 	Msg("* GPU [vendor:%X]-[device:%X]: %S", Desc.VendorId, Desc.DeviceId, Desc.Description);
-	/*
-	// Display the name of video board
-	D3DADAPTER_IDENTIFIER9	adapterID;
-	R_CHK	(pD3D->GetAdapterIdentifier(DevAdapter,0,&adapterID));
-	Msg		("* GPU [vendor:%X]-[device:%X]: %s",adapterID.VendorId,adapterID.DeviceId,adapterID.Description);
 
-	u16	drv_Product		= HIWORD(adapterID.DriverVersion.HighPart);
-	u16	drv_Version		= LOWORD(adapterID.DriverVersion.HighPart);
-	u16	drv_SubVersion	= HIWORD(adapterID.DriverVersion.LowPart);
-	u16	drv_Build		= LOWORD(adapterID.DriverVersion.LowPart);
-	Msg		("* GPU driver: %d.%d.%d.%d",u32(drv_Product),u32(drv_Version),u32(drv_SubVersion), u32(drv_Build));
-	*/
-
-	/*
-	Caps.id_vendor	= adapterID.VendorId;
-	Caps.id_device	= adapterID.DeviceId;
-	*/
 
 	Caps.id_vendor = Desc.VendorId;
 	Caps.id_device = Desc.DeviceId;
@@ -172,11 +156,7 @@ void CHW::CreateDevice(HWND m_hWnd, bool move_window)
 
 	selectResolution(sd.BufferDesc.Width, sd.BufferDesc.Height, bWindowed);
 
-	// Back buffer
-	//.	P.BackBufferWidth		= dwWidth;
-	//. P.BackBufferHeight		= dwHeight;
-	//	TODO: DX10: implement dynamic format selection
-	//sd.BufferDesc.Format		= fTarget;
+
 	sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	sd.BufferCount = 1;
 
@@ -609,79 +589,6 @@ struct _uniq_mode
 
 #ifndef _EDITOR
 
-/*
-void free_render_mode_list()
-{
-for( int i=0; vid_quality_token[i].name; i++ )
-{
-xr_free					(vid_quality_token[i].name);
-}
-xr_free						(vid_quality_token);
-vid_quality_token			= NULL;
-}
-*/
-/*
-void	fill_render_mode_list()
-{
-if(vid_quality_token != NULL)		return;
-
-D3DCAPS9					caps;
-CHW							_HW;
-_HW.CreateD3D				();
-_HW.pD3D->GetDeviceCaps		(D3DADAPTER_DEFAULT,D3DDEVTYPE_HAL,&caps);
-_HW.DestroyD3D				();
-u16		ps_ver_major		= u16 ( u32(u32(caps.PixelShaderVersion)&u32(0xf << 8ul))>>8 );
-
-xr_vector<LPCSTR>			_tmp;
-u32 i						= 0;
-for(; i<5; ++i)
-{
-bool bBreakLoop = false;
-switch (i)
-{
-case 3:		//"renderer_r2.5"
-if (ps_ver_major < 3)
-bBreakLoop = true;
-break;
-case 4:		//"renderer_r_dx10"
-bBreakLoop = true;
-break;
-default:	;
-}
-
-if (bBreakLoop) break;
-
-_tmp.push_back				(NULL);
-LPCSTR val					= NULL;
-switch (i)
-{
-case 0: val ="renderer_r1";			break;
-case 1: val ="renderer_r2a";		break;
-case 2: val ="renderer_r2";			break;
-case 3: val ="renderer_r2.5";		break;
-case 4: val ="renderer_r_dx10";		break; //  -)
-}
-_tmp.back()					= xr_strdup(val);
-}
-u32 _cnt								= _tmp.size()+1;
-vid_quality_token						= xr_alloc<xr_token>(_cnt);
-
-vid_quality_token[_cnt-1].id			= -1;
-vid_quality_token[_cnt-1].name			= NULL;
-
-#ifdef DEBUG
-Msg("Available render modes[%d]:",_tmp.size());
-#endif // DEBUG
-for(u32 i=0; i<_tmp.size();++i)
-{
-vid_quality_token[i].id				= i;
-vid_quality_token[i].name			= _tmp[i];
-#ifdef DEBUG
-Msg							("[%s]",_tmp[i]);
-#endif // DEBUG
-}
-}
-*/
 void free_vid_mode_list()
 {
 	for (int i = 0; vid_mode_token[i].name; i++)
@@ -843,111 +750,7 @@ void CHW::UpdateViews()
 	temp1->Release();
 	temp2->Release();
 
-#ifdef USE_DX11
-	//R = pDevice->CreateRenderTargetView( pBuffer, NULL, &pBaseRT);
-	//pBuffer->Release();
-	//R_CHK(R);
 
-	//	Create Depth/stencil buffer
-	//	HACK: DX10: hard depth buffer format
-	//R_CHK	(pDevice->GetDepthStencilSurface	(&pBaseZB));
-
-// #ifdef USE_DX11
-	// D3D_TEXTURE2D_DESC descDepth;
-	// descDepth.Width = sd.BufferDesc.Width;
-	// descDepth.Height = sd.BufferDesc.Height;
-	// descDepth.MipLevels = 1;
-	// descDepth.ArraySize = 1;
-	// descDepth.Format = DXGI_FORMAT_R24G8_TYPELESS; // DXGI_FORMAT_D24_UNORM_S8_UINT;
-	// descDepth.SampleDesc.Count = 1;
-	// descDepth.SampleDesc.Quality = 0;
-	// descDepth.Usage = D3D_USAGE_DEFAULT;
-	// descDepth.BindFlags = D3D_BIND_DEPTH_STENCIL | D3D_BIND_SHADER_RESOURCE;;
-	// descDepth.CPUAccessFlags = 0;
-	// descDepth.MiscFlags = 0;
-	// R = pDevice->CreateTexture2D( &descDepth,       // Texture desc
-		// NULL,                  // Initial data
-		// &pDepthStencil ); // [out] Texture
-	// R_CHK(R);
-
-	// //	Create Depth/stencil view
-	// //R = pDevice->CreateDepthStencilView( pDepthStencil, NULL, &pBaseZB );
-	// //R_CHK(R);
-	// D3D_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
-	// dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	// dsvDesc.Flags = 0;
-	// dsvDesc.ViewDimension = D3D_DSV_DIMENSION_TEXTURE2D;
-	// dsvDesc.Texture2D.MipSlice = 0;
-	// R_CHK(pDevice->CreateDepthStencilView(pDepthStencil, &dsvDesc, &pBaseZB)); // read & wtire DSV
-
-
-
-	// // Shader resource view
-	// D3D_SHADER_RESOURCE_VIEW_DESC depthSRVDesc = {};
-	// depthSRVDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
-	// depthSRVDesc.ViewDimension = D3D_SRV_DIMENSION_TEXTURE2D;
-	// depthSRVDesc.Texture2D.MipLevels = 1;
-	// depthSRVDesc.Texture2D.MostDetailedMip = 0; // No MIP
-	// R_CHK(pDevice->CreateShaderResourceView(pDepthStencil, &depthSRVDesc, &pBaseDepthReadSRV)); // read SRV
-
-	// if (pBaseDepthReadSRV)
-	// {
-		// Msg("* Shader Resource: pBaseDepthReadSRV Created");
-	// }
-
-// #else 
-	// ID3DTexture2D* pDepthStencil = NULL;
-	// D3D_TEXTURE2D_DESC descDepth;
-	// descDepth.Width = sd.BufferDesc.Width;
-	// descDepth.Height = sd.BufferDesc.Height;
-	// descDepth.MipLevels = 1;
-	// descDepth.ArraySize = 1;
-	// descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	// descDepth.SampleDesc.Count = 1;
-	// descDepth.SampleDesc.Quality = 0;
-	// descDepth.Usage = D3D_USAGE_DEFAULT;
-	// descDepth.BindFlags = D3D_BIND_DEPTH_STENCIL | D3D_BIND_SHADER_RESOURCE;;
-	// descDepth.CPUAccessFlags = 0;
-	// descDepth.MiscFlags = 0;
-	// R = pDevice->CreateTexture2D(&descDepth,       // Texture desc
-		// NULL,                  // Initial data
-		// &pDepthStencil); // [out] Texture
-	// R_CHK(R);
-
-	// //	Create Depth/stencil view
-	// R = pDevice->CreateDepthStencilView(pDepthStencil, NULL, &pBaseZB);
-	// R_CHK(R);
-
-	// pDepthStencil->Release();
-
-// #endif 
-
-	//R = pDevice->CreateRenderTargetView( pBuffer, NULL, &pBaseRT);
-	//pBuffer->Release();
-	//R_CHK(R);
-
-	//	Create Depth/stencil buffer
-	//	HACK: DX10: hard depth buffer format
-	//R_CHK	(pDevice->GetDepthStencilSurface	(&pBaseZB));
-	//ID3DTexture2D* pDepthStencil = NULL;
-
-	//-------------- CREATE TEXTURE 2D MAIN
-	// ID3DTexture2D* depth_stencil = NULL;
-	// D3D_TEXTURE2D_DESC descDepth;
-	// descDepth.Width = sd.BufferDesc.Width;
-	// descDepth.Height = sd.BufferDesc.Height;
-	// descDepth.MipLevels = 1;
-	// descDepth.ArraySize = 1;
-	// descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	// descDepth.SampleDesc.Count = 1;
-	// descDepth.SampleDesc.Quality = 0;
-	// descDepth.Usage = D3D_USAGE_DEFAULT;
-	// descDepth.BindFlags = D3D_BIND_DEPTH_STENCIL;
-	// descDepth.CPUAccessFlags = 0;
-	// descDepth.MiscFlags = 0;
-	// //R = pDevice->CreateTexture2D( &descDepth,NULL,&pDepthStencil );
-	// R = pDevice->CreateTexture2D(&descDepth, NULL, &depth_stencil);
-	// R_CHK(R);
 	D3D_TEXTURE2D_DESC descDepth;
 	descDepth.Width = sd.BufferDesc.Width;
 	descDepth.Height = sd.BufferDesc.Height;
@@ -981,15 +784,6 @@ void CHW::UpdateViews()
 	R = pDevice->CreateDepthStencilView(viewPortsRTZB.at(MAIN_VIEWPORT).pDepthStencil, &dsvDesc, &viewPortsRTZB.at(MAIN_VIEWPORT).baseZB);
 	R_CHK(R);
 
-	//-------------- CREATE SRV MAIN
-	// D3D_SHADER_RESOURCE_VIEW_DESC depthSRVDesc = {};
-	// depthSRVDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
-	// depthSRVDesc.ViewDimension = D3D_SRV_DIMENSION_TEXTURE2D;
-	// depthSRVDesc.Texture2D.MipLevels = 1;
-	// depthSRVDesc.Texture2D.MostDetailedMip = 0; // No MIP
-	// R_CHK(pDevice->CreateShaderResourceView(pDepthStencil, &depthSRVDesc, &pBaseDepthReadSRV)); // read SRV
-	// if (pBaseDepthReadSRV)
-		// Msg("* Shader Resource: pBaseDepthReadSRV Created");
 	D3D_SHADER_RESOURCE_VIEW_DESC depthSRVDesc = {};
 	depthSRVDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
 	depthSRVDesc.ViewDimension = D3D_SRV_DIMENSION_TEXTURE2D;
@@ -999,32 +793,15 @@ void CHW::UpdateViews()
 	if (viewPortsRTZB.at(MAIN_VIEWPORT).pBaseDepthReadSRV)
 	Msg("* Shader Resource: MAIN_VIEWPORT: pBaseDepthReadSRV Created");
 
-	//-------------- CREATE TEXTURE 2D SECONDARY
-	// descDepth.Width = Device.m_SecondViewport.screenWidth;
-	// descDepth.Height = Device.m_SecondViewport.screenHeight;
-	// R = pDevice->CreateTexture2D(&descDepth, NULL, &depth_stencil);
-	// R_CHK(R);
 	descDepth.Width = Device.m_SecondViewport.screenWidth;
 	descDepth.Height = Device.m_SecondViewport.screenHeight;
 	R = pDevice->CreateTexture2D(&descDepth, NULL, &viewPortsRTZB.at(SECONDARY_WEAPON_SCOPE).pDepthStencil);
 	R_CHK(R);
 
-	//-------------- CREATE DSV SECONDARY
-	// R = pDevice->CreateDepthStencilView(depth_stencil, NULL, &viewPortsRTZB.at(SECONDARY_WEAPON_SCOPE).baseZB);
-	// R_CHK(R);
-	// depth_stencil->Release();
 	R = pDevice->CreateDepthStencilView(viewPortsRTZB.at(SECONDARY_WEAPON_SCOPE).pDepthStencil, &dsvDesc, &viewPortsRTZB.at(SECONDARY_WEAPON_SCOPE).baseZB);
 	R_CHK(R);
 
-	//-------------- CREATE SRV SECONDARY
-	// D3D_SHADER_RESOURCE_VIEW_DESC depthSRVDesc = {};
-	// depthSRVDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
-	// depthSRVDesc.ViewDimension = D3D_SRV_DIMENSION_TEXTURE2D;
-	// depthSRVDesc.Texture2D.MipLevels = 1;
-	// depthSRVDesc.Texture2D.MostDetailedMip = 0; // No MIP
-	// R_CHK(pDevice->CreateShaderResourceView(pDepthStencil, &depthSRVDesc, &pBaseDepthReadSRV)); // read SRV
-	// if (pBaseDepthReadSRV)
-		// Msg("* Shader Resource: pBaseDepthReadSRV Created");
+
 	R_CHK(pDevice->CreateShaderResourceView(viewPortsRTZB.at(SECONDARY_WEAPON_SCOPE).pDepthStencil, &depthSRVDesc, &viewPortsRTZB.at(SECONDARY_WEAPON_SCOPE).pBaseDepthReadSRV)); // read SRV
 	if (viewPortsRTZB.at(SECONDARY_WEAPON_SCOPE).pBaseDepthReadSRV)
 	Msg("* Shader Resource: SECONDARY_VIEWPORT: pBaseDepthReadSRV Created");
@@ -1039,54 +816,7 @@ void CHW::UpdateViews()
 	// pBaseZB = viewPortsRTZB.at(MAIN_VIEWPORT).baseZB;
 	pBaseDepthReadSRV = viewPortsRTZB.at(MAIN_VIEWPORT).pBaseDepthReadSRV;
 	// pDepthStencil = viewPortsRTZB.at(MAIN_VIEWPORT).pDepthStencil;
-#else 
-	//R = pDevice->CreateRenderTargetView( pBuffer, NULL, &pBaseRT);
-	//pBuffer->Release();
-	//R_CHK(R);
 
-	//	Create Depth/stencil buffer
-	//	HACK: DX10: hard depth buffer format
-	//R_CHK	(pDevice->GetDepthStencilSurface	(&pBaseZB));
-	//ID3DTexture2D* pDepthStencil = NULL;
-	ID3DTexture2D* depth_stencil = NULL;
-	D3D_TEXTURE2D_DESC descDepth;
-	descDepth.Width = sd.BufferDesc.Width;
-	descDepth.Height = sd.BufferDesc.Height;
-	descDepth.MipLevels = 1;
-	descDepth.ArraySize = 1;
-	descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	descDepth.SampleDesc.Count = 1;
-	descDepth.SampleDesc.Quality = 0;
-	descDepth.Usage = D3D_USAGE_DEFAULT;
-	descDepth.BindFlags = D3D_BIND_DEPTH_STENCIL;
-	descDepth.CPUAccessFlags = 0;
-	descDepth.MiscFlags = 0;
-	//R = pDevice->CreateTexture2D( &descDepth,NULL,&pDepthStencil );
-	R = pDevice->CreateTexture2D(&descDepth, NULL, &depth_stencil);
-	R_CHK(R);
-
-	//	Create Depth/stencil view
-	R = pDevice->CreateDepthStencilView(depth_stencil, NULL, &viewPortsRTZB.at(MAIN_VIEWPORT).baseZB);
-	R_CHK(R);
-	//R = pDevice->CreateDepthStencilView( pDepthStencil, NULL, &pBaseZB );
-	//R_CHK(R);
-
-	//pDepthStencil->Release();
-
-	depth_stencil->Release();
-
-	descDepth.Width = Device.m_SecondViewport.screenWidth;
-	descDepth.Height = Device.m_SecondViewport.screenHeight;
-
-	R = pDevice->CreateTexture2D(&descDepth, NULL, &depth_stencil);
-	R_CHK(R);
-
-	R = pDevice->CreateDepthStencilView(depth_stencil, NULL, &viewPortsRTZB.at(SECONDARY_WEAPON_SCOPE).baseZB);
-	R_CHK(R);
-
-	depth_stencil->Release();
-
-#endif
 
 	// first init
 	pBaseRT = viewPortsRTZB.at(MAIN_VIEWPORT).baseRT;

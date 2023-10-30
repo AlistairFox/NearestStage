@@ -50,34 +50,6 @@ void CRT::create(LPCSTR Name, xr_vector<RtCreationParams>& vp_params, DXGI_FORMA
 	case DXGI_FORMAT_D16_UNORM:				dx10FMT = DXGI_FORMAT_R16_TYPELESS;		break;
 	}
 
-	//	bool	bUseAsDepth = (usage == D3DUSAGE_RENDERTARGET)?false:true;
-
-
-		//DEV->Evict				();
-	//	D3D_TEXTURE2D_DESC desc;
-	//	ZeroMemory( &desc, sizeof(desc) );
-	//	desc.Width = 0; // dwWidth;
-	//	desc.Height = 0; // dwHeight;
-	//	desc.MipLevels = 1;
-	//	desc.ArraySize = 1;
-	//	desc.Format = dx10FMT;
-	//	desc.SampleDesc.Count = SampleCount;
-	//	desc.Usage = D3D_USAGE_DEFAULT;
-	//   if( SampleCount <= 1 )
-	//	   desc.BindFlags = D3D_BIND_SHADER_RESOURCE | (bUseAsDepth ? D3D_BIND_DEPTH_STENCIL : D3D_BIND_RENDER_TARGET);
-	//   else
-	//   {
-	//      desc.BindFlags = (bUseAsDepth ? D3D_BIND_DEPTH_STENCIL : (D3D_BIND_SHADER_RESOURCE | D3D_BIND_RENDER_TARGET));
-	//      if( RImplementation.o.dx10_msaa_opt )
-	//      {
-	//         desc.SampleDesc.Quality = UINT(D3D_STANDARD_MULTISAMPLE_PATTERN);
-	//      }
-	//   }
-	//
-	//#ifdef USE_DX11
-	//	if (HW.FeatureLevel>=D3D_FEATURE_LEVEL_11_0 && !bUseAsDepth && SampleCount == 1 && useUAV )
-	//		desc.BindFlags |= D3D11_BIND_UNORDERED_ACCESS;
-	//#endif
 	D3D_TEXTURE2D_DESC desc = {};
 	desc.Width = 0;//dwWidth;
 	desc.Height = 0;//dwHeight;
@@ -92,47 +64,7 @@ void CRT::create(LPCSTR Name, xr_vector<RtCreationParams>& vp_params, DXGI_FORMA
 	desc.MiscFlags = 0;
 
 
-	//CHK_DX( HW.pDevice->CreateTexture2D( &desc, NULL, &pSurface ) );
-	//HW.stats_manager.increment_stats_rtarget( pSurface );
-	// OK
-#ifdef DEBUG
-	//Msg			("* created RT(%s), %dx%d, format = %d samples = %d",Name,w,h, dx10FMT, SampleCount );
-#endif // DEBUG
-	//R_CHK		(pSurface->GetSurfaceLevel	(0,&pRT));
 
-	//D3D_DEPTH_STENCIL_VIEW_DESC	ViewDesc;
-	//
-	//if (bUseAsDepth)
-	//{
-	//	//D3D_DEPTH_STENCIL_VIEW_DESC	ViewDesc;
-	//	ZeroMemory( &ViewDesc, sizeof(ViewDesc) );
-	//
-	//	ViewDesc.Format = DXGI_FORMAT_UNKNOWN;
-	//	if( SampleCount <= 1 )
-	//	{
-	//		ViewDesc.ViewDimension = D3D_DSV_DIMENSION_TEXTURE2D;
-	//	}
-	//	else
-	//	{
-	//		ViewDesc.ViewDimension = D3D_DSV_DIMENSION_TEXTURE2DMS;
-	//		ViewDesc.Texture2DMS.UnusedField_NothingToDefine = 0;
-	//	}
-	//
-	//	ViewDesc.Texture2D.MipSlice = 0;
-	//	switch (desc.Format)
-	//	{
-	//	case DXGI_FORMAT_R24G8_TYPELESS:
-	//		ViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	//		break;
-	//	case DXGI_FORMAT_R32_TYPELESS:
-	//		ViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
-	//		break;
-	//	}
-	//
-	//	//CHK_DX( HW.pDevice->CreateDepthStencilView( pSurface, &ViewDesc, &pZRT) );
-	//}
-	//else
-		//CHK_DX( HW.pDevice->CreateRenderTargetView( pSurface, 0, &pRT ) );
 	bool use_uav = HW.FeatureLevel >= D3D_FEATURE_LEVEL_10_0 && view == SRV_RTV_UAV && s <= 1;
 	bool use_dsv = view == SRV_DSV || view == SRV_RTV_DSV;
 	bool use_rtv = view == SRV_RTV || view == SRV_RTV_UAV || view == SRV_RTV_DSV;
@@ -207,21 +139,6 @@ void CRT::create(LPCSTR Name, xr_vector<RtCreationParams>& vp_params, DXGI_FORMA
 			CHK_DX(HW.pDevice->CreateDepthStencilView(it.first->second.textureSurface, &depthstencil, &it.first->second.zBufferInstance));
 		}
 	
-/*
-#ifdef USE_DX11
-		if (HW.FeatureLevel >= D3D_FEATURE_LEVEL_11_0 && !bUseAsDepth && SampleCount == 1 && useUAV)
-		{
-			D3D11_UNORDERED_ACCESS_VIEW_DESC UAVDesc;
-			ZeroMemory(&UAVDesc, sizeof(D3D11_UNORDERED_ACCESS_VIEW_DESC));
-			UAVDesc.Format = dx10FMT;
-			UAVDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
-			UAVDesc.Buffer.FirstElement = 0;
-			UAVDesc.Buffer.NumElements = vp_params[i].w * vp_params[i].h;
-			R_CHK(HW.pDevice->CreateUnorderedAccessView(it.first->second.textureSurface, &UAVDesc, &it.first->second.unorderedAccessViewInstance));
-		}
-#endif //  DX_11
-		Msg("Create resource for %s", rtName.c_str());
-		*/
 		// Create unordered acces view
 
 		if (use_uav && HW.Caps.raster_major >= 5)
@@ -276,9 +193,7 @@ void CRT::destroy		()
 		HW.stats_manager.decrement_stats_rtarget(it->second.textureSurface);
 
 		_RELEASE(it->second.textureSurface);
-#ifdef USE_DX11
 		_RELEASE(it->second.unorderedAccessViewInstance);
-#endif
 		_RELEASE(it->second.shaderResView);
 	}
 }
@@ -310,9 +225,7 @@ void CRT::SwitchViewPortResources(ViewPort vp)
 
 	pRT = value.renderTargetInstance;
 	pZRT = value.zBufferInstance;
-#ifdef USE_DX11
 	pUAView = value.unorderedAccessViewInstance;
-#endif
 	pSurface = value.textureSurface;
 	rtWidth = value.rtWidth;
 	rtHeight = value.rtHeight;

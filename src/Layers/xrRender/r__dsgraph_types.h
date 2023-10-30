@@ -37,13 +37,9 @@ namespace	R_dsgraph
 #ifdef USE_RESOURCE_DEBUGGER
 	typedef	ref_vs						vs_type;
 	typedef	ref_ps						ps_type;
-#	if defined(USE_DX10) || defined(USE_DX11)
 		typedef	ref_gs						gs_type;
-#		ifdef USE_DX11
 		typedef	ref_hs						hs_type;
 		typedef	ref_ds						ds_type;
-#		endif
-#	endif	//	USE_DX10
 #else
 	//	DX10 needs shader signature to propperly bind deometry to shader
 		typedef	SVS*					vs_type;

@@ -21,7 +21,7 @@
 
 #include "../xrRender/ShaderResourceTraits.h"
 
-#ifdef USE_DX11
+
 	SHS*	CResourceManager::_CreateHS			(LPCSTR Name)
 	{
 		return CreateShader<SHS>(Name);
@@ -51,7 +51,7 @@
 	{
 		DestroyShader(CS);
 	}
-#endif	//	USE_DX10
+
 
 void fix_texture_name(LPSTR fn);
 

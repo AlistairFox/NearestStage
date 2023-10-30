@@ -33,10 +33,8 @@ dxRainRender::dxRainRender()
 	hGeom_Rain.create(FVF::F_LIT, RCache.Vertex.Buffer(), RCache.QuadIB);
 	hGeom_Drops.create(D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1, RCache.Vertex.Buffer(), RCache.Index.Buffer());
 
-	#if defined(USE_DX11)
 		if (RImplementation.o.ssfx_rain)
 		 SH_Splash.create("effects\\rain_splash", "fx\\fx_rain");
-	#endif
 	
 	FS.r_close(F);
 }
@@ -65,7 +63,6 @@ void dxRainRender::Render(CEffect_Rain &owner)
 	static shared_str s_shader_setup = "ssfx_rain_setup";
 	
 			// SSS Rain shader is available
-		#if defined(USE_DX11)
 		if (RImplementation.o.ssfx_rain)
 		 {
 		_drop_len = ps_ssfx_rain_1.x;
@@ -73,7 +70,6 @@ void dxRainRender::Render(CEffect_Rain &owner)
 		_drop_speed = ps_ssfx_rain_1.z;
 		_splash_SH = SH_Splash;
 		}
-	 #endif
 
   	u32 desired_items			= iFloor	(0.5f*(1.f+factor)*float(max_desired_items));
 	// visual

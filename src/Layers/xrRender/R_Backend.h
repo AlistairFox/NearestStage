@@ -128,14 +128,10 @@ private:
 #ifdef DEBUG
 	LPCSTR							ps_name;
 	LPCSTR							vs_name;
-#if defined(USE_DX10) || defined(USE_DX11)
 	LPCSTR							gs_name;
-#	ifdef USE_DX11
 	LPCSTR							hs_name;
 	LPCSTR							ds_name;
 	LPCSTR							cs_name;
-#	endif
-#endif	//	USE_DX10
 #endif
 	u32								stencil_enable;
 	u32								stencil_func;
@@ -380,7 +376,6 @@ public:
 
 	CBackend()						{	Invalidate(); };
 
-#if defined(USE_DX10) || defined(USE_DX11)
 private:
 	//	DirectX 10 internal functionality
 	//void CreateConstantBuffers();
@@ -394,7 +389,6 @@ private:
 	ID3DBlob*				m_pInputSignature;
 
 	bool					m_bChangedRTorZB;
-#endif	//	USE_DX10
 };
 #pragma warning(pop)
 

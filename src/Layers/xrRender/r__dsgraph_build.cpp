@@ -172,14 +172,9 @@ void R_dsgraph_structure::r_dsgraph_insert_dynamic	(dxRender_Visual *pVisual, Fv
 		
 
 #ifdef USE_RESOURCE_DEBUGGER
-	#if defined(USE_DX10) || defined(USE_DX11)
 		mapMatrixVS::TNode*			Nvs		= map.insert		(pass.vs);
 		mapMatrixGS::TNode*			Ngs		= Nvs->val.insert	(pass.gs);
 		mapMatrixPS::TNode*			Nps		= Ngs->val.insert	(pass.ps);
-	#else	//	USE_DX10
-		mapMatrixVS::TNode*			Nvs		= map.insert		(pass.vs);
-		mapMatrixPS::TNode*			Nps		= Nvs->val.insert	(pass.ps);
-	#endif	//	USE_DX10
 #else
 		mapMatrixVS::TNode*			Nvs		= map.insert		(&*pass.vs);
 		mapMatrixGS::TNode*			Ngs		= Nvs->val.insert	(pass.gs->gs);
@@ -304,27 +299,10 @@ void R_dsgraph_structure::r_dsgraph_insert_static	(dxRender_Visual *pVisual)
 		SPass&						pass	= *sh->passes[iPass];
 		mapNormal_T&				map		= mapNormalPasses[sh->flags.iPriority/2][iPass];
 
-//#ifdef USE_RESOURCE_DEBUGGER
-//	mapNormalVS::TNode*			Nvs		= map.insert		(pass.vs);
-//	mapNormalPS::TNode*			Nps		= Nvs->val.insert	(pass.ps);
-//#else
-//#if defined(USE_DX10) || defined(USE_DX11)
-//	mapNormalVS::TNode*			Nvs		= map.insert		(&*pass.vs);
-//#else	//	USE_DX10
-//	mapNormalVS::TNode*			Nvs		= map.insert		(pass.vs->vs);
-//#endif	//	USE_DX10
-//	mapNormalPS::TNode*			Nps		= Nvs->val.insert	(pass.ps->ps);
-//#endif
-
 #ifdef USE_RESOURCE_DEBUGGER
-#	if defined(USE_DX10) || defined(USE_DX11)
 		mapNormalVS::TNode*			Nvs		= map.insert		(pass.vs);
 		mapNormalGS::TNode*			Ngs		= Nvs->val.insert	(pass.gs);
 		mapNormalPS::TNode*			Nps		= Ngs->val.insert	(pass.ps);
-#	else	//	USE_DX10
-		mapNormalVS::TNode*			Nvs		= map.insert		(pass.vs);
-		mapNormalPS::TNode*			Nps		= Nvs->val.insert	(pass.ps);
-#	endif	//	USE_DX10
 #else // USE_RESOURCE_DEBUGGER
 
 		mapNormalVS::TNode*			Nvs		= map.insert		(&*pass.vs);
