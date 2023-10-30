@@ -2570,9 +2570,6 @@ void CActor::on_requested_spawn(CObject* object) {
 	character_physics_support()->movement()->SetPosition(oHolder->ExitPosition());
 	character_physics_support()->movement()->SetVelocity(oHolder->ExitVelocity());
 
-	CCar* car = smart_cast<CCar*>(object);
-	attach_Vehicle(car);
-
 	m_holder = NULL;
 	m_holderID = (u16)(-1);
 

@@ -529,7 +529,6 @@ SERVER_ENTITY_DECLARE_END
 add_to_type_list(CSE_ALifeHelicopter)
 #define script_type_list save_type_list(CSE_ALifeHelicopter)
 
-#include "car_net_update.h"
 SERVER_ENTITY_DECLARE_BEGIN2(CSE_ALifeCar,CSE_ALifeDynamicObjectVisual,CSE_PHSkeleton)
 	struct SDoorState				
 	{
@@ -547,19 +546,12 @@ SERVER_ENTITY_DECLARE_BEGIN2(CSE_ALifeCar,CSE_ALifeDynamicObjectVisual,CSE_PHSke
 	xr_vector<SDoorState>			door_states;
 	xr_vector<SWheelState>			wheel_states;
 	float							health;
-	u8 engine;
-	u8 light;
-	u16 owner;
-	u16 cnt;
-	SCarNetUpdate update;
-
 									CSE_ALifeCar		(LPCSTR caSection);
 	virtual							~CSE_ALifeCar		();
 	virtual bool					used_ai_locations	() const;
 	virtual	void					load				(NET_Packet &tNetPacket);
 	virtual bool					can_save			() const;
 	virtual CSE_Abstract			*cast_abstract		() {return this;}
-	virtual BOOL Net_Relevant();
 protected:
 	virtual void					data_load				(NET_Packet &tNetPacket);
 	virtual void					data_save				(NET_Packet &tNetPacket);

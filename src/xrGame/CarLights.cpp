@@ -102,15 +102,8 @@ void SCarLight::TurnOff()
 
 bool SCarLight::isOn()
 {
-	if (!light_render)
-		return false;
-
-	if (!glow_render)
-		return false;
-
-	VERIFY(!physics_world()->Processing());
-	VERIFY(light_render->get_active()==glow_render->get_active());
-
+	VERIFY(!ph_world->Processing());
+	VERIFY(light_render->get_active() == glow_render->get_active());
 	return light_render->get_active();
 }
 

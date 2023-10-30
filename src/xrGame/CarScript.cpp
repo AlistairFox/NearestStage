@@ -32,3 +32,4 @@ void CCar::script_register(lua_State *L)
 			 .def("ExplodeTime", &CCar::ExplodeTime)
 			 .def("CarExplode", &CCar::CarExplode)
 			 .def(constructor<>())];
+}

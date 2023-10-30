@@ -5,7 +5,7 @@
 #include "phvalidevalues.h"
 #include "PHObject.h"
 class IPhysicsShellHolder;
-class 	XRPHYSICS_API CPHActivationShape : public CPHObject
+class CPHActivationShape : public CPHObject
 {
 dBodyID					m_body																																							;
 dGeomID					m_geom																																							;
