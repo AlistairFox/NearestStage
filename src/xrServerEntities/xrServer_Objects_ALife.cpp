@@ -14,6 +14,7 @@
 #include "restriction_space.h"
 
 
+
 #ifndef AI_COMPILER
 #	include "character_info.h"
 #endif // AI_COMPILER
@@ -1806,16 +1807,53 @@ void CSE_ALifeCar::STATE_Write			(NET_Packet	&tNetPacket)
 	tNetPacket.w_float(health);
 }
 
-void CSE_ALifeCar::UPDATE_Read			(NET_Packet	&tNetPacket)
+void CSE_ALifeCar::UPDATE_Read			(NET_Packet	&P)
 {
-	inherited1::UPDATE_Read		(tNetPacket);
-	inherited2::UPDATE_Read		(tNetPacket);
+	inherited1::UPDATE_Read		(P);
+	inherited2::UPDATE_Read		(P);
+
+	update.StateVec.clear();
+	P.r_u8(engine);
+	P.r_u8(light);
+	P.r_float(health);
+	P.r_u16(owner);
+	P.r_u16(cnt);
+	update.TimeStamp = Device.dwTimeGlobal;
+
+	for (int i = 0; i < cnt; i++)
+	{
+		SPHNetState state{ 0 };
+
+		P.r_vec3(state.position);
+		P.r_float_q8(state.quaternion.x, -1.0, 1.0);
+		P.r_float_q8(state.quaternion.y, -1.0, 1.0);
+		P.r_float_q8(state.quaternion.z, -1.0, 1.0);
+		P.r_float_q8(state.quaternion.w, -1.0, 1.0);
+
+		update.StateVec.push_back(state);
+	}
+
 }
 
-void CSE_ALifeCar::UPDATE_Write			(NET_Packet	&tNetPacket)
+void CSE_ALifeCar::UPDATE_Write			(NET_Packet	&P)
 {
-	inherited1::UPDATE_Write		(tNetPacket);
-	inherited2::UPDATE_Write		(tNetPacket);
+	inherited1::UPDATE_Write		(P);
+	inherited2::UPDATE_Write		(P);
+
+	P.w_u8(engine);
+	P.w_u8(light);
+	P.w_float(health);
+	P.w_u16(owner);
+	P.w_u16(cnt);
+
+		for(auto State : update.StateVec)
+		{
+			P.w_vec3(State.position);
+			P.w_float_q8(State.quaternion.x, -1.0, 1.0);
+			P.w_float_q8(State.quaternion.y, -1.0, 1.0);
+			P.w_float_q8(State.quaternion.z, -1.0, 1.0);
+			P.w_float_q8(State.quaternion.w, -1.0, 1.0);
+		}
 }
 
 bool CSE_ALifeCar::used_ai_locations() const
@@ -1833,6 +1871,11 @@ void CSE_ALifeCar::load(NET_Packet &tNetPacket)
 	inherited1::load(tNetPacket);
 	inherited2::load(tNetPacket);
 
+}
+
+BOOL CSE_ALifeCar::Net_Relevant()
+{
+	return true;
 }
 
 void CSE_ALifeCar::data_load(NET_Packet	&tNetPacket)
