@@ -215,11 +215,15 @@ void CObjectList::Update		(bool bForce)
 				P->net_Relcase(destroy_queue[it]);
 			}
 			});
-			
-		for (Objects::iterator oit=objects_sleeping.begin(); oit!=objects_sleeping.end(); oit++)
-			for (int it = destroy_queue.size()-1; it>=0; it--)	(*oit)->net_Relcase	(destroy_queue[it]);
 
-		for (int it = destroy_queue.size()-1; it>=0; it--)	Sound->object_relcase	(destroy_queue[it]);
+			std::for_each(objects_sleeping.begin(), objects_sleeping.end(), [&](CObject* P) {
+				for (int it = destroy_queue.size() - 1; it >= 0; it--)
+					P->net_Relcase(destroy_queue[it]);
+
+			});
+
+		for (int it = destroy_queue.size()-1; it>=0; it--)
+			Sound->object_relcase	(destroy_queue[it]);
 		
 		RELCASE_CALLBACK_VEC::iterator It	= m_relcase_callbacks.begin();
 		RELCASE_CALLBACK_VEC::iterator Ite	= m_relcase_callbacks.end();

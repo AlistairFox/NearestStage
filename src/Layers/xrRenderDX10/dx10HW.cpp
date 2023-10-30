@@ -664,48 +664,6 @@ void fill_vid_mode_list(CHW* _hw)
 #endif // DEBUG
 	}
 
-	/*	Old code
-	if(vid_mode_token != NULL)		return;
-	xr_vector<LPCSTR>	_tmp;
-	u32 cnt = _hw->pD3D->GetAdapterModeCount	(_hw->DevAdapter, _hw->Caps.fTarget);
-
-	u32 i;
-	for(i=0; i<cnt;++i)
-	{
-		D3DDISPLAYMODE	Mode;
-		string32		str;
-
-		_hw->pD3D->EnumAdapterModes(_hw->DevAdapter, _hw->Caps.fTarget, i, &Mode);
-		if(Mode.Width < 800)		continue;
-
-		xr_sprintf						(str,sizeof(str),"%dx%d", Mode.Width, Mode.Height);
-
-		if(_tmp.end() != std::find_if(_tmp.begin(), _tmp.end(), _uniq_mode(str)))
-			continue;
-
-		_tmp.push_back				(NULL);
-		_tmp.back()					= xr_strdup(str);
-	}
-
-	u32 _cnt						= _tmp.size()+1;
-
-	vid_mode_token					= xr_alloc<xr_token>(_cnt);
-
-	vid_mode_token[_cnt-1].id			= -1;
-	vid_mode_token[_cnt-1].name		= NULL;
-
-#ifdef DEBUG
-	Msg("Available video modes[%d]:",_tmp.size());
-#endif // DEBUG
-	for(i=0; i<_tmp.size();++i)
-	{
-		vid_mode_token[i].id		= i;
-		vid_mode_token[i].name		= _tmp[i];
-#ifdef DEBUG
-		Msg							("[%s]",_tmp[i]);
-#endif // DEBUG
-	}
-	*/
 }
 
 void CHW::UpdateViews()
@@ -716,13 +674,6 @@ void CHW::UpdateViews()
 	// Set up svp image size
 	Device.m_SecondViewport.screenWidth = u32((sd.BufferDesc.Width / 32) * psSVPImageSizeK) * 32;
 	Device.m_SecondViewport.screenHeight = u32((sd.BufferDesc.Height / 32) * psSVPImageSizeK) * 32;
-
-
-	// Create a render target view
-	//R_CHK	(pDevice->GetRenderTarget			(0,&pBaseRT));
-	//ID3DTexture2D *pBuffer;
-	//R = m_pSwapChain->GetBuffer( 0, __uuidof( ID3DTexture2D ), (LPVOID*)&pBuffer );
-	//R_CHK(R);
 
 	viewPortsRTZB.insert(mk_pair(MAIN_VIEWPORT, HWViewPortRTZB()));
 	viewPortsRTZB.insert(mk_pair(SECONDARY_WEAPON_SCOPE, HWViewPortRTZB()));
