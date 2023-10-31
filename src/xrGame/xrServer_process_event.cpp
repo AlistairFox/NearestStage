@@ -491,7 +491,7 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 
 	case GE_KEY_PRESSED:
 	{
-		//Msg("GE_KEY_PRESSED [%d]", destination);
+		Msg("GE_KEY_PRESSED [%d]", destination);
 		xrClientData* data = ID_to_client(sender);
 
 		if (!data || !data->ps)
@@ -499,25 +499,26 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 
 		game_PlayerState* ps = data->ps;
 		u8 key = P.r_u8();
+		Msg("key %d", key);
 
 		if (key == 1)
-		{
-			if (ps && !ps->testFlag(GAME_PLAYER_MP_ANIMATION_MODE))
-			{
-				ps->setFlag(GAME_PLAYER_MP_ANIMATION_MODE);
-			}
-			else
-			{
-				ps->resetFlag(GAME_PLAYER_MP_ANIMATION_MODE);
-			}
-		}
-		else 
-		if (key == 2)
 		{
 			if (ps && !ps->testFlag(GAME_PLAYER_MP_SAFE_MODE))
 				ps->setFlag(GAME_PLAYER_MP_SAFE_MODE);
 			else
 				ps->resetFlag(GAME_PLAYER_MP_SAFE_MODE);
+		}
+		else 
+		if (key == 2)
+		{
+			Msg("name : %s", ps->getName());
+			if (ps && !ps->testFlag(GAME_PLAYER_MP_LOOT_MODE))
+			{
+				Msg("set flag");
+				ps->setFlag(GAME_PLAYER_MP_LOOT_MODE);
+			}
+			else
+				ps->resetFlag(GAME_PLAYER_MP_LOOT_MODE);
 		}
 		game->signal_Syncronize();
 	}break;

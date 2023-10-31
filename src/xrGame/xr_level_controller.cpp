@@ -39,6 +39,7 @@ _action  actions[] = {
 
 	{ "animation_mode",		kAnimationMode			,_both},
 	{ "safe_mode",			kSafeMode				,_both},
+	{ "loot_mode", kLOOTMODE, _both},
 	{ "swipe_mask", kSwipeMask, _both},
 	{"fuck", kFuck, _both},
 
@@ -356,6 +357,7 @@ EGameActions get_binded_action(int _dik)
 		
 		if(binding->m_keyboard[1] && binding->m_keyboard[1]->dik==_dik && b_is_group_matching)
 			return binding->m_action->id;
+		binding->m_action->action_name;
 	}
 	return kNOTBINDED;
 }

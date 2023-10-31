@@ -97,13 +97,35 @@ void CActor::IR_OnKeyboardPress(int cmd)
 			if (ps)
 			{
 				bool mode = ps->testFlag(GAME_PLAYER_MP_SAFE_MODE);
-				Msg("car mode [%s]", !mode ? "true" : "false");
+				Msg("safe mode [%s]", !mode ? "true" : "false");
 			}
 
 			NET_Packet packet;
 			Level().game->u_EventGen(packet, GE_KEY_PRESSED, this->ID());
-			packet.w_u8(2);
+			packet.w_u8(1);
 			Level().game->u_EventSend(packet);
+		}
+	}break;
+	case kLOOTMODE:
+	{
+		if (OnClient())
+		{
+
+			if (!OutAnim)
+			{
+
+				game_PlayerState* ps = Game().GetPlayerByGameID(ID());
+				if (ps)
+				{
+					bool mode = ps->testFlag(GAME_PLAYER_MP_LOOT_MODE);
+					Msg("loot mode [%s]", !mode ? "true" : "false");
+				}
+
+				NET_Packet packet;
+				Level().game->u_EventGen(packet, GE_KEY_PRESSED, this->ID());
+				packet.w_u8(2);
+				Level().game->u_EventSend(packet);
+			}
 		}
 	}break;
 	default:
@@ -122,7 +144,7 @@ void CActor::IR_OnKeyboardPress(int cmd)
 	}
 	else
 	{
-		if (MpSafeMODE() || MpAnimationMODE() || MpWoundMODE())
+		if (MpSafeMODE() || MpAnimationMODE() || MpWoundMODE() || MpLootMODE())
 			return;
 
 		if (inventory().Action((u16)cmd, CMD_START))	
@@ -586,7 +608,7 @@ void CActor::ActorUse()
 void CActor::ActorCheckWoundInv()
 {
 	CActor* pActor = smart_cast<CActor*>(m_pPersonWeLookingAt);
-	if (Actor() && pActor && pActor->g_Alive() && pActor->MpWoundMODE())
+	if (Actor() && pActor && pActor->g_Alive() && (pActor->MpWoundMODE() || pActor->MpLootMODE()))
 	{
 		CurrentGameUI()->StartCarBody(this, m_pPersonWeLookingAt);
 	}

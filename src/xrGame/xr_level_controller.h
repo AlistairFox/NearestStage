@@ -30,6 +30,7 @@ enum	EGameActions
 	kDETECTOR,
 	kAnimationMode,
 	kSafeMode,
+	kLOOTMODE,
 	kSwipeMask,
 	kFuck,
 	kWPN_1,

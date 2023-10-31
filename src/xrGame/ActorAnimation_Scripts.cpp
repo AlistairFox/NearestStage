@@ -4,8 +4,13 @@
 #include "Inventory.h"
 #include "../Include/xrRender/Kinematics.h"
 
-
 extern int ANIM_SELECTED;
+
+void CActor::SetAnim(int ANIM)
+{
+	ANIM_SELECTED = ANIM;
+}
+
 
 void callbackAnim(CBlend* blend)
 {
@@ -462,6 +467,9 @@ void CActor::FastExit()
 
 void CActor::StopAnims()
 {
+	if (ANIMSET)
+		ANIMSET = false;
+
 	NEED_EXIT = true;
 	ANIM_SELECTED = 0;
 }

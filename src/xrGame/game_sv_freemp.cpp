@@ -343,8 +343,8 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 	if (ps)
 	{
 		ps->resetFlag(GAME_PLAYER_MP_SAFE_MODE);
-		ps->resetFlag(GAME_PLAYER_MP_ANIMATION_MODE);
 		ps->resetFlag(GAME_PLAYER_MP_WOUND_MODE);
+		ps->resetFlag(GAME_PLAYER_MP_LOOT_MODE);
 	}
 
 	if (Game().Type() == eGameIDFreeMp)

@@ -464,7 +464,7 @@ void CActor::g_cl_Orientate	(u32 mstate_rl, float dt)
 {
 	// capture camera into torso (only for FirstEye & LookAt cameras)
 
-	if (MpAnimationMODE() || MpWoundMODE())
+	if (MpAnimationMODE() || MpWoundMODE() || MpLootMODE())
 	{
 		r_torso.pitch = 0;
 		return;
@@ -590,7 +590,7 @@ bool CActor::CanJump()
 		!character_physics_support()->movement()->PHCapture() &&((mstate_real&mcJump)==0) && (m_fJumpTime<=0.f) 
 		&& !m_bJumpKeyPressed &&!IsZoomAimingMode();
 
-	if (MpAnimationMODE() || MpWoundMODE())
+	if (MpAnimationMODE() || MpWoundMODE() || MpLootMODE())
 		return false;
 
 	return can_Jump;
@@ -598,7 +598,7 @@ bool CActor::CanJump()
 
 bool CActor::CanMove()
 {
-	if (MpAnimationMODE() || MpWoundMODE())
+	if (MpAnimationMODE() || MpWoundMODE() || MpLootMODE())
 	{
 		return false;
 	}

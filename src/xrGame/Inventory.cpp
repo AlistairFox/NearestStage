@@ -334,8 +334,8 @@ bool CInventory::Slot(u16 slot_id, PIItem pIItem, bool bNotActivate, bool strict
 		u16 real_parent = pIItem->object().H_Parent() ? pIItem->object().H_Parent()->ID() : u16(-1);
 		if (GetOwner()->object_id() != real_parent)
 		{
-			Msg("! WARNING: CL: actor [%d] tries to place to slot not own item [%d], that has parent [%d]",
-				GetOwner()->object_id(), pIItem->object_id(), real_parent);
+			//Msg("! WARNING: CL: actor [%d] tries to place to slot not own item [%d], that has parent [%d]",
+			//	GetOwner()->object_id(), pIItem->object_id(), real_parent);
 			return false;
 		}
 	}
@@ -469,8 +469,8 @@ bool CInventory::Ruck(PIItem pIItem, bool strict_placement)
 		u16 real_parent = pIItem->object().H_Parent() ? pIItem->object().H_Parent()->ID() : u16(-1);
 		if (GetOwner()->object_id() != real_parent)
 		{
-			Msg("! WARNING: CL: actor [%d] tries to place to ruck not own item [%d], that has parent [%d]",
-				GetOwner()->object_id(), pIItem->object_id(), real_parent);
+		//	Msg("! WARNING: CL: actor [%d] tries to place to ruck not own item [%d], that has parent [%d]",
+			//	GetOwner()->object_id(), pIItem->object_id(), real_parent);
 			return false;
 		}
 	}
@@ -494,10 +494,10 @@ bool CInventory::Ruck(PIItem pIItem, bool strict_placement)
 		{
 			u16 item_parent_id = pIItem->object().H_Parent() ? pIItem->object().H_Parent()->ID() : u16(-1) ;
 			u16 inventory_owner_id = GetOwner()->object_id();
-			R_ASSERT2(item_parent_id == inventory_owner_id,
-				make_string("! ERROR: CL: Actor[%d] tries to place to ruck not own item [%d], real item owner is [%d]",
-				inventory_owner_id, pIItem->object_id(), item_parent_id).c_str()
-			);
+		//	R_ASSERT2(item_parent_id == inventory_owner_id,
+			//	make_string("! ERROR: CL: Actor[%d] tries to place to ruck not own item [%d], real item owner is [%d]",
+		//		inventory_owner_id, pIItem->object_id(), item_parent_id).c_str()
+		//	);
 #ifdef MP_LOGGING
 			Msg("--- Actor [%d] place to ruck item [%d]", inventory_owner_id, pIItem->object_id());
 #endif
@@ -1307,6 +1307,70 @@ u32  CInventory::BeltWidth() const
 	return 0; //m_iMaxBelt;
 }
 
+void  CInventory::AddAvailableItemsCheck(TIItemContainer& items_container, bool for_trade) const
+{
+	for (TIItemContainer::const_iterator it = m_ruck.begin(); m_ruck.end() != it; ++it)
+	{
+		PIItem pIItem = *it;
+
+		//if(!pIItem->m_pInventory->ItemFromSlot(OUTFIT_SLOT))
+		if (!for_trade || pIItem->CanTrade())
+			items_container.push_back(pIItem);
+	}
+
+	if (m_bBeltUseful)
+	{
+		for (TIItemContainer::const_iterator it = m_belt.begin(); m_belt.end() != it; ++it)
+		{
+			PIItem pIItem = *it;
+			if (!for_trade || pIItem->CanTrade())
+				items_container.push_back(pIItem);
+		}
+	}
+
+	CAI_Stalker* pOwner = smart_cast<CAI_Stalker*>(m_pOwner);
+	if (pOwner && !pOwner->g_Alive()) {
+		std::uint16_t I = FirstSlot();
+		std::uint16_t E = LastSlot();
+		for (; I <= E; ++I) {
+			PIItem item = ItemFromSlot(I);
+			if (item && (item->BaseSlot() != BOLT_SLOT))
+				items_container.push_back(item);
+		}
+	}
+	else if (m_bSlotsUseful) {
+		u16 I = FirstSlot();
+		u16 E = LastSlot();
+		for (;I <= E;++I)
+		{
+			PIItem item = ItemFromSlot(I);
+			if (item && (!for_trade || item->CanTrade()))
+			{
+				if (!SlotIsPersistent(I) || item->BaseSlot() == GRENADE_SLOT)
+				{
+					if (pOwner) {
+						std::uint32_t slot = item->BaseSlot();
+
+						if (slot != INV_SLOT_3)
+							items_container.push_back(item);
+					}
+					else
+					{
+						CCustomOutfit* pOuf = smart_cast<CCustomOutfit*>(item);
+
+						if (!pOuf)
+						{
+							items_container.push_back(item);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+
+
 void  CInventory::AddAvailableItems(TIItemContainer& items_container, bool for_trade) const
 {
 	//Msg("ADD ITEM AVALIABLE");
@@ -1345,7 +1409,6 @@ void  CInventory::AddAvailableItems(TIItemContainer& items_container, bool for_t
 		for(;I<=E;++I)
 		{
 
-
 			PIItem item = ItemFromSlot(I);
 			if(item && (!for_trade || item->CanTrade())  )
 			{
@@ -1357,8 +1420,8 @@ void  CInventory::AddAvailableItems(TIItemContainer& items_container, bool for_t
 							if (slot != INV_SLOT_3)
 								items_container.push_back(item);
 						}
-						else {
-							if (!ItemFromSlot(OUTFIT_SLOT))
+						else
+						{
 							items_container.push_back(item);
 						}
 				}

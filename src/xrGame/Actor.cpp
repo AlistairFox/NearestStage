@@ -294,6 +294,16 @@ bool CActor::MpSafeMODE() const
 	return (ps && ps->testFlag(GAME_PLAYER_MP_SAFE_MODE));
 }
 
+bool CActor::MpLootMODE() const
+{
+	if (!g_Alive())
+		return false;
+
+	game_PlayerState* ps = Game().GetPlayerByGameID(ID());
+
+	return (ps && ps->testFlag(GAME_PLAYER_MP_LOOT_MODE));
+}
+
 void CActor::reinit	()
 {
 	character_physics_support()->movement()->CreateCharacter		();
@@ -1141,23 +1151,20 @@ void CActor::UpdateCL	()
 
 	if(g_Alive() && Level().CurrentViewEntity() == this)
 	{
-		if(CurrentGameUI() && NULL==CurrentGameUI()->TopInputReceiver())
+		if (Actor()->MpLootMODE() && !ANIMSET)
 		{
-
-				int dik = get_action_dik(kUSE, 0);
-				if (dik && pInput->iGetAsyncKeyState(dik))
-					m_bPickupMode = true;
-
-				dik = get_action_dik(kUSE, 1);
-				if (dik && pInput->iGetAsyncKeyState(dik))
-					m_bPickupMode = true;
-
+			SetAnim(16);
+			ANIMSET = true;
 		}
-	}
 
-	if (g_Alive() && Level().CurrentControlEntity() == this)
-	{
+		if (!Actor()->MpLootMODE() && ANIMSET && !OutAnim)
+		{
+			FastExit();
+		}
+
+
 		CActor* pActor = smart_cast<CActor*>(Level().CurrentControlEntity());
+
 		if (pActor->GetfHealth() <= 0.2 && g_Alive())
 		{
 			ANIM_WOUND = 1;
@@ -1172,6 +1179,18 @@ void CActor::UpdateCL	()
 			}
 		}
 
+		if(CurrentGameUI() && NULL==CurrentGameUI()->TopInputReceiver())
+		{
+
+				int dik = get_action_dik(kUSE, 0);
+				if (dik && pInput->iGetAsyncKeyState(dik))
+					m_bPickupMode = true;
+
+				dik = get_action_dik(kUSE, 1);
+				if (dik && pInput->iGetAsyncKeyState(dik))
+					m_bPickupMode = true;
+
+		}
 	}
 
 	UpdateInventoryOwner			(Device.dwTimeDelta);
@@ -1648,6 +1667,10 @@ void CActor::shedule_Update	(u32 DT)
 				if (cA && cA->MpWoundMODE())
 				{
 					m_sDefaultObjAction = CStringTable().translate("st_help_player");
+				}
+				else if (cA && cA->MpLootMODE())
+				{
+					m_sDefaultObjAction = CStringTable().translate("st_loot_player");
 				}
 				else
 				if (m_pPersonWeLookingAt && pEntityAlive->g_Alive() && m_pPersonWeLookingAt->IsTalkEnabled() && !pEntityAlive->cast_actor())

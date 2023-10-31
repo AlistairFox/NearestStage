@@ -108,6 +108,7 @@ protected:
 	bool OutWoundPlay = true;
 	bool MidWoundPlay = true;
 	bool NEED_WOUND_EXIT = false;
+
 	void					HealthActorInWound(CActor* p);
 
 	void					SelectScriptAnimation();
@@ -130,7 +131,6 @@ protected:
 	void					script_anim(MotionID exit_animation, PlayCallback Callback, LPVOID CallbackParam);
 	void					script_wound_anim(MotionID exit_animation, PlayCallback Callback, LPVOID CallbackParam);
 
-
 	//Script Animation
 
 
@@ -144,6 +144,12 @@ public:
 	bool						MpSafeMODE() const;
 	bool						MpAnimationMODE() const;
 	bool						MpWoundMODE() const;
+	bool						MpLootMODE() const;
+
+
+
+	void					SetAnim(int ANIM);
+	bool					ANIMSET = false;
 
 	int ANIM_WOUND = 0;
 	bool need_ex_wound = false;

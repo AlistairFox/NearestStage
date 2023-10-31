@@ -748,19 +748,6 @@ void CActor::g_SetAnimation(u32 mstate_rl)
 			{
 				if (!m_bAnimTorsoPlayed)
 				{
-					/*
-					bool sprint = moving_idx == 3 ? true : false;
-
-					if (mstate_rl & mcFwd && !sprint)
-						M_legs = ST_Moving->legs_fwd;
-					else if (mstate_rl & mcBack && !sprint)
-						M_legs = ST_Moving->legs_back;
-					else if (mstate_rl & mcLStrafe && !sprint)
-						M_legs = ST_Moving->legs_ls;
-					else if (mstate_rl & mcRStrafe && !sprint)
-						M_legs = ST_Moving->legs_rs;
-					*/
-
 					M_torso = ST_Safe->m_safe_torso[4].torso_moving_safe[moving_idx];
 				}
 			}
