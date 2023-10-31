@@ -24,6 +24,8 @@
 #include "ai/stalker/ai_stalker.h"
 #include "weaponmagazined.h"
 #include"PDA.h"
+#include "Inventory.h"
+#include "CustomOutfit.h"
 
 using namespace InventoryUtilities;
 
@@ -1307,11 +1309,14 @@ u32  CInventory::BeltWidth() const
 
 void  CInventory::AddAvailableItems(TIItemContainer& items_container, bool for_trade) const
 {
+	//Msg("ADD ITEM AVALIABLE");
 	for(TIItemContainer::const_iterator it = m_ruck.begin(); m_ruck.end() != it; ++it) 
 	{
 		PIItem pIItem = *it;
-		if(!for_trade || pIItem->CanTrade())
-			items_container.push_back(pIItem);
+
+		//if(!pIItem->m_pInventory->ItemFromSlot(OUTFIT_SLOT))
+			if (!for_trade || pIItem->CanTrade())
+				items_container.push_back(pIItem);
 	}
 
 	if(m_bBeltUseful)
@@ -1339,19 +1344,23 @@ void  CInventory::AddAvailableItems(TIItemContainer& items_container, bool for_t
 		u16 E = LastSlot();
 		for(;I<=E;++I)
 		{
+
+
 			PIItem item = ItemFromSlot(I);
 			if(item && (!for_trade || item->CanTrade())  )
 			{
-				if (!SlotIsPersistent(I) || item->BaseSlot() == GRENADE_SLOT) {
-					if (pOwner) {
-						std::uint32_t slot = item->BaseSlot();
+				if (!SlotIsPersistent(I) || item->BaseSlot() == GRENADE_SLOT) 
+				{
+						if (pOwner) {
+							std::uint32_t slot = item->BaseSlot();
 
-						if (slot != INV_SLOT_3)
+							if (slot != INV_SLOT_3)
+								items_container.push_back(item);
+						}
+						else {
+							if (!ItemFromSlot(OUTFIT_SLOT))
 							items_container.push_back(item);
-					}
-					else {
-						items_container.push_back(item);
-					}
+						}
 				}
 			}
 		}

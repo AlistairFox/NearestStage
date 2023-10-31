@@ -260,6 +260,11 @@ void CActor::IR_OnKeyboardPress(int cmd)
 				}
 			}
 		}break;
+
+	case kLootPlayer:
+	{
+		ActorCheckWoundInv();
+	}break;
 	}
 }
 
@@ -472,6 +477,8 @@ bool CActor::use_Holder				(CHolderCustom* holder)
 }
 
 
+
+
 void CActor::ActorUse()
 {
 	if (m_holder)
@@ -573,6 +580,15 @@ void CActor::ActorUse()
 			}
 
 		}
+	}
+}
+
+void CActor::ActorCheckWoundInv()
+{
+	CActor* pActor = smart_cast<CActor*>(m_pPersonWeLookingAt);
+	if (Actor() && pActor && pActor->g_Alive() && pActor->MpWoundMODE())
+	{
+		CurrentGameUI()->StartCarBody(this, m_pPersonWeLookingAt);
 	}
 }
 

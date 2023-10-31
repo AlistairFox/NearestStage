@@ -363,6 +363,7 @@ protected:
 
 	bool					use_MountedWeapon		(CHolderCustom* object);
 	void					ActorUse				();
+	void					ActorCheckWoundInv();
 
 protected:
 	BOOL					m_bAnimTorsoPlayed;
