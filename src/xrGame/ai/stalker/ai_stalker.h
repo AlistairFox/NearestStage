@@ -226,6 +226,7 @@ public:
 	virtual	void						reinit								();
 	virtual void						reload								(LPCSTR	section );				
 	virtual void						LoadSounds							(LPCSTR section );
+	virtual void						SetEnemy(CEntityAlive* Entity);
 
 
 	virtual void						PH_B_CrPr							(); // actions & operations before physic correction-prediction steps

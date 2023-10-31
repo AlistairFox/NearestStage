@@ -226,6 +226,11 @@ void CAI_Stalker::LoadSounds		(LPCSTR section)
 	sound().add						(pSettings->r_string(section,"sound_throw_grenade"),				100, SOUND_TYPE_MONSTER_TALKING,	5, u32(eStalkerSoundMaskKillWounded),				eStalkerSoundThrowGrenade,				head_bone_name, xr_new<CStalkerSoundData>(this));
 }
 
+void CAI_Stalker::SetEnemy(CEntityAlive* Entity)
+{
+	memory().enemy().set_enemy(Entity);
+}
+
 void CAI_Stalker::reload			(LPCSTR section)
 {
 #ifdef DEBUG_MEMORY_MANAGER

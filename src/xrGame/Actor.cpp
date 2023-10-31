@@ -85,6 +85,7 @@
 #include <PostprocessAnimator.h>
 #include "../xrEngine/XR_IOConsole.h"
 #include "Inventory.h"
+#include "ai/stalker/ai_stalker.h"
 
 const u32		patch_frames	= 50;
 const float		respawn_delay	= 1.f;
@@ -542,6 +543,31 @@ void	CActor::Hit(SHit* pHDS)
 	pHDS->aim_bullet = false;
 
 	SHit& HDS	= *pHDS;
+
+	if (OnServer())
+	{
+		CActor* pA = smart_cast<CActor*>(HDS.who);
+
+		if (pA && pA != this)
+		{
+			if (!Actor()->is_relation_enemy(pA))
+			{
+				for (int i = 0; i < Level().Objects.o_count(); i++)
+				{
+					CObject* obj = Level().Objects.o_get_by_iterator(i);
+					CAI_Stalker* Stalker = smart_cast<CAI_Stalker*>(obj);
+					if (Stalker && Stalker->Position().distance_to(pA->Position()) <= 60)
+					{
+						//Msg("HIT");
+						Stalker->SetEnemy(pA);
+					}
+				}
+			}
+
+			//Msg("pA");
+		}
+	}
+
 	if( HDS.hit_type<ALife::eHitTypeBurn || HDS.hit_type >= ALife::eHitTypeMax )
 	{
 		string256	err;

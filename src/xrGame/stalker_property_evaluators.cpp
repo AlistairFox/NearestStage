@@ -435,7 +435,7 @@ CStalkerPropertyEvaluatorShouldThrowGrenade::CStalkerPropertyEvaluatorShouldThro
 
 _value_type CStalkerPropertyEvaluatorShouldThrowGrenade::evaluate	()
 {
-#if 0
+#if 1
 	return						(false);
 #else // #if 1
 
