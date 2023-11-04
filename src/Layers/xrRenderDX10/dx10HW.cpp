@@ -14,6 +14,7 @@
 #include "StateManager\dx10SamplerStateCache.h"
 #include "StateManager\dx10StateCache.h"
 #include <imgui.h>
+#include "imgui_impl_dx10.h"
 #include "imgui_impl_dx11.h"
 
 #ifndef _EDITOR
@@ -150,6 +151,66 @@ void CHW::CreateDevice(HWND m_hWnd, bool move_window)
 	Caps.id_vendor = Desc.VendorId;
 	Caps.id_device = Desc.DeviceId;
 
+	/*
+	// Retreive windowed mode
+	D3DDISPLAYMODE mWindowed;
+	R_CHK(pD3D->GetAdapterDisplayMode(DevAdapter, &mWindowed));
+
+	*/
+	// Select back-buffer & depth-stencil format
+	//D3DFORMAT& fTarget = Caps.fTarget;
+	//D3DFORMAT& fDepth = Caps.fDepth;
+
+	//	HACK: DX10: Embed hard target format.
+	//fTarget = D3DFMT_X8R8G8B8;	//	No match in DX10. D3DFMT_A8B8G8R8->DXGI_FORMAT_R8G8B8A8_UNORM
+	//fDepth = selectDepthStencil(fTarget);
+	/*
+	if (bWindowed)
+	{
+		fTarget = mWindowed.Format;
+		R_CHK(pD3D->CheckDeviceType	(DevAdapter,DevT,fTarget,fTarget,TRUE));
+		fDepth  = selectDepthStencil(fTarget);
+	} else {
+		switch (psCurrentBPP) {
+		case 32:
+			fTarget = D3DFMT_X8R8G8B8;
+			if (SUCCEEDED(pD3D->CheckDeviceType(DevAdapter,DevT,fTarget,fTarget,FALSE)))
+				break;
+			fTarget = D3DFMT_A8R8G8B8;
+			if (SUCCEEDED(pD3D->CheckDeviceType(DevAdapter,DevT,fTarget,fTarget,FALSE)))
+				break;
+			fTarget = D3DFMT_R8G8B8;
+			if (SUCCEEDED(pD3D->CheckDeviceType(DevAdapter,DevT,fTarget,fTarget,FALSE)))
+				break;
+			fTarget = D3DFMT_UNKNOWN;
+			break;
+		case 16:
+		default:
+			fTarget = D3DFMT_R5G6B5;
+			if (SUCCEEDED(pD3D->CheckDeviceType(DevAdapter,DevT,fTarget,fTarget,FALSE)))
+				break;
+			fTarget = D3DFMT_X1R5G5B5;
+			if (SUCCEEDED(pD3D->CheckDeviceType(DevAdapter,DevT,fTarget,fTarget,FALSE)))
+				break;
+			fTarget = D3DFMT_X4R4G4B4;
+			if (SUCCEEDED(pD3D->CheckDeviceType(DevAdapter,DevT,fTarget,fTarget,FALSE)))
+				break;
+			fTarget = D3DFMT_UNKNOWN;
+			break;
+		}
+		fDepth  = selectDepthStencil(fTarget);
+	}
+
+
+	if ((D3DFMT_UNKNOWN==fTarget) || (D3DFMT_UNKNOWN==fTarget))	{
+		Msg					("Failed to initialize graphics hardware.\nPlease try to restart the game.");
+		FlushLog			();
+		MessageBox			(NULL,"Failed to initialize graphics hardware.\nPlease try to restart the game.","Error!",MB_OK|MB_ICONERROR);
+		TerminateProcess	(GetCurrentProcess(),0);
+	}
+
+	*/
+
 	// Set up the presentation parameters
 	DXGI_SWAP_CHAIN_DESC& sd = m_ChainDesc;
 	ZeroMemory(&sd, sizeof(sd));
@@ -164,10 +225,24 @@ void CHW::CreateDevice(HWND m_hWnd, bool move_window)
 	sd.SampleDesc.Count = 1;
 	sd.SampleDesc.Quality = 0;
 
+	// Windoze
+	//P.SwapEffect			= bWindowed?D3DSWAPEFFECT_COPY:D3DSWAPEFFECT_DISCARD;
+	//P.hDeviceWindow			= m_hWnd;
+	//P.Windowed				= bWindowed;
 	sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 	sd.OutputWindow = m_hWnd;
 	sd.Windowed = bWindowed;
 
+	// Depth/stencil
+	// DX10 don't need this?
+	//P.EnableAutoDepthStencil= TRUE;
+	//P.AutoDepthStencilFormat= fDepth;
+	//P.Flags					= 0;	//. D3DPRESENTFLAG_DISCARD_DEPTHSTENCIL;
+
+	// Refresh rate
+	//P.PresentationInterval	= D3DPRESENT_INTERVAL_IMMEDIATE;
+	//if( !bWindowed )		P.FullScreen_RefreshRateInHz	= selectRefresh	(P.BackBufferWidth, P.BackBufferHeight,fTarget);
+	//else					P.FullScreen_RefreshRateInHz	= D3DPRESENT_RATE_DEFAULT;
 	if (bWindowed)
 	{
 		sd.BufferDesc.RefreshRate.Numerator = 60;
@@ -189,6 +264,7 @@ void CHW::CreateDevice(HWND m_hWnd, bool move_window)
 	// Create the device
 	//	DX10 don't need it?
 	//u32 GPU		= selectGPU();
+#ifdef USE_DX11
 	D3D_FEATURE_LEVEL pFeatureLevels[] =
 	{
 		D3D_FEATURE_LEVEL_11_0,
@@ -208,8 +284,36 @@ void CHW::CreateDevice(HWND m_hWnd, bool move_window)
 		&pDevice,
 		&FeatureLevel,
 		&pContext);
+#else
+	R = D3DX10CreateDeviceAndSwapChain(m_pAdapter,
+		m_DriverType,
+		NULL,
+		createDeviceFlags,
+		&sd,
+		&m_pSwapChain,
+		&pDevice);
 
+	pContext = pDevice;
+	FeatureLevel = D3D_FEATURE_LEVEL_10_0;
+	if (!FAILED(R))
+	{
+		D3DX10GetFeatureLevel1(pDevice, &pDevice1);
+		FeatureLevel = D3D_FEATURE_LEVEL_10_1;
+	}
+	pContext1 = pDevice1;
+#endif
 
+	/*
+	if (FAILED(R))	{
+		R	= HW.pD3D->CreateDevice(	DevAdapter,
+			DevT,
+			m_hWnd,
+			GPU | D3DCREATE_MULTITHREADED,	//. ? locks at present
+			&P,
+			&pDevice );
+	}
+	*/
+	//if (D3DERR_DEVICELOST==R)	{
 	if (FAILED(R))
 	{
 		// Fatal error! Cannot create rendering device AT STARTUP !!!
@@ -225,6 +329,7 @@ void CHW::CreateDevice(HWND m_hWnd, bool move_window)
 
 	_SHOW_REF("* CREATE: DeviceREF:", HW.pDevice);
 
+#ifdef USE_DX11
 
 	//if (ps_r_ssao == SSAO_HBAO_PLUS)
 	{
@@ -238,7 +343,25 @@ void CHW::CreateDevice(HWND m_hWnd, bool move_window)
 			Msg("*pSSAO HAS CONTEXT");
 		}
 	}
+#endif
 
+	/*
+	switch (GPU)
+	{
+	case D3DCREATE_SOFTWARE_VERTEXPROCESSING:
+		Log	("* Vertex Processor: SOFTWARE");
+		break;
+	case D3DCREATE_MIXED_VERTEXPROCESSING:
+		Log	("* Vertex Processor: MIXED");
+		break;
+	case D3DCREATE_HARDWARE_VERTEXPROCESSING:
+		Log	("* Vertex Processor: HARDWARE");
+		break;
+	case D3DCREATE_HARDWARE_VERTEXPROCESSING|D3DCREATE_PUREDEVICE:
+		Log	("* Vertex Processor: PURE HARDWARE");
+		break;
+	}
+	*/
 
 	// Capture misc data
 //	DX10: Don't neeed this?
@@ -257,12 +380,20 @@ void CHW::CreateDevice(HWND m_hWnd, bool move_window)
 	fill_vid_mode_list(this);
 #endif
 
+#ifdef USE_DX11
 	ImGui_ImplDX11_Init(m_hWnd, pDevice, pContext);
+#else
+	ImGui_ImplDX10_Init(m_hWnd, pDevice);
+#endif
 }
 
 void CHW::DestroyDevice()
 {
+#ifdef USE_DX11
 	ImGui_ImplDX11_Shutdown();
+#else
+	ImGui_ImplDX10_Shutdown();
+#endif
 	//	Destroy state managers
 	StateManager.Reset();
 	RSManager.ClearStateArray();
@@ -279,8 +410,10 @@ void CHW::DestroyDevice()
 		_SHOW_REF("refCount:pBaseRT", it->second.baseRT);
 		_RELEASE(it->second.baseZB);
 		_RELEASE(it->second.baseRT);
+#ifdef USE_DX11
 		it->second.pDepthStencil->Release();
 		_RELEASE(it->second.pBaseDepthReadSRV);
+#endif
 	}
 
 	//_SHOW_REF				("refCount:pBaseRT",pBaseRT);
@@ -291,13 +424,19 @@ void CHW::DestroyDevice()
 	_SHOW_REF("refCount:m_pSwapChain", m_pSwapChain);
 	_RELEASE(m_pSwapChain);
 
+#ifdef USE_DX11
 	_RELEASE(pContext);
 
 	if (pSSAO)
 		_RELEASE(pSSAO);
 
+	// pDepthStencil->Release();
 
+#endif
 
+#ifndef USE_DX11
+	_RELEASE(HW.pDevice1);
+#endif
 	_SHOW_REF("DeviceREF:", HW.pDevice);
 	_RELEASE(HW.pDevice);
 
@@ -314,7 +453,11 @@ void CHW::DestroyDevice()
 //////////////////////////////////////////////////////////////////////
 void CHW::Reset(HWND hwnd)
 {
+#ifdef USE_DX11
 	ImGui_ImplDX11_InvalidateDeviceObjects();
+#else
+	ImGui_ImplDX10_InvalidateDeviceObjects();
+#endif
 
 	DXGI_SWAP_CHAIN_DESC& cd = m_ChainDesc;
 
@@ -350,7 +493,11 @@ void CHW::Reset(HWND hwnd)
 		_RELEASE(it->second.baseRT);
 	}
 
+	//_SHOW_REF				("refCount:pBaseZB",pBaseZB);
+	//_SHOW_REF				("refCount:pBaseRT",pBaseRT);
 
+	//_RELEASE(pBaseZB);
+	//_RELEASE(pBaseRT);
 
 	CHK_DX(m_pSwapChain->ResizeBuffers(
 		cd.BufferCount,
@@ -381,13 +528,24 @@ void CHW::SwitchVP(ViewPort vp)
 
 	pBaseRT = it->second.baseRT;
 	pBaseZB = it->second.baseZB;
-
+#ifdef USE_DX11
 	pBaseDepthReadSRV = it->second.pBaseDepthReadSRV;
 	// pDepthStencil = it->second.pDepthStencil;
-
-
+#endif
+#ifdef USE_DX11
 	ImGui_ImplDX11_CreateDeviceObjects();
+#else
+	ImGui_ImplDX10_CreateDeviceObjects();
+#endif
 }
+/*
+D3DFORMAT CHW::selectDepthStencil(D3DFORMAT fTarget)
+{
+	// R3 hack
+#pragma todo("R3 need to specify depth format")
+	return D3DFMT_D24S8;
+}
+*/
 
 void CHW::selectResolution(u32& dwWidth, u32& dwHeight, BOOL bWindowed)
 {
@@ -526,6 +684,19 @@ DXGI_RATIONAL CHW::selectRefresh(u32 dwWidth, u32 dwHeight, DXGI_FORMAT fmt)
 	return res;
 }
 
+/*
+BOOL CHW::support(D3DFORMAT fmt, DWORD type, DWORD usage)
+{
+	//	TODO: DX10: implement stub for this code.
+	VERIFY(!"Implement CHW::support");
+	
+	HRESULT hr		= pD3D->CheckDeviceFormat(DevAdapter,DevT,Caps.fTarget,usage,(D3DRESOURCETYPE)type,fmt);
+	if (FAILED(hr))	return FALSE;
+	else			return TRUE;
+	
+	return TRUE;
+}
+*/
 void CHW::updateWindowProps(HWND m_hWnd)
 {
 	//	BOOL	bWindowed				= strstr(Core.Params,"-dedicated") ? TRUE : !psDeviceFlags.is	(rsFullscreen);

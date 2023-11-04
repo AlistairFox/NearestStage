@@ -45,7 +45,12 @@ private:
 #endif
 }; // class stats_manager
 
-u32 get_format_pixel_size ( DXGI_FORMAT format );
+#ifndef USE_DX11
+u32 get_format_pixel_size ( D3DFORMAT format );
+#endif // !USE_DX11
 
+#if defined(USE_DX11)
+u32 get_format_pixel_size ( DXGI_FORMAT format );
+#endif
 
 #endif // #ifndef STATS_MANAGER_H_INCLUDED
