@@ -101,28 +101,49 @@ void game_sv_freemp::OnPlayerConnect(ClientID id_who)
 		string_path path_xray; // logins
 		FS.update_path(path_xray, "$mp_saves_logins$", "logins.ltx"); // logins
 		CInifile* file = xr_new<CInifile>(path_xray, true); // logins
+		u8 level;
 
 		if (file->section_exist(ps_who->getName()))
 		{
 			if (file->line_exist(ps_who->getName(), "Admin"))
 			{
-				if (file->r_bool(ps_who->getName(), "Admin"))
+				level = file->r_u8(ps_who->getName(), "Admin");
+
+				if (level == 1)
 				{
 					Msg("-- %s является администратором", ps_who->getName());
-
 					xrCData->m_admin_rights.m_has_admin_rights = TRUE;
+					xrCData->m_admin_rights.m_has_super_admin_rights = FALSE;
 					xrCData->m_admin_rights.m_dwLoginTime = Device.dwTimeGlobal;
 					if (xrCData->ps)
 					{
 						xrCData->ps->setFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS);
+						xrCData->ps->resetFlag(GAME_PLAYER_SUPER_ADMIN);
 						m_server->game->signal_Syncronize();
 					}
-
 					NET_Packet			P_answ;
 					P_answ.w_begin(M_REMOTE_CONTROL_AUTH);
 					P_answ.w_stringZ("admin rights acces");
 					m_server->SendTo(xrCData->ID, P_answ, net_flags(TRUE, TRUE));
 				}
+				else if (level == 2)
+				{
+					Msg("-- %s является супер администратором", ps_who->getName());
+					xrCData->m_admin_rights.m_has_admin_rights = TRUE;
+					xrCData->m_admin_rights.m_has_super_admin_rights = TRUE;
+					xrCData->m_admin_rights.m_dwLoginTime = Device.dwTimeGlobal;
+					if (xrCData->ps)
+					{
+						xrCData->ps->setFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS);
+						xrCData->ps->setFlag(GAME_PLAYER_SUPER_ADMIN);
+						m_server->game->signal_Syncronize();
+					}
+					NET_Packet			P_answ;
+					P_answ.w_begin(M_REMOTE_CONTROL_AUTH);
+					P_answ.w_stringZ("admin rights acces");
+					m_server->SendTo(xrCData->ID, P_answ, net_flags(TRUE, TRUE));
+				}
+
 			}
 		}
 		xr_delete(file);

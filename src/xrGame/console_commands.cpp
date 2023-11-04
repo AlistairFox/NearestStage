@@ -417,9 +417,9 @@ public:
 			if (!Game().local_player)
 				return;
 
-			if (!Game().local_player->testFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS))
+			if (!Game().local_player->testFlag(GAME_PLAYER_SUPER_ADMIN))
 			{
-				Msg("Available only for administrators.");
+				Msg("Available only for super administrators.");
 				return;
 			}
 		}

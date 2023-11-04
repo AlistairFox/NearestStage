@@ -45,6 +45,7 @@ public:
 	}m_ping_warn;
 	struct{
 		BOOL					m_has_admin_rights;
+		BOOL					m_has_super_admin_rights;
 		u32						m_dwLoginTime;
 	}m_admin_rights;
 

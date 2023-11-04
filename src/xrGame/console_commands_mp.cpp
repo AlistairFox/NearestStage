@@ -117,6 +117,7 @@ extern	u32		g_sv_cta_rankUpToArtsCountDiv;
 extern	BOOL	g_draw_downloads;
 extern	BOOL	g_sv_mp_save_proxy_screenshots;
 extern	BOOL	g_sv_mp_save_proxy_configs;
+extern BOOL		g_player_names = FALSE;
 
 #ifdef DEBUG
 extern s32		lag_simmulator_min_ping;
@@ -1908,34 +1909,18 @@ public:
 			return;
 		}
 
-		if (strstr(arguments, "remove_admin_rights") == arguments)
-		{
-			return;
-		}
 
-		if (strstr(arguments, "give_admin_rights") == arguments)
+		if (strstr(arguments, "changeteam") != arguments)
 		{
-			return;
-		}
+			if (strstr(arguments, "sv_give_money") != arguments)
+			{
 
-		if (strstr(arguments, "adm_register_account") == arguments)
-		{
-			return;
-		}
-
-		if (strstr(arguments, "adm_register_file") == arguments)
-		{
-			return;
-		}
-
-		if (strstr(arguments, "adm_badregistername_file") == arguments)
-		{
-			return;
-		}
-
-		if (strstr(arguments, "adm_badregisterpass_file") == arguments)
-		{
-			return;
+				if (!Game().local_player->testFlag(GAME_PLAYER_SUPER_ADMIN))
+				{
+					Msg("! ERROR: u don't have super admin rights");
+					return;
+				}
+			}
 		}
 
 		if (strstr(arguments, "off_player_pc") == arguments)
@@ -2204,10 +2189,21 @@ public:
 
 	virtual void	fill_tips(vecTips& tips, u32 mode)
 	{
-		for (auto sect : pSettings->sections())
+		if (!Game().local_player->testFlag(GAME_PLAYER_SUPER_ADMIN))
 		{
-			if (sect->line_exist("description") && !sect->line_exist("value") && !sect->line_exist("scheme_index"))
-				tips.push_back(sect->Name);
+			for (auto sect : pSettings->sections())
+			{
+				if (sect->line_exist("description") && !sect->line_exist("value") && !sect->line_exist("scheme_index") && sect->line_exist("allow_spawn") && !sect->line_exist("ignor_spawn"))
+					tips.push_back(sect->Name);
+			}
+		}
+		else
+		{
+			for (auto sect : pSettings->sections())
+			{
+				if (sect->line_exist("description") && !sect->line_exist("value") && !sect->line_exist("scheme_index"))
+					tips.push_back(sect->Name);
+			}
 		}
 	}
 };
@@ -2220,6 +2216,11 @@ public:
 	{
 		if (pSettings->section_exist(arguments))
 		{
+			if (!Game().local_player->testFlag(GAME_PLAYER_SUPER_ADMIN))
+			{
+				Msg("! ERROR: u don't super admin");
+				return;
+			}
 			Fvector3 pos, dir, madPos;
 			float range;
 			pos.set(Device.vCameraPosition);
@@ -2302,10 +2303,21 @@ public:
 
 	virtual void	fill_tips(vecTips& tips, u32 mode)
 	{
-		for (auto sect : pSettings->sections())
+		if (!Game().local_player->testFlag(GAME_PLAYER_SUPER_ADMIN))
 		{
-			if (sect->line_exist("description") && !sect->line_exist("value") && !sect->line_exist("scheme_index"))
-				tips.push_back(sect->Name);
+			for (auto sect : pSettings->sections())
+			{
+				if (sect->line_exist("description") && !sect->line_exist("value") && !sect->line_exist("scheme_index") && sect->line_exist("allow_spawn") && !sect->line_exist("ignor_spawn"))
+					tips.push_back(sect->Name);
+			}
+		}
+		else
+		{
+			for (auto sect : pSettings->sections())
+			{
+				if (sect->line_exist("description") && !sect->line_exist("value") && !sect->line_exist("scheme_index"))
+					tips.push_back(sect->Name);
+			}
 		}
 	}
 };
@@ -2484,10 +2496,19 @@ public:
 		if (OnServer() && g_dedicated_server)
 		{
 			string128 name;
+			u8		level;
 
-			sscanf_s(args, "%s", &name);
+			if (sscanf_s(args, "%s %d", &name, sizeof(name), &level) != 2)
+			{
+				Msg("uncorrect args");
+				return;
+			}
 
-
+			if (level > 2)
+			{
+				Msg("uncorrect level");
+				return;
+			}
 			//reg file
 			string_path filepath;
 			FS.update_path(filepath, "$mp_saves_logins$", "logins.ltx");
@@ -2501,7 +2522,7 @@ public:
 
 			if (file && file->section_exist(name))
 			{
-				file->w_bool(name, "Admin", true);
+				file->w_u8(name, "Admin", level);
 				Msg("--Complete!!! %s have Admin rights", name);
 			}
 			else
@@ -2541,19 +2562,42 @@ public:
 
 				if (CL && CL->ps)
 				{
-					CL->m_admin_rights.m_has_admin_rights = TRUE;
-					CL->m_admin_rights.m_dwLoginTime = Device.dwTimeGlobal;
-					if (CL->ps)
+					if (level == 1)
 					{
-						CL->ps->setFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS);
-						Level().Server->game->signal_Syncronize();
-					}
+						CL->m_admin_rights.m_has_admin_rights = TRUE;
+						CL->m_admin_rights.m_has_super_admin_rights = FALSE;
+						CL->m_admin_rights.m_dwLoginTime = Device.dwTimeGlobal;
+						if (CL->ps)
+						{
+							CL->ps->resetFlag(GAME_PLAYER_SUPER_ADMIN);
+							CL->ps->setFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS);
+							Level().Server->game->signal_Syncronize();
+						}
 
-					NET_Packet			P_answ;
-					P_answ.w_begin(M_REMOTE_CONTROL_AUTH);
-					P_answ.w_stringZ("acces rights");
-					Level().Server->SendTo(CL->ID, P_answ, net_flags(TRUE, TRUE));
-					Msg("-- %s является администратором", name);
+						NET_Packet			P_answ;
+						P_answ.w_begin(M_REMOTE_CONTROL_AUTH);
+						P_answ.w_stringZ("acces rights");
+						Level().Server->SendTo(CL->ID, P_answ, net_flags(TRUE, TRUE));
+						Msg("-- %s является администратором", name);
+					}
+					else if (level == 2)
+					{
+						CL->m_admin_rights.m_has_admin_rights = TRUE;
+						CL->m_admin_rights.m_has_super_admin_rights = TRUE;
+						CL->m_admin_rights.m_dwLoginTime = Device.dwTimeGlobal;
+						if (CL->ps)
+						{
+							CL->ps->setFlag(GAME_PLAYER_SUPER_ADMIN);
+							CL->ps->setFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS);
+							Level().Server->game->signal_Syncronize();
+						}
+
+						NET_Packet			P_answ;
+						P_answ.w_begin(M_REMOTE_CONTROL_AUTH);
+						P_answ.w_stringZ("acces rights");
+						Level().Server->SendTo(CL->ID, P_answ, net_flags(TRUE, TRUE));
+						Msg("-- %s является супер администратором", name);
+					}
 
 				}
 				else
@@ -2642,8 +2686,10 @@ public:
 				if (CL && CL->ps)
 				{
 					CL->m_admin_rights.m_has_admin_rights = FALSE;
+					CL->m_admin_rights.m_has_super_admin_rights = FALSE;
 					if (CL->ps)
 					{
+						CL->ps->resetFlag(GAME_PLAYER_SUPER_ADMIN);
 						CL->ps->resetFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS);
 						Level().Server->game->signal_Syncronize();
 					}
@@ -2855,6 +2901,11 @@ public:
 
 	virtual void	Execute(LPCSTR args)
 	{
+		if (!Game().local_player->testFlag(GAME_PLAYER_SUPER_ADMIN))
+		{
+			Msg("! ERROR: u don't super admin");
+			return;
+		}
 		if (!g_pGameLevel || !Level().Server) return;
 
 		game_sv_mp* sv_game = smart_cast<game_sv_mp*>(Level().Server->game);
@@ -3551,10 +3602,21 @@ public:
 
 	virtual void	fill_tips(vecTips& tips, u32 mode)
 	{
-		for (auto sect : pSettings->sections())
+		if (!Game().local_player->testFlag(GAME_PLAYER_SUPER_ADMIN))
 		{
-			if (sect->line_exist("description") && !sect->line_exist("value") && !sect->line_exist("scheme_index"))
-				tips.push_back(sect->Name);
+			for (auto sect : pSettings->sections())
+			{
+				if (sect->line_exist("description") && !sect->line_exist("value") && !sect->line_exist("scheme_index") && sect->line_exist("allow_spawn") && !sect->line_exist("ignor_spawn"))
+					tips.push_back(sect->Name);
+			}
+		}
+		else
+		{
+			for (auto sect : pSettings->sections())
+			{
+				if (sect->line_exist("description") && !sect->line_exist("value") && !sect->line_exist("scheme_index"))
+					tips.push_back(sect->Name);
+			}
 		}
 	}
 };
@@ -3708,6 +3770,7 @@ void register_mp_console_commands()
 	CMD1(CCC_NextMap,		"sv_nextmap"				);	
 	CMD1(CCC_PrevMap,		"sv_prevmap"				);
 	CMD1(CCC_AnomalySet,	"sv_nextanomalyset"			);
+	CMD4(CCC_Integer, "view_player_names", &g_player_names, 0, 1);
 
 	CMD1(CCC_Vote_Start,	"cl_votestart"				);
 	CMD1(CCC_Vote_Stop,		"sv_votestop"				);

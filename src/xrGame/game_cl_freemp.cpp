@@ -109,9 +109,40 @@ void game_cl_freemp::shedule_Update(u32 dt)
 	}
 }
 
+extern BOOL	g_player_names;
+
 void game_cl_freemp::OnRender()
 {
 	inherited::OnRender();
+
+	if (g_player_names)
+	{
+		if (local_player->testFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS))
+			if (local_player->testFlag(GAME_PLAYER_SUPER_ADMIN))
+			{
+				if (local_player)
+				{
+					PLAYERS_MAP_IT it = players.begin();
+					for (;it != players.end();++it)
+					{
+						game_PlayerState* ps = it->second;
+						u16 id = ps->GameID;
+						if (ps->testFlag(GAME_PLAYER_FLAG_VERY_VERY_DEAD)) continue;
+						CObject* pObject = Level().Objects.net_Find(id);
+						if (!pObject) continue;
+						if (!pObject || !smart_cast<CActor*>(pObject)) continue;
+						if (ps == local_player) continue;
+						CActor* pActor = smart_cast<CActor*>(pObject);
+						string128 text;
+						sprintf(text, "%s | %d", ps->getName(), ps->team);
+						float pDub = 0.0f;
+						Fvector Pos = pActor->Position();
+						Pos.y -= pActor->Position().y;
+						pActor->RenderText(text, Pos, &pDub, 0xff40ff40);
+					}
+				};
+			}
+	}
 
 	if (m_pVoiceChat)
 		m_pVoiceChat->OnRender();
