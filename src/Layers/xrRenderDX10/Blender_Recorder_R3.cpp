@@ -203,10 +203,10 @@ void CBlender_Compile::r_Pass(LPCSTR _vs, LPCSTR _gs, LPCSTR _ps, bool bFog, boo
 	dest.ps	= ps;
 	dest.vs	= vs;
 	dest.gs	= gs;
-#ifdef USE_DX11
+
 	dest.hs = DEV->_CreateHS("null");
 	dest.ds = DEV->_CreateDS("null");
-#endif
+
 	ctable.merge			(&ps->constants);
 	ctable.merge			(&vs->constants);
 	ctable.merge			(&gs->constants);
@@ -218,7 +218,7 @@ void CBlender_Compile::r_Pass(LPCSTR _vs, LPCSTR _gs, LPCSTR _ps, bool bFog, boo
 	}
 }
 
-#ifdef USE_DX11
+
 void CBlender_Compile::r_TessPass(LPCSTR vs, LPCSTR hs, LPCSTR ds, LPCSTR gs, LPCSTR ps, bool bFog, bool bZtest, bool bZwrite, bool bABlend, D3D11_BLEND abSRC, D3D11_BLEND abDST, bool aTest, u32 aRef)
 {
 	r_Pass(vs, gs, ps, bFog, bZtest, bZwrite, bABlend, abSRC, abDST, aTest, aRef);
@@ -236,7 +236,7 @@ void CBlender_Compile::r_ComputePass(LPCSTR cs)
 
 	ctable.merge(&dest.cs->constants);
 }
-#endif
+
 
 void	CBlender_Compile::r_End			()
 {
@@ -247,5 +247,5 @@ void	CBlender_Compile::r_End			()
 	dest.C					= 0;
 	ref_matrix_list			temp(0);
 	SH->passes.push_back	(DEV->_CreatePass(dest));
-	//SH->passes.push_back	(DEV->_CreatePass(dest.state,dest.ps,dest.vs,dest.gs,dest.constants,dest.T,temp,dest.C));
+
 }

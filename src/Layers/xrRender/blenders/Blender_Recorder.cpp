@@ -88,43 +88,28 @@ void	CBlender_Compile::_cpp_Compile	(ShaderElement* _SH)
 	bDetail_Diffuse	= FALSE;
 	bDetail_Bump	= FALSE;
 
-#ifndef _EDITOR
-#if RENDER==R_R1
-	if (RImplementation.o.no_detail_textures)
-		bDetail = FALSE;
-#endif
-#endif
 
 	if(bDetail)
 	{
 		DEV->m_textures_description.GetTextureUsage(base, bDetail_Diffuse, bDetail_Bump);
 
-#ifndef _EDITOR
-#if RENDER!=R_R1
+
 		//	Detect the alowance of detail bump usage here.
 		if (  !(RImplementation.o.advancedpp && ps_r2_ls_flags.test(R2FLAG_DETAIL_BUMP) ) )
 		{
 			bDetail_Diffuse |= bDetail_Bump;
 			bDetail_Bump = false;
 		}
-#endif
-#endif
+
 
 	}
 
 	bUseSteepParallax = DEV->m_textures_description.UseSteepParallax(base) 
 		&& BT->canUseSteepParallax();
-/*
-	if (DEV->m_textures_description.UseSteepParallax(base))
-	{
-		bool bSteep = BT->canUseSteepParallax();
-		DEV->m_textures_description.UseSteepParallax(base);
-		bUseSteepParallax = true;
-	}
-*/	
-#ifdef USE_DX11
+
+
 	TessMethod = 0;
-#endif
+
 
 	// Compile
 	BT->Compile		(*this);
@@ -135,16 +120,10 @@ void	CBlender_Compile::SetParams		(int iPriority, bool bStrictB2F)
 	SH->flags.iPriority		= iPriority;
 	SH->flags.bStrictB2F	= bStrictB2F;
 	if (bStrictB2F){			
-#ifdef _EDITOR    
-		if (1!=(SH->flags.iPriority/2)){
-        	Log("!If StrictB2F true then Priority must div 2.");
-            SH->flags.bStrictB2F	= FALSE;
-        }
-#else
+
     	VERIFY(1==(SH->flags.iPriority/2));
-#endif
+
     }
-	//SH->Flags.bLighting		= FALSE;
 }
 
 //
@@ -172,24 +151,20 @@ void	CBlender_Compile::PassEnd			()
 	proto.vs		= DEV->_CreateVS			(pass_vs);
 	ctable.merge	(&proto.ps->constants);
 	ctable.merge	(&proto.vs->constants);
-#if defined(USE_DX10) || defined(USE_DX11)
 	proto.gs		= DEV->_CreateGS			(pass_gs);
 	ctable.merge	(&proto.gs->constants);
-#	ifdef	USE_DX11
+
 	proto.hs		= DEV->_CreateHS			(pass_hs);
 	ctable.merge	(&proto.hs->constants);
 	proto.ds		= DEV->_CreateDS			(pass_ds);
 	ctable.merge	(&proto.ds->constants);
 	proto.cs		= DEV->_CreateCS			(pass_cs);
 	ctable.merge	(&proto.cs->constants);
-#	endif
-#endif	//	USE_DX10
+
 	SetMapping				();
 	proto.constants	= DEV->_CreateConstantTable(ctable);
 	proto.T 		= DEV->_CreateTextureList	(passTextures);
-#ifdef _EDITOR
-	proto.M			= DEV->_CreateMatrixList	(passMatrices);
-#endif
+
 	proto.C			= DEV->_CreateConstantList	(passConstants);
 
 	ref_pass	_pass_		= DEV->_CreatePass			(proto);
@@ -211,11 +186,9 @@ void	CBlender_Compile::PassSET_VS		(LPCSTR name)
 void	CBlender_Compile::PassSET_ZB		(BOOL bZTest, BOOL bZWrite, BOOL bInvertZTest)
 {
 	if (Pass())	bZWrite = FALSE;
-#ifdef  USE_DX11
+
 	RS.SetRS(D3DRS_ZFUNC, bZTest ? (bInvertZTest ? D3D11_COMPARISON_GREATER : D3D11_COMPARISON_LESS_EQUAL) : D3D11_COMPARISON_ALWAYS);
-#else
-	RS.SetRS(D3DRS_ZFUNC, bZTest ? (bInvertZTest ? D3DCMP_GREATER : D3DCMP_LESSEQUAL) : D3DCMP_ALWAYS);
-#endif
+
 	RS.SetRS	(D3DRS_ZWRITEENABLE,	BC(bZWrite));
 	/*
 	if (bZWrite || bZTest)				RS.SetRS	(D3DRS_ZENABLE,	D3DZB_TRUE);
@@ -230,7 +203,6 @@ void	CBlender_Compile::PassSET_ablend_mode	(BOOL bABlend,	u32 abSRC, u32 abDST)
 	RS.SetRS(D3DRS_SRCBLEND, bABlend ? abSRC : D3DBLEND_ONE);
 	RS.SetRS(D3DRS_DESTBLEND, bABlend ? abDST : D3DBLEND_ZERO);
 
-#if defined(USE_DX10) || defined(USE_DX11)
 	//	Since in our engine D3DRS_SEPARATEALPHABLENDENABLE state is
 	//	always set to false and in DirectX 10 blend functions for 
 	//	color and alpha are always independent, assign blend options for
@@ -241,7 +213,6 @@ void	CBlender_Compile::PassSET_ablend_mode	(BOOL bABlend,	u32 abSRC, u32 abDST)
 	RS.SetRS(D3DRS_DESTBLEND, bABlend ? abDST : D3D11_BLEND_ZERO);
 	RS.SetRS(D3DRS_SRCBLENDALPHA, bABlend ? abSRC : D3D11_BLEND_ONE);
 	RS.SetRS(D3DRS_DESTBLENDALPHA, bABlend ? abDST : D3D11_BLEND_ZERO);
-#endif	//	USE_DX10
 }
 void	CBlender_Compile::PassSET_ablend_aref	(BOOL bATest,	u32 aRef)
 {
@@ -253,9 +224,6 @@ void	CBlender_Compile::PassSET_ablend_aref	(BOOL bATest,	u32 aRef)
 void	CBlender_Compile::PassSET_Blend	(BOOL bABlend, u32 abSRC, u32 abDST, BOOL bATest, u32 aRef)
 {
 	PassSET_ablend_mode					(bABlend,abSRC,abDST);
-#ifdef DEBUG
-	if (strstr(Core.Params,"-noaref"))	{bATest=FALSE; aRef=0; }
-#endif
 	PassSET_ablend_aref					(bATest,aRef);
 }
 
@@ -263,7 +231,6 @@ void	CBlender_Compile::PassSET_LightFog	(BOOL bLight, BOOL bFog)
 {
 	RS.SetRS(D3DRS_LIGHTING,			BC(bLight));
 	RS.SetRS(D3DRS_FOGENABLE,			BC(bFog));
-	//SH->Flags.bLighting				|= !!bLight;
 }
 
 //
@@ -282,10 +249,6 @@ void	CBlender_Compile::StageSET_Address	(u32 adr)
 }
 void	CBlender_Compile::StageSET_XForm	(u32 tf, u32 tc)
 {
-#ifdef _EDITOR
-	RS.SetTSS	(Stage(),D3DTSS_TEXTURETRANSFORMFLAGS,	tf);
-	RS.SetTSS	(Stage(),D3DTSS_TEXCOORDINDEX,			tc);
-#endif
 }
 void	CBlender_Compile::StageSET_Color	(u32 a1, u32 op, u32 a2)
 {
@@ -299,36 +262,6 @@ void	CBlender_Compile::StageSET_Alpha	(u32 a1, u32 op, u32 a2)
 {
 	RS.SetAlpha	(Stage(),a1,op,a2);
 }
-#if !defined(USE_DX10) && !defined(USE_DX11)
-void	CBlender_Compile::StageSET_TMC		(LPCSTR T, LPCSTR M, LPCSTR C, int UVW_channel)
-{
-	Stage_Texture		(T);
-	Stage_Matrix		(M,UVW_channel);
-	Stage_Constant		(C);
-}
-
-void	CBlender_Compile::StageTemplate_LMAP0	()
-{
-	StageSET_Address	(D3DTADDRESS_CLAMP);
-	StageSET_Color		(D3DTA_TEXTURE,	  D3DTOP_SELECTARG1,	D3DTA_DIFFUSE);
-	StageSET_Alpha		(D3DTA_TEXTURE,	  D3DTOP_SELECTARG1,	D3DTA_DIFFUSE);
-	StageSET_TMC		("$base1","$null","$null",1);
-}
-
-void	CBlender_Compile::Stage_Texture	(LPCSTR name, u32 ,	u32	 fmin, u32 fmip, u32 fmag)
-{
-	sh_list& lst=	L_textures;
-	int id		=	ParseName(name);
-	LPCSTR N	=	name;
-	if (id>=0)	{
-		if (id>=int(lst.size()))	Debug.fatal(DEBUG_INFO,"Not enought textures for shader. Base texture: '%s'.",*lst[0]);
-		N = *lst [id];
-	}
-	passTextures.push_back	(mk_pair( Stage(),ref_texture( DEV->_CreateTexture(N))));
-//	i_Address				(Stage(),address);
-	i_Filter				(Stage(),fmin,fmip,fmag);
-}
-#endif	//	USE_DX10
 void	CBlender_Compile::Stage_Matrix		(LPCSTR name, int iChannel)
 {
 	sh_list& lst	= L_matrices; 
