@@ -76,8 +76,6 @@ extern	float	psHUD_FOV;
 extern	float	psSqueezeVelocity;
 extern	int		psLUA_GCSTEP;
 
-extern BOOL off_hanging_lamp_shdw = false;
-
 extern	int		x_m_x;
 extern	int		x_m_z;
 extern	BOOL	net_cl_inputguaranteed	;
@@ -2026,7 +2024,6 @@ CMD4(CCC_Integer,			"hit_anims_tune",						&tune_hit_anims,		0, 1);
 	CMD4(CCC_Float, "r__lamp_bright", &lamp_bright, 0.5f, 10.0f);
 
 
-	CMD4(CCC_Integer, "r__off_shadows_of_lamps", &off_hanging_lamp_shdw, 0, 1);
 	CMD4(CCC_Integer, "box_respawn_time", &box_respawn_time, 1, 1000000000);
 
 

@@ -6,6 +6,19 @@
 
 #include "../../build_config_defines.h"
 
+
+// SSR quality option
+u32			dt_ssr_samp = 5;
+xr_token							ssr_samp_token[] = {
+	{ "ssr_lowesr",					0												},
+	{ "ssr_low",				1													},
+	{ "ssr_medium",					2												},
+	{ "ssr_high",				3													},
+	{ "ssr_veryhigh",					4											},
+	{ "ssr_ultra",					5												},
+	{ 0,							0												}
+};
+
 // SMAP Control
 
 u32 ps_r2_smapsize = 2048;
@@ -172,10 +185,11 @@ float		ps_r2_ssaLOD_B				= 48.f	;
 float		ps_r2_tf_Mipbias			= 0.0f	;
 
 //r4 only
-Flags32 ps_r4_ssr_flags = {
- R4_FLAG_SSR_USE
-|R4_FLAG_MAX_QUALITY_SHADERS
-|R4_FLAG_USE_ADVANCED_SHADERS
+Flags32 ps_r4_ssr_flags = { R4_FLAG_SSR_USE
+};
+
+Flags32 ps_r4_parallax_flags = {
+	R4_USE_FULL_PARALLAX
 };
 
 // R2-specific
@@ -287,6 +301,7 @@ extern ENGINE_API Fvector4 ps_ssfx_rain_1;
 extern ENGINE_API Fvector4 ps_ssfx_rain_2;
 extern ENGINE_API Fvector4 ps_ssfx_rain_3;
 
+int ps_screen_space_shaders = 0;
 
 
 Fvector3	ps_r2_dof					= Fvector3().set(-1.25f, 1.4f, 10000.f);
@@ -359,14 +374,18 @@ float ps_r2_gloss_min = 0.0f;
 #include	"../../xrEngine/xr_ioconsole.h"
 #include	"../../xrEngine/xr_ioc_cmd.h"
 
+#if defined(USE_DX10) || defined(USE_DX11)
 #include "../xrRenderDX10/StateManager/dx10SamplerStateCache.h"
+#endif	//	USE_DX10
 
 class CCC_ssfx_cascades : public CCC_Vector3
 	 {
 public:
 	void apply()
 		 {
+		#if defined(USE_DX10) || defined(USE_DX11)
 			RImplementation.init_cascades();
+		#endif
 			 }
 	
 		CCC_ssfx_cascades(LPCSTR N, Fvector3* V, const Fvector3 _min, const Fvector3 _max) : CCC_Vector3(N, V, _min, _max)
@@ -419,8 +438,12 @@ public:
 	void	apply	()	{
 		if (0==HW.pDevice)	return	;
 		int	val = *value;	clamp(val,1,16);
+#if defined(USE_DX10) || defined(USE_DX11)
 		SSManager.SetMaxAnisotropy(val);
-
+#else	//	USE_DX10
+		for (u32 i=0; i<HW.Caps.raster.dwStages; i++)
+			CHK_DX(HW.pDevice->SetSamplerState( i, D3DSAMP_MAXANISOTROPY, val	));
+#endif	//	USE_DX10
 	}
 	CCC_tf_Aniso(LPCSTR N, int*	v) : CCC_Integer(N, v, 1, 16)		{ };
 	virtual void Execute	(LPCSTR args)
@@ -440,10 +463,13 @@ public:
 	void	apply	()	{
 		if (0==HW.pDevice)	return	;
 
-
+#if defined(USE_DX10) || defined(USE_DX11)
 		//	TODO: DX10: Implement mip bias control
 		//VERIFY(!"apply not implmemented.");
-
+#else	//	USE_DX10
+		for (u32 i=0; i<HW.Caps.raster.dwStages; i++)
+			CHK_DX(HW.pDevice->SetSamplerState( i, D3DSAMP_MIPMAPLODBIAS, *((LPDWORD) value)));
+#endif	//	USE_DX10
 	}
 
 
@@ -614,7 +640,7 @@ public:
 
 
 
-
+#if RENDER!=R_R1
 #include "r__pixel_calculator.h"
 class CCC_BuildSSA : public IConsole_Command
 {
@@ -622,10 +648,14 @@ public:
 	CCC_BuildSSA(LPCSTR N) : IConsole_Command(N)  { bEmptyArgsHandled = TRUE; };
 	virtual void Execute(LPCSTR args) 
 	{
-
+#if !defined(USE_DX10) && !defined(USE_DX11)
+		//	TODO: DX10: Implement pixel calculator
+		r_pixel_calculator	c;
+		c.run				();
+#endif	//	USE_DX10
 	}
 };
-
+#endif
 
 class CCC_DofFar : public CCC_Float
 {
@@ -942,8 +972,6 @@ void		xrRender_initconsole	()
 #endif // DEBUG
 
 	CMD3(CCC_Mask, "SSR_ON", &ps_r4_ssr_flags, R4_FLAG_SSR_USE);
-	CMD3(CCC_Mask, "r__use_max_quality_shaders", &ps_r4_ssr_flags, R4_FLAG_MAX_QUALITY_SHADERS);
-	CMD3(CCC_Mask, "r__use_advanced_shaders", &ps_r4_ssr_flags, R4_FLAG_USE_ADVANCED_SHADERS);
 
 	CMD3(CCC_Mask,		"r2_sun",				&ps_r2_ls_flags,			R2FLAG_SUN		);
 	CMD3(CCC_Mask,		"r2_sun_details",		&ps_r2_ls_flags,			R2FLAG_SUN_DETAILS);
@@ -1053,6 +1081,10 @@ void		xrRender_initconsole	()
 
 	CMD3(CCC_Token,		"r2_sun_quality",				&ps_r_sun_quality,			qsun_quality_token);
 
+	// DWM: DT SSR quality option
+	CMD3(CCC_Token, "r4_ssr_quality", &dt_ssr_samp, ssr_samp_token);
+
+
 	//Raindrops
 	CMD4(CCC_Float, "r2_rain_drops_power_debug", &droplets_power_debug, 0.f, 3.f);
 
@@ -1062,6 +1094,9 @@ void		xrRender_initconsole	()
 	CMD4(CCC_Float, "r4_hbao_plus_bias", &hbao_plus_bias, 0, 1);
 	CMD4(CCC_Float, "r4_hbao_plus_power_exponent", &hbao_plus_power_exponent, 0, 10);
 	CMD4(CCC_Float, "r4_hbao_plus_blur_sharp", &hbao_plus_blur_sharp, 16, 256);
+
+	//switch terrain parallax
+	CMD3(CCC_Mask, "r4_use_full_parallax", &ps_r4_parallax_flags, R4_USE_FULL_PARALLAX);
 
 
 	//	Igor: need restart
@@ -1099,6 +1134,7 @@ void		xrRender_initconsole	()
 
 
 	// Screen Space Shaders
+	CMD4(CCC_Integer, "r__screen_space_shaders", &ps_screen_space_shaders, 0, 1);
 	CMD4(CCC_Vector4, "ssfx_grass_shadows", &ps_ssfx_grass_shadows, Fvector4().set(0, 0, 0, 0), Fvector4().set(3, 1, 100, 100));
 	CMD4(CCC_ssfx_cascades, "ssfx_shadow_cascades", &ps_ssfx_shadow_cascades, Fvector3().set(1.0f, 1.0f, 1.0f), Fvector3().set(300, 300, 300));
 	CMD4(CCC_Vector4, "ssfx_grass_interactive", &ps_ssfx_grass_interactive, Fvector4().set(0, 0, 0, 0), Fvector4().set(1, 15, 5000, 1));

@@ -78,7 +78,6 @@ void CHangingLamp::net_Destroy()
 	inherited::net_Destroy	();
 }
 extern float lamp_bright;
-extern BOOL off_hanging_lamp_shdw;
 BOOL CHangingLamp::net_Spawn(CSE_Abstract* DC)
 {
 	CSE_Abstract			*e		= (CSE_Abstract*)(DC);
@@ -105,11 +104,7 @@ BOOL CHangingLamp::net_Spawn(CSE_Abstract* DC)
 	clr.mul_rgb				(fBrightness);
 
 	light_render			= ::Render->light_create();
-	if (off_hanging_lamp_shdw)
-		light_render->set_shadow(false);
-	else
 	light_render->set_shadow(!!lamp->flags.is(CSE_ALifeObjectHangingLamp::flCastShadow));
-
 	light_render->set_volumetric(!!lamp->flags.is(CSE_ALifeObjectHangingLamp::flVolumetric));
 	light_render->set_type	(lamp->flags.is(CSE_ALifeObjectHangingLamp::flTypeSpot)?IRender_Light::SPOT:IRender_Light::POINT);
 	light_render->set_range	(lamp->range);

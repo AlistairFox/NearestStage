@@ -188,6 +188,14 @@ float		ps_r2_ssaLOD_A				= 64.f	;
 float		ps_r2_ssaLOD_B				= 48.f	;
 float		ps_r2_tf_Mipbias			= 0.0f	;
 
+//r4 only
+Flags32 ps_r4_ssr_flags = { R4_FLAG_SSR_USE
+};
+
+Flags32 ps_r4_parallax_flags = {
+	R4_USE_FULL_PARALLAX
+};
+
 // R2-specific
 Flags32		ps_r2_ls_flags				= { R2FLAG_SUN 
 	//| R2FLAG_SUN_IGNORE_PORTALS
@@ -969,6 +977,8 @@ void		xrRender_initconsole	()
 	CMD3(CCC_Mask,		"r2_use_nvdbt",			&ps_r2_ls_flags,			R2FLAG_USE_NVDBT);
 #endif // DEBUG
 
+	CMD3(CCC_Mask, "SSR_ON", &ps_r4_ssr_flags, R4_FLAG_SSR_USE);
+
 	CMD3(CCC_Mask,		"r2_sun",				&ps_r2_ls_flags,			R2FLAG_SUN		);
 	CMD3(CCC_Mask,		"r2_sun_details",		&ps_r2_ls_flags,			R2FLAG_SUN_DETAILS);
 	CMD3(CCC_Mask,		"r2_sun_focus",			&ps_r2_ls_flags,			R2FLAG_SUN_FOCUS);
@@ -1092,6 +1102,9 @@ void		xrRender_initconsole	()
 	CMD4(CCC_Float, "r4_hbao_plus_bias", &hbao_plus_bias, 0, 1);
 	CMD4(CCC_Float, "r4_hbao_plus_power_exponent", &hbao_plus_power_exponent, 0, 10);
 	CMD4(CCC_Float, "r4_hbao_plus_blur_sharp", &hbao_plus_blur_sharp, 16, 256);
+
+	//switch terrain parallax
+	CMD3(CCC_Mask, "r4_use_full_parallax", &ps_r4_parallax_flags, R4_USE_FULL_PARALLAX);
 
 
 	//	Igor: need restart
