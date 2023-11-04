@@ -1837,7 +1837,7 @@ void game_sv_Deathmatch::check_InvinciblePlayers()
 			if (ps->testFlag(GAME_PLAYER_FLAG_VERY_VERY_DEAD))
 				return;
 
-			u16 OldFlags = ps->flags__;
+			u32 OldFlags = ps->flags__;
 			m_owner->check_Player_for_Invincibility(ps);
 			if (ps->flags__ != OldFlags) m_owner->signal_Syncronize();
 		};

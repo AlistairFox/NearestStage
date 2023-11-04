@@ -52,7 +52,7 @@ struct game_PlayerState
 	//count delivered artefacts (in CTA and AH)
 	u8			rank;
 	u8			af_count;			
-	u16			flags__;
+	u32			flags__;
 
 	u16			ping;
 
@@ -83,9 +83,9 @@ struct game_PlayerState
 					~game_PlayerState		();
 
 	virtual void	clear					();
-			bool	testFlag				(u16 f) const;
-			void	setFlag					(u16 f);
-			void	resetFlag				(u16 f);
+			bool	testFlag				(u32 f) const;
+			void	setFlag					(u32 f);
+			void	resetFlag				(u32 f);
 			LPCSTR	getName					() const {return m_account.name().c_str();}
 			//void	setName					(LPCSTR s){xr_strcpy(name,s);}
 			void	SetGameID				(u16 NewID);

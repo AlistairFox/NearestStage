@@ -175,7 +175,7 @@ void	game_cl_GameState::net_import_state	(NET_Packet& P)
 		{
 			IP = I->second;
 			//***********************************************
-			u16 OldFlags = IP->flags__;
+			u32 OldFlags = IP->flags__;
 			u8 OldVote = IP->m_bCurrentVoteAgreed;
 			//-----------------------------------------------
 			IP->net_Import(P);
@@ -231,7 +231,7 @@ void	game_cl_GameState::net_import_update(NET_Packet& P)
 		game_PlayerState* IP		= I->second;
 //		CopyMemory	(&IP,&PS,sizeof(PS));		
 		//***********************************************
-		u16 OldFlags = IP->flags__;
+		u32 OldFlags = IP->flags__;
 		u8 OldVote = IP->m_bCurrentVoteAgreed;
 		//-----------------------------------------------
 		IP->net_Import(P);

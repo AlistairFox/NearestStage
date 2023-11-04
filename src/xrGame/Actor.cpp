@@ -1179,7 +1179,7 @@ void CActor::UpdateCL	()
 	{
 		if (Actor()->MpLootMODE() && !ANIMSET)
 		{
-			SetAnim(16);
+			SetAnim(30);
 			ANIMSET = true;
 		}
 
