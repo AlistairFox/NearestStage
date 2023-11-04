@@ -36,8 +36,11 @@ void CLight_DB::Load			(IReader *fs)
 			L->flags.bStatic			= true;
 			L->set_type					(IRender_Light::POINT);
 
+#if RENDER==R_R1
+			L->set_shadow				(false);
+#else
 			L->set_shadow				(true);
-
+#endif
 			u32 controller				= 0;
 			F->r						(&controller,4);
 			F->r						(&Ldata,sizeof(Flight));
@@ -78,8 +81,25 @@ void CLight_DB::Load			(IReader *fs)
 	}
 	R_ASSERT2(sun_original && sun_adapted,"Where is sun?");
 
+	// fake spot
+	/*
+	if (0)
+	{
+		Fvector	P;			P.set(-5.58f,	-0.00f + 2, -3.63f);
+		Fvector	D;			D.set(0,-1,0);
+		light*	fake		= Create();
+		fake->set_type		(IRender_Light::SPOT);
+		fake->set_color		(1,1,1);
+		fake->set_cone		(deg2rad(60.f));
+		fake->set_direction	(D);
+		fake->set_position	(P);
+		fake->set_range		(3.f);
+		fake->set_active	(true);
+	}
+	*/
 }
 
+#if RENDER != R_R1
 void	CLight_DB::LoadHemi	()
 {
 	string_path fn_game;
@@ -134,6 +154,7 @@ void	CLight_DB::LoadHemi	()
 		FS.r_close(F);
 	}
 }
+#endif
 
 void			CLight_DB::Unload	()
 {
@@ -152,7 +173,17 @@ light*			CLight_DB::Create	()
 	return				L;
 }
 
+#if RENDER==R_R1
+void			CLight_DB::add_light		(light* L)
+{
+	if (Device.dwFrame==L->frame_render)	return;
+	L->frame_render							=	Device.dwFrame;
+	if (L->flags.bStatic)					return;	// skip static lighting, 'cause they are in lmaps
+	if (ps_r1_flags.test(R1FLAG_DLIGHTS))	RImplementation.L_Dynamic->add	(L);
+}
+#endif
 
+#if (RENDER==R_R2) || (RENDER==R_R4)
 void			CLight_DB::add_light		(light* L)
 {
 	if (Device.dwFrame==L->frame_render)	return;
@@ -161,6 +192,7 @@ void			CLight_DB::add_light		(light* L)
 	if (L->flags.bStatic && !ps_r2_ls_flags.test(R2FLAG_R1LIGHTS))	return;
 	L->export_to							(package);
 }
+#endif // (RENDER==R_R2) || (RENDER==R_R3) || (RENDER==R_R4)
 
 void			CLight_DB::Update			()
 {
@@ -171,7 +203,24 @@ void			CLight_DB::Update			()
 		light*	_sun_adapted		= (light*) sun_adapted._get();
 		CEnvDescriptor&	E			= *g_pGamePersistent->Environment().CurrentEnv;
 		VERIFY						(_valid(E.sun_dir));
-
+#ifdef DEBUG
+		if(E.sun_dir.y>=0)
+		{
+//			Log("sect_name", E.sect_name.c_str());
+			Log("E.sun_dir", E.sun_dir);
+			Log("E.wind_direction",E.wind_direction);
+			Log("E.wind_velocity",E.wind_velocity);
+			Log("E.sun_color",E.sun_color);
+			Log("E.rain_color",E.rain_color);
+			Log("E.rain_density",E.rain_density);
+			Log("E.fog_distance",E.fog_distance);
+			Log("E.fog_density",E.fog_density);
+			Log("E.fog_color",E.fog_color);
+			Log("E.far_plane",E.far_plane);
+			Log("E.sky_rotation",E.sky_rotation);
+			Log("E.sky_color",E.sky_color);
+		}
+#endif
 
 		VERIFY2						(E.sun_dir.y<0,"Invalid sun direction settings in evironment-config");
 		Fvector						OD,OP,AD,AP;

@@ -50,12 +50,13 @@ IBlender* CResourceManager::_GetBlender		(LPCSTR Name)
 	if (I==m_blenders.end())	return 0;
 #else
 //	TODO: DX10: When all shaders are ready switch to common path
+#if defined(USE_DX10) || defined(USE_DX11)
 	if (I==m_blenders.end())	
 	{
 		Msg("DX10: Shader '%s' not found in library.",Name); 
 		return 0;
 	}
-
+#endif
 	if (I==m_blenders.end())	{ Msg ("Shader '%s' not found in library.",Name); return 0; }
 #endif
 	else					return I->second;
@@ -159,7 +160,9 @@ Shader*	CResourceManager::_cpp_Create	(IBlender* B, LPCSTR s_shader, LPCSTR s_te
 	C.bEditor			= FALSE;
 	C.bDetail			= FALSE;
 
+#if defined(USE_DX11)
 	C.HudElement = false;
+#endif
 
 #ifdef _EDITOR
 	if (!C.BT)			{ ELog.Msg(mtError,"Can't find shader '%s'",s_shader); return 0; }
@@ -171,11 +174,13 @@ Shader*	CResourceManager::_cpp_Create	(IBlender* B, LPCSTR s_shader, LPCSTR s_te
 	_ParseList			(C.L_constants,	s_constants	);
 	_ParseList			(C.L_matrices,	s_matrices	);
 
+#if defined(USE_DX11)
 	if (::Render->hud_loading && RImplementation.o.ssfx_hud_raindrops)
 	{
 		Msg(":::::::::::::::: HUD ELEMENT [%s] [%s]", s_shader, s_textures);
 		C.HudElement = true;
 	}
+#endif
 
 	// Compile element	(LOD0 - HQ)
 	{
@@ -255,9 +260,13 @@ Shader*	CResourceManager::_cpp_Create	(LPCSTR s_shader, LPCSTR s_textures, LPCST
 #endif    
 	{
 		//	TODO: DX10: When all shaders are ready switch to common path
+#if defined(USE_DX10) || defined(USE_DX11)
 		IBlender	*pBlender = _GetBlender(s_shader?s_shader:"null");
 		if (!pBlender) return NULL;
 		return	_cpp_Create(pBlender ,s_shader,s_textures,s_constants,s_matrices);
+#else	//	USE_DX10
+		return	_cpp_Create(_GetBlender(s_shader?s_shader:"null"),s_shader,s_textures,s_constants,s_matrices);
+#endif	//	USE_DX10
 //#else
 	}
 #ifndef _EDITOR
@@ -296,7 +305,7 @@ Shader*		CResourceManager::Create	(LPCSTR s_shader,	LPCSTR s_textures,	LPCSTR s_
 #endif
 	{
 		//	TODO: DX10: When all shaders are ready switch to common path
-
+#if defined(USE_DX10) || defined(USE_DX11)
 		if	(_lua_HasShader(s_shader))		
 			return	_lua_Create	(s_shader,s_textures);
 		else								
@@ -315,7 +324,14 @@ Shader*		CResourceManager::Create	(LPCSTR s_shader,	LPCSTR s_textures,	LPCSTR s_
 				}
 			}
 		}
-
+#else	//	USE_DX10
+#ifndef _EDITOR
+		if	(_lua_HasShader(s_shader))		
+			return	_lua_Create	(s_shader,s_textures);
+		else								
+#endif
+			return	_cpp_Create	(s_shader,s_textures,s_constants,s_matrices);
+#endif	//	USE_DX10
 	}
 //#else
 #ifndef _EDITOR
@@ -481,7 +497,9 @@ void	CResourceManager::ED_UpdateTextures(AStringVec* names)
 void	CResourceManager::Evict()
 {
 	//	TODO: DX10: check if we really need this method
-
+#if !defined(USE_DX10) && !defined(USE_DX11)
+	CHK_DX	(HW.pDevice->EvictManagedResources());
+#endif	//	USE_DX10
 }
 /*
 BOOL	CResourceManager::_GetDetailTexture(LPCSTR Name,LPCSTR& T, R_constant_setup* &CS)

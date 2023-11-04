@@ -308,8 +308,11 @@ void dx10StateManager::SetColorWriteEnable(u32 WriteMask)
 	bool	bNeedUpdate = false;
 	for (u32 i=0; i<4; ++i)
 	{
+#ifdef USE_DX11
 		if (m_BDesc.RenderTarget[i].RenderTargetWriteMask!=WMask)
-
+#else
+		if (m_BDesc.RenderTargetWriteMask[i]!=WMask)
+#endif
 			bNeedUpdate = true;
 	}
 
@@ -317,9 +320,11 @@ void dx10StateManager::SetColorWriteEnable(u32 WriteMask)
 	{
 		m_bBSChanged = true;
 		for (int i=0; i<4; ++i)
-
+#ifdef USE_DX11
 			m_BDesc.RenderTarget[i].RenderTargetWriteMask = WMask;
-
+#else
+			m_BDesc.RenderTargetWriteMask[i] = WMask;
+#endif
 	}
 }
 
