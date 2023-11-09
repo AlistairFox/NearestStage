@@ -284,10 +284,13 @@ static const float	ik_cam_shift_speed = 0.01f;
 #endif
 
 u16 eyeID;
+u16 headID;
 
 void CActor::cam_Update(float dt, float fFOV)
 {
 	if(m_holder)		return;
+
+	IKinematics* k = Visual()->dcast_PKinematics();
 
 	if( (mstate_real & mcClimb) && (cam_active!=eacFreeLook) )
 		camUpdateLadder(dt);
@@ -353,22 +356,110 @@ void CActor::cam_Update(float dt, float fFOV)
 	}
 
 	float _viewport_near			= VIEWPORT_NEAR;
+	float _viewport_near_hud = VIEWPORT_NEAR_HUD;
 	// calc point
 	xform.transform_tiny			(point);
 
-	if (!g_Alive() && eacFirstEye == cam_active && !Level().Cameras().GetCamEffector(cefDemo)) //Arkada: First Person Death
+	CCameraBase* C = cam_Active();
+	if (Level().CurrentControlEntity() == this)
 	{
-		IKinematics* k = Visual()->dcast_PKinematics();
-		if (eyeID == NULL)
-			eyeID = k->LL_BoneID("eyelid_1");
-		Fmatrix m;
-		m.mul_43(XFORM(), k->LL_GetTransform(eyeID));
-		point = m.c; //Head position
-		m.mul_43(XFORM(), k->LL_GetTransform(eyeID));
-		m.getHPB(dangle); //Head direction
+
+		if (g_Alive() && (MpAnimationMODE() || MpWoundMODE()) && eacFirstEye == cam_active && !Level().Cameras().GetCamEffector(cefDemo))
+		{
+			_viewport_near = 0.05;
+			float		cam_limit = 1;
+			float yaw = (-XFORM().k.getH());
+			float& cam_yaw = C->yaw;
+			float delta_yaw = angle_difference_signed(yaw, cam_yaw);
+
+			if (-cam_limit<delta_yaw && cam_limit>delta_yaw)
+			{
+				yaw = cam_yaw + delta_yaw;
+				float lo = (yaw - cam_limit);
+				float hi = (yaw + cam_limit);
+				C->lim_yaw[0] = lo;
+				C->lim_yaw[1] = hi;
+				C->bClampYaw = true;
+			}
+			C->lim_pitch.set(-0.6, 0.4);
+
+			if (eyeID == NULL)
+				eyeID = k->LL_BoneID("bip01_neck");
+
+			if (headID == NULL)
+				headID = k->LL_BoneID("bip01_head");
+
+			k->LL_SetBoneVisible(headID, 0, TRUE);
+			Fmatrix m;
+			m.mul_43(XFORM(), k->LL_GetTransform(eyeID));
+			point = m.c; //Head position
+			//point.z += 0.12;
+			point.y += 0.15;
+
+			if (MpWoundMODE())
+			{
+				float x = 0;
+				float y = 0;
+				float z = 0;
+				m.mul_43(XFORM(), k->LL_GetTransform(eyeID));
+				m.getHPB(x, y, z);
+				z -= 1.5;
+				dangle.z = z;
+
+			}
+		}
+		else
+		{
+			if (headID == NULL)
+				headID = k->LL_BoneID("bip01_head");
+
+			k->LL_SetBoneVisible(headID, 1, TRUE);
+
+			C->lim_pitch[0] = -1.5;
+			C->lim_pitch[1] = 1.5;
+
+			C->lim_yaw[0] = 0;
+			C->lim_yaw[1] = 0;
+			C->bClampYaw = false;
+
+		}
+
+		if (!g_Alive() && eacFirstEye == cam_active /* && !Level().Cameras().GetCamEffector(cefDemo)*/) //Arkada: First Person Death
+		{
+			_viewport_near = 0.2;
+			if (eyeID == NULL)
+				eyeID = k->LL_BoneID("bip01_neck");
+
+			k->LL_SetBoneVisible(headID, 0, TRUE);
+			Fmatrix m;
+			m.mul_43(XFORM(), k->LL_GetTransform(eyeID));
+			point = m.c; //Head position
+			point.y += 0.15;
+
+			////////direction start//
+			m.mul_43(XFORM(), k->LL_GetTransform(eyeID));
+			float x = 0;
+			float y = 0;
+			float z = 0;
+			m.getHPB(x, y, z);
+			z -= 1.5;
+
+			dangle.x = x;
+			dangle.y = y;
+			dangle.z = z;
+			///////direction end
+
+		}
+	}
+	else
+	{
+
+		if (headID == NULL)
+			headID = k->LL_BoneID("bip01_head");
+
+		k->LL_SetBoneVisible(headID, 1, TRUE);
 	}
 
-	CCameraBase* C					= cam_Active();
 
 	C->Update						(point,dangle);
 	C->f_fov						= fFOV;

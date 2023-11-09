@@ -659,8 +659,8 @@ void	CCar::net_Import			(NET_Packet& P)
 	{
 		if (!OwnerActor())
 		{
-			if (auto* act = smart_cast<CActor*>(Level().Objects.net_Find(owner)))
-				act->attach_Vehicle(this);
+		//	if (auto* act = smart_cast<CActor*>(Level().Objects.net_Find(owner)))
+		//		act->attach_Vehicle(this);
 		}
 	}
 	else

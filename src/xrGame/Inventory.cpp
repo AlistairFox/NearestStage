@@ -1344,9 +1344,9 @@ void  CInventory::AddAvailableItemsCheck(TIItemContainer& items_container, bool 
 		for (;I <= E;++I)
 		{
 			PIItem item = ItemFromSlot(I);
-			if (item && (!for_trade || item->CanTrade()))
+			if (item)
 			{
-				if (!SlotIsPersistent(I) || item->BaseSlot() == GRENADE_SLOT)
+				if (item->BaseSlot() != BOLT_SLOT)
 				{
 					if (pOwner) {
 						std::uint32_t slot = item->BaseSlot();

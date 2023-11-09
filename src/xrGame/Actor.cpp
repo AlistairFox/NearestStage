@@ -1659,8 +1659,8 @@ void CActor::shedule_Update	(u32 DT)
 	if (MpInvisibility())
 		setVisible(false);
 
-	if (MpAnimationMODE() || MpWoundMODE())
-		cam_Set(eacLookAt);
+	//if (MpAnimationMODE() || MpWoundMODE())
+	//	cam_Set(eacLookAt);
 
 	//else
 	//	cam_Set(eacFirstEye);
@@ -2262,21 +2262,35 @@ bool CActor::can_attach			(const CInventoryItem *inventory_item) const
 {
 	const CAttachableItem	*item = smart_cast<const CAttachableItem*>(inventory_item);
 	if (!item)
+	{
+		Msg("!  !item");
 		return	(false);
+	}
 
 	if (!dynamic_cast<const CTorch*>(inventory_item))
+	{
+		Msg("!  !dynamic_cast");
 		if (!item->enabled())
+		{
+			Msg("!  !item->enabled");
 			return(false);
-
+		}
+	}
 
 	//можно ли присоединять объекты такого типа
-	if( m_attach_item_sections.end() == std::find(m_attach_item_sections.begin(),m_attach_item_sections.end(),inventory_item->object().cNameSect()) )
+	if (m_attach_item_sections.end() == std::find(m_attach_item_sections.begin(), m_attach_item_sections.end(), inventory_item->object().cNameSect()))
+	{
+		Msg("m_attach_item_section.end");
 		return false;
+	}
 
 	//если уже есть присоединненый объет такого типа 
-	if(attached(inventory_item->object().cNameSect()))
+	if (attached(inventory_item->object().cNameSect()))
+	{
+		Msg("%s", inventory_item->object().cNameSect().c_str());
+		Msg("attached(inv_item->object().cNameSect)");
 		return false;
-
+	}
 	return true;
 }
 
@@ -2619,9 +2633,9 @@ void CActor::on_requested_spawn(CObject* object) {
 	character_physics_support()->movement()->SetPosition(oHolder->ExitPosition());
 	character_physics_support()->movement()->SetVelocity(oHolder->ExitVelocity());
 
-	CCar* car = smart_cast<CCar*>(object);
-	if(car)
-		attach_Vehicle(car);
+//	CCar* car = smart_cast<CCar*>(object);
+//	if(car)
+//		attach_Vehicle(car);
 
 	m_holder = NULL;
 	m_holderID = (u16)(-1);

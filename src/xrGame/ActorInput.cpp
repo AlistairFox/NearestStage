@@ -616,6 +616,14 @@ void CActor::ActorCheckWoundInv()
 
 BOOL CActor::HUDview				( )const 
 { 
+	if (Level().Cameras().GetCamEffector(cefDemo))
+		return FALSE;
+	if (MpAnimationMODE())
+		return FALSE;
+	if (MpWoundMODE())
+		return FALSE;
+
+
 	if (!g_Alive())
 		return FALSE;
 	else

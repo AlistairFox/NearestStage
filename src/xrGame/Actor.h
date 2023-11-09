@@ -356,7 +356,7 @@ public:
 public:
 	void					detach_Vehicle			();
 	void					steer_Vehicle			(float angle);
-	void					attach_Vehicle			(CHolderCustom* vehicle);
+//	void					attach_Vehicle			(CHolderCustom* vehicle);
 	bool					use_HolderEx(CHolderCustom* object, bool bForce);
 	bool				use_Vehicle(CHolderCustom* object);
 

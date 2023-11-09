@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #pragma hdrstop
 
+/*
 #include "actor.h"
 #include "..\xrEngine\CameraBase.h"
 #include "ActorEffector.h"
@@ -141,3 +142,4 @@ bool CActor::use_Vehicle(CHolderCustom* object)
 		return false;
 	}
 }
+*/

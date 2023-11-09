@@ -42,6 +42,7 @@ void  CInventoryOwner::OnEvent (NET_Packet& P, u16 type)
 		break;
 	case GE_INFO_TRANSFER:
 		{
+
 			u16				id;
 			shared_str		info_id;
 			u8				add_info;
@@ -73,6 +74,7 @@ bool CInventoryOwner::OnReceiveInfo(shared_str info_id) const
 	else
 		return false;
 
+	Msg("OnReceiveInfo");
 #ifdef DEBUG
 	if(psAI_Flags.test(aiInfoPortion))
 		Msg("[%s] Received Info [%s]", Name(), *info_id);
@@ -117,7 +119,7 @@ void CInventoryOwner::TransferInfo(shared_str info_id, bool add_info) const
 {
 	VERIFY( info_id.size() );
 	const CObject* pThisObject = smart_cast<const CObject*>(this); VERIFY(pThisObject);
-
+	Msg("Transfer Info");
 	//отправляем от нашему PDA пакет информации с номером
 	NET_Packet		P;
 	CGameObject::u_EventGen(P, GE_INFO_TRANSFER, pThisObject->ID());

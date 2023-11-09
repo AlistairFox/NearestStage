@@ -349,10 +349,16 @@ void CActor::SelectScriptAnimation()
 				item->enable(true);
 				SendActivateItem(attach, true);
 
+				
 				bool att = this->can_attach(inv_item);
 
+				Msg("%s", inv_item->object().cNameSect().c_str());
+			
 				if (att)
+				{
+					Msg("att");
 					this->attach(inv_item);
+				}
 			}
 		}
 
