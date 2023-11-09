@@ -514,6 +514,7 @@ void CRender::reset_end()
 	m_bFirstFrameAfterReset		= true;
 }
 
+
 void CRender::OnFrame()
 {
 	Models->DeleteQueue();
@@ -524,6 +525,7 @@ void CRender::OnFrame()
 	// MT-HOM (@front)
 	Device.seqParallel.insert(Device.seqParallel.begin(),
 		fastdelegate::FastDelegate0<>(&HOM, &CHOM::MT_RENDER));
+
 	if (Details)
 		g_pGamePersistent->GrassBendersUpdateAnimations();
 }
