@@ -6,6 +6,9 @@
 
 #include "../../build_config_defines.h"
 
+u32 ps_ColorGradingPreset = 0;
+xr_token qcolorgrading_preset_token[] = { {"Default", 0}, {"Cold", 1}, {"Filmic 1", 2}, {"Filmic 2", 3}, {"Filmic 3", 4} , {"Hollywood", 5}, {"Vanilla", 6}, {"Vibrant", 7} , {"Warm", 8}, {nullptr, 0} };
+
 // SMAP Control
 
 u32 ps_r2_smapsize = 2048;
@@ -614,7 +617,34 @@ public:
 };
 
 
+class CCC_ColorGrading_Preset : public CCC_Token
+{
+public:
+	CCC_ColorGrading_Preset(LPCSTR N, u32* V, xr_token* T) : CCC_Token(N, V, T) {};
 
+	virtual void Execute(LPCSTR args)
+	{
+		CCC_Token::Execute(args);
+		string_path _cfg;
+		string_path cmd;
+
+		switch (*value)
+		{
+		case 0: xr_strcpy(_cfg, "grading_default.ltx"); break;
+		case 1: xr_strcpy(_cfg, "grading_cold.ltx"); break;
+		case 2: xr_strcpy(_cfg, "grading_filmic01.ltx"); break;
+		case 3: xr_strcpy(_cfg, "grading_filmic02.ltx"); break;
+		case 4: xr_strcpy(_cfg, "grading_filmic03.ltx"); break;
+		case 5: xr_strcpy(_cfg, "grading_hollywood.ltx"); break;
+		case 6: xr_strcpy(_cfg, "grading_vanilla.ltx"); break;
+		case 7: xr_strcpy(_cfg, "grading_vibrant.ltx"); break;
+		case 8: xr_strcpy(_cfg, "grading_warm.ltx"); break;
+		}
+		FS.update_path(_cfg, "$game_config$", _cfg);
+		strconcat(sizeof(cmd), cmd, "cfg_load", " ", _cfg);
+		Console->Execute(cmd);
+	}
+};
 
 #include "r__pixel_calculator.h"
 class CCC_BuildSSA : public IConsole_Command
@@ -883,6 +913,7 @@ void		xrRender_initconsole	()
 	// R2
 	CMD4(CCC_Float,		"r2_ssa_lod_a",			&ps_r2_ssaLOD_A,			16,		96		);
 	CMD4(CCC_Float,		"r2_ssa_lod_b",			&ps_r2_ssaLOD_B,			32,		40		);
+	CMD3(CCC_ColorGrading_Preset, "_colorgrading_preset", &ps_ColorGradingPreset, qcolorgrading_preset_token);
 
 	// R2-specific
 	CMD2(CCC_R2GM,		"r2em",					&ps_r2_gmaterial							);

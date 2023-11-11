@@ -27,6 +27,12 @@ using namespace				luabind;
 class	adopt_dx10options
 {
 public:
+
+	LPCSTR _get_level()
+	{
+		const shared_str level_name = g_pGameLevel->name();
+		return level_name.c_str();
+	}
 	bool	_dx10_msaa_alphatest_atoc()			{	return (RImplementation.o.dx10_msaa_alphatest==CRender::MSAA_ATEST_DX10_0_ATOC); }
 };
 
@@ -228,6 +234,7 @@ void	CResourceManager::LS_Load			()
 	module			(LSVM)
 	[
 		class_<adopt_dx10options>("_dx10options")
+		.def("getLevel", &adopt_dx10options::_get_level)
 		.def("dx10_msaa_alphatest_atoc",	&adopt_dx10options::_dx10_msaa_alphatest_atoc		)
 		//.def("",					&adopt_dx10options::_dx10Options		),	// returns options-object
 		,
