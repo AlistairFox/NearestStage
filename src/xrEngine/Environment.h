@@ -45,8 +45,8 @@ public:
 	Fvector3			ambient;
 	Fvector3			sky_color;		
 	Fvector3			hemi_color;
-	float				lowland_fog_height;
 	float				lowland_fog_density;
+	float				lowland_fog_height;
 	float				lowland_fog_base_height;
 	float				rain_density;
 	Flags16				use_flags;
@@ -150,8 +150,8 @@ public:
 	Fvector3			fog_color;
 	float				fog_density;
 	float				fog_distance;
-	float				lowland_fog_height;
 	float				lowland_fog_density;
+	float				lowland_fog_height;
 	float				lowland_fog_base_height;
 
 	float				rain_density;

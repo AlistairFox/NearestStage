@@ -173,10 +173,9 @@ class cl_lowland_fog_params : public R_constant_setup
 		float low_fog_height = desc.lowland_fog_height;
 		float low_fog_density = desc.lowland_fog_density;
 		float low_fog_base_height = desc.lowland_fog_base_height;
-		RCache.set_c(C, low_fog_height, low_fog_density, low_fog_base_height, 0);
+		RCache.set_c(C, low_fog_height, low_fog_base_height, low_fog_density, 0);
 	}
 };	static cl_lowland_fog_params binder_lowland_fog_params;
-
 
 class cl_m_v2w : public R_constant_setup
 {

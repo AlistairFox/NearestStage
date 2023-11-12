@@ -27,8 +27,8 @@ void CEnvModifier::load	(IReader* fs, u32 version)
 	fs->r_fvector3	(ambient);
 	fs->r_fvector3	(sky_color);
 	fs->r_fvector3	(hemi_color);
-	lowland_fog_height = fs->r_float();
 	lowland_fog_density = fs->r_float();
+	lowland_fog_height = fs->r_float();
 	lowland_fog_base_height = fs->r_float();
 	rain_density = fs->r_float();
 
@@ -246,8 +246,8 @@ CEnvDescriptor::CEnvDescriptor	(shared_str const& identifier) :
 	fog_color.set		(1,1,1);
 	fog_density			= 0.0f;
 	fog_distance		= 400.0f;
-	lowland_fog_height = 0.0f;
 	lowland_fog_density = 0.0f;
+	lowland_fog_height = 0.0f;
 	lowland_fog_base_height = 0.0f;
 
 	rain_density		= 0.0f;
@@ -343,11 +343,14 @@ void CEnvDescriptor::load	(CEnvironment& environment, CInifile& config)
 		m_fTreeAmplitudeIntensity = config.r_float(m_identifier.c_str(), "tree_amplitude_intensity");
 #endif
 
-	if (config.line_exist(m_identifier.c_str(), "lowland_fog_height"))
-		lowland_fog_height = config.r_float(m_identifier.c_str(), "lowland_fog_height");
-
 	if (config.line_exist(m_identifier.c_str(), "lowland_fog_density"))
 		lowland_fog_density = config.r_float(m_identifier.c_str(), "lowland_fog_density");
+
+	if (config.line_exist(m_identifier.c_str(), "lowland_fog_height"))
+	{
+		lowland_fog_height = config.r_float(m_identifier.c_str(), "lowland_fog_height");
+		Msg("%f", lowland_fog_height);
+	}
 
 	if (config.line_exist(m_identifier.c_str(), "lowland_fog_base_height"))
 		lowland_fog_base_height = config.r_float(m_identifier.c_str(), "lowland_fog_base_height");
@@ -511,24 +514,23 @@ void CEnvDescriptorMixer::lerp	(CEnvironment* env, CEnvDescriptor& A, CEnvDescri
 		hemi_color.z			*= modif_power;
 	}
 
+	lowland_fog_density = (fi * A.lowland_fog_density + f * B.lowland_fog_density);
+	if (Mdf.use_flags.test(elowland_fog_density))
+	{
+		lowland_fog_density += Mdf.lowland_fog_density;
+		lowland_fog_density *= modif_power;
+	}
+
 	lowland_fog_height = (fi * A.lowland_fog_height + f * B.lowland_fog_height);
 	if (Mdf.use_flags.test(elowland_fog_height))
 	{
-		lowland_fog_height += Mdf.lowland_fog_height;
-		lowland_fog_height *= modif_power;
+		lowland_fog_height = Mdf.lowland_fog_height;
 	}
 
 	lowland_fog_base_height = (fi * A.lowland_fog_base_height + f * B.lowland_fog_base_height);
 	if (Mdf.use_flags.test(elowland_fog_base_height))
 	{
 		lowland_fog_base_height = Mdf.lowland_fog_base_height;
-	}
-
-	lowland_fog_density = (fi * A.lowland_fog_density + f * B.lowland_fog_density);
-	if (Mdf.use_flags.test(elowland_fog_density))
-	{
-		lowland_fog_density += Mdf.lowland_fog_base_height;
-		lowland_fog_base_height *= modif_power;
 	}
 
 	rain_density = (fi * A.rain_density + f * B.rain_density);
