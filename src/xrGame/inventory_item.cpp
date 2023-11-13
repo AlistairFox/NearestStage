@@ -1478,6 +1478,14 @@ bool CInventoryItem::IsNecessaryItem(CInventoryItem* item)
 
 BOOL CInventoryItem::IsInvalid() const
 {
+	if (object().getDestroy())
+	{
+		Msg("object getDestroy");
+	}
+
+	if (GetDropManual())
+		Msg("GetDropManual");
+
 	return object().getDestroy() || GetDropManual();
 }
 
