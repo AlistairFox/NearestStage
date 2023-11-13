@@ -348,6 +348,12 @@ void ShowWeatherEditor(bool& show)
 		changed = true;
 	if (ImGui::SliderFloat("lowland_fog_height", &cur->lowland_fog_height, 0.0f, 100.0f))
 		changed = true;
+	if (ImGui::SliderFloat("fog_far", &cur->fog_desc_far, 0.0f, 1000.f))
+		changed = true;
+	if (ImGui::SliderFloat("fog_near", &cur->fog_desc_near, 0.0f, 1000.f))
+		changed = true;
+	if (ImGui::SliderFloat("fog_height_curve", &cur->lowland_fog_height_curve, -1000.f, 1000.f))
+		changed = true;
 	if (ImGui::ColorEdit3("fog_color", (float*)&cur->fog_color))
 		changed = true;
 

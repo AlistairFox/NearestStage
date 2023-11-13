@@ -150,6 +150,9 @@ public:
 	Fvector3			fog_color;
 	float				fog_density;
 	float				fog_distance;
+	float				fog_desc_near;
+	float				fog_desc_far;
+	float				lowland_fog_height_curve;
 	float				lowland_fog_density;
 	float				lowland_fog_height;
 	float				lowland_fog_base_height;
@@ -212,7 +215,8 @@ public:
 	float				weight;				
 
 	float				fog_near;		
-	float				fog_far;		
+	float				fog_far;	
+	float				fog_curve;
 public:
 						CEnvDescriptorMixer	(shared_str const& identifier);
 	INGAME_EDITOR_VIRTUAL void lerp			(CEnvironment* parent, CEnvDescriptor& A, CEnvDescriptor& B, float f, CEnvModifier& M, float m_power);
