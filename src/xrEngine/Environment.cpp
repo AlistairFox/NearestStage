@@ -283,6 +283,10 @@ void CEnvironment::SetWeather(shared_str name, bool forced)
 //.	static BOOL bAlready = FALSE;
 //.	if(bAlready)	return;
 	if (name.size())	{
+#ifdef DEDICATED_SERVER
+	Msg("Weather Set: %s", name.c_str());
+#endif // DEDICATED_SERVER
+
 //.		bAlready = TRUE;
         EnvsMapIt it		= WeatherCycles.find(name);
 		if (it == WeatherCycles.end())

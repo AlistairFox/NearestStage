@@ -9,6 +9,7 @@
 #include "stdafx.h"
 #include "alife_time_manager.h"
 #include "date_time.h"
+#include "../xrEngine/IGame_Persistent.h"
 
 CALifeTimeManager::CALifeTimeManager	(LPCSTR section)
 {
@@ -27,22 +28,28 @@ void CALifeTimeManager::init			(LPCSTR section)
 	FS.update_path(save_game_time, "$global_server_data$", "server_data.ltx");
 	CInifile* global_server_data = xr_new<CInifile>(save_game_time, true);
 
-	if (global_server_data->line_exist("server_time", "time"))
+	if (global_server_data->line_exist("server_env", "time"))
 	{
 		Msg("TIME SET");
-		sscanf(global_server_data->r_string("server_time", "time"), "%d:%d:%d", &hours, &minutes, &seconds);
+		sscanf(global_server_data->r_string("server_env", "time"), "%d:%d:%d", &hours, &minutes, &seconds);
 	}
 	else
 	{
 		sscanf(pSettings->r_string(section, "start_time"), "%d:%d:%d", &hours, &minutes, &seconds);
 	}
 
-	if (global_server_data->line_exist("server_time", "data"))
+	if (global_server_data->line_exist("server_env", "data"))
 	{
-		sscanf(global_server_data->r_string("server_time", "data"), "%d.%d.%d", &days, &months, &years);
+		sscanf(global_server_data->r_string("server_env", "data"), "%d.%d.%d", &days, &months, &years);
 	}
 	else
 	sscanf						(pSettings->r_string(section,"start_date"),"%d.%d.%d",&days,&months,&years);
+
+	if (global_server_data->line_exist("server_env", "weather"))
+	{
+		g_pGamePersistent->Environment().SetWeather(global_server_data->r_string("server_env", "weather"));
+	}
+
 
 	xr_delete(global_server_data);
 

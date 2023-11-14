@@ -66,6 +66,7 @@ public:
 
 	virtual		void				OnEvent(NET_Packet &tNetPacket, u16 type, u32 time, ClientID sender);
 
+	bool		need_change_weather = false;
 	virtual		void				Update();
 	virtual		ALife::_TIME_ID		GetStartGameTime();
 	virtual		ALife::_TIME_ID		GetGameTime();
