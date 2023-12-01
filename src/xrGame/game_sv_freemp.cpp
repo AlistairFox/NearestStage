@@ -775,7 +775,7 @@ void game_sv_freemp::Update()
 			}
 		}
 	}
-
+	///////////////Server environment saving//////////////////////
 	if (Level().game && Device.dwFrame % save_time3 == 0)
 	{
 		string_path save_game_time;
@@ -790,7 +790,10 @@ void game_sv_freemp::Update()
 		global_server_data->save_as(save_game_time);
 		xr_delete(global_server_data);
 	}
+	///////////////Server environment saving//////////////////////
 
+
+	/// <calculate dynamic weather>
 	if (Level().game)
 	{
 		shared_str envtime = InventoryUtilities::GetGameTimeAsString(InventoryUtilities::etpTimeToMinutes);
@@ -877,6 +880,7 @@ void game_sv_freemp::Update()
 			need_change_weather = false;
 		}
 	}
+	/// </calculate dynamic weather>
 
 		if (Level().game && Device.dwFrame % box_respawn_time == 0)
 		{

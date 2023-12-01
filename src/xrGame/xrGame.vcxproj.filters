@@ -7491,6 +7491,9 @@
     <ClInclude Include="DynamicHudGlass.h">
       <Filter>HudGlass</Filter>
     </ClInclude>
+    <ClInclude Include="embedded_editor_npc.h">
+      <Filter>EmbeddedEditor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -11220,6 +11223,9 @@
       <Filter>AnimationMode</Filter>
     </ClCompile>
     <ClCompile Include="ActorVehicle.cpp" />
+    <ClCompile Include="embedded_editor_npc.cpp">
+      <Filter>EmbeddedEditor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="ai\monsters\chimera\chimera_attack_state.h">

@@ -7,6 +7,7 @@
 #include "embedded_editor_weather.h"
 #include "embedded_editor_hud.h"
 #include "embedded_editor_admin.h"
+#include "embedded_editor_npc.h"
 #include "../../build_config_defines.h"
 #include <addons/imguinodegrapheditor/imguinodegrapheditor.h>
 #include <dinput.h>
@@ -18,6 +19,7 @@ bool show_test_window = true;
 bool show_weather_window = false;
 bool show_hud_editor = false;
 bool show_admin_menu = false;
+bool show_npc_editor = false;
 /*bool show_info_window = false;
 bool show_prop_window = false;
 bool show_restr_window = false;
@@ -58,6 +60,10 @@ void ShowMain()
         show_hud_editor = !show_hud_editor;
     if (ImGui::Button("ADMIN MENU"))
         show_admin_menu = !show_admin_menu;
+
+    if (ImGui::Button("NPC EDITOR"))
+        show_npc_editor = !show_npc_editor;
+
 	bool full = stage == EditorStage::Full;
 	if (ImGui::Checkbox("Active", &full))
 		stage = full ? EditorStage::Full : EditorStage::Light;
@@ -98,6 +104,9 @@ void ShowEditor()
 
     if (show_admin_menu)
         ShowAdminMenu(show_admin_menu);
+
+    if (show_npc_editor)
+        ShowNpcEditor(show_npc_editor);
 
     /*if (show_prop_window)
         ShowPropEditor(show_prop_window);
