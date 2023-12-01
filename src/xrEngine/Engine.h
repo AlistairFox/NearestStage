@@ -10,6 +10,7 @@
 #include "eventAPI.h"
 #include "../xrCPU_Pipe/xrCPU_Pipe.h"
 #include "xrSheduler.h"
+#include <thread>
 
 class ENGINE_API CEngine
 {
@@ -20,6 +21,7 @@ public:
 	CEngineAPI			External;
 	CEventAPI			Event;
 	CSheduler			Sheduler;
+	std::thread th;
 
 	void				Initialize	();
 	void				Destroy		();
