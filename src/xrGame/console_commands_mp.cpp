@@ -128,6 +128,7 @@ extern BOOL		g_sv_write_updates_bin;
 extern u32		g_sv_traffic_optimization_level;
 
 extern BOOL		g_cl_draw_mp_statistic;
+extern BOOL		set_next_music = FALSE;
 
 extern int		g_sv_server_goodwill;
 
@@ -3696,6 +3697,7 @@ void register_mp_console_commands()
 	CMD4(CCC_Float,					"net_cl_interpolation",		&g_cl_lvInterp,				-1,1);
 	CMD4(CCC_Integer,				"net_cl_icurvetype",		&g_cl_InterpolationType,	0, 2)	;
 	CMD4(CCC_Integer,				"net_cl_icurvesize",		(int*)&g_cl_InterpolationMaxPoints,	0, 2000)	;
+	CMD4(CCC_Integer, "sv_next_music", &set_next_music, 0, 1);
 	
 	CMD1(CCC_Net_CL_Resync,			"net_cl_resync" );
 	CMD1(CCC_Net_CL_ClearStats,		"net_cl_clearstats" );

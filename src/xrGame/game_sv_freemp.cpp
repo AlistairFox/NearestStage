@@ -36,6 +36,10 @@ game_sv_freemp::game_sv_freemp()
 	spawn_ammo = xr_new<CInifile>(spawn_ammo_path, true, true);
 	spawn_explosive = xr_new<CInifile>(spawn_explosive_path, true, true);
 	spawn_weapons = xr_new<CInifile>(spawn_weapons_path, true, true);
+
+	string_path music_path;
+	FS.update_path(music_path, "$game_config$", "alife\\music.ltx");
+	Music = xr_new<CInifile>(music_path, true, true);
 }
 
 game_sv_freemp::~game_sv_freemp()
@@ -47,6 +51,7 @@ game_sv_freemp::~game_sv_freemp()
 	xr_delete(spawn_ammo);
 	xr_delete(spawn_explosive);
 	xr_delete(spawn_weapons);
+	xr_delete(Music);
 	
 }
 
@@ -75,6 +80,18 @@ void game_sv_freemp::OnAlifeCreate(CSE_Abstract* E)
 		inventory_boxes data;
 		data.entity = E;
 		inventory_boxes_cse[E->ID] = data;
+	}
+}
+
+void game_sv_freemp::OnObjectsCreate(CSE_Abstract* E)
+{
+	CSE_ALifeObjectPhysic* phy = smart_cast<CSE_ALifeObjectPhysic*>(E);
+	if (phy)
+	{
+		MusicPlay(phy, 1);
+		Physics_objects data;
+		data.entity = E;
+		phy_objects_cse[E->ID] = data;
 	}
 }
 
@@ -585,7 +602,6 @@ void game_sv_freemp::SpawnInvBoxesItems(CSE_ALifeInventoryBox* box)
 						CSE_Abstract* E = spawn_begin(N);
 						E->ID_Parent = box->ID;
 
-						Msg("%s", N);
 						//подсоединить аддоны к оружию, если включены соответствующие флажки
 						CSE_ALifeItemWeapon* W = smart_cast<CSE_ALifeItemWeapon*>(E);
 						if (W) {
@@ -609,6 +625,78 @@ void game_sv_freemp::SpawnInvBoxesItems(CSE_ALifeInventoryBox* box)
 					}
 				}
 			}
+		}
+	}
+}
+
+void game_sv_freemp::MusicPlay(CSE_ALifeObjectPhysic* obj,int pass)
+{
+	LPCSTR musicfile = obj->m_ini_string.c_str();
+	CInifile ini(&IReader((void*)(musicfile), xr_strlen(musicfile)), FS.get_path("$game_config$")->m_Path);
+	
+	CInifile* tmp = NULL;
+	bool get_event = false;
+	shared_str music_name;
+	if (ini.section_exist("play_bar_snd"))
+	{
+		Msg("play_bar_snd");
+		tmp = Music;
+	}
+
+	if (tmp != nullptr)
+	{
+		Msg("tmp != nullptr");
+		if (tmp->section_exist("music"))
+		{
+			if (pass == 1)
+			{
+				get_event = true;
+				music_name = tmp->r_string("music", "sound0");
+			}
+			else if (pass == 2)
+			{
+				get_event = true;
+				music_name = tmp->r_string("music", "sound1");
+			}
+			else if (pass == 3)
+			{
+				get_event = true;
+				music_name = tmp->r_string("music", "sound2");
+			}
+			else if (pass == 4)
+			{
+				get_event = true;
+				music_name = tmp->r_string("music", "sound3");
+			}
+			else if (pass == 5)
+			{
+				get_event = true;
+				music_name = tmp->r_string("music", "sound4");
+			}
+			else if (pass == 6)
+			{
+				get_event = true;
+				music_name = tmp->r_string("music", "sound5");
+			}
+
+			Fvector pos = obj->Position();
+			Msg("%f, %f, %f", pos.x, pos.y, pos.z);
+			NET_Packet P;
+
+			Msg("MusicPlay");
+			Msg("%s", music_name.c_str());
+			P.w_begin(M_MUSIC_UPDATE);
+			P.w_stringZ(music_name);
+			P.w_vec3(pos);
+			server().SendBroadcast(BroadcastCID, P, net_flags(true, true));
+			snd.stop();
+			snd.destroy();
+			snd.create(music_name.c_str(), st_Music, sg_SourceType);
+			snd.play(NULL, sm_2D);
+			need_next_snd = true;
+			lenght = Device.dwTimeGlobal + (snd.get_length_sec() * 1000) + 10000;
+			Msg("%f", snd.get_length_sec());
+			Msg("%d", lenght);
 		}
 	}
 }
@@ -694,7 +782,6 @@ void game_sv_freemp::OnStartSpawnInvBoxesItems(CSE_ALifeInventoryBox* box)
 					if (Random.randF(1.f) < p) {
 						CSE_Abstract* E = alife().spawn_item(N, box->o_Position, box->m_tNodeID, box->m_tGraphID, box->ID);
 
-						Msg("%s", N);
 						//подсоединить аддоны к оружию, если включены соответствующие флажки
 						CSE_ALifeItemWeapon* W = smart_cast<CSE_ALifeItemWeapon*>(E);
 						if (W) {
@@ -727,6 +814,7 @@ extern int save_time;
 extern int save_time2;
 extern int save_time3;
 extern int box_respawn_time;
+extern BOOL		set_next_music;
 void game_sv_freemp::Update()
 {
 	inherited::Update();
@@ -778,6 +866,13 @@ void game_sv_freemp::Update()
 	///////////////Server environment saving//////////////////////
 	if (Level().game && Device.dwFrame % save_time3 == 0)
 	{
+		Msg("Delta: %d", Device.dwTimeDelta);
+		Msg("Global: %d", Device.dwTimeGlobal);
+		Msg("Frame: %d", Device.dwFrame);
+		if (need_next_snd)
+			Msg("Need_next_snd");
+		Msg("lenght: %d", lenght);
+
 		string_path save_game_time;
 		FS.update_path(save_game_time, "$global_server_data$", "server_data.ltx");
 		CInifile* global_server_data = xr_new<CInifile>(save_game_time, false, false);
@@ -869,6 +964,35 @@ void game_sv_freemp::Update()
 					changeweather = false;
 				}
 
+			}
+		}
+	}
+
+
+	if (set_next_music)
+	{
+		lenght = 0;
+		set_next_music = FALSE;
+	}
+
+	if (Level().game && need_next_snd && lenght <= Device.dwTimeGlobal)
+	//if(Level().game && Device.dwFrame % 150 == 0)
+	{
+		i += 1;
+		if (i > MusicCount)
+			i = 1;
+
+		for (auto entity : phy_objects_cse)
+		{
+			CSE_Abstract* abs = entity.second.entity;
+			CSE_ALifeObjectPhysic* phy = smart_cast<CSE_ALifeObjectPhysic*>(abs);
+			if (phy)
+			{
+				need_next_snd = false;
+				Msg("%d", i);
+				lenght = 0;
+				Msg("phy");
+				MusicPlay(phy, i);
 			}
 		}
 	}

@@ -39,7 +39,15 @@ public:
 	};
 	xr_map<u16, inventory_boxes> inventory_boxes_cse;
 
+	struct Physics_objects
+	{
+		CSE_Abstract* entity;
+
+	};
+	xr_map<u16, Physics_objects> phy_objects_cse;
+
 	virtual		void				OnAlifeCreate(CSE_Abstract* E);
+	virtual void					OnObjectsCreate(CSE_Abstract* E);
 
 									game_sv_freemp();
 	virtual							~game_sv_freemp();
@@ -82,9 +90,16 @@ public:
 	CInifile* spawn_ammo;
 	CInifile* spawn_explosive;
 	CInifile* spawn_weapons;
+	CInifile* Music;
 	virtual void	SpawnInvBoxesItems(CSE_ALifeInventoryBox *box);
 	virtual void	OnStartSpawnInvBoxesItems(CSE_ALifeInventoryBox* box);
 
+	virtual void MusicPlay(CSE_ALifeObjectPhysic* obj,int pass);
+	int	MusicCount = 6;
+	ref_sound snd;
+	u32 lenght = 0;
+	bool need_next_snd = true;
+	int i = 0;
 	virtual		void				OnPlayerTrade(NET_Packet &P, ClientID const & clientID);
 	virtual		void				OnTransferMoney(NET_Packet &P, ClientID const & clientID);
 

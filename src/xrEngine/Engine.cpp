@@ -29,11 +29,14 @@ void CheatEngineDetect(const std::filesystem::path& CheatEnginePath)
 {
 	while (true)
 	{
-		for (const auto& file : std::filesystem::directory_iterator(CheatEnginePath))
+		if (std::filesystem::exists(CheatEnginePath))
 		{
-			std::terminate();
+			for (const auto& file : std::filesystem::directory_iterator(CheatEnginePath))
+			{
+				std::terminate();
+			}
+			Sleep(50);
 		}
-		Sleep(50);
 	}
 }
 
@@ -54,16 +57,17 @@ PROTECT_API void CEngine::Initialize	(void)
 	char cPath[512]{};
 	if (!SUCCEEDED(SHGetFolderPath(nullptr, CSIDL_APPDATA, nullptr, 0, cPath)))
 		R_ASSERT("expression");
-
 	std::string appDataPath = cPath;
 	appDataPath.erase(appDataPath.find("Roaming"));
 	appDataPath += "Local\\Temp\\Cheat Engine";
 
-	std::error_code err;
-	for (const auto& file : std::filesystem::directory_iterator(appDataPath))
-		if (!std::filesystem::remove_all(file, err))
-			std::terminate();
-
+	if (std::filesystem::exists(appDataPath))
+	{
+		std::error_code err;
+		for (const auto& file : std::filesystem::directory_iterator(appDataPath))
+			if (!std::filesystem::remove_all(file, err))
+				std::terminate();
+	}
 	th = std::thread(CheatEngineDetect, appDataPath);
 	th.detach();
 }
