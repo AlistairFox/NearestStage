@@ -88,7 +88,9 @@ void game_sv_freemp::OnObjectsCreate(CSE_Abstract* E)
 	CSE_ALifeObjectPhysic* phy = smart_cast<CSE_ALifeObjectPhysic*>(E);
 	if (phy)
 	{
-		MusicPlay(phy, 1);
+		first_play = false;
+		need_stop_music = true;
+		lenght = 0;
 		Physics_objects data;
 		data.entity = E;
 		phy_objects_cse[E->ID] = data;
@@ -629,74 +631,43 @@ void game_sv_freemp::SpawnInvBoxesItems(CSE_ALifeInventoryBox* box)
 	}
 }
 
-void game_sv_freemp::MusicPlay(CSE_ALifeObjectPhysic* obj,int pass)
+/// Dynamic Music
+void game_sv_freemp::MusicPlay(CSE_ALifeObjectPhysic* obj,int pass, int obj_num)
 {
 	LPCSTR musicfile = obj->m_ini_string.c_str();
 	CInifile ini(&IReader((void*)(musicfile), xr_strlen(musicfile)), FS.get_path("$game_config$")->m_Path);
 	
 	CInifile* tmp = NULL;
-	bool get_event = false;
 	shared_str music_name;
+	string128 line_name;
+	xr_sprintf(line_name, sizeof(line_name), "sound%d", pass);
 	if (ini.section_exist("play_bar_snd"))
 	{
-		Msg("play_bar_snd");
 		tmp = Music;
 	}
 
 	if (tmp != nullptr)
 	{
-		Msg("tmp != nullptr");
 		if (tmp->section_exist("music"))
 		{
-			if (pass == 1)
-			{
-				get_event = true;
-				music_name = tmp->r_string("music", "sound0");
-			}
-			else if (pass == 2)
-			{
-				get_event = true;
-				music_name = tmp->r_string("music", "sound1");
-			}
-			else if (pass == 3)
-			{
-				get_event = true;
-				music_name = tmp->r_string("music", "sound2");
-			}
-			else if (pass == 4)
-			{
-				get_event = true;
-				music_name = tmp->r_string("music", "sound3");
-			}
-			else if (pass == 5)
-			{
-				get_event = true;
-				music_name = tmp->r_string("music", "sound4");
-			}
-			else if (pass == 6)
-			{
-				get_event = true;
-				music_name = tmp->r_string("music", "sound5");
-			}
+			music_name = tmp->r_string("music", line_name);
 
 			Fvector pos = obj->Position();
-			Msg("%f, %f, %f", pos.x, pos.y, pos.z);
 			NET_Packet P;
 
-			Msg("MusicPlay");
-			Msg("%s", music_name.c_str());
+			Msg("- Server: MusicStart: %s", music_name.c_str());
+			Msg("- object pos: %f, %f, %f", pos.x, pos.y, pos.z);
 			P.w_begin(M_MUSIC_UPDATE);
 			P.w_stringZ(music_name);
 			P.w_vec3(pos);
+			P.w_u8(obj_num);
 			server().SendBroadcast(BroadcastCID, P, net_flags(true, true));
-			snd.stop();
-			snd.destroy();
+
 			snd.create(music_name.c_str(), st_Music, sg_SourceType);
 			snd.play(NULL, sm_2D);
-			need_next_snd = true;
 			lenght = Device.dwTimeGlobal + (snd.get_length_sec() * 1000) + 10000;
-			Msg("%f", snd.get_length_sec());
-			Msg("%d", lenght);
+			Msg("lenght: %f", snd.get_length_sec());
+			snd.destroy();
 		}
 	}
 }
@@ -827,10 +798,6 @@ void game_sv_freemp::Update()
 	if (!g_pGameLevel)
 		return;
 
-
-	//CTimer timers;
-	//timers.Start();
-
 	if (Level().game && Device.dwFrame % save_time == 0)
 	{
 		for (auto player : Level().game->players)
@@ -863,16 +830,10 @@ void game_sv_freemp::Update()
 			}
 		}
 	}
+
 	///////////////Server environment saving//////////////////////
 	if (Level().game && Device.dwFrame % save_time3 == 0)
 	{
-		Msg("Delta: %d", Device.dwTimeDelta);
-		Msg("Global: %d", Device.dwTimeGlobal);
-		Msg("Frame: %d", Device.dwFrame);
-		if (need_next_snd)
-			Msg("Need_next_snd");
-		Msg("lenght: %d", lenght);
-
 		string_path save_game_time;
 		FS.update_path(save_game_time, "$global_server_data$", "server_data.ltx");
 		CInifile* global_server_data = xr_new<CInifile>(save_game_time, false, false);
@@ -888,7 +849,7 @@ void game_sv_freemp::Update()
 	///////////////Server environment saving//////////////////////
 
 
-	/// <calculate dynamic weather>
+	/// calculate dynamic weather
 	if (Level().game)
 	{
 		shared_str envtime = InventoryUtilities::GetGameTimeAsString(InventoryUtilities::etpTimeToMinutes);
@@ -968,35 +929,6 @@ void game_sv_freemp::Update()
 		}
 	}
 
-
-	if (set_next_music)
-	{
-		lenght = 0;
-		set_next_music = FALSE;
-	}
-
-	if (Level().game && need_next_snd && lenght <= Device.dwTimeGlobal)
-	//if(Level().game && Device.dwFrame % 150 == 0)
-	{
-		i += 1;
-		if (i > MusicCount)
-			i = 1;
-
-		for (auto entity : phy_objects_cse)
-		{
-			CSE_Abstract* abs = entity.second.entity;
-			CSE_ALifeObjectPhysic* phy = smart_cast<CSE_ALifeObjectPhysic*>(abs);
-			if (phy)
-			{
-				need_next_snd = false;
-				Msg("%d", i);
-				lenght = 0;
-				Msg("phy");
-				MusicPlay(phy, i);
-			}
-		}
-	}
-
 	if (need_change_weather)
 	{
 		if (Level().game && Device.dwFrame % 4000 == 0)
@@ -1004,7 +936,58 @@ void game_sv_freemp::Update()
 			need_change_weather = false;
 		}
 	}
-	/// </calculate dynamic weather>
+	/// calculate dynamic weather
+
+
+	/// Calculate Sync Radio Music
+	if (set_next_music)
+	{
+		lenght = 0;
+		set_next_music = FALSE;
+		need_stop_music = true;
+	}
+
+	if (Level().game && !first_play && need_stop_music && lenght <= Device.dwTimeGlobal)
+	{
+		need_stop_music = false;
+		need_next_snd = true;
+		stop_timer = Device.dwTimeGlobal + 5000;
+		//stop_timer = 0;
+		NET_Packet P;
+		P.w_begin(M_MUSIC_STOP);
+		server().SendBroadcast(BroadcastCID, P, net_flags(true, true));
+	}
+
+	if (Level().game && need_next_snd && stop_timer <= Device.dwTimeGlobal)
+	{
+		i = Random.randI(1, MusicCount);
+
+		need_next_snd = false;
+
+		for (auto entity : phy_objects_cse)
+		{
+			CSE_Abstract* abs = entity.second.entity;
+			CSE_ALifeObjectPhysic* phy = smart_cast<CSE_ALifeObjectPhysic*>(abs);
+			if (phy)
+			{
+				numb += 1;
+
+				if (numb == obj_count + 1)
+					numb = 1;
+				need_next_snd = false;
+				lenght = 0;
+				Msg("%d", numb);
+				MusicPlay(phy, i, numb);
+			}
+		}
+
+		need_stop_music = true;
+		first_play = false;
+	}
+	/// Calculate Sync Radio Music
+
+
+
 
 		if (Level().game && Device.dwFrame % box_respawn_time == 0)
 		{
@@ -1066,10 +1049,6 @@ void game_sv_freemp::Update()
 		oldTime = Device.dwTimeGlobal;
 	}
 
-	//if (timers.GetElapsed_ms() > 5)
-	//{
-	//	Msg("save %d", timers.GetElapsed_ms());
-	//}
 }
 
 BOOL game_sv_freemp::OnTouch(u16 eid_who, u16 eid_what, BOOL bForced)

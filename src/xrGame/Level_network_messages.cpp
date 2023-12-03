@@ -19,7 +19,10 @@
 //#include "../xrEngine/XR_IOConsole.h"
 
 extern LPCSTR map_ver_string;
-ref_sound snd;
+ref_sound snd1;
+ref_sound snd2;
+ref_sound snd3;
+ref_sound snd4;
 LPSTR remove_version_option(LPCSTR opt_str, LPSTR new_opt_str, u32 new_opt_str_size)
 {
 	LPCSTR temp_substr = strstr(opt_str, map_ver_string);
@@ -491,16 +494,57 @@ void CLevel::ClientReceive()
 		case M_MUSIC_UPDATE:
 		{
 			shared_str name;
-			Fvector pos;
 			P->r_stringZ(name);
-			P->r_vec3(pos);
-			Msg("Client Event");
-			snd.stop();
-			snd.destroy();
-			snd.create(name.c_str(), st_Music, sg_SourceType);
-			snd.play_at_pos(NULL, pos);
+			Fvector pos = P->r_vec3();
+			int obj_num = P->r_u8();
+
+
+			if (obj_num == 1)
+			{
+				Msg("- snd1 Started");
+				snd1.create(name.c_str(), st_Music, sg_SourceType);
+				snd1.play_at_pos(NULL, pos);
+			}
+			else if (obj_num == 2)
+			{
+				Msg("- snd2 Started");
+				snd2.create(name.c_str(), st_Music, sg_SourceType);
+				snd2.play_at_pos(NULL, pos);
+			}
+			else if (obj_num == 3)
+			{
+				Msg("- snd3 Started");
+				snd3.create(name.c_str(), st_Music, sg_SourceType);
+				snd3.play_at_pos(NULL, pos);
+			}
+			else if (obj_num == 4)
+			{
+				Msg("- snd4 Started");
+				snd4.create(name.c_str(), st_Music, sg_SourceType);
+				snd4.play_at_pos(NULL, pos);
+			}
 			break;
 		}
+
+		case M_MUSIC_STOP:
+		{
+			snd1.stop();
+			snd1.destroy();
+			Msg("! snd1 destroed");
+
+			snd2.stop();
+			snd2.destroy();
+			Msg("! snd2 destroed");
+
+			snd3.stop();
+			snd3.destroy();
+			Msg("! snd3 destroed");
+
+			snd4.stop();
+			snd4.destroy();
+			Msg("! snd4 destroed");
+
+		}break;
 
 		
 		}

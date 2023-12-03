@@ -94,12 +94,17 @@ public:
 	virtual void	SpawnInvBoxesItems(CSE_ALifeInventoryBox *box);
 	virtual void	OnStartSpawnInvBoxesItems(CSE_ALifeInventoryBox* box);
 
-	virtual void MusicPlay(CSE_ALifeObjectPhysic* obj,int pass);
-	int	MusicCount = 6;
+	virtual void MusicPlay(CSE_ALifeObjectPhysic* obj,int pass, int obj_num);
+	int numb = 0;
+	int obj_count = 4;
+	int	MusicCount = 8;
 	ref_sound snd;
 	u32 lenght = 0;
 	bool need_next_snd = true;
 	int i = 0;
+	bool first_play = true;
+	bool need_stop_music = false;
+	u32 stop_timer = 0;
 	virtual		void				OnPlayerTrade(NET_Packet &P, ClientID const & clientID);
 	virtual		void				OnTransferMoney(NET_Packet &P, ClientID const & clientID);
 
