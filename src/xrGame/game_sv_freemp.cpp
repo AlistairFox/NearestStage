@@ -40,6 +40,7 @@ game_sv_freemp::game_sv_freemp()
 	string_path music_path;
 	FS.update_path(music_path, "$game_config$", "alife\\music.ltx");
 	Music = xr_new<CInifile>(music_path, true, true);
+	MusicCount = Music->r_u8("music", "sound_count");
 }
 
 game_sv_freemp::~game_sv_freemp()

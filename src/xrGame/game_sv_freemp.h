@@ -97,7 +97,7 @@ public:
 	virtual void MusicPlay(CSE_ALifeObjectPhysic* obj,int pass, int obj_num);
 	int numb = 0;
 	int obj_count = 4;
-	int	MusicCount = 8;
+	int	MusicCount;
 	ref_sound snd;
 	u32 lenght = 0;
 	bool need_next_snd = true;
