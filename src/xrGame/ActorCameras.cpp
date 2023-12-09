@@ -361,55 +361,64 @@ void CActor::cam_Update(float dt, float fFOV)
 	xform.transform_tiny			(point);
 
 	CCameraBase* C = cam_Active();
+	
 		if (Level().CurrentControlEntity() == this)
 		{
-			if (!g_LadderOrient())
+			bool bClimb = ((Actor()->MovingState() & mcClimb) != 0);
+			Fmatrix m;
+			float x = 0;
+			float y = 0;
+			float z = 0;
+			if (!bClimb)
 			{
-				if (g_Alive() && (MpAnimationMODE() || MpWoundMODE()) && !Level().Cameras().GetCamEffector(cefDemo))
+				if (g_Alive())
 				{
-					_viewport_near = 0.05;
-					float		cam_limit = 1;
-					float yaw = (-XFORM().k.getH());
-					float& cam_yaw = C->yaw;
-					float delta_yaw = angle_difference_signed(yaw, cam_yaw);
-
-					if (-cam_limit<delta_yaw && cam_limit>delta_yaw)
+					if (!Level().Cameras().GetCamEffector(cefDemo))
 					{
-						yaw = cam_yaw + delta_yaw;
-						float lo = (yaw - cam_limit);
-						float hi = (yaw + cam_limit);
-						C->lim_yaw[0] = lo;
-						C->lim_yaw[1] = hi;
-						C->bClampYaw = true;
-					}
-					C->lim_pitch.set(-0.6, 0.4);
+						if (MpAnimationMODE())
+						{
+							_viewport_near = 0.05;
+							float		cam_limit = 1;
+							float yaw = (-XFORM().k.getH());
+							float& cam_yaw = C->yaw;
+							float delta_yaw = angle_difference_signed(yaw, cam_yaw);
 
-					if (eyeID == NULL)
-						eyeID = k->LL_BoneID("bip01_neck");
+							if (-cam_limit<delta_yaw && cam_limit>delta_yaw)
+							{
+								yaw = cam_yaw + delta_yaw;
+								float lo = (yaw - cam_limit);
+								float hi = (yaw + cam_limit);
+								C->lim_yaw[0] = lo;
+								C->lim_yaw[1] = hi;
+								C->bClampYaw = true;
+							}
+							C->lim_pitch.set(-0.6, 0.4);
 
-					if (headID == NULL)
-						headID = k->LL_BoneID("bip01_head");
+							if (eyeID == NULL)
+								eyeID = k->LL_BoneID("bip01_neck");
 
-					k->LL_SetBoneVisible(headID, 0, TRUE);
-					Fmatrix m;
-					m.mul_43(XFORM(), k->LL_GetTransform(eyeID));
-					point = m.c; //Head position
-					//point.z += 0.12;
-					point.y += 0.15;
+							if (headID == NULL)
+								headID = k->LL_BoneID("bip01_head");
 
-					if (MpWoundMODE())
-					{
-						float x = 0;
-						float y = 0;
-						float z = 0;
-						m.mul_43(XFORM(), k->LL_GetTransform(eyeID));
-						m.getHPB(x, y, z);
-						z -= 1.5;
-						dangle.z = z;
+							k->LL_SetBoneVisible(headID, 0, TRUE);
+							m.mul_43(XFORM(), k->LL_GetTransform(eyeID));
+							point = m.c; //Head position
+							//point.z += 0.12;
+							point.y += 0.15;
 
+							if (MpWoundMODE())
+							{
+								m.mul_43(XFORM(), k->LL_GetTransform(eyeID));
+								m.getHPB(x, y, z);
+								z -= 1.5;
+								dangle.z = z;
+
+							}
+						}
 					}
 				}
-				else
+
+				if(!(MpAnimationMODE() || MpWoundMODE()))
 				{
 					if (headID == NULL)
 						headID = k->LL_BoneID("bip01_head");
@@ -425,43 +434,39 @@ void CActor::cam_Update(float dt, float fFOV)
 
 				}
 
-				if (!g_Alive()/* && !Level().Cameras().GetCamEffector(cefDemo)*/) //Arkada: First Person Death
+				if (!g_Alive())
 				{
-					_viewport_near = 0.2;
-					if (eyeID == NULL)
-						eyeID = k->LL_BoneID("bip01_neck");
+						_viewport_near = 0.2;
+						if (eyeID == NULL)
+							eyeID = k->LL_BoneID("bip01_neck");
 
-					k->LL_SetBoneVisible(headID, 0, TRUE);
-					Fmatrix m;
-					m.mul_43(XFORM(), k->LL_GetTransform(eyeID));
-					point = m.c; //Head position
-					point.y += 0.15;
+						k->LL_SetBoneVisible(headID, 0, TRUE);
+						m.mul_43(XFORM(), k->LL_GetTransform(eyeID));
+						point = m.c; //Head position
+						point.y += 0.15;
 
-					////////direction start//
-					m.mul_43(XFORM(), k->LL_GetTransform(eyeID));
-					float x = 0;
-					float y = 0;
-					float z = 0;
-					m.getHPB(x, y, z);
-					z -= 1.5;
+						////////direction start//
+						m.mul_43(XFORM(), k->LL_GetTransform(eyeID));
+						m.getHPB(x, y, z);
+						z -= 1.5;
 
-					dangle.x = x;
-					dangle.y = y;
-					dangle.z = z;
-					///////direction end
+						dangle.x = x;
+						dangle.y = y;
+						dangle.z = z;
+						///////direction end
 
 				}
 			}
 		}
 		else
 		{
-
 			if (headID == NULL)
 				headID = k->LL_BoneID("bip01_head");
 
-			k->LL_SetBoneVisible(headID, 1, TRUE);
+			if (!k->LL_GetBoneVisible(headID))
+				k->LL_SetBoneVisible(headID, 1, TRUE);
 		}
-
+		
 
 	C->Update						(point,dangle);
 	C->f_fov						= fFOV;
