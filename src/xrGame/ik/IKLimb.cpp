@@ -954,7 +954,8 @@ IC void	CIKLimb::GetPickDir( Fvector &v, SCalculateData& cd ) const
 
 void	CIKLimb::	AnimGoal			( Fmatrix &gl )
 {
-	Kinematics()->Bone_GetAnimPos( gl, m_bones[m_foot.ref_bone()], 1<<0, false );
+	gl = Kinematics()->LL_GetTransform(m_bones[m_foot.ref_bone()]);
+	//Kinematics()->Bone_GetAnimPos( gl, m_bones[m_foot.ref_bone()], 1<<0, false );
 }
 
 void	CIKLimb::SetAnimGoal			( SCalculateData& cd )
@@ -1039,6 +1040,7 @@ static void	_BCL get_matrix( CBoneInstance* P )
 }
 u16	CIKLimb::foot_matrix_predict ( Fmatrix& foot, Fmatrix& toe, float time, IKinematicsAnimated *K ) const 
 {
+	/*
 	//CBlend *control = 0;
 	u32	blends_count = K->LL_PartBlendsCount( 0 );
 	buffer_vector<CBlend> saved_blends( _alloca( blends_count*sizeof( CBlend ) ), blends_count );
@@ -1066,16 +1068,22 @@ u16	CIKLimb::foot_matrix_predict ( Fmatrix& foot, Fmatrix& toe, float time, IKin
 	bi3.set_callback( bctCustom, get_matrix, &m_b3, FALSE );
 
 	Kinematics()->Bone_GetAnimPos( foot, m_bones[3], u8(-1), false );
+	*/
+	Fmatrix m_b2, m_b3;
+
+	m_b2 = Kinematics()->LL_GetTransform(m_bones[2]);
+	m_b3 = Kinematics()->LL_GetTransform(m_bones[3]);
+
 	u16 ref_b = m_foot.get_ref_bone( m_b2, m_b3 );
 	foot = m_b2;
 	toe = m_b3;
 
 
-	cb2.restore();
-	cb3.restore();
+//	cb2.restore();
+//	cb3.restore();
 	
-	for(u32 i = 0; i<blends_count; ++i )
-		*K->LL_PartBlend( 0, i ) = saved_blends[i];
+//	for(u32 i = 0; i<blends_count; ++i )
+//		*K->LL_PartBlend( 0, i ) = saved_blends[i];
 
 	return ref_b;
 }

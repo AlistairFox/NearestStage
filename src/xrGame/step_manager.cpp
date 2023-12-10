@@ -112,7 +112,8 @@ void CStepManager::on_animation_start(MotionID motion_id, CBlend *blend)
 {
 	m_blend	= blend;
 	if (!m_blend) return;
-
+	
+	if(!OnServer())
 	if(m_object->character_ik_controller	())
 		m_object->character_ik_controller	()->PlayLegs(blend);
 

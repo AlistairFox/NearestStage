@@ -220,6 +220,7 @@ void CWeapon::UpdateXForm	()
 
 	// Get access to entity and its visual
 	CEntityAlive*			E = smart_cast<CEntityAlive*>(H_Parent());
+	CActor* pA = smart_cast<CActor*>(E);
 	
 	if (!E) {
 		if (!IsGameTypeSingle())
@@ -275,9 +276,20 @@ void CWeapon::UpdateXForm	()
 	if ((HandDependence() == hd1Hand) || (GetState() == eReload) || (!E->g_Alive()))
 		boneL				= boneR2;
 
-	V->CalculateBones();
-	Fmatrix& mL				= V->LL_GetTransform(u16(boneL));
-	Fmatrix& mR				= V->LL_GetTransform(u16(boneR));
+	Fmatrix mL;
+	Fmatrix mR;
+
+	if (pA)
+	{
+		V->Bone_GetAnimPos(mL, boneL, u8(-1), false);
+		V->Bone_GetAnimPos(mR, boneR, u8(-1), false);
+	}
+	else
+	{
+		//V->CalculateBones();
+		mL = V->LL_GetTransform(u16(boneL));
+		mR = V->LL_GetTransform(u16(boneR));
+	}
 	// Calculate
 	Fmatrix					mRes;
 	Fvector					R,D,N;

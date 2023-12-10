@@ -361,115 +361,109 @@ void CActor::cam_Update(float dt, float fFOV)
 	xform.transform_tiny			(point);
 
 	CCameraBase* C = cam_Active();
-	
-		if (Level().CurrentControlEntity() == this)
+		
+	if (Level().CurrentControlEntity() == this)
+	{
+		bool bClimb = ((Actor()->MovingState() & mcClimb) != 0);
+		Fmatrix m;
+		if (eyeID == NULL)
+			eyeID = k->LL_BoneID("bip01_neck");
+
+		if (headID == NULL)
+			headID = k->LL_BoneID("bip01_head");
+
+		if (!bClimb)
 		{
-			bool bClimb = ((Actor()->MovingState() & mcClimb) != 0);
-			Fmatrix m;
-			float x = 0;
-			float y = 0;
-			float z = 0;
-			if (!bClimb)
+			if (g_Alive())
 			{
-				if (g_Alive())
+				if (!Level().Cameras().GetCamEffector(cefDemo))
 				{
-					if (!Level().Cameras().GetCamEffector(cefDemo))
+					if (MpAnimationMODE())
 					{
-						if (MpAnimationMODE())
+						_viewport_near = 0.05;
+						float		cam_limit = 1;
+						float yaw = (-XFORM().k.getH());
+						float& cam_yaw = C->yaw;
+						float delta_yaw = angle_difference_signed(yaw, cam_yaw);
+
+						if (-cam_limit<delta_yaw && cam_limit>delta_yaw)
 						{
-							_viewport_near = 0.05;
-							float		cam_limit = 1;
-							float yaw = (-XFORM().k.getH());
-							float& cam_yaw = C->yaw;
-							float delta_yaw = angle_difference_signed(yaw, cam_yaw);
-
-							if (-cam_limit<delta_yaw && cam_limit>delta_yaw)
-							{
-								yaw = cam_yaw + delta_yaw;
-								float lo = (yaw - cam_limit);
-								float hi = (yaw + cam_limit);
-								C->lim_yaw[0] = lo;
-								C->lim_yaw[1] = hi;
-								C->bClampYaw = true;
-							}
-							C->lim_pitch.set(-0.6, 0.4);
-
-							if (eyeID == NULL)
-								eyeID = k->LL_BoneID("bip01_neck");
-
-							if (headID == NULL)
-								headID = k->LL_BoneID("bip01_head");
-
-							k->LL_SetBoneVisible(headID, 0, TRUE);
-							m.mul_43(XFORM(), k->LL_GetTransform(eyeID));
-							point = m.c; //Head position
-							//point.z += 0.12;
-							point.y += 0.15;
-
-							if (MpWoundMODE())
-							{
-								m.mul_43(XFORM(), k->LL_GetTransform(eyeID));
-								m.getHPB(x, y, z);
-								z -= 1.5;
-								dangle.z = z;
-
-							}
+							yaw = cam_yaw + delta_yaw;
+							float lo = (yaw - cam_limit);
+							float hi = (yaw + cam_limit);
+							C->lim_yaw[0] = lo;
+							C->lim_yaw[1] = hi;
+							C->bClampYaw = true;
 						}
-					}
-				}
+						C->lim_pitch.set(-0.6, 0.4);
 
-				if(!(MpAnimationMODE() || MpWoundMODE()))
-				{
-					if (headID == NULL)
-						headID = k->LL_BoneID("bip01_head");
-
-					k->LL_SetBoneVisible(headID, 1, TRUE);
-
-					C->lim_pitch[0] = -1.5;
-					C->lim_pitch[1] = 1.5;
-
-					C->lim_yaw[0] = 0;
-					C->lim_yaw[1] = 0;
-					C->bClampYaw = false;
-
-				}
-
-				if (!g_Alive())
-				{
-						_viewport_near = 0.2;
-						if (eyeID == NULL)
-							eyeID = k->LL_BoneID("bip01_neck");
 
 						k->LL_SetBoneVisible(headID, 0, TRUE);
 						m.mul_43(XFORM(), k->LL_GetTransform(eyeID));
+
 						point = m.c; //Head position
 						point.y += 0.15;
-
-						////////direction start//
-						m.mul_43(XFORM(), k->LL_GetTransform(eyeID));
-						m.getHPB(x, y, z);
-						z -= 1.5;
-
-						dangle.x = x;
-						dangle.y = y;
-						dangle.z = z;
-						///////direction end
-
+					}
 				}
 			}
-		}
-		else
-		{
-			if (headID == NULL)
-				headID = k->LL_BoneID("bip01_head");
 
-			if (!k->LL_GetBoneVisible(headID))
+			if (!(MpAnimationMODE() || MpWoundMODE()))
+			{
+
 				k->LL_SetBoneVisible(headID, 1, TRUE);
+
+				C->lim_pitch[0] = -1.5;
+				C->lim_pitch[1] = 1.5;
+
+				C->lim_yaw[0] = 0;
+				C->lim_yaw[1] = 0;
+				C->bClampYaw = false;
+
+			}
 		}
-		
+	}
+	else
+	{
+		if (headID == NULL)
+			headID = k->LL_BoneID("bip01_head");
+
+		k->LL_SetBoneVisible(headID, 1, TRUE);
+	}
 
 	C->Update						(point,dangle);
 	C->f_fov						= fFOV;
+
+	if (Level().CurrentControlEntity() == this)
+	{
+		if (MpWoundMODE())
+		{
+			_viewport_near = 0.2;
+			Fmatrix wp;
+			k->LL_SetBoneVisible(headID, 0, TRUE);
+			wp.mul_43(XFORM(), k->LL_GetTransform(eyeID));
+			C->vPosition.set(wp.c);
+			C->vDirection.set(wp.k);
+			C->vNormal.set(wp.i);
+		}
+
+		if (!g_Alive())
+		{
+			_viewport_near = 0.2;
+			Fmatrix zalupa;
+			k->LL_SetBoneVisible(headID, 0, TRUE);
+			zalupa.mul_43(XFORM(), k->LL_GetTransform(eyeID));
+			C->vPosition.set(zalupa.c);
+			C->vDirection.set(zalupa.k);
+			C->vNormal.set(zalupa.i);
+		}
+	}
+	else
+	{
+		if (headID == NULL)
+			headID = k->LL_BoneID("bip01_head");
+
+		k->LL_SetBoneVisible(headID, 1, TRUE);
+	}
 
 	if(eacFirstEye != cam_active)
 	{
