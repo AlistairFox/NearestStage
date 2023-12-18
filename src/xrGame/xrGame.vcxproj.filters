@@ -2536,6 +2536,9 @@
     <Filter Include="UI\Common\PDA\Trade Wnd">
       <UniqueIdentifier>{10b8e80e-6685-4221-bb81-b5316adf65da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Chat">
+      <UniqueIdentifier>{14d8731e-4dd7-4f88-9ad8-5bf0729b93ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mt_config.h">
@@ -7494,6 +7497,9 @@
     <ClInclude Include="embedded_editor_npc.h">
       <Filter>EmbeddedEditor</Filter>
     </ClInclude>
+    <ClInclude Include="UIPdaChat.h">
+      <Filter>Chat</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -11225,6 +11231,12 @@
     <ClCompile Include="ActorVehicle.cpp" />
     <ClCompile Include="embedded_editor_npc.cpp">
       <Filter>EmbeddedEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="UIPdaChat.cpp">
+      <Filter>Chat</Filter>
+    </ClCompile>
+    <ClCompile Include="xrServer_process_event_chatpda.cpp">
+      <Filter>Core\Server\ServerProcess</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

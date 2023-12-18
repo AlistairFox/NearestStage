@@ -1623,6 +1623,7 @@
     <ClInclude Include="UIGameSP.h" />
     <ClInclude Include="UIGameTDM.h" />
     <ClInclude Include="UIPanelsClassFactory.h" />
+    <ClInclude Include="UIPdaChat.h" />
     <ClInclude Include="UIPlayerItem.h" />
     <ClInclude Include="UIStaticItem.h" />
     <ClInclude Include="UITeamHeader.h" />
@@ -4272,6 +4273,7 @@
     </ClCompile>
     <ClCompile Include="UIGameTDM.cpp" />
     <ClCompile Include="UIPanelsClassFactory.cpp" />
+    <ClCompile Include="UIPdaChat.cpp" />
     <ClCompile Include="UIPlayerItem.cpp" />
     <ClCompile Include="UIStaticItem.cpp" />
     <ClCompile Include="UITeamHeader.cpp" />
@@ -4846,6 +4848,7 @@
     <ClCompile Include="xrServer_perform_transfer.cpp" />
     <ClCompile Include="xrServer_process_event.cpp" />
     <ClCompile Include="xrServer_process_event_activate.cpp" />
+    <ClCompile Include="xrServer_process_event_chatpda.cpp" />
     <ClCompile Include="xrServer_process_event_destroy.cpp" />
     <ClCompile Include="xrServer_process_event_ownership.cpp" />
     <ClCompile Include="xrServer_process_event_reject.cpp" />
