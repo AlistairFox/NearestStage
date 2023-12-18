@@ -17,6 +17,7 @@ class CUITaskWnd;
 //-class CUIFactionWarWnd;
 class CUIRankingWnd;
 class CUILogsWnd;
+class UIPdaChat;
 class CUIAnimatedStatic;
 class UIHint;
 class CUIProgressBar;
@@ -53,6 +54,7 @@ public:
 //-	CUIFactionWarWnd*		pUIFactionWarWnd;
 	CUIRankingWnd*			pUIRankingWnd;
 	CUILogsWnd*				pUILogsWnd;
+	UIPdaChat* pUIChatWnd;
 
 	virtual void			Reset				();
 

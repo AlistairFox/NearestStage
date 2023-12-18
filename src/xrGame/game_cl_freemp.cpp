@@ -11,6 +11,8 @@
 #include "ui/UITalkWnd.h"
 #include "ui/UIMessagesWindow.h"
 #include "string_table.h"
+#include "ui/UIPdaWnd.h"
+#include "UIPdaChat.h"
 
 game_cl_freemp::game_cl_freemp()
 {
@@ -451,6 +453,11 @@ void game_cl_freemp::TranslateGameMessage(u32 msg, NET_Packet& P)
 						CurrentGameUI()->TalkMenu->AddIconedMessage(name.c_str(), text.c_str(), icon.c_str(), "iconed_answer_item");
 			}
 
+	}break;
+	case GE_PDA_CHAT:
+	{
+		if (!g_dedicated_server)
+			m_game_ui->PdaMenu().pUIChatWnd->RecivePacket(P);
 	}break;
 
 	default:

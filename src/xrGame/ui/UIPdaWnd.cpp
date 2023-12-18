@@ -27,6 +27,7 @@
 #include "UITaskWnd.h"
 #include "UIRankingWnd.h"
 #include "UILogsWnd.h"
+#include "..\UIPdaChat.h"
 
 #include "UIScriptWnd.h"
 
@@ -48,6 +49,7 @@ CUIPdaWnd::CUIPdaWnd()
 	//-	pUIFactionWarWnd = nullptr;
 	pUIRankingWnd = nullptr;
 	pUILogsWnd = nullptr;
+	pUIChatWnd = nullptr;
 	m_hint_wnd = nullptr;
 	last_cursor_pos.set(UI_BASE_WIDTH / 2.f, UI_BASE_HEIGHT / 2.f);
 	m_cursor_box.set(117.f, 39.f, UI_BASE_WIDTH - 121.f, UI_BASE_HEIGHT - 37.f);
@@ -60,6 +62,7 @@ CUIPdaWnd::~CUIPdaWnd()
 //-	delete_data( pUIFactionWarWnd );
 	delete_data( pUIRankingWnd );
 	delete_data( pUILogsWnd );
+	delete_data(pUIChatWnd);
 	delete_data( m_hint_wnd );
 	delete_data( UINoice );
 }
@@ -101,6 +104,9 @@ void CUIPdaWnd::Init()
 
 	pUILogsWnd						= xr_new<CUILogsWnd>();
 	pUILogsWnd->Init				();
+
+	pUIChatWnd = xr_new<UIPdaChat>();
+	pUIChatWnd->Init();
 
 
 	UITabControl					= xr_new<CUITabControl>();
@@ -257,14 +263,12 @@ void CUIPdaWnd::SetActiveSubdialog(const shared_str& section)
 		m_pActiveDialog->Show(false);
 	}
 
+	Msg("%s", section.c_str());
+
 	if ( section == "eptTasks" )
 	{
 		m_pActiveDialog = pUITaskWnd;
 	}
-//-	else if ( section == "eptFractionWar" )
-//-	{
-//-		m_pActiveDialog = pUIFactionWarWnd;
-//-	}
 	else if ( section == "eptRanking" )
 	{
 		m_pActiveDialog = pUIRankingWnd;
@@ -272,6 +276,11 @@ void CUIPdaWnd::SetActiveSubdialog(const shared_str& section)
 	else if ( section == "eptLogs" )
 	{
 		m_pActiveDialog = pUILogsWnd;
+	}
+	else if (section == "eptChat")
+	{
+		Msg("chat");
+		m_pActiveDialog = pUIChatWnd;
 	}
 
 	R_ASSERT2						(m_pActiveDialog, "active dialog is not initialized");
@@ -396,6 +405,7 @@ void CUIPdaWnd::Reset()
 //-	if ( pUIFactionWarWnd )	pUITaskWnd->ResetAll();
 	if ( pUIRankingWnd )	pUIRankingWnd->ResetAll();
 	if ( pUILogsWnd )		pUILogsWnd->ResetAll();
+	if (pUIChatWnd)			pUIChatWnd->ResetAll();
 }
 
 void CUIPdaWnd::SetCaption( LPCSTR text )
@@ -468,7 +478,7 @@ bool CUIPdaWnd::OnKeyboardAction(int dik, EUIMessages keyboard_action)
 
 						return true;
 				}
-				if ((action == kUSE || action == kINVENTORY || (action > kCAM_ZOOM_OUT && action < kWPN_NEXT)) && (!pUILogsWnd->IsShown())) // Since UI no longer passes non-movement inputs to the actor input receiver this is needed now.
+				if ((action == kUSE || action == kINVENTORY || (action > kCAM_ZOOM_OUT && action < kWPN_NEXT)) && (!pUIChatWnd->IsShown())) // Since UI no longer passes non-movement inputs to the actor input receiver this is needed now.
 				{
 						CObject* obj = (GameID() == eGameIDSingle) ? Level().CurrentEntity() : Level().CurrentControlEntity();
 						{

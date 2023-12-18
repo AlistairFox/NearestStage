@@ -229,6 +229,7 @@ void CUICharacterInfo::InitCharacter(u16 id)
 void CUICharacterInfo::InitCharacterMP(CInventoryOwner * invOwner)
 {
 	ClearInfo();
+	m_ownerID = invOwner->object_id();
 
 	if (m_icons[eName])
 	{
@@ -261,6 +262,7 @@ void CUICharacterInfo::InitCharacterMP(CInventoryOwner * invOwner)
 void CUICharacterInfo::InitCharacterMP( LPCSTR player_name, LPCSTR player_icon )
 {
 	ClearInfo();
+	
 	
 	if ( m_icons[eName] )
 	{

@@ -550,6 +550,11 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 		SendBroadcast(sender, P, net_flags(true, true));
 	}break;
 
+	case GE_PDA_CHAT:
+	{
+		Process_event_PDA_CHAT(P, sender);
+	}break;
+
 	default:
 		R_ASSERT2	(0,"Game Event not implemented!!!");
 		break;
