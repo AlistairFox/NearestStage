@@ -540,7 +540,8 @@ void save_mini_dump			(_EXCEPTION_POINTERS *pExceptionInfo)
 				ExInfo.ClientPointers		= NULL;
 
 				// write the dump
-				MINIDUMP_TYPE	dump_flags	= MINIDUMP_TYPE(MiniDumpNormal | MiniDumpFilterMemory | MiniDumpScanMemory );
+				MINIDUMP_TYPE	dump_flags	= MINIDUMP_TYPE(MiniDumpNormal | MiniDumpFilterMemory | MiniDumpScanMemory);
+				//MINIDUMP_TYPE	dump_flags = MINIDUMP_TYPE(MiniDumpNormal | MiniDumpWithFullMemory);
 
 				BOOL bOK = pDump( GetCurrentProcess(), GetCurrentProcessId(), hFile, dump_flags, &ExInfo, NULL, NULL );
 				if (bOK)
@@ -606,6 +607,13 @@ void format_message	(LPSTR buffer, const u32 &buffer_size)
 
 LONG WINAPI UnhandledFilter	(_EXCEPTION_POINTERS *pExceptionInfo)
 {
+	if (shared_str_initialized)
+		FlushLog();
+
+	save_mini_dump(pExceptionInfo);
+	quick_exit(-1);
+
+	/*
 	string256				error_message;
 	format_message			(error_message,sizeof(error_message));
 
@@ -645,9 +653,6 @@ LONG WINAPI UnhandledFilter	(_EXCEPTION_POINTERS *pExceptionInfo)
 		}
 	}
 
-	if (shared_str_initialized)
-		FlushLog			();
-
 #ifndef USE_OWN_ERROR_MESSAGE_WINDOW
 #	ifdef USE_OWN_MINI_DUMP
 		save_mini_dump		(pExceptionInfo);
@@ -680,8 +685,9 @@ LONG WINAPI UnhandledFilter	(_EXCEPTION_POINTERS *pExceptionInfo)
 	if (Debug.get_on_dialog())
 		Debug.get_on_dialog()		(false);
 #endif // USE_OWN_ERROR_MESSAGE_WINDOW
-
+*/
 	return					(EXCEPTION_CONTINUE_SEARCH) ;
+	
 }
 #endif
 

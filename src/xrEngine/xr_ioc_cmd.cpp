@@ -61,8 +61,9 @@ public:
 	virtual void Execute(LPCSTR args) {
 //		TerminateProcess(GetCurrentProcess(),0);
 		Console->Hide();
-		Engine.Event.Defer("KERNEL:disconnect");
-		Engine.Event.Defer("KERNEL:quit");
+		//Engine.Event.Defer("KERNEL:disconnect");
+		quick_exit(-1);
+		//Engine.Event.Defer("KERNEL:quit");
 	}
 };
 //-----------------------------------------------------------------------
