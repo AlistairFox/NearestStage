@@ -64,7 +64,6 @@ void __stdcall AttachmentCallback(IKinematics *tpKinematics)
 {
 	CGameObject				*game_object = smart_cast<CGameObject*>(static_cast<CObject*>(tpKinematics->GetUpdateCallbackParam()));
 	VERIFY					(game_object);
-	CActor* actor = smart_cast<CActor*>(game_object);
 	
 	CAttachmentOwner		*attachment_owner = smart_cast<CAttachmentOwner*>(game_object);
 	VERIFY					(attachment_owner);
@@ -73,7 +72,7 @@ void __stdcall AttachmentCallback(IKinematics *tpKinematics)
 
 	xr_vector<CAttachableItem*>::const_iterator	I = attachment_owner->attached_objects().begin();
 	xr_vector<CAttachableItem*>::const_iterator	E = attachment_owner->attached_objects().end();
-	if (actor)
+	if (game_object->cast_actor())
 	{
 		for (; I != E; ++I)
 		{

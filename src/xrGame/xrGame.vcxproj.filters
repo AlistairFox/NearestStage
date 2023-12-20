@@ -11228,7 +11228,6 @@
     <ClCompile Include="ActorMpWound_Script.cpp">
       <Filter>AnimationMode</Filter>
     </ClCompile>
-    <ClCompile Include="ActorVehicle.cpp" />
     <ClCompile Include="embedded_editor_npc.cpp">
       <Filter>EmbeddedEditor</Filter>
     </ClCompile>

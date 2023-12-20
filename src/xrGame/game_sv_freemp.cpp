@@ -487,6 +487,7 @@ void game_sv_freemp::OnPlayerDisconnect(ClientID id_who, LPSTR Name, u16 GameID)
 
 void game_sv_freemp::OnPlayerKillPlayer(game_PlayerState * ps_killer, game_PlayerState * ps_killed, KILL_TYPE KillType, SPECIAL_KILL_TYPE SpecialKillType, CSE_Abstract * pWeaponA)
 {
+
 	if (ps_killed)
 	{
 		ps_killed->setFlag(GAME_PLAYER_FLAG_VERY_VERY_DEAD);

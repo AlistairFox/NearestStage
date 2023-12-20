@@ -82,6 +82,7 @@ void CSoundRender_CoreA::_initialize(int stage)
 
 		if (0==pDeviceList->GetNumDevices())
 		{ 
+			system("start https://www.openal.org");
 			CHECK_OR_EXIT			(0,"OpenAL: Can't create sound device.");
 			xr_delete				(pDeviceList);
 		}

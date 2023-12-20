@@ -27,6 +27,7 @@
 #include "Grenade.h"
 #include "Torch.h"
 #include "../xrEngine/Rain.h"
+#include "relation_registry.h"
 
 // breakpoints
 #include "../xrEngine/xr_input.h"
@@ -543,30 +544,33 @@ void	CActor::Hit(SHit* pHDS)
 	pHDS->aim_bullet = false;
 
 	SHit& HDS	= *pHDS;
-
+	
 	if (OnServer())
 	{
 		CActor* pA = smart_cast<CActor*>(HDS.who);
 
 		if (pA && pA != this)
 		{
-			if (!Actor()->is_relation_enemy(pA))
+			Msg("pA && pA != this");
+			if (this->g_Team() == pA->g_Team())
 			{
+				Msg("Actor not enemy");
 				for (int i = 0; i < Level().Objects.o_count(); i++)
 				{
 					CObject* obj = Level().Objects.o_get_by_iterator(i);
 					CAI_Stalker* Stalker = smart_cast<CAI_Stalker*>(obj);
 					if (Stalker && Stalker->Position().distance_to(pA->Position()) <= 60)
 					{
-						//Msg("HIT");
-						Stalker->SetEnemy(pA);
+						Msg("set enemy");
+							//Stalker->SetEnemy(pA);
+							RELATION_REGISTRY().FightRegister(pA->ID(), this->ID(), this->tfGetRelationType(pA), HDS.damage());
+							RELATION_REGISTRY().Action(pA, Stalker, RELATION_REGISTRY::KILL); // need hard testing!!!!!!!!!
 					}
 				}
 			}
-			//Msg("pA");
 		}
 	}
-
+	
 	if( HDS.hit_type<ALife::eHitTypeBurn || HDS.hit_type >= ALife::eHitTypeMax )
 	{
 		string256	err;
@@ -1360,8 +1364,8 @@ void CActor::UpdateCL	()
 		g_player_hud->update(trans);
 	}
 
-	if (cam_Active() != cam_FirstEye() && (!MpAnimationMODE()) && (!MpWoundMODE())) //разблокировать все камеры
-		cam_Set(eacFirstEye);
+//	if (cam_Active() != cam_FirstEye() && (!MpAnimationMODE()) && (!MpWoundMODE())) //разблокировать все камеры
+	//	cam_Set(eacFirstEye);
 
 	m_bPickupMode=false;
 
@@ -1777,14 +1781,15 @@ void CActor::renderable_Render	()
 	VERIFY(_valid(XFORM()));
 	inherited::renderable_Render();
 	//if(1/*!HUDview()*/)
-	if ((cam_active == eacFirstEye && // first eye cam
-		::Render->get_generation() == ::Render->GENERATION_R2 && // R2
-		::Render->active_phase() == 1) // shadow map rendering on R2	
-		||
-		!(IsFocused() &&
-			(cam_active == eacFirstEye) &&
-			((!m_holder) || (m_holder && m_holder->allowWeapon() && m_holder->HUDView())))
-		)
+	//if ((cam_active == eacFirstEye && // first eye cam
+	//	::Render->get_generation() == ::Render->GENERATION_R2 && // R2
+	//	::Render->active_phase() == 1) // shadow map rendering on R2	
+	//	||
+	//	!(IsFocused() &&
+	//		(cam_active == eacFirstEye) &&
+	//		((!m_holder) || (m_holder && m_holder->allowWeapon() && m_holder->HUDView())))
+	//	)
+	
 		//{
 		CInventoryOwner::renderable_Render();
 	//}

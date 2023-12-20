@@ -1752,7 +1752,25 @@ public:
 	}
 };
 
+void test_mt(void*)
+{
+	while (true)
+	{
+		Msg("test_mt start");
+		collide::rq_result	R;
+		Level().ObjectSpace.RayPick(Fvector().set(0, 0, 0), Fvector().set(0, 0, 0), 100.f, collide::rqtBoth, R, NULL);
+	}
+}
 
+class CCC_mt_test : public IConsole_Command {
+public:
+	CCC_mt_test(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = true; };
+	virtual void Execute(LPCSTR arguments)
+	{
+		//test_mt(0);
+		thread_spawn(test_mt, "Test_mt", 0, 0);
+	}
+};
 
 class CCC_Net_SV_GuaranteedPacketMode : public CCC_Integer {
 protected:

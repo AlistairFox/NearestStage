@@ -167,8 +167,9 @@ void CHUDManager::Render_First()
 	CObject*	O					= g_pGameLevel->CurrentViewEntity();
 	if (0==O)						return;
 	CActor*		A					= smart_cast<CActor*> (O);
-	if (!A || !A->HUDview())
-		return;
+
+	if (!A)							return;
+	if (A && !A->HUDview())			return;
 
 	// only shadow 
 	::Render->set_Invisible			(TRUE);

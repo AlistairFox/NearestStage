@@ -148,15 +148,17 @@ void CKinematics::CLBone( const CBoneData* bd, CBoneInstance &bi, const Fmatrix 
 	}
 }
 
-void	CKinematics::Bone_GetAnimPos(Fmatrix& pos,u16 id,u8 mask_channel, bool ignore_callbacks)
+void	CKinematics::Bone_GetAnimPos(Fmatrix& pos, u16 id, u8 mask_channel, bool ignore_callbacks)
 {
-	R_ASSERT(id<LL_BoneCount());
+	R_ASSERT(id < LL_BoneCount());
 	CBoneInstance bi = LL_GetBoneInstance(id);
-	BoneChain_Calculate(&LL_GetData(id),bi,mask_channel,ignore_callbacks);
+	Fvector last_ñ = bi.mTransform.c;
+	BoneChain_Calculate(&LL_GetData(id), bi, mask_channel, ignore_callbacks);
 #ifndef MASTER_GOLD
-	R_ASSERT( _valid( bi.mTransform ) );
+	R_ASSERT(_valid(bi.mTransform));
 #endif
-	pos.set( bi.mTransform );
+	pos.set(bi.mTransform);
+	pos.c.set(last_ñ);
 }
 
 void CKinematics::Bone_Calculate(CBoneData* bd, Fmatrix *parent)

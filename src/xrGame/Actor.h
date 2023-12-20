@@ -358,18 +358,15 @@ public:
 	void					steer_Vehicle			(float angle);
 //	void					attach_Vehicle			(CHolderCustom* vehicle);
 	bool					use_HolderEx(CHolderCustom* object, bool bForce);
-	bool				use_Vehicle(CHolderCustom* object);
-
+	void					ActorCheckWoundInv();
 	virtual bool			can_attach				(const CInventoryItem *inventory_item) const;
+protected:
 	CHolderCustom* m_holder;
 	u16						m_holderID;
 	bool					use_Holder(CHolderCustom* holder);
 
-protected:
-
 	bool					use_MountedWeapon		(CHolderCustom* object);
 	void					ActorUse				();
-	void					ActorCheckWoundInv();
 
 protected:
 	BOOL					m_bAnimTorsoPlayed;
