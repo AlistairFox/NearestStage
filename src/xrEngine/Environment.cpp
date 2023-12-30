@@ -41,6 +41,7 @@ static const float			MAX_NOISE_FREQ	= 0.03f;
 
 const float MAX_DIST_FACTOR = 0.95f;
 ENGINE_API extern bool IsWeatherEditor;
+extern Fvector4 ps_ssfx_wind_trees;
 
 //////////////////////////////////////////////////////////////////////////
 // environment
@@ -77,6 +78,7 @@ CEnvironment::CEnvironment	() :
 
 	wind_blast_strength	= 0.f;
 	wind_blast_direction.set(1.f,0.f,0.f);
+	wind_anim = { 0.0f, 0.0f, 0.0f };
 
 	wind_blast_strength_start_value	= 0.f;
 	wind_blast_strength_stop_value	= 0.f;
@@ -500,6 +502,19 @@ void CEnvironment::OnFrame()
 
 	if (!g_pGameLevel)		return;
 
+
+	// Min wind velocity. [ ps_ssfx_wind_trees.w 0 ~ 1 ]
+	float WindVel = _max(CurrentEnv->wind_velocity, ps_ssfx_wind_trees.w * 1000);
+	
+	// Limit min at 200 to avoid slow-mo at extremly low speed.
+	WindVel = _max(WindVel, 200) * 0.001f;
+	
+	float WindDir = -CurrentEnv->wind_direction + PI_DIV_2;
+	Fvector2 WDir = { _cos(WindDir), _sin(WindDir) };
+	
+	wind_anim.x += WindVel * WDir.x * Device.fTimeDelta;
+	wind_anim.y += WindVel * WDir.y * Device.fTimeDelta;
+	wind_anim.z += clampr(WindVel * 1.33f, 0.0f, 1.0f) * Device.fTimeDelta;
 
 //	if (pInput->iGetAsyncKeyState(DIK_O))		SetWeatherFX("surge_day"); 
 	float					current_weight;

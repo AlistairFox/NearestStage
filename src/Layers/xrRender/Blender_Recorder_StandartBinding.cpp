@@ -206,7 +206,33 @@ static class cl_inv_v : public R_constant_setup
 extern ENGINE_API Fvector4 ps_ssfx_hud_drops_1;
 extern ENGINE_API Fvector4 ps_ssfx_hud_drops_2;
 extern ENGINE_API Fvector4 ps_ssfx_blood_decals;
+extern ENGINE_API Fvector4 ps_ssfx_wind_grass;
+extern ENGINE_API Fvector4 ps_ssfx_wind_trees;
 
+static class ssfx_wind_grass : public R_constant_setup
+{
+	virtual void setup(R_constant * C)
+	{
+		RCache.set_c(C, ps_ssfx_wind_grass);
+	}
+}ssfx_wind_grass;
+
+static class ssfx_wind_trees : public R_constant_setup
+{
+	virtual void setup(R_constant * C)
+	{
+		RCache.set_c(C, ps_ssfx_wind_trees);
+	}
+}ssfx_wind_trees;
+
+static class ssfx_wind_anim : public R_constant_setup
+ {
+	virtual void setup(R_constant * C)
+		 {
+		Fvector3 WindAni = g_pGamePersistent->Environment().wind_anim;
+		RCache.set_c(C, WindAni.x, WindAni.y, WindAni.z, 0);
+		}
+	 }    ssfx_wind_anim;
 
 // DWM: set weather params
 class cl_u_weather : public R_constant_setup
@@ -485,7 +511,9 @@ void	CBlender_Compile::SetMapping	()
 
 	// Screen Space Shaders
 	r_Constant("sky_color", &binder_sky_color);
-
+	r_Constant("ssfx_wind_anim", &ssfx_wind_anim);
+	r_Constant("ssfx_wsetup_grass", &ssfx_wind_grass);
+	r_Constant("ssfx_wsetup_trees", &ssfx_wind_trees);
 	r_Constant("pp_img_corrections", &pp_image_corrections);
 
 	// DWM: out to shaders view to world mat, weather params, alternative screen res

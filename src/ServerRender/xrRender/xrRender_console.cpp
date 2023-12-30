@@ -297,6 +297,10 @@ extern ENGINE_API Fvector4 ps_ssfx_rain_1;
 extern ENGINE_API Fvector4 ps_ssfx_rain_2;
 extern ENGINE_API Fvector4 ps_ssfx_rain_3;
 
+extern ENGINE_API Fvector4 ps_ssfx_wind_grass;
+extern ENGINE_API Fvector4 ps_ssfx_wind_trees;
+
+
 int ps_screen_space_shaders = 0;
 
 

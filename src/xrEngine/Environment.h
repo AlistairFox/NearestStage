@@ -260,7 +260,7 @@ protected:
 public:
 	FactoryPtr<IEnvironmentRender>	m_pRender;
 	BOOL					bNeed_re_create_env;
-
+	Fvector3 wind_anim;
 	float					wind_strength_factor;	
 	float					wind_gust_factor;
 

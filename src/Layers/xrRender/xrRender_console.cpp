@@ -290,7 +290,8 @@ extern ENGINE_API Fvector4 ps_ssfx_blood_decals;
 extern ENGINE_API Fvector4 ps_ssfx_rain_1;
 extern ENGINE_API Fvector4 ps_ssfx_rain_2;
 extern ENGINE_API Fvector4 ps_ssfx_rain_3;
-
+extern ENGINE_API Fvector4 ps_ssfx_wind_grass;
+extern ENGINE_API Fvector4 ps_ssfx_wind_trees;
 
 
 Fvector3	ps_r2_dof					= Fvector3().set(-1.25f, 1.4f, 10000.f);
@@ -852,6 +853,8 @@ void		xrRender_initconsole	()
 	CMD4(CCC_Float,		"r__wallmark_ttl",		&ps_r__WallmarkTTL,			1.0f,	5.f*60.f);
 
 	CMD4(CCC_Integer,	"r__supersample",		&ps_r__Supersample,			1,		8		);
+	CMD4(CCC_Vector4, "ssfx_wind_grass", &ps_ssfx_wind_grass, Fvector4().set(0.0, 0.0, 0.0, 0.0), Fvector4().set(20.0, 5.0, 5.0, 5.0));
+	CMD4(CCC_Vector4, "ssfx_wind_trees", &ps_ssfx_wind_trees, Fvector4().set(0.0, 0.0, 0.0, 0.0), Fvector4().set(20.0, 5.0, 5.0, 1.0));
 
 	Fvector	tw_min,tw_max;
 	

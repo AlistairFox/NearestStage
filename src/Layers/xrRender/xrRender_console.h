@@ -12,7 +12,6 @@ extern ECORE_API float ps_r2_tnmp_w; // r2-only
 extern ECORE_API float ps_r2_tnmp_exposure; // r2-only
 extern ECORE_API float ps_r2_tnmp_gamma; // r2-only
 extern ECORE_API float ps_r2_tnmp_onoff; // r2-only
-
 extern ECORE_API float			ps_r2_reflections_distance;
 
 
