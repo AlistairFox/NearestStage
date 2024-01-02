@@ -23,6 +23,8 @@
 #include "blender_lens_flares.h"
 #include "blender_ss_sunshafts.h"
 #include "blender_cut.h"
+#include "blender_lut.h"
+#include "blender_blur.h"
 
 #include "../xrRender/dxRenderDeviceRender.h"
 
@@ -328,6 +330,8 @@ CRenderTarget::CRenderTarget		()
 	b_combine				= xr_new<CBlender_combine>			();
 	b_ssao					= xr_new<CBlender_SSAO_noMSAA>		();
 	b_sunshafts = new CBlender_sunshafts();
+	b_lut = xr_new<CBlender_lut>();
+	b_blur = xr_new<CBlender_blur>();
 
 	//HUD BLOOD
 	b_hud_blood = xr_new<CBlender_Hud_Blood>();
@@ -441,6 +445,16 @@ CRenderTarget::CRenderTarget		()
 		rt_secondVP.create(r2_RT_secondVP, RtCreationParams(Device.m_SecondViewport.screenWidth, Device.m_SecondViewport.screenHeight, MAIN_VIEWPORT), DXGI_FORMAT_R8G8B8A8_UNORM, SRV_RTV, 1); //--#SM+#-- +SecondVP+
 		rt_ui_pda.create(r2_RT_ui, vp_params_main_secondary, DXGI_FORMAT_R8G8B8A8_UNORM, SRV_RTV);
 
+		// RT Blur
+		rt_blur_h_2.create(r2_RT_blur_h_2, RtCreationParams(Device.dwWidth /2, Device.dwHeight /2, MAIN_VIEWPORT), DXGI_FORMAT_R8G8B8A8_UNORM, SRV_RTV, 1);
+		rt_blur_2.create(r2_RT_blur_2, RtCreationParams(Device.dwWidth / 2, Device.dwHeight / 2, MAIN_VIEWPORT), DXGI_FORMAT_R8G8B8A8_UNORM, SRV_RTV, 1);
+
+		rt_blur_h_4.create(r2_RT_blur_h_4, RtCreationParams(Device.dwWidth / 4, Device.dwHeight / 4, MAIN_VIEWPORT), DXGI_FORMAT_R8G8B8A8_UNORM, SRV_RTV, 1);
+		rt_blur_4.create(r2_RT_blur_4, RtCreationParams(Device.dwWidth / 4, Device.dwHeight / 4, MAIN_VIEWPORT), DXGI_FORMAT_R8G8B8A8_UNORM, SRV_RTV, 1);
+
+		rt_blur_h_8.create(r2_RT_blur_h_8, RtCreationParams(Device.dwWidth / 8, Device.dwHeight / 8, MAIN_VIEWPORT), DXGI_FORMAT_R8G8B8A8_UNORM, SRV_RTV, 1);
+		rt_blur_8.create(r2_RT_blur_8, RtCreationParams(Device.dwWidth / 8, Device.dwHeight / 8, MAIN_VIEWPORT), DXGI_FORMAT_R8G8B8A8_UNORM, SRV_RTV, 1);
+
 		if (RImplementation.o.dx10_msaa)
 			rt_Generic_temp.create("$user$generic_temp", vp_params_main_secondary, DXGI_FORMAT_R8G8B8A8_UNORM, SRV_RTV, SampleCount);
 		else
@@ -468,6 +482,8 @@ CRenderTarget::CRenderTarget		()
 
 	s_sunshafts.create(b_sunshafts, "r2\\sunshafts");
 
+	s_blur.create(b_blur, "r2\\blur");
+	s_lut.create(b_lut, "r2\\lut");
 	// OCCLUSION
 	s_occq.create					(b_occq,		"r2\\occq");
 
@@ -1139,6 +1155,8 @@ CRenderTarget::~CRenderTarget	()
 	xr_delete					(b_accum_point			);
 	xr_delete					(b_accum_direct			);
 	xr_delete					(b_ssao					);
+	xr_delete					(b_lut					);
+	xr_delete(b_blur);
 	xr_delete					(b_hud_blood			); //Hud Blood
 	xr_delete					(b_hud_power			); //Hud Stamina
 	xr_delete					(b_hud_bleeding			); //Hud Bleeding

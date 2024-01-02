@@ -57,6 +57,8 @@ public:
 	IBlender*					b_hud_thirst;
 	IBlender* b_lfx;
 	IBlender* b_sunshafts;
+	IBlender* b_lut;
+	IBlender* b_blur;
 
     // compute shader for hdao
     IBlender*                   b_hdao_cs;
@@ -99,6 +101,15 @@ public:
 
 	// Viewports
 	ref_rt						rt_ui_pda;
+
+	ref_rt rt_blur_h_2;
+	ref_rt rt_blur_2;
+
+	ref_rt rt_blur_h_4;
+	ref_rt rt_blur_4;
+
+	ref_rt rt_blur_h_8;
+	ref_rt rt_blur_8;
 
 	//	Igor: for volumetric lights
 	ref_rt						rt_Generic_2;		// 32bit		(r,g,b,a)				// post-process, intermidiate results, etc.
@@ -184,8 +195,11 @@ private:
 	ref_shader					s_accum_spot	;
 	ref_shader					s_accum_reflected;
 	ref_shader					s_accum_volume;
+	
 
+	ref_shader					s_lut;
 	ref_shader					s_cut;
+	ref_shader					s_blur;
 
 	//	generate min/max
 	ref_shader					s_create_minmax_sm;
@@ -319,7 +333,9 @@ public:
 	void						phase_scene_end			();
 	void						phase_occq				();
 	void						phase_ssao				();
+	void						phase_lut				();
 	void						phase_hdao				();
+	void						phase_blur();
 	void						phase_downsamp			();
 	void						phase_wallmarks			();
 	void						phase_smap_direct		(light* L,	u32 sub_phase);

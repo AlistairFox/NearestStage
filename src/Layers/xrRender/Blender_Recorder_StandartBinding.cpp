@@ -208,6 +208,15 @@ extern ENGINE_API Fvector4 ps_ssfx_hud_drops_2;
 extern ENGINE_API Fvector4 ps_ssfx_blood_decals;
 extern ENGINE_API Fvector4 ps_ssfx_wind_grass;
 extern ENGINE_API Fvector4 ps_ssfx_wind_trees;
+extern ENGINE_API Fvector4 ps_ssfx_lut;
+
+static class ssfx_lut : public R_constant_setup
+{
+	virtual void setup(R_constant* C)
+	{
+		RCache.set_c(C, ps_ssfx_lut);
+	}
+}    ssfx_lut;
 
 static class ssfx_wind_grass : public R_constant_setup
 {
@@ -515,6 +524,7 @@ void	CBlender_Compile::SetMapping	()
 	r_Constant("ssfx_wsetup_grass", &ssfx_wind_grass);
 	r_Constant("ssfx_wsetup_trees", &ssfx_wind_trees);
 	r_Constant("pp_img_corrections", &pp_image_corrections);
+	r_Constant("ssfx_lut", &ssfx_lut);
 
 	// DWM: out to shaders view to world mat, weather params, alternative screen res
 	r_Constant("m_view2world", &binder_m_v2w);
