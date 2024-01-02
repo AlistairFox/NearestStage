@@ -177,6 +177,25 @@ public:
 	bool neet_switch_torch = false;
 	/* hud anims system end*/
 
+
+	/* LUT script*/
+	//Fvector2 ssfx_lut_default = { 1.f,0.5f };
+	//float ssfx_lut_transition_speed = 0.005f;
+	//float ssfx_lut_group1 = 0.f;
+	//float ssfx_lut_group2 = 0.f;
+	//float ssfx_lut_lerp = 0.f;
+	//float ssfx_lut_lerp_targer = 0.f;
+	//float ssfx_lut_int = 0.f;
+	//bool ssfx_lut_lerp_done = true;
+	//float DebugGroup = 0.f;
+	//
+	//void ssfx_lut_transition();
+	//void ssfx_lut_diminish();
+	//void ssfx_lut_change(float group, bool insta);
+	//
+	//bool first_update = false;
+	/*LUT script*/
+
 	u32 old_timer = 0;
 	bool need_exit;
 	bool CanChange = true;

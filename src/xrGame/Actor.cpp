@@ -1364,8 +1364,8 @@ void CActor::UpdateCL	()
 		g_player_hud->update(trans);
 	}
 
-//	if (cam_Active() != cam_FirstEye() && (!MpAnimationMODE()) && (!MpWoundMODE())) //разблокировать все камеры
-	//	cam_Set(eacFirstEye);
+	if (cam_Active() != cam_FirstEye() && (!MpAnimationMODE()) && (!MpWoundMODE())) //разблокировать все камеры
+		cam_Set(eacFirstEye);
 
 	m_bPickupMode=false;
 
@@ -1423,8 +1423,78 @@ void CActor::UpdateCL	()
 
 		ps_ssfx_hud_drops_1.x = m_dropsAnimIncrementor;
 		ps_ssfx_hud_drops_1.y = m_dropsIntensity;
+
+		/*
+		if (!first_update)
+		{
+			float Map_LUT = ssfx_lut_default.x;
+			ssfx_lut_int = ssfx_lut_default.y;
+
+			ssfx_lut_change(Map_LUT, true);
+			first_update = true;
+		}
+
+
+		if (!ssfx_lut_lerp_done)
+		{
+			ssfx_lut_diminish();
+			ssfx_lut_transition();
+		}
+		*/
 }
 
+/*
+void CActor::ssfx_lut_transition()
+{
+	string256 tmp;
+	sprintf_s(tmp, "ssfx_lut %f, %f, %f, %f", ssfx_lut_int, ssfx_lut_group1, ssfx_lut_group2, ssfx_lut_lerp);
+	Msg("Command: %s", tmp);
+	Console->Execute(tmp);
+}
+
+void CActor::ssfx_lut_diminish()
+{
+	float smoothing = _min(ssfx_lut_transition_speed * Device.dwTimeDelta / 20, 0.19f);
+
+	if (ssfx_lut_lerp < ssfx_lut_lerp_targer)
+	{
+		ssfx_lut_lerp = ssfx_lut_lerp + smoothing;
+	}
+	else
+		ssfx_lut_lerp = ssfx_lut_lerp - smoothing;
+
+	if (abs(ssfx_lut_lerp - ssfx_lut_lerp_targer) <= ssfx_lut_transition_speed)
+	{
+		ssfx_lut_group1 = ssfx_lut_group2;
+		ssfx_lut_group2 = 0;
+		ssfx_lut_lerp = 0;
+		ssfx_lut_lerp_targer = 0;
+
+		ssfx_lut_lerp_done = true;
+	}
+}
+
+void CActor::ssfx_lut_change(float group, bool insta)
+{
+	if (!ssfx_lut_lerp_done)
+		return;
+
+	if (insta)
+	{
+		ssfx_lut_group1 = group;
+		ssfx_lut_lerp = 0;
+		ssfx_lut_lerp_targer = 0;
+		ssfx_lut_lerp_done = true;
+		ssfx_lut_transition();
+	}
+	else
+	{
+		ssfx_lut_group2 = group;
+		ssfx_lut_lerp_targer = 1;
+		ssfx_lut_lerp_done = false;
+	}
+}
+*/
 void CActor::HealthActorInWound(CActor* p)
 {
 	Msg("try health");
