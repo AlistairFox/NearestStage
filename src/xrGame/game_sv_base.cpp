@@ -522,36 +522,27 @@ void	game_sv_GameState::ConsoleCommands_Clear	()
 void	game_sv_GameState::assign_RP				(CSE_Abstract* E, game_PlayerState* ps_who)
 {
 	VERIFY				(E);
-
 	u8					l_uc_team = u8(-1);
 	CSE_Spectator		*tpSpectator = smart_cast<CSE_Spectator*>(E);
 	if (tpSpectator)
 	{
 		l_uc_team = tpSpectator->g_team();
-#ifdef DEBUG
-		Msg("--- game_sv_GameState RPoint for Spectators uses team [%d]", l_uc_team);
-#endif // #ifdef DEBUG
-	} else
+	}
+	else
 	{
 		CSE_ALifeCreatureAbstract	*tpTeamed = smart_cast<CSE_ALifeCreatureAbstract*>(E);
 		if (tpTeamed)
 		{
 			l_uc_team = tpTeamed->g_team();
-#ifdef DEBUG
-		Msg("--- game_sv_GameState RPoint for AlifeCreature uses team [%d]", l_uc_team);
-#endif // #ifdef DEBUG
-		} else
+		} 
+		else
 		{
 			R_ASSERT2(false/*tpTeamed*/,"Non-teamed object is assigning to respawn point!");
 		}
 	}
-	R_ASSERT2(l_uc_team < TEAM_COUNT, make_string("not found rpoint for team [%d]",
-		l_uc_team).c_str());
+	R_ASSERT2(l_uc_team < TEAM_COUNT, make_string("not found rpoint for team [%d]",l_uc_team).c_str());
 	
 	xr_vector<RPoint>&	rp	= rpoints[l_uc_team];
-#ifdef DEBUG
-	Msg("---Size of rpoints of team [%d] is [%d]", l_uc_team, rp.size());
-#endif
 	//-----------------------------------------------------------
 	xr_vector<u32>	xrp;//	= rpoints[l_uc_team];
 	for (u32 i=0; i<rp.size(); i++)
@@ -576,9 +567,6 @@ void	game_sv_GameState::assign_RP				(CSE_Abstract* E, game_PlayerState* ps_who)
 		rpoint = ::Random.randI((int)rp.size());
 	}
 	//-----------------------------------------------------------
-#ifdef DEBUG
-	Msg("--- Result rpoint is [%d]", rpoint);
-#endif // #ifdef DEBUG
 	RPoint&				r	= rp[rpoint];
 	if (!tpSpectator)
 	{

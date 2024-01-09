@@ -203,7 +203,7 @@ void CCameraManager::UpdateDeffered()
 		RemoveCamEffector			( (*it)->eType );
 		
 		if((*it)->AbsolutePositioning())
-			m_EffectorsCam.push_front(*it);
+			m_EffectorsCam.insert(m_EffectorsCam.begin(),*it);
 		else
 			m_EffectorsCam.push_back	(*it);
 	}
@@ -290,13 +290,17 @@ void CCameraManager::Update(const Fvector& P, const Fvector& D, const Fvector& N
 	// camera
 	if (flags&CCameraBase::flPositionRigid)
 		m_cam_info.p.set		(P);
-	else
-		m_cam_info.p.inertion	(P,	psCamInert);
+	else if (Device.dwFrame % 1 == 0)
+	{
+		m_cam_info.p.inertion(P, psCamInert);
+	}
 	if (flags&CCameraBase::flDirectionRigid)
 	{
 		m_cam_info.d.set		(D);
 		m_cam_info.n.set		(N);
-	}else{
+	}
+	else if (Device.dwFrame % 1 == 0)
+	{
 		m_cam_info.d.inertion	(D,	psCamInert);
 		m_cam_info.n.inertion	(N,	psCamInert);
 	}
@@ -373,15 +377,16 @@ bool CCameraManager::ProcessCameraEffector(CEffectorCam* eff)
 
 void CCameraManager::UpdateCamEffectors()
 {
-	if (m_EffectorsCam.empty()) 	return;
-	EffectorCamVec::reverse_iterator rit	= m_EffectorsCam.rbegin();
-	for(; rit!=m_EffectorsCam.rend(); ++rit)
-		ProcessCameraEffector(*rit);
+	if (m_EffectorsCam.empty())
+		return;
 
-	m_cam_info.d.normalize			();
-	m_cam_info.n.normalize			();
-	m_cam_info.r.crossproduct		(m_cam_info.n,m_cam_info.d);
-	m_cam_info.n.crossproduct		(m_cam_info.d,m_cam_info.r);
+	for (int i = m_EffectorsCam.size() - 1; i >= 0; --i)
+		ProcessCameraEffector(m_EffectorsCam[i]);
+
+	m_cam_info.d.normalize();
+	m_cam_info.n.normalize();
+	m_cam_info.r.crossproduct(m_cam_info.n, m_cam_info.d);
+	m_cam_info.n.crossproduct(m_cam_info.d, m_cam_info.r);
 }
 
 void CCameraManager::UpdatePPEffectors()

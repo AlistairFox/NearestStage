@@ -1631,199 +1631,138 @@ void PAVortex::Transform(const Fmatrix& m)
 static int	noise_start = 1;
 extern void	noise3Init();
 
+
 #ifndef _EDITOR
 
 #include <xmmintrin.h>
-#include "../xrCPU_Pipe/ttapi.h"
-#pragma comment(lib,"xrCPU_Pipe.lib")
 
-__forceinline __m128 _mm_load_fvector( const Fvector& v )
+__forceinline __m128 _mm_load_fvector(const Fvector& v)
 {
-	__m128 R1,R2;
+	__m128 R1, R2;
 
-	R1 = _mm_load_ss( (float*) &v.x );	// R1 = 0 | 0 | 0 | v.x
-	R2 = _mm_load_ss( (float*) &v.y );	// R2 = 0 | 0 | 0 | v.y
-	R1 = _mm_unpacklo_ps( R1 , R2 );	// R1 = 0 | 0 | v.y | v.x
-	R2 = _mm_load_ss( (float*) &v.z );	// R2 = 0 | 0 | 0 | v.z
-	R1 = _mm_movelh_ps( R1 , R2 );		// R1 = 0 | v.z | v.y | v.x
+	R1 = _mm_load_ss((float*)&v.x);	// R1 = 0 | 0 | 0 | v.x
+	R2 = _mm_load_ss((float*)&v.y);	// R2 = 0 | 0 | 0 | v.y
+	R1 = _mm_unpacklo_ps(R1, R2);	// R1 = 0 | 0 | v.y | v.x
+	R2 = _mm_load_ss((float*)&v.z);	// R2 = 0 | 0 | 0 | v.z
+	R1 = _mm_movelh_ps(R1, R2);		// R1 = 0 | v.z | v.y | v.x
 
 	return R1;
 }
 
-__forceinline void _mm_store_fvector( Fvector& v , const __m128 R1 )
+__forceinline void _mm_store_fvector(Fvector& v, const __m128 R1)
 {
 	__m128 R2;
 
-	_mm_store_ss( (float*) &v.x , R1 );
-	R2 = _mm_unpacklo_ps( R1 , R1 );	// R2 = v.y | v.y | v.x | v.x
-	R2 = _mm_movehl_ps( R2 , R2 );		// R2 = v.y | v.y | v.y | v.y 
-	_mm_store_ss( (float*) &v.y , R2 );
-	R2 = _mm_movehl_ps( R1 , R1 );		// R2 = 0 | v.z | 0 | v.z
-	_mm_store_ss( (float*) &v.z , R2 );
+	_mm_store_ss((float*)&v.x, R1);
+	R2 = _mm_unpacklo_ps(R1, R1);	// R2 = v.y | v.y | v.x | v.x
+	R2 = _mm_movehl_ps(R2, R2);		// R2 = v.y | v.y | v.y | v.y 
+	_mm_store_ss((float*)&v.y, R2);
+	R2 = _mm_movehl_ps(R1, R1);		// R2 = 0 | v.z | 0 | v.z
+	_mm_store_ss((float*)&v.z, R2);
 }
 
-
-struct TES_PARAMS {
-	u32 p_count;
-	ParticleEffect* effect;
-	pVector offset;
-	float age;
-	float epsilon;
-	float frequency;
-	int octaves;
-	float magnitude;
-};
-
-
-void PATurbulenceExecuteStream( LPVOID lpvParams )
+void PATurbulence::Execute(ParticleEffect* effect, const float dt, float& tm_max)
 {
-	#ifdef _GPA_ENABLED	
-		TAL_SCOPED_TASK_NAMED( "PATurbulenceExecuteStream()" );
-
-		TAL_ID rtID = TAL_MakeID( 1 , Core.dwFrame , 0);	
-		TAL_AddRelationThis(TAL_RELATION_IS_CHILD_OF, rtID);
-	#endif // _GPA_ENABLED
-
-
-	pVector pV;
-    pVector vX;
-    pVector vY;
-    pVector vZ;
-
-	TES_PARAMS* pParams = (TES_PARAMS *) lpvParams;
-
-	ParticleEffect* effect = pParams->effect;
-	pVector offset = pParams->offset;
-	float age = pParams->age;
-	float epsilon = pParams->epsilon;
-	float frequency = pParams->frequency;
-	int octaves = pParams->octaves;
-	float magnitude = pParams->magnitude;
-
-    for(u32 i = 0; i < pParams->p_count; i++)
-    {
-        Particle &m = effect->particles[i];
-
-        pV.mad(m.pos,offset,age);
-        vX.set(pV.x+epsilon,pV.y,pV.z);
-        vY.set(pV.x,pV.y+epsilon,pV.z);
-        vZ.set(pV.x,pV.y,pV.z+epsilon);
-
-        float d	=	fractalsum3(pV, frequency, octaves);
-
-		pVector D;
-
-        D.x 	= 	fractalsum3(vX, frequency, octaves);
-        D.y 	= 	fractalsum3(vY, frequency, octaves);
-        D.z 	= 	fractalsum3(vZ, frequency, octaves);
-
-		__m128 _D = _mm_load_fvector( D );
-		__m128 _d = _mm_set1_ps( d );
-		__m128 _magnitude = _mm_set1_ps( magnitude );
-		__m128 _mvel = _mm_load_fvector( m.vel );
-		_D = _mm_sub_ps( _D , _d );
-		_D = _mm_mul_ps( _D , _magnitude );
-
-		__m128 _vmo = _mm_mul_ps( _mvel , _mvel );	// _vmo = 00 | zz | yy | xx
-		__m128 _tmp = _mm_movehl_ps( _vmo , _vmo );	// _tmp = 00 | zz | 00 | zz 
-		_vmo = _mm_add_ss( _vmo , _tmp );			// _vmo = 00 | zz | yy | xx + zz
-		_tmp = _mm_unpacklo_ps( _vmo , _vmo );		// _tmp = yy | yy | xx + zz | xx + zz
-		_tmp = _mm_movehl_ps( _tmp , _tmp );		// _tmp = yy | yy | yy | yy 
-		_vmo = _mm_add_ss( _vmo , _tmp );			// _vmo = 00 | zz | yy | xx + yy + zz
-		_vmo = _mm_sqrt_ss( _vmo );					// _vmo = 00 | zz | yy | vmo
-
-		_mvel = _mm_add_ps( _mvel , _D );
-
-		__m128 _vmn = _mm_mul_ps( _mvel , _mvel );	// _vmn = 00 | zz | yy | xx
-		_tmp = _mm_movehl_ps( _vmn , _vmn );		// _tmp = 00 | zz | 00 | zz 
-		_vmn = _mm_add_ss( _vmn , _tmp );			// _vmn = 00 | zz | yy | xx + zz
-		_tmp = _mm_unpacklo_ps( _vmn , _vmn );		// _tmp = yy | yy | xx + zz | xx + zz
-		_tmp = _mm_movehl_ps( _tmp , _tmp );		// _tmp = yy | yy | yy | yy 
-		_vmn = _mm_add_ss( _vmn , _tmp );			// _vmn = 00 | zz | yy | xx + yy + zz
-		_vmn = _mm_sqrt_ss( _vmn );					// _vmn = 00 | zz | yy | vmn
-
-		_vmo = _mm_div_ss( _vmo , _vmn );			// _vmo = 00 | zz | yy | scale
-
-		_vmo = _mm_shuffle_ps( _vmo , _vmo , _MM_SHUFFLE( 0 , 0 , 0 , 0 ) ); // _vmo = scale | scale | scale | scale
-		_mvel = _mm_mul_ps( _mvel , _vmo );
-
-		_mm_store_fvector( m.vel , _mvel );
-	}
-
-}
-
-void PATurbulence::Execute(ParticleEffect *effect, const float dt, float& tm_max)
-{
-
-	#ifdef _GPA_ENABLED	
-		TAL_SCOPED_TASK_NAMED( "PATurbulence::Execute()" );
-	#endif // _GPA_ENABLED
-
-	if ( noise_start ) {
+	if (noise_start) {
 		noise_start = 0;
 		noise3Init();
 	};
 
-    age		+= dt;
+	pVector pV;
+	pVector vX;
+	pVector vY;
+	pVector vZ;
+	age += dt;
+	for (u32 i = 0; i < effect->p_count; i++)
+	{
+		Particle& m = effect->particles[i];
 
-	u32 p_cnt = effect->p_count;
+		pV.mad(m.pos, offset, age);
+		vX.set(pV.x + epsilon, pV.y, pV.z);
+		vY.set(pV.x, pV.y + epsilon, pV.z);
+		vZ.set(pV.x, pV.y, pV.z + epsilon);
 
-	if ( ! p_cnt )
-		return;
+		float d = fractalsum3(pV, frequency, octaves);
 
-	TES_PARAMS tesParams;
+		pVector D;
 
-	tesParams.p_count = p_cnt;
-	tesParams.effect = effect;
-	tesParams.offset = offset;
-	tesParams.age = age;
-	tesParams.epsilon = epsilon;
-	tesParams.frequency = frequency;
-	tesParams.octaves = octaves;
-	tesParams.magnitude = magnitude;
+		D.x = fractalsum3(vX, frequency, octaves);
+		D.y = fractalsum3(vY, frequency, octaves);
+		D.z = fractalsum3(vZ, frequency, octaves);
 
-	PATurbulenceExecuteStream(&tesParams);
+		__m128 _D = _mm_load_fvector(D);
+		__m128 _d = _mm_set1_ps(d);
+		__m128 _magnitude = _mm_set1_ps(magnitude);
+		__m128 _mvel = _mm_load_fvector(m.vel);
+		_D = _mm_sub_ps(_D, _d);
+		_D = _mm_mul_ps(_D, _magnitude);
+
+		__m128 _vmo = _mm_mul_ps(_mvel, _mvel);	// _vmo = 00 | zz | yy | xx
+		__m128 _tmp = _mm_movehl_ps(_vmo, _vmo);	// _tmp = 00 | zz | 00 | zz 
+		_vmo = _mm_add_ss(_vmo, _tmp);			// _vmo = 00 | zz | yy | xx + zz
+		_tmp = _mm_unpacklo_ps(_vmo, _vmo);		// _tmp = yy | yy | xx + zz | xx + zz
+		_tmp = _mm_movehl_ps(_tmp, _tmp);		// _tmp = yy | yy | yy | yy 
+		_vmo = _mm_add_ss(_vmo, _tmp);			// _vmo = 00 | zz | yy | xx + yy + zz
+		_vmo = _mm_sqrt_ss(_vmo);					// _vmo = 00 | zz | yy | vmo
+
+		_mvel = _mm_add_ps(_mvel, _D);
+
+		__m128 _vmn = _mm_mul_ps(_mvel, _mvel);	// _vmn = 00 | zz | yy | xx
+		_tmp = _mm_movehl_ps(_vmn, _vmn);		// _tmp = 00 | zz | 00 | zz 
+		_vmn = _mm_add_ss(_vmn, _tmp);			// _vmn = 00 | zz | yy | xx + zz
+		_tmp = _mm_unpacklo_ps(_vmn, _vmn);		// _tmp = yy | yy | xx + zz | xx + zz
+		_tmp = _mm_movehl_ps(_tmp, _tmp);		// _tmp = yy | yy | yy | yy 
+		_vmn = _mm_add_ss(_vmn, _tmp);			// _vmn = 00 | zz | yy | xx + yy + zz
+		_vmn = _mm_sqrt_ss(_vmn);					// _vmn = 00 | zz | yy | vmn
+
+		_vmo = _mm_div_ss(_vmo, _vmn);			// _vmo = 00 | zz | yy | scale
+
+		_vmo = _mm_shuffle_ps(_vmo, _vmo, _MM_SHUFFLE(0, 0, 0, 0)); // _vmo = scale | scale | scale | scale
+		_mvel = _mm_mul_ps(_mvel, _vmo);
+
+		_mm_store_fvector(m.vel, _mvel);
+	}
 }
 
 #else
 
-void PATurbulence::Execute(ParticleEffect *effect, const float dt, float& tm_max)
+void PATurbulence::Execute(ParticleEffect* effect, const float dt, float& tm_max)
 {
-	if ( noise_start ) {
+	if (noise_start) {
 		noise_start = 0;
 		noise3Init();
 	};
 
-    pVector pV;
-    pVector vX;
-    pVector vY;
-    pVector vZ;
-    age		+= dt;
-    for(u32 i = 0; i < effect->p_count; i++)
-    {
-        Particle &m = effect->particles[i];
+	pVector pV;
+	pVector vX;
+	pVector vY;
+	pVector vZ;
+	age += dt;
+	for (u32 i = 0; i < effect->p_count; i++)
+	{
+		Particle& m = effect->particles[i];
 
-        pV.mad(m.pos,offset,age);
-        vX.set(pV.x+epsilon,pV.y,pV.z);
-        vY.set(pV.x,pV.y+epsilon,pV.z);
-        vZ.set(pV.x,pV.y,pV.z+epsilon);
+		pV.mad(m.pos, offset, age);
+		vX.set(pV.x + epsilon, pV.y, pV.z);
+		vY.set(pV.x, pV.y + epsilon, pV.z);
+		vZ.set(pV.x, pV.y, pV.z + epsilon);
 
-        pVector D;
-        float d	=	fractalsum3(pV, frequency, octaves);
-        D.x 	= 	(fractalsum3(vX, frequency, octaves) - d)*(float)magnitude;
-        D.y 	= 	(fractalsum3(vY, frequency, octaves) - d)*(float)magnitude;
-        D.z 	= 	(fractalsum3(vZ, frequency, octaves) - d)*(float)magnitude;
+		pVector D;
+		float d = fractalsum3(pV, frequency, octaves);
+		D.x = (fractalsum3(vX, frequency, octaves) - d) * (float)magnitude;
+		D.y = (fractalsum3(vY, frequency, octaves) - d) * (float)magnitude;
+		D.z = (fractalsum3(vZ, frequency, octaves) - d) * (float)magnitude;
 
-        float velMagOrig 	= m.vel.magnitude();
-        m.vel.add	(D);
-        float	velMagNow 	= m.vel.magnitude();
-        float	valMagScale = velMagOrig/velMagNow;
-        m.vel.mul(valMagScale);
+		float velMagOrig = m.vel.magnitude();
+		m.vel.add(D);
+		float	velMagNow = m.vel.magnitude();
+		float	valMagScale = velMagOrig / velMagNow;
+		m.vel.mul(valMagScale);
 	}
 }
 #endif
 
 
-void PATurbulence::Transform(const Fmatrix& m){}
+void PATurbulence::Transform(const Fmatrix& m) {}
 //-------------------------------------------------------------------------------------------------
 

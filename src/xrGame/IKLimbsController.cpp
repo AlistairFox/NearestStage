@@ -12,6 +12,9 @@
 //#include "ode_include.h"
 #include "characterphysicssupport.h"
 #include "../xrEngine/motion.h"
+#include "actor.h"
+#include "actor_memory.h"
+#include "visual_memory_manager.h"
 #ifdef DEBUG
 #	include "PHDebug.h"
 #endif // DEBUG
@@ -243,6 +246,8 @@ int ik_shift_object = 1;
 void CIKLimbsController::Calculate( )
 {
 	update_blend( m_legs_blend );
+	if (m_legs_blend && m_object->Visual()->dcast_PKinematicsAnimated()->LL_GetMotionDef(m_legs_blend->motionID)->marks.empty())
+		return;
 
 	Fmatrix &obj = m_object->XFORM( );
 #ifdef	DEBUG
@@ -335,6 +340,14 @@ void _stdcall CIKLimbsController:: IKVisualCallback( IKinematics* K )
 #endif
 	
 	CGameObject* O=( ( CGameObject* )K->GetUpdateCallbackParam());
+	//if (!O) return;
+	//if (O->getDestroy()) return;
+	//
+	//if (Actor() && O->cast_actor() != Actor())
+	//{
+	//	if (!Actor()->memory().visual().visible_now(O))
+	//		return;
+	//}
 	CPhysicsShellHolder*	Sh = smart_cast<CPhysicsShellHolder*>( O );
 	VERIFY( Sh );
 	CIKLimbsController* ik = Sh->character_ik_controller( );
@@ -362,11 +375,21 @@ void	CIKLimbsController:: Update						( )
 	if( ph_dbg_draw_mask1.test( phDbgIKOff ) )
 		return;
 #endif
+	if (!m_object) return;
+	if (m_object->getDestroy()) return;
+
+	if (Actor() && m_object->cast_actor() != Actor())
+	{
+		if (!Actor()->memory().visual().visible_now(m_object))
+			return;
+	}
 	IKinematicsAnimated *skeleton_animated = m_object->Visual()->dcast_PKinematicsAnimated( );
 	VERIFY( skeleton_animated );
 
 	skeleton_animated->UpdateTracks();
 	update_blend( m_legs_blend );
+	if (m_legs_blend && skeleton_animated->LL_GetMotionDef(m_legs_blend->motionID)->marks.empty())
+		return;
 
 	_pose_extrapolation.update( m_object->XFORM() );
 	xr_vector<CIKLimb>::iterator i = _bone_chains.begin(), e = _bone_chains.end();
