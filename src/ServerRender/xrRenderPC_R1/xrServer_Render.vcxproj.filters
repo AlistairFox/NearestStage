@@ -1009,7 +1009,4 @@
     </ClCompile>
     <ClCompile Include="xrServer_Render.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <Text Include="Pipeline.txt" />
-  </ItemGroup>
 </Project>

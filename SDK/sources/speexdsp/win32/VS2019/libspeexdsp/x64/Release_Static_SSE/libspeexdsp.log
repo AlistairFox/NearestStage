@@ -1,0 +1,93 @@
+﻿cl : командная строка  warning D9002: пропуск неизвестного параметра "/arch:SSE"
+  buffer.c
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\win32\config.h(8,1): warning C4005: USE_SSE: изменение макроопределения
+  (компиляция исходного файла "../../../../../SDK/sources/speexdsp/libspeexdsp/buffer.c")
+  C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\win32\config.h(8,1):
+  "USE_SSE" ранее объявлен в командной строке
+  
+  fftwrap.c
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\win32\config.h(8,1): warning C4005: USE_SSE: изменение макроопределения
+  (компиляция исходного файла "../../../../../SDK/sources/speexdsp/libspeexdsp/fftwrap.c")
+  C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\win32\config.h(8,1):
+  "USE_SSE" ранее объявлен в командной строке
+  
+  filterbank.c
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\win32\config.h(8,1): warning C4005: USE_SSE: изменение макроопределения
+  (компиляция исходного файла "../../../../../SDK/sources/speexdsp/libspeexdsp/filterbank.c")
+  C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\win32\config.h(8,1):
+  "USE_SSE" ранее объявлен в командной строке
+  
+  jitter.c
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\win32\config.h(8,1): warning C4005: USE_SSE: изменение макроопределения
+  (компиляция исходного файла "../../../../../SDK/sources/speexdsp/libspeexdsp/jitter.c")
+  C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\win32\config.h(8,1):
+  "USE_SSE" ранее объявлен в командной строке
+  
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\libspeexdsp\jitter.c(445,20): warning C4018: <: несоответствие типов со знаком и без знака
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\libspeexdsp\jitter.c(692,20): warning C4018: <: несоответствие типов со знаком и без знака
+  kiss_fft.c
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\win32\config.h(8,1): warning C4005: USE_SSE: изменение макроопределения
+  (компиляция исходного файла "../../../../../SDK/sources/speexdsp/libspeexdsp/kiss_fft.c")
+  C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\win32\config.h(8,1):
+  "USE_SSE" ранее объявлен в командной строке
+  
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\libspeexdsp\kiss_fft.c(311,34): warning C4267: +=: преобразование из "size_t" в "int"; возможна потеря данных
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\libspeexdsp\kiss_fft.c(416,73): warning C4267: функция: преобразование из "size_t" в "int"; возможна потеря данных
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\libspeexdsp\kiss_fft.c(471,46): warning C4267: функция: преобразование из "size_t" в "int"; возможна потеря данных
+  kiss_fftr.c
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\win32\config.h(8,1): warning C4005: USE_SSE: изменение макроопределения
+  (компиляция исходного файла "../../../../../SDK/sources/speexdsp/libspeexdsp/kiss_fftr.c")
+  C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\win32\config.h(8,1):
+  "USE_SSE" ранее объявлен в командной строке
+  
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\libspeexdsp\kiss_fftr.c(48,47): warning C4267: функция: преобразование из "size_t" в "int"; возможна потеря данных
+  mdf.c
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\win32\config.h(8,1): warning C4005: USE_SSE: изменение макроопределения
+  (компиляция исходного файла "../../../../../SDK/sources/speexdsp/libspeexdsp/mdf.c")
+  C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\win32\config.h(8,1):
+  "USE_SSE" ранее объявлен в командной строке
+  
+  preprocess.c
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\win32\config.h(8,1): warning C4005: USE_SSE: изменение макроопределения
+  (компиляция исходного файла "../../../../../SDK/sources/speexdsp/libspeexdsp/preprocess.c")
+  C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\win32\config.h(8,1):
+  "USE_SSE" ранее объявлен в командной строке
+  
+  resample.c
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\win32\config.h(8,1): warning C4005: USE_SSE: изменение макроопределения
+  (компиляция исходного файла "../../../../../SDK/sources/speexdsp/libspeexdsp/resample.c")
+  C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\win32\config.h(8,1):
+  "USE_SSE" ранее объявлен в командной строке
+  
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\libspeexdsp\resample_sse.h(45,14): warning C4018: <: несоответствие типов со знаком и без знака
+  (компиляция исходного файла "../../../../../SDK/sources/speexdsp/libspeexdsp/resample.c")
+  
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\libspeexdsp\resample_sse.h(62,12): warning C4018: <: несоответствие типов со знаком и без знака
+  (компиляция исходного файла "../../../../../SDK/sources/speexdsp/libspeexdsp/resample.c")
+  
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\libspeexdsp\resample_sse.h(84,14): warning C4018: <: несоответствие типов со знаком и без знака
+  (компиляция исходного файла "../../../../../SDK/sources/speexdsp/libspeexdsp/resample.c")
+  
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\libspeexdsp\resample_sse.h(110,12): warning C4018: <: несоответствие типов со знаком и без знака
+  (компиляция исходного файла "../../../../../SDK/sources/speexdsp/libspeexdsp/resample.c")
+  
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\libspeexdsp\resample.c(674,20): warning C4018: <: несоответствие типов со знаком и без знака
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\libspeexdsp\resample.c(946,21): warning C4018: <: несоответствие типов со знаком и без знака
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\libspeexdsp\resample.c(949,20): warning C4018: <: несоответствие типов со знаком и без знака
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\libspeexdsp\resample.c(1001,19): warning C4018: <: несоответствие типов со знаком и без знака
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\libspeexdsp\resample.c(1008,19): warning C4018: <: несоответствие типов со знаком и без знака
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\libspeexdsp\resample.c(1018,16): warning C4018: <: несоответствие типов со знаком и без знака
+  scal.c
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\win32\config.h(8,1): warning C4005: USE_SSE: изменение макроопределения
+  (компиляция исходного файла "../../../../../SDK/sources/speexdsp/libspeexdsp/scal.c")
+  C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\win32\config.h(8,1):
+  "USE_SSE" ранее объявлен в командной строке
+  
+  smallft.c
+C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\win32\config.h(8,1): warning C4005: USE_SSE: изменение макроопределения
+  (компиляция исходного файла "../../../../../SDK/sources/speexdsp/libspeexdsp/smallft.c")
+  C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\win32\config.h(8,1):
+  "USE_SSE" ранее объявлен в командной строке
+  
+E:\Programms\Визуальная Хуйня 2022\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(1574,5): warning MSB8012: TargetPath(C:\GitHubRepos\NearestSource\NearestStage\src\x64\Release_Static_SSE\libspeexdsp.lib) не соответствует значению свойства выходного файла (C:\GitHubRepos\NearestSource\NearestStage\SDK\sources\speexdsp\lib\libspeexdsp.lib) для Library. Это может привести к неправильной сборке проекта. Чтобы исправить это, убедитесь, что значения свойств $(OutDir), $(TargetName) и $(TargetExt) соответствуют значению, указанному в %(Lib.OutputFile).
+  libspeexdsp.vcxproj -> C:\GitHubRepos\NearestSource\NearestStage\src\x64\Release_Static_SSE\libspeexdsp.lib
