@@ -2170,14 +2170,32 @@ public:
 
 	virtual void		Execute(LPCSTR arguments)
 	{
-		if (pSettings->section_exist(arguments))
+		string256 tmp, sect;
+		int numb = 0;
+		exclude_raid_from_args(arguments, tmp, sizeof(tmp));
+
+		sscanf(tmp, "%s %d", &sect, &numb);
+		if (numb == 0)
+			numb++;
+
+		if (numb > 100)
 		{
-			NET_Packet		P;
-			P.w_begin(M_REMOTE_CONTROL_CMD);
-			string128 str;
-			xr_sprintf(str, "sv_spawn_to_player_inv %u %s", Game().local_svdpnid.value(), arguments);
-			P.w_stringZ(str);
-			Level().Send(P, net_flags(TRUE, TRUE));
+			Msg("# ERROR: too many items!! max count == 100");
+			numb = 100;
+		}
+
+		if (pSettings->section_exist(sect))
+		{
+			for (int i = 0; i < numb; i++)
+			{
+				NET_Packet		P;
+				P.w_begin(M_REMOTE_CONTROL_CMD);
+				string128 str;
+				xr_sprintf(str, "sv_spawn_to_player_inv %u %s", Game().local_svdpnid.value(), sect);
+				P.w_stringZ(str);
+				Level().Send(P, net_flags(TRUE, TRUE));
+			}
+			Msg("- Complete! Spawn: [%u] Items: [%s]", numb, sect);
 		}
 		else
 		{
@@ -3655,7 +3673,6 @@ void register_mp_console_commands()
 	CMD1(CCC_GSpawn,				"g_spawn"				);
 	CMD1(CCC_GSpawnToInventorySelf,	"g_spawn_to_self"	);
 	CMD1(CCC_GSpawnToInventory,		"g_spawn_to_target"		);
-	CMD1(CCC_GSpawnToInventorySelfx100, "g_spawn_to_self_some");
 
 	CMD1(CCC_WeatherSync, "weather_invalidate");
 
