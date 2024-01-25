@@ -455,6 +455,9 @@ void CMainMenu::StartStopMenu(CUIDialogWnd* pDialog, bool bDoHideIndicators)
 	CDialogHolder::StartStopMenu(pDialog, bDoHideIndicators);
 }*/
 
+extern u32 download_progress;
+extern u32 download_progress_max;
+extern bool need_draw_download;
 //pureFrame
 void CMainMenu::OnFrame()
 {
@@ -466,6 +469,17 @@ void CMainMenu::OnFrame()
 	}
 	CDialogHolder::OnFrame		();
 
+	if (need_draw_download)
+	{
+			UI().Font().pFontStat->SetInterval(1, 0.2);
+			UI().Font().pFontStat->SizeOf_(3.5f);
+			UI().Font().pFontStat->OutSet(10.f, 10.f);
+			UI().Font().pFontStat->SetColor(D3DCOLOR_XRGB(255, 0, 0));
+			if (download_progress_max == 0)
+				UI().Font().pFontStat->OutNext("Downloading: Connection");
+			else
+				UI().Font().pFontStat->OutNext("Downloading: %u/%u", download_progress, download_progress_max);
+	}
 
 	//screenshot stuff
 	if(m_Flags.test(flGameSaveScreenshot) && Device.dwFrame > m_screenshotFrame  )
@@ -661,6 +675,17 @@ void	CMainMenu::OnSessionTerminate				(LPCSTR reason)
 	}
 	
 	m_pMB_ErrDlgs[SessionTerminate]->SetText(st.translate(text).c_str());
+	SetErrorDialog(CMainMenu::SessionTerminate);
+}
+
+void CMainMenu::MainMenuMessage(LPCSTR reason)
+{
+	if (m_NeedErrDialog == SessionTerminate && (Device.dwTimeGlobal - m_start_time) < 8000)
+		return;
+
+	m_start_time = Device.dwTimeGlobal;
+
+	m_pMB_ErrDlgs[SessionTerminate]->SetText(reason);
 	SetErrorDialog(CMainMenu::SessionTerminate);
 }
 

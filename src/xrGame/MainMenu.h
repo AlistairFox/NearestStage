@@ -129,6 +129,7 @@ protected:
 	xr_vector<CUIMessageBoxEx*>	m_pMB_ErrDlgs;
 	bool			ReloadUI						();
 public:
+	CUIMessageBoxEx* m_messagebox_ok;
 	u32				m_deactivated_frame;
 	bool			m_activatedScreenRatio;
 	virtual void	DestroyInternal					(bool bForce);
@@ -183,6 +184,7 @@ public:
 	void xr_stdcall OnDownloadMPMap					(CUIWindow*, void*);
 
 	void			OnSessionTerminate				(LPCSTR reason);
+	void			MainMenuMessage(LPCSTR reason);
 	void			OnLoadError						(LPCSTR module);
 	void			OnDownloadPatchError			();
 	void			OnDownloadPatchSuccess			();

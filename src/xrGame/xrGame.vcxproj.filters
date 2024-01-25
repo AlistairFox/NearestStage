@@ -2539,6 +2539,9 @@
     <Filter Include="Chat">
       <UniqueIdentifier>{14d8731e-4dd7-4f88-9ad8-5bf0729b93ae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="HTTP">
+      <UniqueIdentifier>{1c36d6c4-d1cd-4781-96e6-b0f09b83ad78}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mt_config.h">
@@ -7500,6 +7503,9 @@
     <ClInclude Include="UIPdaChat.h">
       <Filter>Chat</Filter>
     </ClInclude>
+    <ClInclude Include="HTTPURLmon.h">
+      <Filter>HTTP</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -11236,6 +11242,9 @@
     </ClCompile>
     <ClCompile Include="xrServer_process_event_chatpda.cpp">
       <Filter>Core\Server\ServerProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="HTTPURLmon.cpp">
+      <Filter>HTTP</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

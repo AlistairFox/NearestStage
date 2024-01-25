@@ -1788,6 +1788,7 @@
     <ClInclude Include="UI_AnimMode.h" />
     <ClInclude Include="ui_base.h" />
     <ClInclude Include="ui_defs.h" />
+    <ClInclude Include="HTTPURLmon.h" />
     <ClInclude Include="UsableScriptObject.h" />
     <ClInclude Include="vertex_allocator_fixed.h" />
     <ClInclude Include="vertex_allocator_fixed_inline.h" />
@@ -4640,6 +4641,7 @@
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
+    <ClCompile Include="HTTPURLmon.cpp" />
     <ClCompile Include="UsableScriptObject.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">pch_script.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch_script.h</PrecompiledHeaderFile>
