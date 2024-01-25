@@ -110,6 +110,7 @@ extern int save_time = 60;
 extern int save_time2 = 60;
 extern int save_time3 = 600;
 extern int box_respawn_time = 100000;
+extern BOOL binar_save = FALSE;
 
 ENGINE_API extern float	g_console_sensitive;
 
@@ -2046,6 +2047,7 @@ CMD4(CCC_Integer,			"hit_anims_tune",						&tune_hit_anims,		0, 1);
 
 	CMD4(CCC_Integer, "r__off_shadows_of_lamps", &off_hanging_lamp_shdw, 0, 1);
 	CMD4(CCC_Integer, "box_respawn_time", &box_respawn_time, 1, 1000000000);
+	CMD4(CCC_Integer, "sv_binnar_save", &binar_save, 0, 1);
 
 
 	

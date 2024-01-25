@@ -14,6 +14,15 @@ protected:
 protected:
 
 public:
+
+	enum ActorChunks
+	{
+		ACTOR_STATS_CHUNK = 0, 
+		ACTOR_DEVICES_CHUNK = 1,
+		ACTOR_INV_ITEMS_CHUNK = 2,
+		ACTOR_POS = 3,
+		ACTOR_TEAM = 4
+	};
 	u32								oldTime = 0;
 
 	struct outfits
@@ -111,9 +120,11 @@ public:
 	virtual		void				RespawnPlayer(ClientID id_who, bool NoSpectator);
 
 	virtual     void				SavePlayer(game_PlayerState* ps, CInifile* file);
+	virtual		void				BinnarSavePlayer(game_PlayerState* ps, string_path& filepath);
 	virtual     void				SavePlayerOutfits(game_PlayerState* ps, CInifile* outfsFile);
 	virtual     void				SavePlayerDetectors(game_PlayerState* ps, CInifile* detsFile);
 	virtual     bool				LoadPlayer(game_PlayerState* ps, CInifile* file);
+	virtual		bool				BinnarLoadPlayer(game_PlayerState* ps, string_path& filepath);
 	virtual     void				LoadPlayerOtfits(game_PlayerState* ps, CInifile* outfsFile);
 	virtual     void				LoadPlayerDetectors(game_PlayerState* ps, CInifile* detsFile);
 	virtual		bool				HasSaveFile(game_PlayerState* ps);
@@ -123,4 +134,7 @@ public:
 
 	virtual		void				assign_RP(CSE_Abstract* E, game_PlayerState* ps_who);
 	virtual		bool				load_position_RP(game_PlayerState* ps, Fvector& pos, Fvector& angle);
+
 };
+
+extern BOOL binar_save;

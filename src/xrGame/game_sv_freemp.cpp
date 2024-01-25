@@ -397,20 +397,36 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 
 	if (ps && !ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
 	{
-		string_path file_name;
-		string32 filename;
-		xr_strcpy(filename, ps->getName());
-		xr_strcat(filename, ".ltx");
-
-		FS.update_path(file_name, "$mp_saves_players$", filename);
-
-		Msg("read file path = %s", file_name);
-
-		CInifile* file = xr_new<CInifile>(file_name, true);
-
 		SpawnItemToActor(ps->GameID, "wpn_binoc");
-		LoadPlayer(ps, file);
-		xr_delete  (file);
+		if (binar_save)
+		{
+			string_path file_name_path;
+			string32 file_name;
+			xr_strcpy(file_name, ps->getName());
+			xr_strcat(file_name, ".binsave");
+			FS.update_path(file_name_path, "$mp_saves_players_bin$", file_name);
+			if (FS.exist(file_name_path))
+			{
+				Msg("read file path = %s", file_name);
+				BinnarLoadPlayer(ps, file_name_path);
+			}
+		}
+		else
+		{
+			string_path file_name;
+			string32 filename;
+			xr_strcpy(filename, ps->getName());
+			xr_strcat(filename, ".ltx");
+
+			FS.update_path(file_name, "$mp_saves_players$", filename);
+
+			Msg("read file path = %s", file_name);
+
+			CInifile* file = xr_new<CInifile>(file_name, true);
+
+			LoadPlayer(ps, file);
+			xr_delete(file);
+		}
 				
  		ps->setFlag(GAME_PLAYER_MP_SAVE_LOADED);
  	}
@@ -816,19 +832,31 @@ void game_sv_freemp::Update()
 				if (!actor->g_Alive())
 					return;
 
-				string_path file_name;
-				string32 filename;
-				xr_strcpy(filename, player.second->getName());
-				xr_strcat(filename, ".ltx");
 
-				FS.update_path(file_name, "$mp_saves_players$", filename);
+				if (binar_save)
+				{
+					string_path file_name_path;
+					string32 file_name;
+					xr_strcpy(file_name, player.second->getName());
+					xr_strcat(file_name, ".binsave");
+					FS.update_path(file_name_path, "$mp_saves_players_bin$", file_name);
+					BinnarSavePlayer(player.second, file_name_path);
+				}
+				else
+				{
+					string_path file_name;
+					string32 filename;
+					xr_strcpy(filename, player.second->getName());
+					xr_strcat(filename, ".ltx");
 
-				CInifile* file = xr_new<CInifile>(file_name, false, false);
-				SavePlayer(player.second, file);
-				file->save_as(file_name);
+					FS.update_path(file_name, "$mp_saves_players$", filename);
+					CInifile* file = xr_new<CInifile>(file_name, false, false);
+					SavePlayer(player.second, file);
+					file->save_as(file_name);
+					xr_delete(file);
+				}
 				SavePlayerOutfits(player.second, nullptr);
 				SavePlayerDetectors(player.second, nullptr);
-				xr_delete(file);
 			}
 		}
 	}
