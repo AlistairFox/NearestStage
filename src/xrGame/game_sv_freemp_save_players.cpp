@@ -194,6 +194,7 @@ void game_sv_freemp::BinnarSavePlayer(game_PlayerState* ps, string_path& filepat
 				writer->w_u8(0); // check upgrades
 		}
 		writer->close_chunk();
+		FS.w_close(writer);
 	}
 }
 
@@ -292,7 +293,6 @@ void game_sv_freemp::SavePlayer(game_PlayerState* ps, CInifile* file)
 			file->w_fvector3("actor_position", "pos", actor_cse->o_Position);
 			file->w_fvector3("actor_position", "angle", actor_cse->o_Angle);
 		}
-
 	}
 
 }
