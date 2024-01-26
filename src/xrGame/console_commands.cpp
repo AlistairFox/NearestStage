@@ -83,8 +83,6 @@ extern	int		x_m_z;
 extern	BOOL	net_cl_inputguaranteed	;
 extern	BOOL	net_sv_control_hit		;
 
-extern BOOL ismycar = false;
-
 extern	int		g_dwInputUpdateDelta	;
 #ifdef DEBUG
 extern	BOOL	g_ShowAnimationInfo		;
@@ -1842,7 +1840,6 @@ void CCC_RegisterCommands()
 	CMD1(CCC_GameDifficulty,	"g_game_difficulty"		);
 
 	CMD3(CCC_Mask,				"g_backrun",			&psActorFlags,	AF_RUN_BACKWARD);
-	CMD4(CCC_Integer, "alife_switch", &alife_on, 0, 1);
 
 	// alife
 #ifdef DEBUG
@@ -2034,21 +2031,23 @@ CMD4(CCC_Integer,			"hit_anims_tune",						&tune_hit_anims,		0, 1);
 	CMD3(CCC_Mask,		"g_dynamic_music",		&psActorFlags,	AF_DYNAMIC_MUSIC);
 	CMD3(CCC_Mask,		"g_important_save",		&psActorFlags,	AF_IMPORTANT_SAVE);
 
-	CMD4(CCC_Integer, "IsMyCar", &ismycar, 0, 1);
-
 	//Alundaio
 	CMD3(CCC_Mask, "g_spawn_antifreeze", &psActorFlags, AF_SPAWN_ANTIFREEZE);
 	//-Alundaio
-	CMD4(CCC_Integer, "savetime_players", &save_time, 1, 1000000);
-	CMD4(CCC_Integer, "savetime_inventory_box", &save_time2, 1, 1000000);
-	CMD4(CCC_Integer, "savetime_server_time", &save_time3, 1, 10000000);
 	CMD4(CCC_Float, "r__lamp_bright", &lamp_bright, 0.5f, 10.0f);
 
 
 	CMD4(CCC_Integer, "r__off_shadows_of_lamps", &off_hanging_lamp_shdw, 0, 1);
-	CMD4(CCC_Integer, "box_respawn_time", &box_respawn_time, 1, 1000000000);
-	CMD4(CCC_Integer, "sv_binnar_save", &binar_save, 0, 1);
 
+	if (g_dedicated_server)
+	{
+		CMD4(CCC_Integer, "alife_switch", &alife_on, 0, 1);
+		CMD4(CCC_Integer, "savetime_players", &save_time, 1, 1000000);
+		CMD4(CCC_Integer, "savetime_inventory_box", &save_time2, 1, 1000000);
+		CMD4(CCC_Integer, "savetime_server_time", &save_time3, 1, 10000000);
+		CMD4(CCC_Integer, "box_respawn_time", &box_respawn_time, 1, 1000000000);
+		CMD4(CCC_Integer, "sv_binnar_save", &binar_save, 0, 1);
+	}
 
 	
 #ifdef DEBUG

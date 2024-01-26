@@ -3740,6 +3740,7 @@ void register_mp_console_commands()
 	CMD4(CCC_Integer,	"g_eventdelay",			&g_dwEventDelay,	0,	1000);
 	CMD4(CCC_Integer,	"g_corpsenum",			(int*)&g_dwMaxCorpses,		0,	100);
 
+
 	CMD4(CCC_Integer, "g_alife_sheduler", &Alife_Sheduler, FALSE, TRUE);
 
 	CMD1(CCC_KickPlayerByName,	"sv_kick"					);	//saved for backward compatibility
@@ -3782,7 +3783,7 @@ void register_mp_console_commands()
 	
 	CMD1(CCC_ChangeGameType,		"sv_changegametype"			);
 	CMD1(CCC_ChangeLevel,			"sv_changelevel"			);
-	CMD1(CCC_ChangeLevelGameType,	"sv_changelevelgametype"	);	
+	CMD1(CCC_ChangeLevelGameType,	"sv_changelevelgametype"	);
 
 	CMD1(CCC_AddMap,		"sv_addmap"				);	
 	CMD1(CCC_ListMaps,		"sv_listmaps"				);	
