@@ -2794,7 +2794,14 @@
     <ClCompile Include="embedded_editor\embedded_editor_weather.cpp" />
     <ClCompile Include="embedded_editor_npc.cpp" />
     <ClCompile Include="game_cl_roleplay.cpp" />
+    <ClCompile Include="game_sv_freemp_death_items_save.cpp" />
+    <ClCompile Include="game_sv_freemp_dynamic_inv_box_respawn.cpp" />
+    <ClCompile Include="game_sv_freemp_dynamic_music.cpp" />
+    <ClCompile Include="game_sv_freemp_dynamic_weather.cpp" />
+    <ClCompile Include="game_sv_freemp_save_inv_boxes.cpp" />
+    <ClCompile Include="game_sv_freemp_save_inv_boxes_bin.cpp" />
     <ClCompile Include="game_sv_freemp_save_players.cpp" />
+    <ClCompile Include="game_sv_freemp_save_players_bin.cpp" />
     <ClCompile Include="game_sv_freemp_trade.cpp" />
     <ClCompile Include="game_sv_roleplay.cpp" />
     <ClCompile Include="game_sv_roleplay_drop_items.cpp" />

@@ -15,31 +15,7 @@ protected:
 
 public:
 
-	enum ActorChunks
-	{
-		ACTOR_STATS_CHUNK = 0, 
-		ACTOR_DEVICES_CHUNK = 1,
-		ACTOR_INV_ITEMS_CHUNK = 2,
-		ACTOR_POS = 3,
-		ACTOR_TEAM = 4
-	};
 	u32								oldTime = 0;
-
-	struct outfits
-	{
-		LPCSTR player_name;
-		LPCSTR outfit_name;
-		float outfit_cond;
-	};
-	xr_vector<outfits> save_outfits;
-
-	struct detectors
-	{
-		LPCSTR player_name;
-		LPCSTR detector_name;
-		float detector_cond;
-	};
-	xr_vector<detectors> save_detectors;
 
 	struct inventory_boxes
 	{
@@ -83,7 +59,6 @@ public:
 
 	virtual		void				OnEvent(NET_Packet &tNetPacket, u16 type, u32 time, ClientID sender);
 
-	bool		need_change_weather = false;
 	virtual		void				Update();
 	virtual		ALife::_TIME_ID		GetStartGameTime();
 	virtual		ALife::_TIME_ID		GetGameTime();
@@ -93,17 +68,39 @@ public:
 	virtual		BOOL				OnTouch(u16 eid_who, u16 eid_what, BOOL bForced = FALSE);
 
 	virtual		void				on_death(CSE_Abstract* e_dest, CSE_Abstract* e_src);
+
+	virtual		void				OnPlayerTrade(NET_Packet &P, ClientID const & clientID);
+	virtual		void				OnTransferMoney(NET_Packet &P, ClientID const & clientID);
+
+	virtual		void				RespawnPlayer(ClientID id_who, bool NoSpectator);
+
+
+
+	///////////Dynamic Weather ////////////////
+	virtual void DynamicWeatherUpdate();
+	bool		need_change_weather = false;
+	///////////Dynamic Weather /////////////
+
+
+	//////////Dynamic Box Respawn //////////////
 	CInifile* spawn_trash;
 	CInifile* spawn_boosters;
 	CInifile* spawn_weapons_devices;
 	CInifile* spawn_ammo;
 	CInifile* spawn_explosive;
 	CInifile* spawn_weapons;
-	CInifile* Music;
-	virtual void	SpawnInvBoxesItems(CSE_ALifeInventoryBox *box);
-	virtual void	OnStartSpawnInvBoxesItems(CSE_ALifeInventoryBox* box);
+	virtual void				   SpawnInvBoxesItems(CSE_ALifeInventoryBox* box);
+	virtual void				   OnStartSpawnInvBoxesItems(CSE_ALifeInventoryBox* box);
+								   
+	virtual void				   DynamicBoxFileCreate();
+	virtual void				   DynamicBoxUpdate();
+	///////////Dynamic Box Respawn //////////////
 
-	virtual void MusicPlay(CSE_ALifeObjectPhysic* obj,int pass, int obj_num);
+
+	//////Dynamic Music /////////////
+	virtual void				   DynamicMusicUpdate();
+	virtual void				   DynamicMusicFileCreate();
+	virtual void				   MusicPlay(CSE_ALifeObjectPhysic* obj, int pass, int obj_num);
 	int numb = 0;
 	int obj_count = 4;
 	int	MusicCount;
@@ -114,27 +111,77 @@ public:
 	bool first_play = true;
 	bool need_stop_music = false;
 	u32 stop_timer = 0;
-	virtual		void				OnPlayerTrade(NET_Packet &P, ClientID const & clientID);
-	virtual		void				OnTransferMoney(NET_Packet &P, ClientID const & clientID);
+	CInifile* Music;
+	///////Dynamic Music /////////////
 
-	virtual		void				RespawnPlayer(ClientID id_who, bool NoSpectator);
 
-	virtual     void				SavePlayer(game_PlayerState* ps, CInifile* file);
-	virtual		void				BinnarSavePlayer(game_PlayerState* ps, string_path& filepath);
-	virtual     void				SavePlayerOutfits(game_PlayerState* ps, CInifile* outfsFile);
-	virtual     void				SavePlayerDetectors(game_PlayerState* ps, CInifile* detsFile);
-	virtual     bool				LoadPlayer(game_PlayerState* ps, CInifile* file);
-	virtual		bool				BinnarLoadPlayer(game_PlayerState* ps, string_path& filepath);
-	virtual     void				LoadPlayerOtfits(game_PlayerState* ps, CInifile* outfsFile);
-	virtual     void				LoadPlayerDetectors(game_PlayerState* ps, CInifile* detsFile);
-	virtual		bool				HasSaveFile(game_PlayerState* ps);
+	///////Binnar InvBox Save ////////
+	enum InvBoxChunks
+	{
+		INVBOX_ITEMS_CHUNK = 0
+	};
+	virtual		void				BinnarSaveInvBox(CSE_ALifeInventoryBox* box, string_path& filepath);
+	virtual		void				BinnarLoadInvBox(CSE_ALifeInventoryBox* box, string_path& filepath);
+	///////Binnar InvBox Save ////////
 
+
+	///////File InvBox Save ////////
 	virtual		void				SaveInvBox(CSE_ALifeInventoryBox* box, CInifile* file);
 	virtual		void				LoadInvBox(CSE_ALifeInventoryBox* box, CInifile* file);
+	///////File InvBox Save ////////
 
+
+	///////Binnar Player Save ////////
+	enum ActorChunks
+	{
+		ACTOR_STATS_CHUNK = 0,
+		ACTOR_DEVICES_CHUNK = 1,
+		ACTOR_INV_ITEMS_CHUNK = 2,
+		ACTOR_POS = 3,
+		ACTOR_TEAM = 4
+	};
+	virtual		void				BinnarSavePlayer(game_PlayerState* ps, string_path& filepath);
+	virtual		bool				BinnarLoadPlayer(game_PlayerState* ps, string_path& filepath);
+	virtual		bool				HasBinnarSaveFile(game_PlayerState* ps);
+	virtual		bool				load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos, Fvector& angle);
+	///////Binnar Player Save ////////
+
+
+	///////File Player Save ////////
+	virtual		bool				HasSaveFile(game_PlayerState* ps);
 	virtual		void				assign_RP(CSE_Abstract* E, game_PlayerState* ps_who);
 	virtual		bool				load_position_RP(game_PlayerState* ps, Fvector& pos, Fvector& angle);
+	virtual     void				SavePlayer(game_PlayerState* ps, CInifile* file);
+	virtual     bool				LoadPlayer(game_PlayerState* ps, CInifile* file);
+	///////File Player Save ///////
 
+
+	//////////Death items save ///////
+	struct outfits
+	{
+		LPCSTR player_name;
+		LPCSTR outfit_name;
+		float outfit_cond;
+	};
+	xr_vector<outfits> save_outfits;
+
+	struct detectors
+	{
+		LPCSTR player_name;
+		LPCSTR detector_name;
+		float detector_cond;
+	};
+	xr_vector<detectors> save_detectors;
+	virtual     void				SavePlayerOutfits(game_PlayerState* ps, CInifile* outfsFile);
+	virtual     void				SavePlayerDetectors(game_PlayerState* ps, CInifile* detsFile);
+	virtual     void				LoadPlayerOtfits(game_PlayerState* ps, CInifile* outfsFile);
+	virtual     void				LoadPlayerDetectors(game_PlayerState* ps, CInifile* detsFile);
+	////////Death items save ////////
 };
 
 extern BOOL binar_save;
+extern int save_time;
+extern int save_time2;
+extern int save_time3;
+extern int box_respawn_time;
+extern BOOL		set_next_music;

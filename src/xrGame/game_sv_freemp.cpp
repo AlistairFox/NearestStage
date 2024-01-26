@@ -6,41 +6,20 @@
 #include "actor_mp_client.h"
 #include "alife_time_manager.h"
 #include "CustomOutfit.h"
+#include "Actor.h"
+#include <ui/UIInventoryUtilities.h>
 
 BOOL g_SV_IsVipeMode = FALSE;
 int g_sv_server_goodwill = 0;
-
 game_sv_freemp::game_sv_freemp()
 	:pure_relcase(&game_sv_freemp::net_Relcase)
 {
 	m_type = eGameIDFreeMp;
 
-	if (g_SV_IsVipeMode) 
-	{
-		
-	}
+	if (g_SV_IsVipeMode) {}
 
-	string_path spawn_trash_path, spawn_boosters_path, spawn_weapons_devices_path,
-		spawn_ammo_path, spawn_explosive_path, spawn_weapons_path;
-
-	FS.update_path(spawn_trash_path, "$game_config$", "alife\\spawn_trash.ltx");
-	FS.update_path(spawn_boosters_path, "$game_config$", "alife\\spawn_boosters.ltx");
-	FS.update_path(spawn_weapons_devices_path, "$game_config$", "alife\\spawn_weapons_devices.ltx");
-	FS.update_path(spawn_ammo_path, "$game_config$", "alife\\spawn_ammo.ltx");
-	FS.update_path(spawn_explosive_path, "$game_config$", "alife\\spawn_explosive.ltx");
-	FS.update_path(spawn_weapons_path, "$game_config$", "alife\\spawn_weapons.ltx");
-
-	spawn_trash = xr_new<CInifile>(spawn_trash_path, true, true);
-	spawn_boosters = xr_new<CInifile>(spawn_boosters_path, true, true);
-	spawn_weapons_devices = xr_new<CInifile>(spawn_weapons_devices_path, true, true);
-	spawn_ammo = xr_new<CInifile>(spawn_ammo_path, true, true);
-	spawn_explosive = xr_new<CInifile>(spawn_explosive_path, true, true);
-	spawn_weapons = xr_new<CInifile>(spawn_weapons_path, true, true);
-
-	string_path music_path;
-	FS.update_path(music_path, "$game_config$", "alife\\music.ltx");
-	Music = xr_new<CInifile>(music_path, true, true);
-	MusicCount = Music->r_u8("music", "sound_count");
+	DynamicBoxFileCreate();
+	DynamicMusicFileCreate();
 }
 
 game_sv_freemp::~game_sv_freemp()
@@ -195,13 +174,27 @@ void game_sv_freemp::OnPlayerConnectFinished(ClientID id_who)
 		
 		if (!g_SV_IsVipeMode) 
 		{
-			if (HasSaveFile(xrCData->ps))
+			if (binar_save)
 			{
-				xrCData->ps->resetFlag(GAME_PLAYER_MP_SAVE_LOADED);
+				if (HasBinnarSaveFile(xrCData->ps))
+				{
+					xrCData->ps->resetFlag(GAME_PLAYER_MP_SAVE_LOADED);
+				}
+				else
+				{
+					xrCData->ps->setFlag(GAME_PLAYER_MP_SAVE_LOADED);
+				}
 			}
 			else
 			{
-				xrCData->ps->setFlag(GAME_PLAYER_MP_SAVE_LOADED);
+				if (HasSaveFile(xrCData->ps))
+				{
+					xrCData->ps->resetFlag(GAME_PLAYER_MP_SAVE_LOADED);
+				}
+				else
+				{
+					xrCData->ps->setFlag(GAME_PLAYER_MP_SAVE_LOADED);
+				}
 			}
 		}
 		else
@@ -539,271 +532,6 @@ void game_sv_freemp::OnEvent(NET_Packet &P, u16 type, u32 time, ClientID sender)
 	};
 }
 
-void game_sv_freemp::SpawnInvBoxesItems(CSE_ALifeInventoryBox* box)
-{
-	LPCSTR boxfile = box->m_ini_string.c_str();
-	CInifile					ini(
-		&IReader(
-			(void*)(boxfile),
-			xr_strlen(boxfile)
-		),
-		FS.get_path("$game_config$")->m_Path
-	);
-
-	CInifile* tmp = NULL;
-
-	if (ini.section_exist("spawn_trash"))
-	{
-		tmp = spawn_trash;
-	}
-	else if (ini.section_exist("spawn_boosters"))
-	{
-		tmp = spawn_boosters;
-	}
-	else if (ini.section_exist("spawn_weapons_devices"))
-	{
-		tmp = spawn_weapons_devices;
-	}
-	else if (ini.section_exist("spawn_ammo"))
-	{
-		tmp = spawn_ammo;
-	}
-	else if (ini.section_exist("spawn_explosive"))
-	{
-		tmp = spawn_explosive;
-	}
-	else if (ini.section_exist("spawn_weapons"))
-	{
-		tmp = spawn_weapons;
-	}
-
-	if (tmp != nullptr)
-	{
-		LPCSTR					N, V;
-		float					p;
-
-		if (tmp->section_exist("spawn"))
-		{
-			for (u32 k = 0, j; tmp->r_line("spawn", k, &N, &V); k++)
-			{
-				VERIFY(xr_strlen(N));
-
-				float f_cond = 1.0f;
-				bool bScope = false;
-				bool bSilencer = false;
-				bool bLauncher = false;
-
-
-				int cur_scope = 0;
-
-				j = 1;
-				p = 1.f;
-
-				if (V && xr_strlen(V)) {
-					string64			buf;
-					j = atoi(_GetItem(V, 0, buf));
-					if (!j)		j = 1;
-
-					bScope = (NULL != strstr(V, "scope"));
-					bSilencer = (NULL != strstr(V, "silencer"));
-					bLauncher = (NULL != strstr(V, "launcher"));
-					//probability
-					if (NULL != strstr(V, "prob="))
-						p = (float)atof(strstr(V, "prob=") + 5);
-					if (fis_zero(p)) p = 1.0f;
-					if (NULL != strstr(V, "cond="))
-						f_cond = (float)atof(strstr(V, "cond=") + 5);
-					if (nullptr != strstr(V, "scope="))
-						cur_scope = atoi(strstr(V, "scope=") + 6);
-				}
-				for (u32 i = 0; i < j; ++i) {
-					if (Random.randF(1.f) < p) {
-						//CSE_Abstract* E = alife().spawn_item(N, box->o_Position, box->m_tNodeID, box->m_tGraphID, box->ID);
-						CSE_Abstract* E = spawn_begin(N);
-						E->ID_Parent = box->ID;
-
-						//подсоединить аддоны к оружию, если включены соответствующие флажки
-						CSE_ALifeItemWeapon* W = smart_cast<CSE_ALifeItemWeapon*>(E);
-						if (W) {
-							if (W->m_scope_status == ALife::eAddonAttachable)
-							{
-								W->m_addon_flags.set(CSE_ALifeItemWeapon::eWeaponAddonScope, bScope);
-								W->m_cur_scope = cur_scope;
-							}
-							if (W->m_silencer_status == ALife::eAddonAttachable)
-								W->m_addon_flags.set(CSE_ALifeItemWeapon::eWeaponAddonSilencer, bSilencer);
-							if (W->m_grenade_launcher_status == ALife::eAddonAttachable)
-								W->m_addon_flags.set(CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher, bLauncher);
-						}
-						CSE_ALifeInventoryItem* IItem = smart_cast<CSE_ALifeInventoryItem*>(E);
-						if (IItem)
-						{
-							f_cond = Random.randF(0.0f, 0.6f);
-							IItem->m_fCondition = f_cond;
-						}
-						spawn_end(E, m_server->GetServerClient()->ID);
-					}
-				}
-			}
-		}
-	}
-}
-
-/// Dynamic Music
-void game_sv_freemp::MusicPlay(CSE_ALifeObjectPhysic* obj,int pass, int obj_num)
-{
-	LPCSTR musicfile = obj->m_ini_string.c_str();
-	CInifile ini(&IReader((void*)(musicfile), xr_strlen(musicfile)), FS.get_path("$game_config$")->m_Path);
-	
-	CInifile* tmp = NULL;
-	shared_str music_name;
-	string128 line_name;
-	xr_sprintf(line_name, sizeof(line_name), "sound%d", pass);
-	if (ini.section_exist("play_bar_snd"))
-	{
-		tmp = Music;
-	}
-
-	if (tmp != nullptr)
-	{
-		if (tmp->section_exist("music"))
-		{
-			music_name = tmp->r_string("music", line_name);
-
-			Fvector pos = obj->Position();
-			NET_Packet P;
-
-			Msg("- Server: MusicStart: %s", music_name.c_str());
-			Msg("- object pos: %f, %f, %f", pos.x, pos.y, pos.z);
-			P.w_begin(M_MUSIC_UPDATE);
-			P.w_stringZ(music_name);
-			P.w_vec3(pos);
-			P.w_u8(obj_num);
-			server().SendBroadcast(BroadcastCID, P, net_flags(true, true));
-
-			snd.create(music_name.c_str(), st_Music, sg_SourceType);
-			snd.play(NULL, sm_2D);
-			lenght = Device.dwTimeGlobal + (snd.get_length_sec() * 1000) + 10000;
-			Msg("lenght: %f", snd.get_length_sec());
-			snd.destroy();
-		}
-	}
-}
-
-void game_sv_freemp::OnStartSpawnInvBoxesItems(CSE_ALifeInventoryBox* box)
-{
-	LPCSTR boxfile = box->m_ini_string.c_str();
-	CInifile					ini(
-		&IReader(
-			(void*)(boxfile),
-			xr_strlen(boxfile)
-		),
-		FS.get_path("$game_config$")->m_Path
-	);
-
-	CInifile* tmp = NULL;
-
-	if (ini.section_exist("spawn_trash"))
-	{
-		tmp = spawn_trash;
-	}
-	else if (ini.section_exist("spawn_boosters"))
-	{
-		tmp = spawn_boosters;
-	}
-	else if (ini.section_exist("spawn_weapons_devices"))
-	{
-		tmp = spawn_weapons_devices;
-	}
-	else if (ini.section_exist("spawn_ammo"))
-	{
-		tmp = spawn_ammo;
-	}
-	else if (ini.section_exist("spawn_explosive"))
-	{
-		tmp = spawn_explosive;
-	}
-	else if (ini.section_exist("spawn_weapons"))
-	{
-		tmp = spawn_weapons;
-	}
-
-	if (tmp != nullptr)
-	{
-		LPCSTR					N, V;
-		float					p;
-
-		if (tmp->section_exist("spawn"))
-		{
-			for (u32 k = 0, j; tmp->r_line("spawn", k, &N, &V); k++)
-			{
-				VERIFY(xr_strlen(N));
-
-				float f_cond = 1.0f;
-				bool bScope = false;
-				bool bSilencer = false;
-				bool bLauncher = false;
-
-
-				int cur_scope = 0;
-
-				j = 1;
-				p = 1.f;
-
-				if (V && xr_strlen(V)) {
-					string64			buf;
-					j = atoi(_GetItem(V, 0, buf));
-					if (!j)		j = 1;
-
-					bScope = (NULL != strstr(V, "scope"));
-					bSilencer = (NULL != strstr(V, "silencer"));
-					bLauncher = (NULL != strstr(V, "launcher"));
-					//probability
-					if (NULL != strstr(V, "prob="))
-						p = (float)atof(strstr(V, "prob=") + 5);
-					if (fis_zero(p)) p = 1.0f;
-					if (NULL != strstr(V, "cond="))
-						f_cond = (float)atof(strstr(V, "cond=") + 5);
-					if (nullptr != strstr(V, "scope="))
-						cur_scope = atoi(strstr(V, "scope=") + 6);
-				}
-				for (u32 i = 0; i < j; ++i) {
-					if (Random.randF(1.f) < p) {
-						CSE_Abstract* E = alife().spawn_item(N, box->o_Position, box->m_tNodeID, box->m_tGraphID, box->ID);
-
-						//подсоединить аддоны к оружию, если включены соответствующие флажки
-						CSE_ALifeItemWeapon* W = smart_cast<CSE_ALifeItemWeapon*>(E);
-						if (W) {
-							if (W->m_scope_status == ALife::eAddonAttachable)
-							{
-								W->m_addon_flags.set(CSE_ALifeItemWeapon::eWeaponAddonScope, bScope);
-								W->m_cur_scope = cur_scope;
-							}
-							if (W->m_silencer_status == ALife::eAddonAttachable)
-								W->m_addon_flags.set(CSE_ALifeItemWeapon::eWeaponAddonSilencer, bSilencer);
-							if (W->m_grenade_launcher_status == ALife::eAddonAttachable)
-								W->m_addon_flags.set(CSE_ALifeItemWeapon::eWeaponAddonGrenadeLauncher, bLauncher);
-						}
-						CSE_ALifeInventoryItem* IItem = smart_cast<CSE_ALifeInventoryItem*>(E);
-						if (IItem)
-						{
-							f_cond = Random.randF(0.0f, 0.6f);
-							IItem->m_fCondition = f_cond;
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
-#include "Actor.h"
-#include <ui/UIInventoryUtilities.h>
-extern int save_time;
-extern int save_time2;
-extern int save_time3;
-extern int box_respawn_time;
-extern BOOL		set_next_music;
 void game_sv_freemp::Update()
 {
 	inherited::Update();
@@ -878,160 +606,9 @@ void game_sv_freemp::Update()
 	}
 	///////////////Server environment saving//////////////////////
 
-
-	/// calculate dynamic weather
-	if (Level().game)
-	{
-		shared_str envtime = InventoryUtilities::GetGameTimeAsString(InventoryUtilities::etpTimeToMinutes);
-
-		if (!need_change_weather)
-		{
-			if (xr_strcmp(envtime, "01:00") == 0)
-			{
-				bool	changeweather = false;
-				float random = 0.0f;
-				need_change_weather = true;
-				random += Random.randF(0.f, 1.f);
-				shared_str def;
-				shared_str curr_weather = g_pGamePersistent->Environment().CurrentWeatherName;
-
-				while (!changeweather)
-				{
-					if (random <= 0.25f && (xr_strcmp(curr_weather, "[main_cycle_multy]") == 0))
-					{
-						Msg("! !ERROR: overlap weather [main_cycle_multy]!");
-						random = Random.randF(0.f, 1.f);
-					}
-					if (random <= 0.50f && (xr_strcmp(curr_weather, "[main_cycle_foggy_day]") == 0))
-					{
-						Msg("! !ERROR: overlap weather [main_cycle_foggy_day]!");
-						random = Random.randF(0.f, 1.f);
-					}
-					if (random <= 0.75f && (xr_strcmp(curr_weather, "[main_cycle_sunny_day]") == 0))
-					{
-						Msg("! !ERROR: overlap weather [main_cycle_sunny_day]!");
-						random = Random.randF(0.f, 1.f);
-					}
-					if (random > 0.75f && (xr_strcmp(curr_weather, "[main_cycle_thunder_year]") == 0))
-					{
-						Msg("! !ERROR: overlap weather [main_cycle_thunder_year]!");
-						random = Random.randF(0.f, 1.f);
-					}
-					Msg("Calculate next weather: %s, rand: %f", def.c_str(), random);
-
-						if (random <= 0.25f && (xr_strcmp(curr_weather, "[main_cycle_multy]") != 0) && !changeweather)
-						{
-							def = "[main_cycle_multy]";
-							random = 0.0f;
-							changeweather = true;
-						}
-
-						if (random <= 0.50f && (xr_strcmp(curr_weather, "[main_cycle_foggy_day]") != 0) && !changeweather)
-						{
-							def = "[main_cycle_foggy_day]";
-							random = 0.0f;
-							changeweather = true;
-						}
-
-						if (random <= 0.75f && (xr_strcmp(curr_weather, "[main_cycle_sunny_day]") != 0) && !changeweather)
-						{
-							random = 0.0f;
-							def = "[main_cycle_sunny_day]";
-							changeweather = true;
-						}
-
-						if (random > 0.75f && (xr_strcmp(curr_weather, "[main_cycle_thunder_year]") != 0) && !changeweather)
-						{
-							random = 0.0f;
-							def = "[main_cycle_thunder_year]";
-							changeweather = true;
-						}
-				}
-
-				if (changeweather)
-				{
-					Msg("- Calculate end");
-					g_pGamePersistent->Environment().SetWeather(def, true);
-					changeweather = false;
-				}
-
-			}
-		}
-	}
-
-	if (need_change_weather)
-	{
-		if (Level().game && Device.dwFrame % 4000 == 0)
-		{
-			need_change_weather = false;
-		}
-	}
-	/// calculate dynamic weather
-
-
-	/// Calculate Sync Radio Music
-	if (set_next_music)
-	{
-		lenght = 0;
-		set_next_music = FALSE;
-		need_stop_music = true;
-	}
-
-	if (Level().game && !first_play && need_stop_music && lenght <= Device.dwTimeGlobal)
-	{
-		need_stop_music = false;
-		need_next_snd = true;
-		stop_timer = Device.dwTimeGlobal + 5000;
-		//stop_timer = 0;
-		NET_Packet P;
-		P.w_begin(M_MUSIC_STOP);
-		server().SendBroadcast(BroadcastCID, P, net_flags(true, true));
-	}
-
-	if (Level().game && need_next_snd && stop_timer <= Device.dwTimeGlobal)
-	{
-		i = Random.randI(1, MusicCount);
-
-		need_next_snd = false;
-
-		for (auto entity : phy_objects_cse)
-		{
-			CSE_Abstract* abs = entity.second.entity;
-			CSE_ALifeObjectPhysic* phy = smart_cast<CSE_ALifeObjectPhysic*>(abs);
-			if (phy)
-			{
-				numb += 1;
-
-				if (numb == obj_count + 1)
-					numb = 1;
-				need_next_snd = false;
-				lenght = 0;
-				Msg("%d", numb);
-				MusicPlay(phy, i, numb);
-			}
-		}
-
-		need_stop_music = true;
-		first_play = false;
-	}
-	/// Calculate Sync Radio Music
-
-
-
-
-		if (Level().game && Device.dwFrame % box_respawn_time == 0)
-		{
-			for (auto entity : inventory_boxes_cse)
-			{
-				CSE_Abstract* abs = entity.second.entity;
-				CSE_ALifeInventoryBox* box = smart_cast<CSE_ALifeInventoryBox*>(abs);;
-
-					if (box->children.empty())
-					{
-						SpawnInvBoxesItems(box);
-					}
-			}
-		}
+	DynamicWeatherUpdate();
+	DynamicMusicUpdate();
+	DynamicBoxUpdate();
 
 		if (Level().game && Device.dwFrame % save_time2 == 0)
 		{
@@ -1042,38 +619,66 @@ void game_sv_freemp::Update()
 			CSE_ALifeInventoryBox* box = smart_cast<CSE_ALifeInventoryBox*>(abs);
 			if (box)
 			{
-				string_path path_name;
-				string64 invbox_name;
-				xr_strcpy(invbox_name, box->name_replace());
-				xr_strcat(invbox_name, ".ltx");
-				FS.update_path(path_name, "$mp_saves_invbox$", invbox_name);
-
-
-				//check saving box or not
-				string_path curr_invbox_name;
-				FS.update_path(curr_invbox_name, "$mp_check_saves_invbox$", "save_box_list.ltx");
-				CInifile* curr_box_file = xr_new<CInifile>(curr_invbox_name, true);
-				LPCSTR box_name = box->name_replace();
-				//
-
-				if (!entity.second.loaded)
+				if (binar_save)
 				{
-					inventory_boxes_cse[entity.first].loaded = true;
-					CInifile* boxFile = xr_new<CInifile>(path_name, true);
-					LoadInvBox(box, boxFile);
-					xr_delete (boxFile);
+					string_path path_name;
+					string64 invbox_name;
+					xr_strcpy(invbox_name, box->name_replace());
+					xr_strcat(invbox_name, ".binsave");
+					FS.update_path(path_name, "$mp_saves_invbox_bin$", invbox_name);
+
+					//check saving box or not
+					string_path curr_invbox_name;
+					FS.update_path(curr_invbox_name, "$mp_check_saves_invbox$", "save_box_list.ltx");
+					CInifile* curr_box_file = xr_new<CInifile>(curr_invbox_name, true);
+					LPCSTR box_name = box->name_replace();
+					//
+
+					if (!entity.second.loaded)
+					{
+						Msg("%s", path_name);
+						inventory_boxes_cse[entity.first].loaded = true;
+						BinnarLoadInvBox(box, path_name);
+					}
+					else if (curr_box_file->line_exist("saving_boxes", box_name))
+					{
+						BinnarSaveInvBox(box, path_name);
+					}
+					xr_delete(curr_box_file);
 				}
-				else if(curr_box_file->line_exist("saving_boxes", box_name))
+				else
 				{
-					CInifile* boxFile = xr_new<CInifile>(path_name, false, false);
-					bool can_write = FS.can_modify_file(path_name);
-					if (!can_write)                         FS.file_delete(path_name);
-					SaveInvBox(box, boxFile);
-					boxFile->save_as(path_name);
-					xr_delete(boxFile);
+					string_path path_name;
+					string64 invbox_name;
+					xr_strcpy(invbox_name, box->name_replace());
+					xr_strcat(invbox_name, ".ltx");
+					FS.update_path(path_name, "$mp_saves_invbox$", invbox_name);
+
+					//check saving box or not
+					string_path curr_invbox_name;
+					FS.update_path(curr_invbox_name, "$mp_check_saves_invbox$", "save_box_list.ltx");
+					CInifile* curr_box_file = xr_new<CInifile>(curr_invbox_name, true);
+					LPCSTR box_name = box->name_replace();
+					//
+
+					if (!entity.second.loaded)
+					{
+						inventory_boxes_cse[entity.first].loaded = true;
+						CInifile* boxFile = xr_new<CInifile>(path_name, true);
+						LoadInvBox(box, boxFile);
+						xr_delete(boxFile);
+					}
+					else if (curr_box_file->line_exist("saving_boxes", box_name))
+					{
+						CInifile* boxFile = xr_new<CInifile>(path_name, false, false);
+						bool can_write = FS.can_modify_file(path_name);
+						if (!can_write)                         FS.file_delete(path_name);
+						SaveInvBox(box, boxFile);
+						boxFile->save_as(path_name);
+						xr_delete(boxFile);
+					}
+					xr_delete(curr_box_file);
 				}
-				xr_delete(curr_box_file);
-				
 			}
 		}
 		oldTime = Device.dwTimeGlobal;
