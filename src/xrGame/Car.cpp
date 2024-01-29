@@ -1581,16 +1581,11 @@ float CCar::EffectiveGravity()
 	return g;
 }
 
-extern BOOL ismycar;
 bool CCar::IsMyCar()
 {
 	if (!Actor())
 		return false;
 
-
-	if (ismycar)
-		return true;
-	else
 		return false;
 		
 
