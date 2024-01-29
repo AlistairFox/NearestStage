@@ -23,7 +23,6 @@
 #include "blender_lens_flares.h"
 #include "blender_ss_sunshafts.h"
 #include "blender_cut.h"
-#include "blender_lut.h"
 #include "blender_blur.h"
 
 #include "../xrRender/dxRenderDeviceRender.h"
@@ -330,7 +329,6 @@ CRenderTarget::CRenderTarget		()
 	b_combine				= xr_new<CBlender_combine>			();
 	b_ssao					= xr_new<CBlender_SSAO_noMSAA>		();
 	b_sunshafts = new CBlender_sunshafts();
-	b_lut = xr_new<CBlender_lut>();
 	b_blur = xr_new<CBlender_blur>();
 
 	//HUD BLOOD
@@ -483,7 +481,6 @@ CRenderTarget::CRenderTarget		()
 	s_sunshafts.create(b_sunshafts, "r2\\sunshafts");
 
 	s_blur.create(b_blur, "r2\\blur");
-	s_lut.create(b_lut, "r2\\lut");
 	// OCCLUSION
 	s_occq.create					(b_occq,		"r2\\occq");
 
@@ -1155,8 +1152,7 @@ CRenderTarget::~CRenderTarget	()
 	xr_delete					(b_accum_point			);
 	xr_delete					(b_accum_direct			);
 	xr_delete					(b_ssao					);
-	xr_delete					(b_lut					);
-	xr_delete(b_blur);
+	xr_delete					(b_blur					);
 	xr_delete					(b_hud_blood			); //Hud Blood
 	xr_delete					(b_hud_power			); //Hud Stamina
 	xr_delete					(b_hud_bleeding			); //Hud Bleeding

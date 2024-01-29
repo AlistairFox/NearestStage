@@ -772,9 +772,6 @@
       <Filter>Shading templates</Filter>
     </ClInclude>
     <ClInclude Include="blender_cut.h" />
-    <ClInclude Include="blender_lut.h">
-      <Filter>Shading templates</Filter>
-    </ClInclude>
     <ClInclude Include="blender_blur.h">
       <Filter>Shading templates</Filter>
     </ClInclude>
@@ -1424,12 +1421,6 @@
     </ClCompile>
     <ClCompile Include="blender_cut.cpp" />
     <ClCompile Include="r4_rendertarget_phase_cut.cpp" />
-    <ClCompile Include="blender_lut.cpp">
-      <Filter>Shading templates</Filter>
-    </ClCompile>
-    <ClCompile Include="rendertarger_phase_lut.cpp">
-      <Filter>Core_Target</Filter>
-    </ClCompile>
     <ClCompile Include="blender_blur.cpp">
       <Filter>Shading templates</Filter>
     </ClCompile>

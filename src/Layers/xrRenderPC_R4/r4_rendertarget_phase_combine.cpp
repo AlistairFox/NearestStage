@@ -386,9 +386,8 @@ void	CRenderTarget::phase_combine	()
 			phase_sunshafts();
 	}
 
-	phase_blur();
-
-	phase_lut();
+	if(false)
+		phase_blur();
 
 	// PP enabled ?
 	//	Render to RT texture to be able to copy RT even in windowed mode.

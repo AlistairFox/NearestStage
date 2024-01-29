@@ -216,7 +216,6 @@ extern ENGINE_API	Fvector4 ps_ssfx_rain_2;
 extern ENGINE_API	Fvector4 ps_ssfx_rain_3;
 extern ENGINE_API Fvector4 ps_ssfx_wind_grass;
 extern ENGINE_API Fvector4 ps_ssfx_wind_trees;
-extern ENGINE_API Fvector4 ps_ssfx_lut;
 
 extern ENGINE_API	bool g_dedicated_server;
 extern ENGINE_API	IGame_Persistent*	g_pGamePersistent;

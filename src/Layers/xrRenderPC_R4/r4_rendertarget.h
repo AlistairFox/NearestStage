@@ -57,7 +57,6 @@ public:
 	IBlender*					b_hud_thirst;
 	IBlender* b_lfx;
 	IBlender* b_sunshafts;
-	IBlender* b_lut;
 	IBlender* b_blur;
 
     // compute shader for hdao
@@ -197,7 +196,6 @@ private:
 	ref_shader					s_accum_volume;
 	
 
-	ref_shader					s_lut;
 	ref_shader					s_cut;
 	ref_shader					s_blur;
 
@@ -333,7 +331,6 @@ public:
 	void						phase_scene_end			();
 	void						phase_occq				();
 	void						phase_ssao				();
-	void						phase_lut				();
 	void						phase_hdao				();
 	void						phase_blur();
 	void						phase_downsamp			();
