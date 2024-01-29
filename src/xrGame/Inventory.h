@@ -123,6 +123,7 @@ public:
 	
 	void					BlockSlot(u16 slot_id);
 	void					UnblockSlot(u16 slot_id);
+	void					UnblockAll();
 	bool					IsSlotBlocked(PIItem const iitem) const;
 
 	TIItemContainer			m_all;

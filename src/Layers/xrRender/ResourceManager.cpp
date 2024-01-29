@@ -44,6 +44,11 @@ IBlender* CResourceManager::_GetBlender		(LPCSTR Name)
 {
 	R_ASSERT(Name && Name[0]);
 
+	if (!xr_strcmp(Name, "def_shaders\\def_trans_v"))
+	{
+		Msg("shader: %s", Name);
+		Name = "def_shaders\\def_aref";
+	}
 	LPSTR N = LPSTR(Name);
 	map_Blender::iterator I = m_blenders.find	(N);
 #ifdef _EDITOR

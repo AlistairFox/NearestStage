@@ -1563,6 +1563,14 @@ void CInventory::UnblockSlot(u16 slot_id)
 	--m_blocked_slots[slot_id];	
 }
 
+void CInventory::UnblockAll()
+{
+	for (u16 i = FirstSlot(), ie = LastSlot(); i <= ie; ++i)
+	{
+		m_blocked_slots[i] = 0;
+	}
+}
+
 bool CInventory::IsSlotBlocked(u16 slot_id) const
 {
 	VERIFY(slot_id <= LAST_SLOT);
