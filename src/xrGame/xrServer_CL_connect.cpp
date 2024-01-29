@@ -240,7 +240,6 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 	FS.update_path(banned_user, "$mp_banned_users$", "banned_list.ltx"); // hwid banlist
 	FS.update_path(bad_register, "$mp_bad_register$", "bad_register.ltx"); // callback on uncorrect registration
 
-	CInifile* denfile = xr_new<CInifile>(denied_reg, true); // filtering names
 	CInifile* file = xr_new<CInifile>(path_xray, true); // logins
 	CInifile* banlist = xr_new<CInifile>(banned_user, true); // hwid banlist
 	CInifile* bad_register_file = xr_new<CInifile>(bad_register, false, true);  // callback on uncorrect registration
@@ -254,12 +253,18 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 		{
 			SendConnectResult(CL, 0, ecr_data_verification_failed, game_version);
 			Msg("!!ERROR Попытка входа с другой версии! Севрер: %d | Клиент: %d", _our, _him);
+			xr_delete(file);
+			xr_delete(banlist);
+			xr_delete(bad_register_file);
 			return;
 		}
 
 		if (banlist->line_exist("blocklist", comp_name.c_str()))
 		{
 			u8 ban_descr = banlist->r_u8("blocklist", comp_name.c_str());
+			xr_delete(file);
+			xr_delete(banlist);
+			xr_delete(bad_register_file);
 			if (ban_descr == 0)
 			{
 				Msg("!! ERROR: пользователь был заблокирован по причине 0.");
@@ -345,22 +350,24 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 					{
 						Msg("!! ERROR: Попытка повторного запроса на регистрацию от пользователя с HWid: %s", hwid);
 						SendConnectResult(CL, 0, ecr_data_verification_failed, "У вас уже имеется зарегистрированный аккаунт!");
+						xr_delete(reg_data_file);
 						return;
 					}
 					else if (FS.exist(denied_reg))
 					{
 						Msg("!! ERROR: попытка регистрации некорректного никнейма!");
 						SendConnectResult(CL, 0, ecr_data_verification_failed, "Заявка на регистрацию отклоненна: некорректный никнейм");
+						xr_delete(reg_data_file);
 						return;
 					}
 					else if (!file->section_exist(login))
 					{
+						xr_delete(reg_data_file);
 						LPCSTR username = login.c_str();
 						string_path path_registered;
 						string256 transl;
 						sprintf(transl, "%s.ltx", username);
 						FS.update_path(path_registered, "$mp_acces_reg$", transl);
-						CInifile* regacc = xr_new<CInifile>(path_registered, false, true);
 						if (FS.exist(path_registered))
 						{
 							Msg("!! ERROR: Попытка повторной регистрации аккаунта %s", username);
@@ -369,6 +376,7 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 						}
 						else
 						{
+							CInifile* regacc = xr_new<CInifile>(path_registered, false, true);
 							if (regacc)
 							{
 								regacc->w_string("user_data", "username", username);
@@ -379,17 +387,19 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 								regacc->save_as(path_registered);
 								Msg("~ Пользователь %s подал запрос на регистрацию!", username);
 							}
-
+							xr_delete(regacc);
 							SendConnectResult(CL, 0, ecr_data_verification_failed, "Вас Зарегистрируют в Ближайшее время!");
 							return;
 						}
 					}
 					else
 					{
+						xr_delete(reg_data_file);
 						Msg("!! ERROR: Попытка регистрации занятого никнейма!");
 						SendConnectResult(CL, 0, ecr_data_verification_failed, "Данный никнейм уже зарегистрирован!");
 						return;
 					}
+					xr_delete(reg_data_file);
 				}
 			}
 			else
