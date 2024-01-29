@@ -281,7 +281,7 @@ bool game_sv_freemp::HasSaveFile(game_PlayerState* ps)
 
 void game_sv_freemp::assign_RP(CSE_Abstract* E, game_PlayerState* ps_who)
 {
-	if (binar_save)
+	if (Binnar_save_connect)
 	{
 
 		Fvector pos, angle;

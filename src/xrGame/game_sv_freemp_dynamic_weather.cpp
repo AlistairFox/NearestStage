@@ -3,6 +3,47 @@
 #include <ui/UIInventoryUtilities.h>
 #include <Level.h>
 
+
+void game_sv_freemp::ServerEnvSaveUpdateFile()
+{
+	///////////////Server environment saving//////////////////////
+	if (Level().game && Device.dwFrame % save_time3 == 0)
+	{
+		string_path save_game_time;
+		FS.update_path(save_game_time, "$global_server_data$", "server_data.ltx");
+		CInifile* global_server_data = xr_new<CInifile>(save_game_time, false, false);
+		LPCSTR time = InventoryUtilities::GetGameTimeAsString(InventoryUtilities::etpTimeToSeconds).c_str();
+		LPCSTR data = InventoryUtilities::GetDateAsString(GetGameTime(), InventoryUtilities::edpDateToNormal).c_str();
+		global_server_data->w_string("server_env", "time", time);
+		global_server_data->w_string("server_env", "data", data);
+		global_server_data->w_string("server_env", "weather", g_pGamePersistent->Environment().CurrentWeatherName.c_str());
+		global_server_data->save_as(save_game_time);
+		xr_delete(global_server_data);
+	}
+	///////////////Server environment saving//////////////////////
+}
+
+void game_sv_freemp::ServerEnvSaveUpdateBin()
+{
+	///////////////Server environment saving//////////////////////
+	if (Level().game && Device.dwFrame % save_time3 == 0)
+	{
+		string_path save_game_time;
+		FS.update_path(save_game_time, "$global_server_data_bin$", "server_data.binsave");
+		IWriter* env_writer = FS.w_open(save_game_time);
+		env_writer->open_chunk(ENV_CHUNK);
+		shared_str time = InventoryUtilities::GetGameTimeAsString(InventoryUtilities::etpTimeToSeconds);
+		shared_str data = InventoryUtilities::GetDateAsString(GetGameTime(), InventoryUtilities::edpDateToNormal);
+		shared_str weather = g_pGamePersistent->Environment().CurrentWeatherName;
+		env_writer->w_stringZ(time);
+		env_writer->w_stringZ(data);
+		env_writer->w_stringZ(weather);
+		env_writer->close_chunk();
+		FS.w_close(env_writer);
+	}
+	///////////////Server environment saving//////////////////////
+}
+
 void game_sv_freemp::DynamicWeatherUpdate()
 {
 	/// calculate dynamic weather

@@ -9,14 +9,24 @@
 #include "Actor.h"
 #include <ui/UIInventoryUtilities.h>
 
-BOOL g_SV_IsVipeMode = FALSE;
-int g_sv_server_goodwill = 0;
 game_sv_freemp::game_sv_freemp()
 	:pure_relcase(&game_sv_freemp::net_Relcase)
 {
 	m_type = eGameIDFreeMp;
 
-	if (g_SV_IsVipeMode) {}
+	if (binar_save)
+	{
+		Msg("-- Binar Saving Connect!");
+		Binnar_save_connect = true;
+	}
+	else
+	{
+		Binnar_save_connect = false;
+		Msg("--File Saving Connect!");
+	}
+
+	FS.update_path(curr_invbox_name, "$mp_check_saves_invbox$", "save_box_list.ltx");
+	curr_box_file = xr_new<CInifile>(curr_invbox_name, true);
 
 	DynamicBoxFileCreate();
 	DynamicMusicFileCreate();
@@ -32,7 +42,7 @@ game_sv_freemp::~game_sv_freemp()
 	xr_delete(spawn_explosive);
 	xr_delete(spawn_weapons);
 	xr_delete(Music);
-	
+	xr_delete(curr_box_file);
 }
 
 void game_sv_freemp::Create(shared_str & options)
@@ -172,41 +182,25 @@ void game_sv_freemp::OnPlayerConnectFinished(ClientID id_who)
 		xrCData->ps->setFlag(GAME_PLAYER_FLAG_SPECTATOR);
 		xrCData->ps->setFlag(GAME_PLAYER_FLAG_READY);
 		
-		if (!g_SV_IsVipeMode) 
+		if (Binnar_save_connect)
 		{
-			if (binar_save)
+			if (HasBinnarSaveFile(xrCData->ps))
 			{
-				if (HasBinnarSaveFile(xrCData->ps))
-				{
-					xrCData->ps->resetFlag(GAME_PLAYER_MP_SAVE_LOADED);
-				}
-				else
-				{
-					xrCData->ps->setFlag(GAME_PLAYER_MP_SAVE_LOADED);
-				}
+				xrCData->ps->resetFlag(GAME_PLAYER_MP_SAVE_LOADED);
 			}
 			else
 			{
-				if (HasSaveFile(xrCData->ps))
-				{
-					xrCData->ps->resetFlag(GAME_PLAYER_MP_SAVE_LOADED);
-				}
-				else
-				{
-					xrCData->ps->setFlag(GAME_PLAYER_MP_SAVE_LOADED);
-				}
+				xrCData->ps->setFlag(GAME_PLAYER_MP_SAVE_LOADED);
 			}
 		}
 		else
 		{
 			if (HasSaveFile(xrCData->ps))
 			{
-				xrCData->ps->team = 11;
 				xrCData->ps->resetFlag(GAME_PLAYER_MP_SAVE_LOADED);
 			}
 			else
 			{
-				xrCData->ps->team = 11;
 				xrCData->ps->setFlag(GAME_PLAYER_MP_SAVE_LOADED);
 			}
 		}
@@ -391,7 +385,7 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 	if (ps && !ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
 	{
 		SpawnItemToActor(ps->GameID, "wpn_binoc");
-		if (binar_save)
+		if (Binnar_save_connect)
 		{
 			string_path file_name_path;
 			string32 file_name;
@@ -561,7 +555,7 @@ void game_sv_freemp::Update()
 					return;
 
 
-				if (binar_save)
+				if (Binnar_save_connect)
 				{
 					string_path file_name_path;
 					string32 file_name;
@@ -589,22 +583,10 @@ void game_sv_freemp::Update()
 		}
 	}
 
-	///////////////Server environment saving//////////////////////
-	if (Level().game && Device.dwFrame % save_time3 == 0)
-	{
-		string_path save_game_time;
-		FS.update_path(save_game_time, "$global_server_data$", "server_data.ltx");
-		CInifile* global_server_data = xr_new<CInifile>(save_game_time, false, false);
-
-		LPCSTR time = InventoryUtilities::GetGameTimeAsString(InventoryUtilities::etpTimeToSeconds).c_str();
-		LPCSTR data = InventoryUtilities::GetDateAsString(GetGameTime(), InventoryUtilities::edpDateToNormal).c_str();
-		global_server_data->w_string("server_env", "time", time);
-		global_server_data->w_string("server_env", "data", data);
-		global_server_data->w_string("server_env", "weather", g_pGamePersistent->Environment().CurrentWeatherName.c_str());
-		global_server_data->save_as(save_game_time);
-		xr_delete(global_server_data);
-	}
-	///////////////Server environment saving//////////////////////
+	if (Binnar_save_connect)
+		ServerEnvSaveUpdateBin();
+	else
+		ServerEnvSaveUpdateFile();
 
 	DynamicWeatherUpdate();
 	DynamicMusicUpdate();
@@ -619,7 +601,7 @@ void game_sv_freemp::Update()
 			CSE_ALifeInventoryBox* box = smart_cast<CSE_ALifeInventoryBox*>(abs);
 			if (box)
 			{
-				if (binar_save)
+				if (Binnar_save_connect)
 				{
 					string_path path_name;
 					string64 invbox_name;
@@ -628,12 +610,8 @@ void game_sv_freemp::Update()
 					FS.update_path(path_name, "$mp_saves_invbox_bin$", invbox_name);
 
 					//check saving box or not
-					string_path curr_invbox_name;
-					FS.update_path(curr_invbox_name, "$mp_check_saves_invbox$", "save_box_list.ltx");
-					CInifile* curr_box_file = xr_new<CInifile>(curr_invbox_name, true);
 					LPCSTR box_name = box->name_replace();
 					//
-
 					if (!entity.second.loaded)
 					{
 						Msg("%s", path_name);
@@ -641,10 +619,7 @@ void game_sv_freemp::Update()
 						BinnarLoadInvBox(box, path_name);
 					}
 					else if (curr_box_file->line_exist("saving_boxes", box_name))
-					{
 						BinnarSaveInvBox(box, path_name);
-					}
-					xr_delete(curr_box_file);
 				}
 				else
 				{
@@ -655,9 +630,6 @@ void game_sv_freemp::Update()
 					FS.update_path(path_name, "$mp_saves_invbox$", invbox_name);
 
 					//check saving box or not
-					string_path curr_invbox_name;
-					FS.update_path(curr_invbox_name, "$mp_check_saves_invbox$", "save_box_list.ltx");
-					CInifile* curr_box_file = xr_new<CInifile>(curr_invbox_name, true);
 					LPCSTR box_name = box->name_replace();
 					//
 
@@ -677,7 +649,6 @@ void game_sv_freemp::Update()
 						boxFile->save_as(path_name);
 						xr_delete(boxFile);
 					}
-					xr_delete(curr_box_file);
 				}
 			}
 		}

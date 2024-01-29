@@ -73,12 +73,20 @@ public:
 	virtual		void				OnTransferMoney(NET_Packet &P, ClientID const & clientID);
 
 	virtual		void				RespawnPlayer(ClientID id_who, bool NoSpectator);
-
+	bool Binnar_save_connect = false;
 
 
 	///////////Dynamic Weather ////////////////
 	virtual void DynamicWeatherUpdate();
+	virtual void ServerEnvSaveUpdateFile();
+	virtual void ServerEnvSaveUpdateBin();
+
 	bool		need_change_weather = false;
+
+	enum EnvSavingChunks
+	{
+		ENV_CHUNK = 0
+	};
 	///////////Dynamic Weather /////////////
 
 
@@ -123,8 +131,8 @@ public:
 	virtual		void				BinnarSaveInvBox(CSE_ALifeInventoryBox* box, string_path& filepath);
 	virtual		void				BinnarLoadInvBox(CSE_ALifeInventoryBox* box, string_path& filepath);
 	///////Binnar InvBox Save ////////
-
-
+	CInifile* curr_box_file;
+	string_path curr_invbox_name;
 	///////File InvBox Save ////////
 	virtual		void				SaveInvBox(CSE_ALifeInventoryBox* box, CInifile* file);
 	virtual		void				LoadInvBox(CSE_ALifeInventoryBox* box, CInifile* file);
