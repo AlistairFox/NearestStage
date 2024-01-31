@@ -19,6 +19,8 @@
 #include "../Inventory.h"
 #include "clsid_game.h"
 #include "UIActorMenu.h"
+#include "../Backpack.h"
+#include "../Inventory.h"
 
 #include "../Torch.h"
 #include "../CustomDetector.h"
@@ -29,6 +31,8 @@ CUIInventoryItem::CUIInventoryItem()
 	m_charge_level = NULL;
 	m_max_charge = NULL;
 	m_uncharge_speed = NULL;
+	m_additional_weight = nullptr;
+	m_inv_capacity = nullptr;
 }
 
 CUIInventoryItem::~CUIInventoryItem()
@@ -37,6 +41,8 @@ CUIInventoryItem::~CUIInventoryItem()
 	xr_delete(m_max_charge);
 	xr_delete(m_uncharge_speed);
 	xr_delete(m_Prop_line);
+	xr_delete(m_additional_weight);
+	xr_delete(m_inv_capacity);
 }
 
 LPCSTR item_influence_caption[] =
@@ -44,6 +50,8 @@ LPCSTR item_influence_caption[] =
 	"ui_inv_charge_level",
 	"ui_inv_max_charge",
 	"ui_inv_uncharge_speed"
+		"ui_inv_weight",
+	"ui_inv_inventory_capacity"
 };
 
 void CUIInventoryItem::InitFromXml(CUIXml& xml)
@@ -75,6 +83,21 @@ void CUIInventoryItem::InitFromXml(CUIXml& xml)
 	name = CStringTable().translate("ui_inv_uncharge_speed").c_str();
 	m_uncharge_speed->SetCaption(name);
 	xml.SetLocalRoot(base_node);
+
+	m_additional_weight = xr_new<CUIInventoryItemInfo>();
+	m_additional_weight->Init(xml, "additional_weight");
+	m_additional_weight->SetAutoDelete(false);
+	name = CStringTable().translate("ui_inv_weight").c_str();
+	m_additional_weight->SetCaption(name);
+	xml.SetLocalRoot(base_node);
+
+	m_inv_capacity = xr_new<CUIInventoryItemInfo>();
+	m_inv_capacity->Init(xml, "inventory_capacity");
+	m_inv_capacity->SetAutoDelete(false);
+	name = CStringTable().translate("ui_inv_inventory_capacity").c_str();
+	m_inv_capacity->SetCaption(name);
+	xml.SetLocalRoot(base_node);
+
 }
 
 void CUIInventoryItem::SetInfo(shared_str const& section)
@@ -87,6 +110,7 @@ void CUIInventoryItem::SetInfo(shared_str const& section)
 	{
 		return;
 	}
+	CBackpack* pBackpack = smart_cast<CBackpack*>(actor->inventory().GetItemFromInventory(section.c_str()));
 
 	float val = 0.0f, max_val = 1.0f;
 	Fvector2 pos;
@@ -119,6 +143,41 @@ void CUIInventoryItem::SetInfo(shared_str const& section)
 
 			h += m_uncharge_speed->GetWndSize().y;
 			AttachChild(m_uncharge_speed);
+		}
+	}
+
+	if (pBackpack)
+	{
+		if (pSettings->line_exist(section.c_str(), "additional_inventory_weight"))
+		{
+			val = pBackpack->m_additional_weight;
+			if (!fis_zero(val))
+			{
+				m_additional_weight->SetValue(val);
+
+				pos.set(m_additional_weight->GetWndPos());
+				pos.y = h;
+				m_additional_weight->SetWndPos(pos);
+
+				h += m_additional_weight->GetWndSize().y;
+				AttachChild(m_additional_weight);
+			}
+		}
+
+		if (pSettings->line_exist(section.c_str(), "inventory_capacity"))
+		{
+			val = pBackpack->GetInventoryCapacity();
+			if (!fis_zero(val))
+			{
+				m_inv_capacity->SetValue(val);
+
+				pos.set(m_inv_capacity->GetWndPos());
+				pos.y = h;
+				m_inv_capacity->SetWndPos(pos);
+
+				h += m_inv_capacity->GetWndSize().y;
+				AttachChild(m_inv_capacity);
+			}
 		}
 	}
 

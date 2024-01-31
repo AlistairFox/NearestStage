@@ -63,6 +63,8 @@ CInventoryItem::CInventoryItem()
 	m_Description					= "";
 	m_section_id					= 0;
 	m_flags.set						(FIsHelperItem,FALSE);
+
+	m_iOccupiedInvSpace = 1;
 }
 
 CInventoryItem::~CInventoryItem() 
@@ -122,6 +124,8 @@ void CInventoryItem::Load(LPCSTR section)
 		m_fControlInertionFactor	= pSettings->r_float(section,"control_inertion_factor");
 	}
 	m_icon_name					= READ_IF_EXISTS(pSettings, r_string,section,"icon_name",		NULL);
+
+	m_iOccupiedInvSpace = READ_IF_EXISTS(pSettings, r_u32, section, "occupied_inv_space", 1);
 
 }
 

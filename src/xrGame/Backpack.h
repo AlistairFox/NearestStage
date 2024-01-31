@@ -8,9 +8,12 @@ class CBackpack : public CInventoryItemObject
 {
 private:
     using inherited = CInventoryItemObject;
-    float m_additional_weight;
 
 public:
+    float m_additional_weight;
+
+    int m_iInventoryCapacity = 0;
+    int				GetInventoryCapacity() const { return m_iInventoryCapacity; }
     CBackpack() : m_additional_weight(0.f) {};
     virtual ~CBackpack() = default;
 

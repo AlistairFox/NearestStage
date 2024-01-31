@@ -273,10 +273,13 @@ void CActor::IR_OnKeyboardPress(int cmd)
 
 					pItemToEat->HideWeapon();
 					
-					SDrawStaticStruct* _s		= CurrentGameUI()->AddCustomStatic("item_used", true);
-					string1024					str;
-					strconcat					(sizeof(str),str,*CStringTable().translate("st_item_used"),": ", itm->NameItem());
-					_s->wnd()->TextItemControl()->SetText(str);
+					if (false)
+					{
+						SDrawStaticStruct* _s = CurrentGameUI()->AddCustomStatic("item_used", true);
+						string1024					str;
+						strconcat(sizeof(str), str, *CStringTable().translate("st_item_used"), ": ", itm->NameItem());
+						_s->wnd()->TextItemControl()->SetText(str);
+					}
 					
 					CurrentGameUI()->ActorMenu().m_pQuickSlot->ReloadReferences(this);
 				}

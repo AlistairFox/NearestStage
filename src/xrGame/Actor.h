@@ -178,6 +178,16 @@ public:
 	bool neet_switch_torch = false;
 	/* hud anims system end*/
 
+
+	int						GetInventoryCapacity() const { return m_iInventoryCapacity; }
+	int						GetInventoryFullness() const { return m_iInventoryFullness; }
+	int						MaxCarryInvCapacity() const;
+	void					ChangeInventoryFullness(int val);
+
+	int						m_iInventoryCapacity;
+	int						m_iInventoryFullness;
+	int						m_iInventoryFullnessCtrl; // Для контроля эвента. Иначе эвент отправляется пачкой и дропает больше, чем нужно.
+
 	u32 old_timer = 0;
 	bool need_exit;
 	bool CanChange = true;
@@ -206,6 +216,7 @@ public:
 	
 	virtual void						OnEvent				( NET_Packet& P, u16 type		);
 
+	virtual void						UpdateInventoryItems();
 	// Render
 	virtual void						renderable_Render			();
 	virtual BOOL						renderable_ShadowGenerate	();

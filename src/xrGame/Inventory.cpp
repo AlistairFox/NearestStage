@@ -213,11 +213,21 @@ void CInventory::Take(CGameObject *pObj, bool bNotActivate, bool strict_placemen
 		if (Level().CurrentViewEntity() == pActor_owner)
 		{
 			CurrentGameUI()->OnInventoryAction(pIItem, GE_OWNERSHIP_TAKE);
+			if (pIItem->CurrPlace() == eItemPlaceRuck)
+				Actor()->ChangeInventoryFullness(pIItem->GetOccupiedInvSpace());
 		}
 		else if(CurrentGameUI()->ActorMenu().GetMenuMode()==mmDeadBodySearch)
 		{
-			if(m_pOwner==CurrentGameUI()->ActorMenu().GetPartner())
+			if (m_pOwner == CurrentGameUI()->ActorMenu().GetPartner())
+			{
 				CurrentGameUI()->OnInventoryAction(pIItem, GE_OWNERSHIP_TAKE);
+
+				if (pIItem->CurrPlace() == eItemPlaceRuck)
+				{
+					Msg("%d", pIItem->GetOccupiedInvSpace());
+					Actor()->ChangeInventoryFullness(pIItem->GetOccupiedInvSpace());
+				}
+			}
 		}
 	};
 }
@@ -307,13 +317,19 @@ bool CInventory::DropItem(CGameObject *pObj, bool just_before_destroy, bool dont
 		if (Level().CurrentViewEntity() == pActor_owner)
 		{
 			CurrentGameUI()->OnInventoryAction(pIItem, GE_OWNERSHIP_REJECT);
+
+			if (pIItem->CurrPlace() == eItemPlaceRuck)
+				Actor()->ChangeInventoryFullness(-pIItem->GetOccupiedInvSpace());
 		}
 		else if (!IsGameTypeSingle() && CurrentGameUI()->ActorMenu().GetMenuMode() == mmDeadBodySearch)
 		{
-			if (m_pOwner == CurrentGameUI()->ActorMenu().GetPartner())
-			{
+			//if (m_pOwner == CurrentGameUI()->ActorMenu().GetPartner())
+		//	{
 				CurrentGameUI()->OnInventoryAction(pIItem, GE_OWNERSHIP_REJECT);
-			}
+
+			//	if (pIItem->CurrPlace() == eItemPlaceRuck)
+			//		Actor()->ChangeInventoryFullness(-pIItem->GetOccupiedInvSpace());
+			//}
 		}
 
 	};
@@ -410,11 +426,15 @@ bool CInventory::Slot(u16 slot_id, PIItem pIItem, bool bNotActivate, bool strict
 #endif // #ifdef DEBUG
 		Activate				(slot_id);
 	}
-	SInvItemPlace p					= pIItem->m_ItemCurrPlace;
+	SInvItemPlace prev_place = pIItem->m_ItemCurrPlace;
 	m_pOwner->OnItemSlot			(pIItem, pIItem->m_ItemCurrPlace);
 	pIItem->m_ItemCurrPlace.type	= eItemPlaceSlot;
 	pIItem->m_ItemCurrPlace.slot_id = slot_id;
-	pIItem->OnMoveToSlot			(p);
+	pIItem->OnMoveToSlot(prev_place);
+
+	if (prev_place.type == eItemPlaceRuck)
+		Actor()->ChangeInventoryFullness(-pIItem->GetOccupiedInvSpace());
+
 	
 	pIItem->object().processing_activate();
 
@@ -447,10 +467,13 @@ bool CInventory::Belt(PIItem pIItem, bool strict_placement)
 	CalcTotalWeight					();
 	InvalidateState					();
 
-	SInvItemPlace p					= pIItem->m_ItemCurrPlace;
+	SInvItemPlace prev_place = pIItem->m_ItemCurrPlace;
 	pIItem->m_ItemCurrPlace.type	= eItemPlaceBelt;
-	m_pOwner->OnItemBelt			(pIItem, p);
-	pIItem->OnMoveToBelt			(p);
+	m_pOwner->OnItemBelt(pIItem, prev_place);
+	pIItem->OnMoveToBelt(prev_place);
+
+	if (prev_place.type == eItemPlaceRuck)
+		Actor()->ChangeInventoryFullness(-pIItem->GetOccupiedInvSpace());
 
 	if(in_slot)
 		pIItem->object().processing_deactivate();
@@ -513,6 +536,10 @@ bool CInventory::Ruck(PIItem pIItem, bool strict_placement)
 	SInvItemPlace prev_place						= pIItem->m_ItemCurrPlace;
 	pIItem->m_ItemCurrPlace.type					= eItemPlaceRuck;
 	pIItem->OnMoveToRuck							(prev_place);
+
+	if (prev_place.type == eItemPlaceSlot || prev_place.type == eItemPlaceBelt)
+		Actor()->ChangeInventoryFullness(pIItem->GetOccupiedInvSpace());
+
 
 	if(in_slot)
 		pIItem->object().processing_deactivate();

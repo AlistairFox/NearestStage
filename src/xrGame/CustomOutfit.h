@@ -17,6 +17,9 @@ public:
 	virtual void			Hit					(float P, ALife::EHitType hit_type);
 	virtual void			UpdateCL();
 
+	int						m_iInventoryCapacity;
+	int						GetInventoryCapacity() const { return m_iInventoryCapacity; }
+
 	//коэффициенты на которые домножается хит
 	//при соответствующем типе воздействия
 	//если на персонаже надет костюм

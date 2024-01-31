@@ -21,6 +21,8 @@ protected:
 	CUIInventoryItemInfo* m_charge_level;
 	CUIInventoryItemInfo* m_max_charge;
 	CUIInventoryItemInfo* m_uncharge_speed;
+	CUIInventoryItemInfo* m_additional_weight;
+	CUIInventoryItemInfo* m_inv_capacity;
 
 	CUIStatic* m_Prop_line;
 

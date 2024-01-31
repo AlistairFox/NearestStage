@@ -28,6 +28,7 @@
 #include "../Torch.h"
 #include "../CustomDetector.h"
 #include "../AnomalyDetector.h"
+#include "../Backpack.h"
 
 extern const LPCSTR g_inventory_upgrade_xml;
 
@@ -369,8 +370,9 @@ void CUIItemInfo::TryAddConditionInfo( CInventoryItem& pInvItem, CInventoryItem*
 	CTorch* torch = smart_cast<CTorch*>(&pInvItem);
 	CCustomDetector* artefact_detector = smart_cast<CCustomDetector*>(&pInvItem);
 	CDetectorAnomaly* anomaly_detector = smart_cast<CDetectorAnomaly*>(&pInvItem);
+	CBackpack* backpack = smart_cast<CBackpack*>(&pInvItem);
 
-	if (torch || artefact_detector || anomaly_detector)
+	if (torch || artefact_detector || anomaly_detector || backpack)
 	{
 		UIItemConditionParams->SetInfo(pCompareItem, pInvItem);
 		UIDesc->AddWindow(UIItemConditionParams, false);
