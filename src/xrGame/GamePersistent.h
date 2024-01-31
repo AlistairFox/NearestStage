@@ -107,6 +107,7 @@ public:
 	float		GetActorMaxSatiety() override;
 	float		GetActorMaxThirst() override;
 	float		GetActorThirst() override;
+	bool		GetClearMaskProcess() override;
 };
 
 IC CGamePersistent&		GamePersistent()		{ return *((CGamePersistent*) g_pGamePersistent);			}

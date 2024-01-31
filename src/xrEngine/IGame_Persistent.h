@@ -148,6 +148,7 @@ public:
 	virtual bool					GetHudGlassEnabled() { return 0; };
 	virtual float					GetActorMaxThirst() { return 0; };
 	virtual	float					GetActorThirst() { return 0; };
+	virtual bool					GetClearMaskProcess() { return 0; };
 
 	virtual void					RegisterModel		(IRenderVisual* V)
 #ifndef _EDITOR

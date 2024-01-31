@@ -937,6 +937,12 @@ float CGamePersistent::GetActorThirst()
 	return (Actor()->conditions().GetThirst());
 }
 
+bool CGamePersistent::GetClearMaskProcess()
+{
+	if (!Actor())
+		return 0;
+	return Actor()->MaskClearInProcess();
+}
 
 void CGamePersistent::SetEffectorDOF(const Fvector& needed_dof)
 {

@@ -231,6 +231,7 @@ CActor::CActor() : CEntityAlive(),current_ik_cam_shift(0)
 
 
 	m_bEatAnimActive = false;
+	need_en_raindrops = false;
 }
 
 
@@ -2749,11 +2750,15 @@ void CActor::StartClearMask()
 {
 	if (!need_clear_mask)
 	{
+		CWeapon* Wpn = smart_cast<CWeapon*>(inventory().ActiveItem());
+		if (Wpn && !(Wpn->GetState() == CWeapon::eIdle))
+			return;
+
 		g_player_hud->script_anim_play(1, "clear_mask_anm", "anm_use", false, 1.0f);
 		PlayAnmSound("interface\\item_usage\\mask_clean");
 
 		oldmaskTimer = Device.dwTimeGlobal + 5000;
-		need_en_raindrops = true;
+		need_en_raindrops = false;
 		maskTimer = Device.dwTimeGlobal + ((g_player_hud->motion_length_script("clear_mask_anm", "anm_use", 1.0f)) / 2.5);
 		need_clear_mask = true;
 	}
@@ -2761,18 +2766,19 @@ void CActor::StartClearMask()
 
 void CActor::EndClearMask()
 {
-	if (need_clear_mask && maskTimer <= Device.dwTimeGlobal)
+	if (need_clear_mask && maskTimer <= Device.dwTimeGlobal && g_Alive())
 	{
 		Msg("EndMask");
-		Console->Execute("r2_rain_drops_control 0");
+		//Console->Execute("r2_rain_drops_control 0");
 		//Console->Execute("r2_rain_drops_control 1");
 		need_clear_mask = false;
+		need_en_raindrops = true;
 		maskTimer = 0;
 	}
 
-	if (need_en_raindrops && oldmaskTimer <= Device.dwTimeGlobal)
+	if ((need_en_raindrops && oldmaskTimer <= Device.dwTimeGlobal) || !g_Alive())
 	{
-		Console->Execute("r2_rain_drops_control 1");
+		//Console->Execute("r2_rain_drops_control 1");
 		need_en_raindrops = false;
 		oldmaskTimer = 0;
 	}
@@ -2855,6 +2861,7 @@ void CActor::StartTorchAnm()
 		CActor* pActor = smart_cast<CActor*>(Level().CurrentControlEntity());
 		pActor->add_cam_effector("camera_effects\\activity\\anm_torch.anm", 8555, false, "");
 		g_player_hud->script_anim_play(1, "switch_torch_anm", "anm_use", true, 1.0f);
+		g_player_hud->PlayBlendAnm("camera_effects\\activity\\anm_torch.anm", 0, 1.f, 1.f, false, false);
 		neet_switch_torch = true;
 		TorchTimer = Device.dwTimeGlobal + (g_player_hud->motion_length_script("switch_torch_anm", "anm_use", 1.0f) / 2);
 	}

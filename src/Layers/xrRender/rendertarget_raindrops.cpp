@@ -11,7 +11,7 @@ void CRenderTarget::PhaseRainDrops()
 
 	// Чтобы по команде r2_rain_drops_control off/on эффект перезапускался.
 	static bool saved_rain_drops_control = false;
-	bool current_rain_drops_control = !!ps_r2_rain_drops_flags.test(R2FLAG_RAIN_DROPS_CONTROL);
+	bool current_rain_drops_control = !!ps_r2_rain_drops_flags.test(R2FLAG_RAIN_DROPS_CONTROL) && !g_pGamePersistent->GetClearMaskProcess();
 	if (saved_rain_drops_control != current_rain_drops_control)
 	{
 		saved_rain_drops_control = current_rain_drops_control;

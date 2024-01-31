@@ -158,7 +158,8 @@ public:
 	u32 maskTimer = 0;
 	u32 oldmaskTimer = 0;
 	bool need_clear_mask = false;
-	bool need_en_raindrops = false;
+	bool need_en_raindrops;
+	bool			MaskClearInProcess() { return need_en_raindrops; }
 	void StartClearMask();
 	void EndClearMask();
 	void PlayAnmSound(shared_str sndname);
