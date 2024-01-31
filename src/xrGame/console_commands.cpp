@@ -1825,6 +1825,24 @@ public:
 	}
 };
 
+struct CCC_ReloadSystemLtx : public IConsole_Command
+{
+	CCC_ReloadSystemLtx(LPCSTR N) : IConsole_Command(N)
+	{
+		bEmptyArgsHandled = true;
+	};
+
+	virtual void Execute(LPCSTR args)
+	{
+		string_path fname;
+		FS.update_path(fname, "$game_config$", "system.ltx");
+		CInifile::Destroy(pSettings);
+		pSettings = new CInifile(fname, TRUE);
+		CHECK_OR_EXIT(0 != pSettings->section_count(), make_string("Cannot find file %s.\nReinstalling application may fix this problem.", fname));
+		Msg("system.ltx was reloaded.");
+	}
+};
+
 int alife_on = 1;
 void CCC_RegisterCommands()
 {
@@ -2048,7 +2066,7 @@ CMD4(CCC_Integer,			"hit_anims_tune",						&tune_hit_anims,		0, 1);
 		CMD4(CCC_Integer, "box_respawn_time", &box_respawn_time, 1, 1000000000);
 		CMD4(CCC_Integer, "sv_binnar_save", &binar_save, 0, 1);
 	}
-
+	CMD1(CCC_ReloadSystemLtx, "reload_system_ltx");
 	
 #ifdef DEBUG
 	CMD1(CCC_LuaHelp,				"lua_help");
