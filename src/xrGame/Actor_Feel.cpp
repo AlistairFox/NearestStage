@@ -224,8 +224,9 @@ void	CActor::PickupModeUpdate_COD	()
 	if (pNearestItem && m_bPickupMode)
 	{
 		Actor()->PlayAnmSound("interface\\item_usage\\pickup");
-		g_player_hud->script_anim_play(1, "item_ea_take_hud", "anm_ea_take", true, 1.4f);
+		g_player_hud->script_anim_play(1, "item_ea_take_hud", "anm_ea_take", true, 1.4f, pNearestItem->object().cNameVisual().c_str());
 		g_player_hud->PlayBlendAnm("camera_effects\\weapon\\two_handed_weapon_effect.anm", 0, 1.4, 1, false);
+		g_player_hud->SetScriptItemVisible(true);
 			CUsableScriptObject* pUsableObject = smart_cast<CUsableScriptObject*>(pNearestItem);
 			if (pUsableObject && (!m_pUsableObject))
 				pUsableObject->use(this);
