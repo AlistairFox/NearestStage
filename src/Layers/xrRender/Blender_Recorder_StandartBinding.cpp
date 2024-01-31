@@ -221,7 +221,9 @@ static class ssfx_wind_trees : public R_constant_setup
 {
 	virtual void setup(R_constant * C)
 	{
-		RCache.set_c(C, ps_ssfx_wind_trees);
+		CEnvDescriptor& env = *g_pGamePersistent->Environment().CurrentEnv;
+		float WindPower = (env.wind_velocity * 0.1) * ps_ssfx_wind_trees.w;
+		RCache.set_c(C, ps_ssfx_wind_trees.x, ps_ssfx_wind_trees.y, ps_ssfx_wind_trees.z, WindPower);
 	}
 }ssfx_wind_trees;
 

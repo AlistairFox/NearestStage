@@ -462,8 +462,8 @@ int get_ref_count(IUnknown* ii)
 
 void CEnvironment::lerp		(float& current_weight)
 {
-	if (IsWeatherEditor)
-		return;
+//	if (IsWeatherEditor)
+	//	return;
 
 
 	if (bWFX&&(wfx_time<=0.f)) StopWFX();
@@ -497,17 +497,17 @@ void CEnvironment::lerp		(float& current_weight)
 
 void CEnvironment::OnFrame()
 {
-	if (IsWeatherEditor)
-		return;
+//	if (IsWeatherEditor)
+//		return;
 
 	if (!g_pGameLevel)		return;
 
 
 	// Min wind velocity. [ ps_ssfx_wind_trees.w 0 ~ 1 ]
-	float WindVel = _max(CurrentEnv->wind_velocity, ps_ssfx_wind_trees.w * 1000);
+	float WindVel = (CurrentEnv->wind_velocity * 0.1) * ps_ssfx_wind_trees.w;
 	
 	// Limit min at 200 to avoid slow-mo at extremly low speed.
-	WindVel = _max(WindVel, 200) * 0.001f;
+	//WindVel = _max(WindVel, 200) * 0.001f;
 	
 	float WindDir = -CurrentEnv->wind_direction + PI_DIV_2;
 	Fvector2 WDir = { _cos(WindDir), _sin(WindDir) };
