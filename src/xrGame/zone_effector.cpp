@@ -59,9 +59,12 @@ void CZoneEffector::Update(float dist, float r, ALife::EHitType hit_type)
 	bool camera_on_actor = (Level().CurrentEntity() && smart_cast<CActor*>(Level().CurrentEntity()));
 	
 	if (m_pp_effector) {
-		if ((dist > max_r) || !camera_on_actor || (m_pActor&&!m_pActor->g_Alive()))	Stop();
-	} else {
-		if ((dist < max_r) && camera_on_actor)	Activate();
+		if ((dist > max_r) || !camera_on_actor || (m_pActor&&!m_pActor->g_Alive()))
+			Stop();
+	} else 
+	{
+		if ((dist < max_r) && camera_on_actor)	
+			Activate();
 	}
 	
 	float protection = 0.f;

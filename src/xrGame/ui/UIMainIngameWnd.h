@@ -33,7 +33,6 @@ protected:
 	CUIMotionIcon*		UIMotionIcon;
 	CUIZoneMap*			UIZoneMap;
 
-	CUIHudStatesWnd*	m_ui_hud_states;
 
 	CUIStatic*			m_ind_bleeding;
 	CUIStatic*			m_ind_radiation;
@@ -48,6 +47,7 @@ protected:
 	CUITextWnd* m_voice_distance = nullptr;
 
 public:
+	CUIHudStatesWnd* m_ui_hud_states;
 	CUIStatic*			m_ind_boost_psy;
 	CUIStatic*			m_ind_boost_radia;
 	CUIStatic*			m_ind_boost_chem;
