@@ -337,7 +337,6 @@
     <ClCompile Include="..\xrRender\Blender_Model_EbB.cpp" />
     <ClCompile Include="..\xrRender\Blender_Particle.cpp" />
     <ClCompile Include="..\xrRender\Blender_Recorder_R2.cpp" />
-    <ClCompile Include="..\xrRender\Blender_Recorder_StandartBinding.cpp" />
     <ClCompile Include="..\xrRender\Blender_Screen_SET.cpp" />
     <ClCompile Include="..\xrRender\Blender_tree.cpp" />
     <ClCompile Include="..\xrRender\ColorMapManager.cpp" />

@@ -92,10 +92,7 @@ void CEngineAPI::InitializeNotDedicated()
 	// try to initialize R1
 	if (NULL == hRender)
 	{
-		Log("Loading DLL:", r1_name);
-		hRender = LoadLibrary(r1_name);
-		g_current_renderer = 1;
-		renderer_value = 0;
+		R_ASSERT(hRender);
 	}
 
 	SECUROM_MARKER_HIGH_SECURITY_OFF(2)
@@ -201,15 +198,6 @@ void CEngineAPI::CreateRendererList()
 	vid_quality_token[1].id = -1;
 	vid_quality_token[1].name = NULL;
 #else
-	BOOL bSupports_r1 = FALSE;
-	Log("Try loading DLL:", r1_name);
-	hRender = LoadLibrary(r1_name);
-	if (hRender)
-	{
-		FreeLibrary(hRender);
-		bSupports_r1 = TRUE;
-	}
-	Log("* supports: ", bSupports_r1);
 	
 	BOOL bSupports_r2 = FALSE;
 	Log("Try loading DLL:", r2_name);
@@ -240,26 +228,18 @@ void CEngineAPI::CreateRendererList()
 	hRender = 0;
 
 	u32 size = 1;
-
-	if (bSupports_r1) // r1
-		size += 1; 
 	
 	if (bSupports_r2) // r2a, r2, r2.5
-		size += 3; 
+		size += 4; 
 
 	if (bSupports_r4) // r4
 		size += 1; 
 
-	if(!bSupports_r1 && !bSupports_r2 && !bSupports_r4)
+	if(!bSupports_r2 && !bSupports_r4)
 		CHECK_OR_EXIT(!FAILED(E_FAIL), 
 			make_string("Ты зачем рендер украл?\n%s:%s\n%s:%s\n%s:%s\n%s:%s\n%s:%s", r1_name, "украдено", r2_name, "спизженно", r4_name, "потеряно", "xrRender_R5.dll", "coming soon!", "xrRender_R6.dll", "cumming soon!!"));
 
 	vid_quality_token = xr_alloc<xr_token>(size);
-
-	if (bSupports_r1)
-	{
-		//add_renderer_mode("renderer_r1", 0);
-	}
 	
 	if (bSupports_r2)
 	{

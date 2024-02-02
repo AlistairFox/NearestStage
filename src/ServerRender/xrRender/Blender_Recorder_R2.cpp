@@ -205,7 +205,6 @@ void	CBlender_Compile::r_Sampler_clw	(LPCSTR name, LPCSTR texture, bool b_ps1x_P
 
 void	CBlender_Compile::r_End			()
 {
-	SetMapping				();
 	dest.constants			= DEV->_CreateConstantTable(ctable);
 	dest.state				= DEV->_CreateState		(RS.GetContainer());
 	dest.T					= DEV->_CreateTextureList	(passTextures);

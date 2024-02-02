@@ -184,7 +184,6 @@ void	CBlender_Compile::PassEnd			()
 	ctable.merge	(&proto.cs->constants);
 #	endif
 #endif	//	USE_DX10
-	SetMapping				();
 	proto.constants	= DEV->_CreateConstantTable(ctable);
 	proto.T 		= DEV->_CreateTextureList	(passTextures);
 #ifdef _EDITOR

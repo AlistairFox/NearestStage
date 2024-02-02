@@ -2,18 +2,6 @@
 #define xrRender_consoleH
 #pragma once
 
-extern ECORE_API float ps_r2_tnmp_a; // r2-only
-extern ECORE_API float ps_r2_tnmp_b; // r2-only
-extern ECORE_API float ps_r2_tnmp_c; // r2-only
-extern ECORE_API float ps_r2_tnmp_d; // r2-only
-extern ECORE_API float ps_r2_tnmp_e; // r2-only
-extern ECORE_API float ps_r2_tnmp_f; // r2-only
-extern ECORE_API float ps_r2_tnmp_w; // r2-only
-extern ECORE_API float ps_r2_tnmp_exposure; // r2-only
-extern ECORE_API float ps_r2_tnmp_gamma; // r2-only
-extern ECORE_API float ps_r2_tnmp_onoff; // r2-only
-
-
 // SMAP Control
 
 extern ECORE_API 	u32 		ps_r2_smapsize;

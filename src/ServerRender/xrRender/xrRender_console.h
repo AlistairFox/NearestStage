@@ -2,17 +2,6 @@
 #define xrRender_consoleH
 #pragma once
 
-extern ECORE_API float ps_r2_tnmp_a; // r2-only
-extern ECORE_API float ps_r2_tnmp_b; // r2-only
-extern ECORE_API float ps_r2_tnmp_c; // r2-only
-extern ECORE_API float ps_r2_tnmp_d; // r2-only
-extern ECORE_API float ps_r2_tnmp_e; // r2-only
-extern ECORE_API float ps_r2_tnmp_f; // r2-only
-extern ECORE_API float ps_r2_tnmp_w; // r2-only
-extern ECORE_API float ps_r2_tnmp_exposure; // r2-only
-extern ECORE_API float ps_r2_tnmp_gamma; // r2-only
-extern ECORE_API float ps_r2_tnmp_onoff; // r2-only
-
 // SSR quality option
 extern ECORE_API	u32			dt_ssr_samp;
 extern ECORE_API	xr_token	ssr_samp_token[];
@@ -302,7 +291,6 @@ enum
 
 extern void						xrRender_initconsole	();
 extern BOOL						xrRender_test_hw		();
-extern void						xrRender_apply_tf		();
 extern ECORE_API float			droplets_power_debug;
 
 #endif

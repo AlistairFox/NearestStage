@@ -260,17 +260,6 @@ int			ps_r2_wait_sleep			= 0;
 float		ps_r2_lt_smooth				= 1.f;				// 1.f
 float		ps_r2_slight_fade			= 0.5f;				// 1.f
 
-float ps_r2_tnmp_a = .205f; // r2-only
-float ps_r2_tnmp_b = .35f; // r2-only
-float ps_r2_tnmp_c = .55f; // r2-only
-float ps_r2_tnmp_d = .20f; // r2-only
-float ps_r2_tnmp_e = .02f; // r2-only
-float ps_r2_tnmp_f = .15f; // r2-only
-float ps_r2_tnmp_w = 7.5f; // r2-only
-float ps_r2_tnmp_exposure = 7.0f; // r2-only
-float ps_r2_tnmp_gamma = .25f; // r2-only
-float ps_r2_tnmp_onoff = .0f; // r2-only
-
 // Screen Space Shaders Stuff
 // Anomaly
 extern ENGINE_API float ps_r2_img_exposure;		// r2-only
@@ -886,17 +875,6 @@ void		xrRender_initconsole	()
 	CMD4(CCC_Float,		"r1_dlights_clip",		&ps_r1_dlights_clip,		10.f,	150.f	);
 	CMD4(CCC_Float,		"r1_pps_u",				&ps_r1_pps_u,				-1.f,	+1.f	);
 	CMD4(CCC_Float,		"r1_pps_v",				&ps_r1_pps_v,				-1.f,	+1.f	);
-
-	CMD4(CCC_Float, "r2_tnmp_a", &ps_r2_tnmp_a, 0.0f, 20.0f);
-	CMD4(CCC_Float, "r2_tnmp_b", &ps_r2_tnmp_b, 0.0f, 20.0f);
-	CMD4(CCC_Float, "r2_tnmp_c", &ps_r2_tnmp_c, 0.0f, 20.0f);
-	CMD4(CCC_Float, "r2_tnmp_d", &ps_r2_tnmp_d, 0.0f, 20.0f);
-	CMD4(CCC_Float, "r2_tnmp_e", &ps_r2_tnmp_e, 0.0f, 20.0f);
-	CMD4(CCC_Float, "r2_tnmp_f", &ps_r2_tnmp_f, 0.0f, 20.0f);
-	CMD4(CCC_Float, "r2_tnmp_w", &ps_r2_tnmp_w, 0.0f, 20.0f);
-	CMD4(CCC_Float, "r2_tnmp_exposure", &ps_r2_tnmp_exposure, 0.0f, 20.0f);
-	CMD4(CCC_Float, "r2_tnmp_gamma", &ps_r2_tnmp_gamma, 0.0f, 20.0f);
-	CMD4(CCC_Float, "r2_tnmp_onoff", &ps_r2_tnmp_onoff, 0.0f, 1.0f);
 
 	// R1-specific
 	CMD4(CCC_Integer,	"r1_glows_per_frame",	&ps_r1_GlowsPerFrame,		2,		32		);

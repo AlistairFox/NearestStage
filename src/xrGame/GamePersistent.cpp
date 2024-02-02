@@ -100,7 +100,11 @@ CGamePersistent::CGamePersistent(void)
 	}
 
 	eQuickLoad				= Engine.Event.Handler_Attach("Game:QuickLoad",this);
-	Fvector3* DofValue		= Console->GetFVectorPtr("r2_dof");
+	Fvector3* DofValue;
+	if (g_dedicated_server)
+		DofValue->set(0.f, 0.f, 0.f);
+	else
+		DofValue = Console->GetFVectorPtr("r2_dof");
 	SetBaseDof				(*DofValue);
 }
 

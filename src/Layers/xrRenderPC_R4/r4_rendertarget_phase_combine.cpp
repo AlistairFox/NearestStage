@@ -475,18 +475,6 @@ void	CRenderTarget::phase_combine	()
 		RCache.set_c				("dof_params",	dof.x, dof.y, dof.z, ps_r2_dof_sky);
 //.		RCache.set_c				("dof_params",	ps_r2_dof.x, ps_r2_dof.y, ps_r2_dof.z, ps_r2_dof_sky);
 		RCache.set_c				("dof_kernel",	vDofKernel.x, vDofKernel.y, ps_r2_dof_kernel_size, 0);
-
-		RCache.set_c("tnmp_a", ps_r2_tnmp_a);
-		RCache.set_c("tnmp_b", ps_r2_tnmp_b);
-		RCache.set_c("tnmp_c", ps_r2_tnmp_c);
-		RCache.set_c("tnmp_d", ps_r2_tnmp_d);
-		RCache.set_c("tnmp_e", ps_r2_tnmp_e);
-		RCache.set_c("tnmp_f", ps_r2_tnmp_f);
-		RCache.set_c("tnmp_w", ps_r2_tnmp_w);
-
-		RCache.set_c("tnmp_exposure", ps_r2_tnmp_exposure);
-		RCache.set_c("tnmp_gamma", ps_r2_tnmp_gamma);
-		RCache.set_c("tnmp_onoff", ps_r2_tnmp_onoff);
 		
 		RCache.set_Geometry			(g_aa_AA);
 		RCache.Render				(D3DPT_TRIANGLELIST,Offset,0,4,0,2);

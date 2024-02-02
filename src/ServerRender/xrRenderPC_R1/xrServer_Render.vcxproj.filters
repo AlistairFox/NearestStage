@@ -923,9 +923,6 @@
     <ClCompile Include="..\xrRender\Blender_Recorder_R2.cpp">
       <Filter>Refactored\Execution &amp; 3D\Shaders\Blender</Filter>
     </ClCompile>
-    <ClCompile Include="..\xrRender\Blender_Recorder_StandartBinding.cpp">
-      <Filter>Refactored\Execution &amp; 3D\Shaders\Blender</Filter>
-    </ClCompile>
     <ClCompile Include="..\xrRender\tss_def.cpp">
       <Filter>Refactored\Execution &amp; 3D\Shaders\Blender</Filter>
     </ClCompile>
