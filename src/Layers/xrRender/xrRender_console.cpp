@@ -338,9 +338,6 @@ int opt_dynamic = 0;
 //SFZ Lens Flares
 int ps_r2_lfx = 0;
 
-//reflection distance
-float ps_r2_reflections_distance = 300.0f;
-
 //Static on dx11
 Flags32	ps_r2_static_flags = {
 	R2FLAG_USE_BUMP
@@ -1147,13 +1144,11 @@ void		xrRender_initconsole	()
 
 
 	// Geometry optimization
-	CMD4(CCC_Integer, "r__optimize_static_geom", &opt_static, 0, 4);
-	CMD4(CCC_Integer, "r__optimize_dynamic_geom", &opt_dynamic, 0, 4);
+	CMD4(CCC_Integer, "r__optimize_static_geom", &opt_static, 0, 2);
+	CMD4(CCC_Integer, "r__optimize_dynamic_geom", &opt_dynamic, 0, 2);
 	psDeviceFlags2.set(rsOptShadowGeom, FALSE);
 //	CMD3(CCC_Mask, "r__optimize_shadow_geom", &psDeviceFlags2, rsOptShadowGeom);
 	CMD4(CCC_Integer, "r2_lfx", &ps_r2_lfx, 0, 1); //SFZ Lens Flares
-
-	CMD4(CCC_Float, "r3_reflections_dist", &ps_r2_reflections_distance, 10.f, 1000.f); //Дальность отражений
 
 //	CMD3(CCC_Mask,		"r2_sun_ignore_portals",		&ps_r2_ls_flags,			R2FLAG_SUN_IGNORE_PORTALS);
 }

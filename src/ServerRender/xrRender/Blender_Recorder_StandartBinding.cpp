@@ -492,17 +492,6 @@ class ssfx_hud_drops_2 : public R_constant_setup
 };
 static ssfx_hud_drops_2 binder_ssfx_hud_drops_2;
 
-// Reflections distance
-extern float ps_r2_reflections_distance;
-
-static class cl_refl_dist : public R_constant_setup
-{
-	virtual void setup(R_constant* C)
-	{
-		RCache.set_c(C, ps_r2_reflections_distance, 0, 0, 0);
-	}
-} cl_refl_dist;
-
 // Standart constant-binding
 void	CBlender_Compile::SetMapping	()
 {
@@ -553,9 +542,6 @@ void	CBlender_Compile::SetMapping	()
 	r_Constant("ssfx_hud_drops_1", &binder_ssfx_hud_drops_1);
 	r_Constant("ssfx_hud_drops_2", &binder_ssfx_hud_drops_2);
 	r_Constant("pda_params", &binder_pda_params);
-
-	//Reflections distance
-	r_Constant("reflections_distance", &cl_refl_dist);
 
 	//hemi cube
 	r_Constant				("L_material",			&binder_material);
