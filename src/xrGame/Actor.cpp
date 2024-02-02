@@ -1804,18 +1804,22 @@ void CActor::UpdateInventoryItems()
 
 		if (item_to_drop && item_to_drop->m_pInventory && !item_to_drop->IsQuestItem() && m_iInventoryFullness > MaxCarryInvCapacity())
 		{
-			if (m_iInventoryFullnessCtrl > MaxCarryInvCapacity())
+			if (Actor() != nullptr && !g_dedicated_server)
 			{
-				NET_Packet P;
-				CGameObject::u_EventGen(P, GE_OWNERSHIP_REJECT, ID());
-				P.w_u16(item_to_drop->object().ID());
-				CGameObject::u_EventSend(P);
+				if (m_iInventoryFullnessCtrl > MaxCarryInvCapacity())
+				{
+					NET_Packet P;
+					CGameObject::u_EventGen(P, GE_OWNERSHIP_REJECT, ID());
+					P.w_u16(item_to_drop->object().ID());
+					CGameObject::u_EventSend(P);
 
-				m_iInventoryFullnessCtrl -= item_to_drop->GetOccupiedInvSpace();
+					m_iInventoryFullnessCtrl -= item_to_drop->GetOccupiedInvSpace();
+				}
+
+
+					SDrawStaticStruct* _s = CurrentGameUI()->AddCustomStatic("backpack_full", true);
+					_s->wnd()->TextItemControl()->SetText(CStringTable().translate("st_backpack_full").c_str());
 			}
-
-			SDrawStaticStruct* _s = CurrentGameUI()->AddCustomStatic("backpack_full", true);
-			_s->wnd()->TextItemControl()->SetText(CStringTable().translate("st_backpack_full").c_str());
 		}
 	}
 }

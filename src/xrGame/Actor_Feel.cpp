@@ -135,8 +135,11 @@ void CActor::PickupModeUpdate()
 		CInventoryItem* inv_item = smart_cast<CInventoryItem*>(m_pUsableObject);
 		if (!inv_item->IsQuestItem() && MaxCarryInvCapacity() < (GetInventoryFullness() + inv_item->GetOccupiedInvSpace()))
 		{
-			SDrawStaticStruct* _s = CurrentGameUI()->AddCustomStatic("backpack_full", true);
-			_s->wnd()->TextItemControl()->SetText(CStringTable().translate("st_backpack_full").c_str());
+			if (Actor() != nullptr && !g_dedicated_server)
+			{
+				SDrawStaticStruct* _s = CurrentGameUI()->AddCustomStatic("backpack_full", true);
+				_s->wnd()->TextItemControl()->SetText(CStringTable().translate("st_backpack_full").c_str());
+			}
 
 			return;
 		}
@@ -237,8 +240,11 @@ void	CActor::PickupModeUpdate_COD	()
 	{
 		if (!pNearestItem->IsQuestItem() && MaxCarryInvCapacity() < (GetInventoryFullness() + pNearestItem->GetOccupiedInvSpace()))
 		{
-			SDrawStaticStruct* _s = CurrentGameUI()->AddCustomStatic("backpack_full", true);
-			_s->wnd()->TextItemControl()->SetText(CStringTable().translate("st_backpack_full").c_str());
+			if (Actor() != nullptr && !g_dedicated_server)
+			{
+				SDrawStaticStruct* _s = CurrentGameUI()->AddCustomStatic("backpack_full", true);
+				_s->wnd()->TextItemControl()->SetText(CStringTable().translate("st_backpack_full").c_str());
+			}
 
 			return;
 		}

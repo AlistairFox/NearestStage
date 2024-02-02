@@ -436,7 +436,8 @@ bool CInventory::Slot(u16 slot_id, PIItem pIItem, bool bNotActivate, bool strict
 		Actor()->ChangeInventoryFullness(-pIItem->GetOccupiedInvSpace());
 
 	
-	pIItem->object().processing_activate();
+	if(Actor() != nullptr)
+		pIItem->object().processing_activate();
 
 	return						true;
 }
