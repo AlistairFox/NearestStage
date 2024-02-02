@@ -124,6 +124,7 @@ public:
 	void					BlockSlot(u16 slot_id);
 	void					UnblockSlot(u16 slot_id);
 	void					UnblockAll();
+	void					UnblockSlotAll(u16 slot_id);
 	bool					IsSlotBlocked(PIItem const iitem) const;
 
 	TIItemContainer			m_all;

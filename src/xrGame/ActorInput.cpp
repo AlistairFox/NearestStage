@@ -83,13 +83,13 @@ void CActor::IR_OnKeyboardPress(int cmd)
 			}
 		}break;
 
-
+	case kAnimExit:
+	{
+			if (MpAnimationMODE() && !OutAnim)
+				FastExit();
+	}break;
 	case kSafeMode:
 	{
-		if (MpAnimationMODE() && !OutAnim)
-		{
-			FastExit();
-		}
 		if (OnClient())
 		{
 			game_PlayerState* ps = Game().GetPlayerByGameID(ID());
@@ -144,9 +144,12 @@ void CActor::IR_OnKeyboardPress(int cmd)
 	}
 	else
 	{
-		if (MpSafeMODE() || MpAnimationMODE() || MpWoundMODE() || MpLootMODE())
-			return;
 
+		if (MpSafeMODE() || MpAnimationMODE() || MpWoundMODE() || MpLootMODE())
+		{
+			Msg("AnimMode: %d", cmd);
+			return;
+		}
 		if (inventory().Action((u16)cmd, CMD_START))	
 			return;
 	}
@@ -186,6 +189,8 @@ void CActor::IR_OnKeyboardPress(int cmd)
 		return;
 	}
 #endif //DEBUG
+
+	Msg("CMD: %d", cmd);
 	switch(cmd)
 	{
 	case kJUMP:		

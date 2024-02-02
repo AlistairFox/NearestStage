@@ -14,9 +14,13 @@ void CActor::SetAnim(int ANIM)
 
 void callbackAnim(CBlend* blend)
 {
+	Msg("callBack");
 	CActor* act = (CActor*)blend->CallbackParam;
 	if (act)
+	{
+		Msg("Act can change");
 		act->CanChange = true;
+	}
 }
   
 bool CActor::MpAnimationMODE() const
@@ -156,7 +160,7 @@ void CActor::ReciveAnimationPacket(NET_Packet& packet)
 			k->LL_GetMotionDef(motion)->StopAtEnd(),
 			callbackAnim, this, 0
 		);
-
+		Msg("ReciveAnimationPacket callBack");
 		CanChange = false;
 	}
 
@@ -334,6 +338,7 @@ void CActor::SelectScriptAnimation()
 	{
 		script_BODY = m_anims->m_script.in_anims.m_animation_in[selectedAnimation][InputAnim];
 		script_anim(script_BODY, callbackAnim, this);
+		Msg("SelectScriptAnimation callBack");
 		InputAnim += 1;
 		NEED_EXIT = true;
 
@@ -400,6 +405,7 @@ void CActor::SelectScriptAnimation()
 	{
 		script_BODY = m_anims->m_script.middle_anims.m_animation[selectedAnimation][MidAnim];
 		script_anim(script_BODY, callbackAnim, this);
+		Msg("Mid Playe callBack");
 		MidAnim += 1;
 
 		soundPlay();
@@ -422,6 +428,7 @@ void CActor::SelectScriptAnimation()
 	{
 		script_BODY = m_anims->m_script.out_anims.m_animation_out[selectedAnimation][OutAnim];
 		script_anim(script_BODY, callbackAnim, this);
+		Msg("OutPlay callback");
 		OutAnim += 1;
 	}
 
@@ -469,6 +476,7 @@ void CActor::FastExit()
 	NEED_EXIT = false;
 	ANIM_SELECTED = 0;
 	StopAnims();
+	Msg("Act can change");
 }
 
 void CActor::StopAnims()

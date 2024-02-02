@@ -39,6 +39,7 @@ _action  actions[] = {
 
 	{ "animation_mode",		kAnimationMode			,_both},
 	{ "safe_mode",			kSafeMode				,_both},
+	{ "anim_exit", kAnimExit, _both},
 	{ "loot_mode", kLOOTMODE, _both},
 	{ "swipe_mask", kSwipeMask, _both},
 	{"fuck", kFuck, _both},

@@ -1502,7 +1502,10 @@ void CInventory::SetSlotsBlocked(u16 mask, bool bBlock)
 			if (bBlock)
 				BlockSlot(i);
 			else
+			{
 				UnblockSlot(i);
+				UnblockSlotAll(i);
+			}
 		}
 	}
 	
@@ -1597,6 +1600,11 @@ void CInventory::UnblockAll()
 	{
 		m_blocked_slots[i] = 0;
 	}
+}
+
+void CInventory::UnblockSlotAll(u16 slot_id)
+{
+	m_blocked_slots[slot_id] = 0;
 }
 
 bool CInventory::IsSlotBlocked(u16 slot_id) const
