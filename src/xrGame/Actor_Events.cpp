@@ -331,6 +331,7 @@ void CActor::OnEvent(NET_Packet& P, u16 type)
 
 	case GE_ACTOR_ANIMATION_SCRIPT:
 	{
+		Msg("ReciveAnimationScript");
 		ReciveAnimationPacket(P);
 	}break;
 

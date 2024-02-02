@@ -299,8 +299,8 @@ void CKinematicsAnimated::IBlendSetup(CBlend& B,u16 part,u8 channel, MotionID mo
 	B.playing		= TRUE;
 	B.stop_at_end_callback = TRUE;
 	B.Callback		= Callback;
+	Msg("B.CallBack");
 	B.CallbackParam = CallbackParam;
-
 	B.channel		= channel;
 	B.fall_at_end	= B.stop_at_end && (channel > 1);
 }
@@ -333,8 +333,11 @@ CBlend*	CKinematicsAnimated::LL_PlayCycle(u16 part, MotionID motion_ID, BOOL  bM
 	// validate and unroll
 	if (!motion_ID.valid())	return 0;
 	if (BI_NONE==part)		{
-		for (u16 i=0; i<MAX_PARTS; i++)
-			LL_PlayCycle(i,motion_ID,bMixing,blendAccrue,blendFalloff,Speed,noloop,Callback,CallbackParam,channel);
+		for (u16 i = 0; i < MAX_PARTS; i++)
+		{
+			Msg("LL_PlayCycle");
+			LL_PlayCycle(i, motion_ID, bMixing, blendAccrue, blendFalloff, Speed, noloop, Callback, CallbackParam, channel);
+		}
 		return 0;
 	}
 	if (part>=MAX_PARTS)	return 0;

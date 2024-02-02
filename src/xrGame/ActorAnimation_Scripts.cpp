@@ -14,11 +14,10 @@ void CActor::SetAnim(int ANIM)
 
 void callbackAnim(CBlend* blend)
 {
-	Msg("callBack");
 	CActor* act = (CActor*)blend->CallbackParam;
 	if (act)
 	{
-		Msg("Act can change");
+		Msg("callbackAnim");
 		act->CanChange = true;
 	}
 }
@@ -124,6 +123,7 @@ void SActorStateAnimation::CreateAnimationsScripted(IKinematicsAnimated* K)
 
 void CActor::script_anim(MotionID Animation, PlayCallback Callback, LPVOID CallbackParam)
 {
+	Msg("script anim");
 	IKinematicsAnimated* k = smart_cast<IKinematicsAnimated*>(Visual());
 	k->LL_PlayCycle(
 		k->LL_GetMotionDef(Animation)->bone_or_part,
@@ -149,6 +149,7 @@ void CActor::ReciveAnimationPacket(NET_Packet& packet)
 
 	if (motion.valid())
 	{
+		Msg("InReciveAnimationPacket");
 		IKinematicsAnimated* k = smart_cast<IKinematicsAnimated*>(Visual());
 		k->LL_PlayCycle(
 			k->LL_GetMotionDef(motion)->bone_or_part,
@@ -160,7 +161,6 @@ void CActor::ReciveAnimationPacket(NET_Packet& packet)
 			k->LL_GetMotionDef(motion)->StopAtEnd(),
 			callbackAnim, this, 0
 		);
-		Msg("ReciveAnimationPacket callBack");
 		CanChange = false;
 	}
 
@@ -337,8 +337,8 @@ void CActor::SelectScriptAnimation()
 	if (!InPlay)
 	{
 		script_BODY = m_anims->m_script.in_anims.m_animation_in[selectedAnimation][InputAnim];
+		Msg("InPlay");
 		script_anim(script_BODY, callbackAnim, this);
-		Msg("SelectScriptAnimation callBack");
 		InputAnim += 1;
 		NEED_EXIT = true;
 
@@ -361,7 +361,6 @@ void CActor::SelectScriptAnimation()
 			
 				if (att)
 				{
-					Msg("att");
 					this->attach(inv_item);
 				}
 			}
@@ -404,8 +403,8 @@ void CActor::SelectScriptAnimation()
 	if (!MidPlay)
 	{
 		script_BODY = m_anims->m_script.middle_anims.m_animation[selectedAnimation][MidAnim];
+		Msg("MidPlay");
 		script_anim(script_BODY, callbackAnim, this);
-		Msg("Mid Playe callBack");
 		MidAnim += 1;
 
 		soundPlay();
@@ -427,8 +426,8 @@ void CActor::SelectScriptAnimation()
 	if (!OutPlay)
 	{
 		script_BODY = m_anims->m_script.out_anims.m_animation_out[selectedAnimation][OutAnim];
+		Msg("OutPlay");
 		script_anim(script_BODY, callbackAnim, this);
-		Msg("OutPlay callback");
 		OutAnim += 1;
 	}
 
@@ -476,7 +475,6 @@ void CActor::FastExit()
 	NEED_EXIT = false;
 	ANIM_SELECTED = 0;
 	StopAnims();
-	Msg("Act can change");
 }
 
 void CActor::StopAnims()

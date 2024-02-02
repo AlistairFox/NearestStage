@@ -1186,23 +1186,6 @@ void CActor::UpdateCL	()
 	TimeUnblockAction();
 	EndTorchAnm();
 
-	if (Device.dwFrame % 100 == 0)
-	{
-		if (Level().CurrentControlEntity() != this)
-		{
-			if (!CanChange)
-				Msg("!CanChange");
-			if (MpWoundMODE())
-				Msg("WoundMode");
-
-			if (MpLootMODE())
-				Msg("LootMode");
-
-			if (MpAnimationMODE())
-				Msg("Anim mode");
-		}
-	}
-
 	if(g_Alive() && Level().CurrentViewEntity() == this)
 	{
 		if (Actor()->MpLootMODE() && !ANIMSET)
