@@ -519,7 +519,7 @@ int updatecl_frames = 10;
 ENGINE_API float VIEWPORT_NEAR = 0.2f;
 
 ENGINE_API float psSVPImageSizeK = 0.7f;
-ENGINE_API int psSVPFrameDelay = 1;
+ENGINE_API int psSVPFrameDelay = 3;
 
 // Anomaly
 ENGINE_API float ps_r2_img_exposure = 1.0f; // r2-only
