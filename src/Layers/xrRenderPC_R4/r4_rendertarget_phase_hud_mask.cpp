@@ -2,10 +2,8 @@
 
 void CRenderTarget::phase_hud_mask()
 {
-	if (Device.m_SecondViewport.IsSVPActive())//не рендерить в прицеле
+	if (RImplementation.currentViewPort == SECONDARY_WEAPON_SCOPE)
 		return;
-
-
 	u32			Offset = 0;
 	Fvector2	p0, p1;
 

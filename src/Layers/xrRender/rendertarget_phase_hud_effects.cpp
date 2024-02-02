@@ -2,10 +2,8 @@
 
 void CRenderTarget::phase_hud_blood()
 {
-	if (Device.m_SecondViewport.IsSVPActive())
+	if (RImplementation.currentViewPort == SECONDARY_WEAPON_SCOPE)
 		return;
-
-
 	u32			Offset = 0;
 	Fvector2	p0, p1;
 
@@ -58,8 +56,10 @@ void CRenderTarget::phase_hud_blood()
 
 void CRenderTarget::phase_hud_power()
 {
-	if (Device.m_SecondViewport.IsSVPActive())
+
+	if (RImplementation.currentViewPort == SECONDARY_WEAPON_SCOPE)
 		return;
+
 	u32			Offset = 0;
 	Fvector2	p0, p1;
 
@@ -114,7 +114,7 @@ void CRenderTarget::phase_hud_power()
 
 void CRenderTarget::phase_hud_bleeding()
 {
-	if (Device.m_SecondViewport.IsSVPActive())
+	if (RImplementation.currentViewPort == SECONDARY_WEAPON_SCOPE)
 		return;
 	u32			Offset = 0;
 	Fvector2	p0, p1;
@@ -166,7 +166,7 @@ void CRenderTarget::phase_hud_bleeding()
 
 void CRenderTarget::phase_hud_satiety()
 {
-	if (Device.m_SecondViewport.IsSVPActive())
+	if (RImplementation.currentViewPort == SECONDARY_WEAPON_SCOPE)
 		return;
 	u32			Offset = 0;
 	Fvector2	p0, p1;
@@ -221,7 +221,7 @@ void CRenderTarget::phase_hud_satiety()
 
 void CRenderTarget::phase_hud_thirst()
 {
-	if (Device.m_SecondViewport.IsSVPActive())
+	if (RImplementation.currentViewPort == SECONDARY_WEAPON_SCOPE)
 		return;
 	u32			Offset = 0;
 	Fvector2	p0, p1;

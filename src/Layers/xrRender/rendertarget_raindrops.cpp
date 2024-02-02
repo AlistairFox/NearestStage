@@ -2,8 +2,7 @@
 
 void CRenderTarget::PhaseRainDrops()
 {
-
-	if (Device.m_SecondViewport.IsSVPActive()) //В прицеле не рендерим
+	if (RImplementation.currentViewPort == SECONDARY_WEAPON_SCOPE)
 		return;
 
 	static float rain_drops_factor = 0.f;

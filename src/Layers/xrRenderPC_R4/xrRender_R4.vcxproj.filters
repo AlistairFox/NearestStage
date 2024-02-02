@@ -771,8 +771,10 @@
     <ClInclude Include="blender_ss_sunshafts.h">
       <Filter>Shading templates</Filter>
     </ClInclude>
-    <ClInclude Include="blender_cut.h" />
     <ClInclude Include="blender_blur.h">
+      <Filter>Shading templates</Filter>
+    </ClInclude>
+    <ClInclude Include="blender_cut.h">
       <Filter>Shading templates</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1419,13 +1421,17 @@
     <ClCompile Include="..\xrRender\rendertarget_raindrops.cpp">
       <Filter>Core_Target</Filter>
     </ClCompile>
-    <ClCompile Include="blender_cut.cpp" />
-    <ClCompile Include="r4_rendertarget_phase_cut.cpp" />
     <ClCompile Include="blender_blur.cpp">
       <Filter>Shading templates</Filter>
     </ClCompile>
     <ClCompile Include="rendertarget_phase_blur.cpp">
       <Filter>Core_Target</Filter>
+    </ClCompile>
+    <ClCompile Include="r4_rendertarget_phase_cut.cpp">
+      <Filter>Core_Target</Filter>
+    </ClCompile>
+    <ClCompile Include="blender_cut.cpp">
+      <Filter>Shading templates</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -249,6 +249,9 @@ void CRender::Render		()
 	Fcolor					sun_color			= ((light*)Lights.sun._get())->color;
 	BOOL					bSUN				= ps_r2_ls_flags.test(R2FLAG_SUN) && (u_diffuse2s(sun_color.r,sun_color.g,sun_color.b)>EPS);
 	if (o.sunstatic)		bSUN				= FALSE;
+
+//	if (RImplementation.currentViewPort == SECONDARY_WEAPON_SCOPE)
+//		bSUN = FALSE;
 	// Msg						("sstatic: %s, sun: %s",o.sunstatic?;"true":"false", bSUN?"true":"false");
 
 	// HOM
@@ -496,8 +499,11 @@ void CRender::Render		()
 	//	TODO: DX10: Implement DX10 rain.
 	if (ps_r2_ls_flags.test(R3FLAG_DYN_WET_SURF))
 	{
-		PIX_EVENT(DEFER_RAIN);
-		render_rain();
+		if (RImplementation.currentViewPort != SECONDARY_WEAPON_SCOPE)
+		{
+			PIX_EVENT(DEFER_RAIN);
+			render_rain();
+		}
 	}
 
 	// Directional light - fucking sun

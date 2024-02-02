@@ -70,7 +70,7 @@ void	CRenderTarget::phase_combine	()
 
 	if (RImplementation.o.hbao_plus)
 	{
-		phase_hbao_plus();
+			phase_hbao_plus();
 	}
 	else
     if( RImplementation.o.ssao_hdao && RImplementation.o.ssao_ultra)
@@ -304,8 +304,9 @@ void	CRenderTarget::phase_combine	()
 
 	//	Igor: for volumetric lights
 	//	combine light volume here
-	if (m_bHasActiveVolumetric)
-		phase_combine_volumetric();
+	if (RImplementation.currentViewPort != SECONDARY_WEAPON_SCOPE)
+		if (m_bHasActiveVolumetric)
+			phase_combine_volumetric();
 
 	// Perform blooming filter and distortion if needed
 	RCache.set_Stencil	(FALSE);
@@ -382,6 +383,7 @@ void	CRenderTarget::phase_combine	()
 
 	if (!_menu_pp)
 	{
+		if (RImplementation.currentViewPort != SECONDARY_WEAPON_SCOPE)
 		if (ps_r_sun_shafts > 0 && (ps_sunshafts_mode == R2SS_SCREEN_SPACE || ps_sunshafts_mode == R2SS_COMBINE_SUNSHAFTS))
 			phase_sunshafts();
 	}
