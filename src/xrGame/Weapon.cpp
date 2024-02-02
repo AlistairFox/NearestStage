@@ -38,6 +38,7 @@ BOOL	b_hud_rotate = TRUE;
 BOOL safemode_rot = FALSE;
 extern CUIXml* pWpnScopeXml = NULL;
 float m_fFactor;
+extern float m_fZoomPower = 1.0f;
 
 CWeapon::CWeapon()
 {
@@ -1762,6 +1763,7 @@ void CWeapon::OnZoomIn()
 	if (bIsSecondVPZoomPresent() && m_zoom_params.m_bUseDynamicZoom && IsScopeAttached())
 		if (bIsSecondVPZoomPresent() && m_zoom_params.m_bUseDynamicZoom && IsScopeAttached())
 		{
+
 			if (LastZoomFactor)
 				m_fRTZoomFactor = LastZoomFactor;
 			else
@@ -1769,8 +1771,6 @@ void CWeapon::OnZoomIn()
 			float delta, min_zoom_factor;
 			GetZoomData(m_zoom_params.m_fScopeZoomFactor, delta, min_zoom_factor);
 			clamp(m_fRTZoomFactor, m_zoom_params.m_fScopeZoomFactor, min_zoom_factor);
-
-
 
 			SetZoomFactor(CurrentZoomFactor());
 		}
@@ -1817,6 +1817,7 @@ void CWeapon::OnZoomIn()
 
 void CWeapon::OnZoomOut()
 {
+	m_fZoomPower = 1.0f;
 	if (!bIsSecondVPZoomPresent())
 		m_fRTZoomFactor = GetZoomFactor(); //  
 
@@ -2820,6 +2821,10 @@ void CWeapon::ZoomDynamicMod(bool bIncrement, bool bForceLimit)
 
 	GetZoomData(max_zoom_factor, delta, min_zoom_factor);
 
+	m_fZoomPower = (bIncrement ? m_fZoomPower -= 0.2f : m_fZoomPower += 0.2f);
+	clamp(m_fZoomPower, 0.2f, 1.f);
+	Msg("%f", m_fZoomPower);
+
 	if (bForceLimit)
 	{
 		m_fRTZoomFactor = (bIncrement ? max_zoom_factor : min_zoom_factor);
@@ -2829,7 +2834,6 @@ void CWeapon::ZoomDynamicMod(bool bIncrement, bool bForceLimit)
 		float f = (bIsSecondVPZoomPresent() ? m_fRTZoomFactor : GetZoomFactor());
 
 		f -= delta * (bIncrement ? 1.f : -1.f);
-
 		clamp(f, max_zoom_factor, min_zoom_factor);
 
 

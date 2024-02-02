@@ -425,6 +425,8 @@ void CActor::IR_OnKeyboardHold(int cmd)
 	}
 }
 
+extern float m_fZoomPower;
+
 void CActor::IR_OnMouseMove(int dx, int dy)
 {
 	if (!g_Alive())
@@ -435,10 +437,15 @@ void CActor::IR_OnMouseMove(int dx, int dy)
 		g_player_hud->tune	(Ivector().set(dx,dy,0));
 		return;
 	}
-
+	bool use_3d_scope = false;
 	PIItem iitem = inventory().ActiveItem();
 	if(iitem && iitem->cast_hud_item())
 		iitem->cast_hud_item()->ResetSubStateTime();
+
+	if (psActorFlags.test(AF_USE_3D_SCOPES))
+	{
+		use_3d_scope = true;
+	}
 
 	if (Remote())		return;
 
@@ -450,8 +457,16 @@ void CActor::IR_OnMouseMove(int dx, int dy)
 
 	float LookFactor = GetLookFactor();
 
+
+	float scale;
 	CCameraBase* C	= cameras	[cam_active];
-	float scale		= (C->f_fov/g_fov)*psMouseSens * psMouseSensScale/50.f  / LookFactor;
+
+	if (use_3d_scope)
+	{
+		scale = (C->f_fov / g_fov) * psMouseSens * psMouseSensScale / 50.f / LookFactor * m_fZoomPower;
+	}
+	else
+		scale = (C->f_fov / g_fov) * psMouseSens * psMouseSensScale / 50.f / LookFactor;
 	if (dx){
 		float d = float(dx)*scale;
 		cam_Active()->Move((d<0)?kLEFT:kRIGHT, _abs(d));

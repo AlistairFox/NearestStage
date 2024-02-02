@@ -261,10 +261,9 @@ protected:
 
 	} m_zoom_params;
 		float			m_sFactor;
-		float			m_fRTZoomFactor; //run-time zoom factor
 		CUIWindow*		m_UIScope;
 public:
-
+	float			m_fRTZoomFactor; //run-time zoom factor
 	IC bool					IsZoomEnabled		()	const		{return m_zoom_params.m_bZoomEnabled;}
 	virtual	void			ZoomInc				();
 	virtual	void			ZoomDec				();
