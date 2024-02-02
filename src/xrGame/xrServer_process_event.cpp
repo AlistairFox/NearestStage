@@ -70,7 +70,6 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 	case GE_WPN_UNLOAD_AMMO:
 	case GE_WPN_UPDATE_AMMO:
 		{
-		Msg("SERVER GE_INFO_TRANSFER");
 		SendBroadcast			(BroadcastCID,P,MODE);
 		}break;
 	case GEG_PLAYER_ACTIVATEARTEFACT:

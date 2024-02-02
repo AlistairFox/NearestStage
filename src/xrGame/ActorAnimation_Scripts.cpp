@@ -17,7 +17,7 @@ void callbackAnim(CBlend* blend)
 	CActor* act = (CActor*)blend->CallbackParam;
 	if (act)
 	{
-		Msg("callbackAnim");
+		Msg("Callback");
 		act->CanChange = true;
 	}
 }
@@ -123,7 +123,6 @@ void SActorStateAnimation::CreateAnimationsScripted(IKinematicsAnimated* K)
 
 void CActor::script_anim(MotionID Animation, PlayCallback Callback, LPVOID CallbackParam)
 {
-	Msg("script anim");
 	IKinematicsAnimated* k = smart_cast<IKinematicsAnimated*>(Visual());
 	k->LL_PlayCycle(
 		k->LL_GetMotionDef(Animation)->bone_or_part,
@@ -149,7 +148,6 @@ void CActor::ReciveAnimationPacket(NET_Packet& packet)
 
 	if (motion.valid())
 	{
-		Msg("InReciveAnimationPacket");
 		IKinematicsAnimated* k = smart_cast<IKinematicsAnimated*>(Visual());
 		k->LL_PlayCycle(
 			k->LL_GetMotionDef(motion)->bone_or_part,
@@ -337,7 +335,6 @@ void CActor::SelectScriptAnimation()
 	if (!InPlay)
 	{
 		script_BODY = m_anims->m_script.in_anims.m_animation_in[selectedAnimation][InputAnim];
-		Msg("InPlay");
 		script_anim(script_BODY, callbackAnim, this);
 		InputAnim += 1;
 		NEED_EXIT = true;
@@ -357,8 +354,6 @@ void CActor::SelectScriptAnimation()
 				
 				bool att = this->can_attach(inv_item);
 
-				Msg("%s", inv_item->object().cNameSect().c_str());
-			
 				if (att)
 				{
 					this->attach(inv_item);
@@ -403,7 +398,6 @@ void CActor::SelectScriptAnimation()
 	if (!MidPlay)
 	{
 		script_BODY = m_anims->m_script.middle_anims.m_animation[selectedAnimation][MidAnim];
-		Msg("MidPlay");
 		script_anim(script_BODY, callbackAnim, this);
 		MidAnim += 1;
 
@@ -426,7 +420,6 @@ void CActor::SelectScriptAnimation()
 	if (!OutPlay)
 	{
 		script_BODY = m_anims->m_script.out_anims.m_animation_out[selectedAnimation][OutAnim];
-		Msg("OutPlay");
 		script_anim(script_BODY, callbackAnim, this);
 		OutAnim += 1;
 	}

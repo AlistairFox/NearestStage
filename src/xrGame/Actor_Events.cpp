@@ -267,7 +267,6 @@ void CActor::OnEvent(NET_Packet& P, u16 type)
 
 	case GEG_PLAYER_WEAPON_HIDE_STATE:
 		{
-		Msg("Actor weapon hide state");
 			u16 State		= P.r_u16();
 			BOOL	Set		= !!P.r_u8();
 			inventory().SetSlotsBlocked	(State, !!Set);
@@ -331,7 +330,6 @@ void CActor::OnEvent(NET_Packet& P, u16 type)
 
 	case GE_ACTOR_ANIMATION_SCRIPT:
 	{
-		Msg("ReciveAnimationScript");
 		ReciveAnimationPacket(P);
 	}break;
 

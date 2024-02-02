@@ -2316,16 +2316,13 @@ bool CActor::can_attach			(const CInventoryItem *inventory_item) const
 	const CAttachableItem	*item = smart_cast<const CAttachableItem*>(inventory_item);
 	if (!item)
 	{
-		Msg("!  !item");
 		return	(false);
 	}
 
 	if (!dynamic_cast<const CTorch*>(inventory_item))
 	{
-		Msg("!  !dynamic_cast");
 		if (!item->enabled())
 		{
-			Msg("!  !item->enabled");
 			return(false);
 		}
 	}
@@ -2333,15 +2330,12 @@ bool CActor::can_attach			(const CInventoryItem *inventory_item) const
 	//можно ли присоединять объекты такого типа
 	if (m_attach_item_sections.end() == std::find(m_attach_item_sections.begin(), m_attach_item_sections.end(), inventory_item->object().cNameSect()))
 	{
-		Msg("m_attach_item_section.end");
 		return false;
 	}
 
 	//если уже есть присоединненый объет такого типа 
 	if (attached(inventory_item->object().cNameSect()))
 	{
-		Msg("%s", inventory_item->object().cNameSect().c_str());
-		Msg("attached(inv_item->object().cNameSect)");
 		return false;
 	}
 	return true;
@@ -2857,13 +2851,18 @@ void CActor::EndTorchAnm()
 
 void CActor::ChangeInventoryFullness(int val)
 {
-	m_iInventoryFullness += val;
+	if (Level().CurrentControlEntity() == this)
+	{
+		m_iInventoryFullness += val;
 
-	if (m_iInventoryFullness < 0)
-		m_iInventoryFullness = 0;
+		if (m_iInventoryFullness < 0)
+			m_iInventoryFullness = 0;
 
-	if (val > 0)
-		m_iInventoryFullnessCtrl = m_iInventoryFullness;
+		if (val > 0)
+			m_iInventoryFullnessCtrl = m_iInventoryFullness;
+	}
+	else
+		return;
 }
 
 //Максимальная вместительность инвентаря

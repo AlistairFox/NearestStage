@@ -432,11 +432,11 @@ bool CInventory::Slot(u16 slot_id, PIItem pIItem, bool bNotActivate, bool strict
 	pIItem->m_ItemCurrPlace.slot_id = slot_id;
 	pIItem->OnMoveToSlot(prev_place);
 
+	if(Actor() != nullptr)
 	if (prev_place.type == eItemPlaceRuck)
 		Actor()->ChangeInventoryFullness(-pIItem->GetOccupiedInvSpace());
 
 	
-	if(Actor() != nullptr)
 		pIItem->object().processing_activate();
 
 	return						true;

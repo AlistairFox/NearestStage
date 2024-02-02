@@ -1040,6 +1040,7 @@ static void	_BCL get_matrix( CBoneInstance* P )
 }
 u16	CIKLimb::foot_matrix_predict(Fmatrix& foot, Fmatrix& toe, float time, IKinematicsAnimated* K) const
 {
+
 	//CBlend *control = 0;
 	u32	blends_count = K->LL_PartBlendsCount(0);
 	buffer_vector<CBlend> saved_blends(_alloca(blends_count * sizeof(CBlend)), blends_count);
@@ -1065,6 +1066,8 @@ u16	CIKLimb::foot_matrix_predict(Fmatrix& foot, Fmatrix& toe, float time, IKinem
 	Fmatrix m_b2, m_b3;
 	bi2.set_callback(bctCustom, get_matrix, &m_b2, FALSE);
 	bi3.set_callback(bctCustom, get_matrix, &m_b3, FALSE);
+
+
 
 	Kinematics()->Bone_GetAnimPos(foot, m_bones[3], u8(-1), false);
 	u16 ref_b = m_foot.get_ref_bone(m_b2, m_b3);
