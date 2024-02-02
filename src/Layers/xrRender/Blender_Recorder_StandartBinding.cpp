@@ -236,6 +236,22 @@ static class ssfx_wind_anim : public R_constant_setup
 		}
 	 }    ssfx_wind_anim;
 
+static class cl_wind_params : public R_constant_setup
+{
+	u32 marker;
+	Fvector4 result;
+
+	virtual void setup(R_constant* C)
+	{
+		if (marker != Device.dwFrame)
+		{
+			CEnvDescriptor& E = *g_pGamePersistent->Environment().CurrentEnv;
+			result.set(E.wind_direction, E.wind_velocity, 0.0f, 0.0f);
+		}
+		RCache.set_c(C, result);
+	}
+} binder_wind_params;
+
 // DWM: set weather params
 class cl_u_weather : public R_constant_setup
 {
@@ -491,17 +507,6 @@ class ssfx_hud_drops_2 : public R_constant_setup
 };
 static ssfx_hud_drops_2 binder_ssfx_hud_drops_2;
 
-// Reflections distance
-extern float ps_r2_reflections_distance;
-
-static class cl_refl_dist : public R_constant_setup
-{
-	virtual void setup(R_constant* C)
-	{
-		RCache.set_c(C, ps_r2_reflections_distance, 0, 0, 0);
-	}
-} cl_refl_dist;
-
 // Standart constant-binding
 void	CBlender_Compile::SetMapping	()
 {
@@ -516,6 +521,7 @@ void	CBlender_Compile::SetMapping	()
 	r_Constant("ssfx_wind_anim", &ssfx_wind_anim);
 	r_Constant("ssfx_wsetup_grass", &ssfx_wind_grass);
 	r_Constant("ssfx_wsetup_trees", &ssfx_wind_trees);
+	r_Constant("wind_params", &binder_wind_params);
 	r_Constant("pp_img_corrections", &pp_image_corrections);
 
 	// DWM: out to shaders view to world mat, weather params, alternative screen res
@@ -555,8 +561,6 @@ void	CBlender_Compile::SetMapping	()
 	r_Constant("ssfx_hud_drops_2", &binder_ssfx_hud_drops_2);
 	r_Constant("pda_params", &binder_pda_params);
 
-	//Reflections distance
-	r_Constant("reflections_distance", &cl_refl_dist);
 
 	//hemi cube
 	r_Constant				("L_material",			&binder_material);
