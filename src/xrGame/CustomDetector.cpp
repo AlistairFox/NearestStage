@@ -11,6 +11,8 @@
 #include "player_hud.h"
 #include "weapon.h"
 #include "Battery.h"
+#include "ui/UIActorMenu.h"
+#include "UIGameCustom.h"
 
 ITEM_INFO::ITEM_INFO()
 {
@@ -97,12 +99,17 @@ void CCustomDetector::HideDetector(bool bFastMode)
 
 void CCustomDetector::ShowDetector(bool bFastMode)
 {
+	if (CurrentGameUI()->ActorMenu().IsShown())
+		return;
 	if(GetState()==eHidden)
 		ToggleDetector(bFastMode);
 }
 
 void CCustomDetector::ToggleDetector(bool bFastMode)
 {
+	if (CurrentGameUI()->ActorMenu().IsShown())
+		return;
+	Msg("ToggleDetector");
 	m_bNeedActivation		= false;
 	m_bFastAnimMode			= bFastMode;
 
@@ -166,10 +173,12 @@ void CCustomDetector::SwitchState(u32 S)
 			{
 				hide_callback();
 			}
+			m_bDetectorActive = false;
 			ClearCallback();
 			break;
 		case eShowing:
 		case eIdle:
+			m_bDetectorActive = true;
 			ClearCallback();
 			break;
 		default:
@@ -187,19 +196,22 @@ void CCustomDetector::OnStateSwitch(u32 S)
 	{
 	case eShowing:
 		{
+		m_bDetectorActive = true;
 			g_player_hud->attach_item	(this);
-			m_sounds.PlaySound			("sndShow", Fvector().set(0,0,0), this, true, false);
+			m_sounds.PlaySound			(m_bFastAnimMode?"sndShowFast":"sndShow", Fvector().set(0,0,0), this, true, false);
 			PlayHUDMotion				(m_bFastAnimMode?"anm_show_fast":"anm_show", FALSE/*TRUE*/, this, GetState());
 			SetPending					(TRUE);
 		}break;
 	case eHiding:
 		{
-			m_sounds.PlaySound			("sndHide", Fvector().set(0,0,0), this, true, false);
+		m_bDetectorActive = false;
+			m_sounds.PlaySound			(m_bFastAnimMode?"sndHideFast":"sndHide", Fvector().set(0,0,0), this, true, false);
 			PlayHUDMotion				(m_bFastAnimMode?"anm_hide_fast":"anm_hide", FALSE/*TRUE*/, this, GetState());
 			SetPending					(TRUE);
 		}break;
 	case eIdle:
 		{
+		m_bDetectorActive = true;
 			PlayAnimIdle				();
 			SetPending					(FALSE);
 		}break;
@@ -273,6 +285,8 @@ void CCustomDetector::Load(LPCSTR section)
 
 	m_sounds.LoadSound( section, "snd_draw", "sndShow");
 	m_sounds.LoadSound( section, "snd_holster", "sndHide");
+	m_sounds.LoadSound(section, "snd_draw_fast", "sndShowFast");
+	m_sounds.LoadSound(section, "snd_holster_fast", "sndHideFast");
 
 	m_fMaxChargeLevel = READ_IF_EXISTS(pSettings, r_float, section, "max_charge_level", 1.0f);
 	m_fUnchargeSpeed = READ_IF_EXISTS(pSettings, r_float, section, "uncharge_speed", 0.0f);

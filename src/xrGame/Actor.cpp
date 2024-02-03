@@ -2790,11 +2790,14 @@ void CActor::TimeBlockAction(LPCSTR anim_sect)
 		Actor()->block_action(kQUICK_USE_3);
 		Actor()->block_action(kQUICK_USE_4);
 		Actor()->set_inventory_disabled(true);
-		if (pDet)
+		if (pDet && pDet->DetectorActive())
 		{
+			old_timer = Device.dwTimeGlobal + (g_player_hud->motion_length_script(anim_sect, "anm_ea_show", 1.0f)) + 2000;
 			pDet->HideDetector(true);
 		}
-		old_timer = Device.dwTimeGlobal + (g_player_hud->motion_length_script(anim_sect, "anm_ea_show", 1.0f)) + 1000;
+		else
+			old_timer = Device.dwTimeGlobal + (g_player_hud->motion_length_script(anim_sect, "anm_ea_show", 1.0f)) + 1000;
+
 		need_exit = true;
 		DontInv = true;
 	}

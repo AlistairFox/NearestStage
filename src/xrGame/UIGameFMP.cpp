@@ -205,13 +205,24 @@ bool CUIGameFMP::IR_UIOnKeyboardPress(int dik)
 	{
 		CInventoryOwner* pInvOwner = smart_cast<CInventoryOwner*>(Level().CurrentEntity());
 		CActor* pActor = smart_cast<CActor*>(pInvOwner);
+		CCustomDetector* pDet = smart_cast<CCustomDetector*>(pActor->inventory().ItemFromSlot(DETECTOR_SLOT));
 
 		if (!need_activate_inventory && !pActor->DontInv && !pActor->MpWoundMODE())
 		{
 			if (pInvOwner && pActor && pActor->g_Alive())
 			{
+				if (pDet && pDet->DetectorActive())
+				{
+					Msg("DetectorActive");
+					wpnTime = Device.dwTimeGlobal + 2000;
+					pDet->HideDetector(false);
+
+				}
+				else
+				{
+					wpnTime = Device.dwTimeGlobal + 1000;
+				}
 				pActor->EventHideState();
-				wpnTime = Device.dwTimeGlobal + 1000;
 				hide_wpn = true;
 			}
 		}

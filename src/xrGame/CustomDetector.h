@@ -128,7 +128,9 @@ protected:
 public:
 					CCustomDetector		();
 	virtual			~CCustomDetector	();
+	bool			m_bDetectorActive = false;
 
+	virtual bool DetectorActive() const { return m_bDetectorActive; }
 	virtual BOOL 	net_Spawn			(CSE_Abstract* DC);
 	virtual void 	Load				(LPCSTR section);
 
