@@ -85,9 +85,9 @@ static union { unsigned char __c[8]; double __d; } __ode_huge_val =
 
 
 
-#define SHAREDLIBIMPORT __declspec (dllimport)
+#define SHAREDLIBIMPORT
 
-#define SHAREDLIBEXPORT __declspec (dllexport)
+#define SHAREDLIBEXPORT
 
 
 

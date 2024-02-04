@@ -3,9 +3,9 @@
 #pragma once
 
 #ifdef XRAPI_EXPORTS
-#define XRAPI_API __declspec(dllexport)
+#define XRAPI_API 
 #else
-#define XRAPI_API __declspec(dllimport)
+#define XRAPI_API 
 #endif
 
 
@@ -14,8 +14,8 @@
 class IRender_interface;
 extern XRAPI_API IRender_interface*	Render;
 
-class IRenderFactory;
-extern XRAPI_API IRenderFactory*	RenderFactory;
+class dxRenderFactory;
+extern XRAPI_API dxRenderFactory*	RenderFactory;
 
 class CDUInterface;
 extern XRAPI_API CDUInterface*	DU;

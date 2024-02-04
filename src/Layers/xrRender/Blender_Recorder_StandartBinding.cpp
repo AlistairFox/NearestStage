@@ -203,11 +203,11 @@ static class cl_inv_v : public R_constant_setup
 } binder_inv_v;
 
 // Ascii1457's Screen Space Shaders
-extern ENGINE_API Fvector4 ps_ssfx_hud_drops_1;
-extern ENGINE_API Fvector4 ps_ssfx_hud_drops_2;
-extern ENGINE_API Fvector4 ps_ssfx_blood_decals;
-extern ENGINE_API Fvector4 ps_ssfx_wind_grass;
-extern ENGINE_API Fvector4 ps_ssfx_wind_trees;
+extern  Fvector4 ps_ssfx_hud_drops_1;
+extern  Fvector4 ps_ssfx_hud_drops_2;
+extern  Fvector4 ps_ssfx_blood_decals;
+extern  Fvector4 ps_ssfx_wind_grass;
+extern  Fvector4 ps_ssfx_wind_trees;
 
 static class ssfx_wind_grass : public R_constant_setup
 {
@@ -537,13 +537,13 @@ void	CBlender_Compile::SetMapping	()
 
 
 	// matrices
-	r_Constant				("m_W",				&binder_w);
-	r_Constant				("m_invW",			&binder_invw);
-	r_Constant				("m_V",				&binder_v);
-	r_Constant				("m_P",				&binder_p);
-	r_Constant				("m_WV",			&binder_wv);
-	r_Constant				("m_VP",			&binder_vp);
-	r_Constant				("m_WVP",			&binder_wvp);
+	r_Constant("m_W", &binder_w);
+	r_Constant("m_invW", &binder_invw);
+	r_Constant("m_V", &binder_v);
+	r_Constant("m_P", &binder_p);
+	r_Constant("m_WV", &binder_wv);
+	r_Constant("m_VP", &binder_vp);
+	r_Constant("m_WVP", &binder_wvp);
 	r_Constant("m_inv_V", &binder_inv_v);
 
 	r_Constant				("m_xform_v",		&tree_binder_m_xform_v);

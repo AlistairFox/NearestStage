@@ -42,14 +42,17 @@ void AddOne				(const char *split)
 	OutputDebugString	("\n");
  
 	{
-		shared_str			temp = shared_str(split);
- 
-		LogFile->push_back	(temp);
-
-		if (writerfile)
+		if (LogFile)
 		{
-			writerfile->w_string(split);
- 			writerfile->flush();
+			shared_str			temp = shared_str(split);
+
+			LogFile->push_back(temp);
+
+			if (writerfile)
+			{
+				writerfile->w_string(split);
+				writerfile->flush();
+			}
 		}
 	}
 
@@ -182,8 +185,6 @@ void InitLog()
 	LogFile->reserve	(1000);
 }
 
-extern		u32		build_id;
-extern		LPCSTR	build_date;
 void CreateLog			(BOOL nl)
 {
     no_log				= nl;
@@ -216,7 +217,7 @@ void CreateLog			(BOOL nl)
         	abort();
         }
 
-		Msg("'%s' build %d, %s\n", "NearestStage", build_id, build_date);
+		Msg("NearestStage");
 		Msg("NearestStage Discord: https://discord.gg/YGUxMg3f");
 		Msg("NearestStage VK: https://vk.com/neareststage ");
 

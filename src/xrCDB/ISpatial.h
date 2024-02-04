@@ -145,7 +145,7 @@ public:
 //template <class T, int granularity>
 //class	poolSS;
 #ifndef	DLL_API
-#	define DLL_API					__declspec(dllimport)
+#	define DLL_API					
 #endif // #ifndef	DLL_API
 
 //////////////////////////////////////////////////////////////////////////

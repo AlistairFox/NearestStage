@@ -39,7 +39,7 @@
 const u16	TEST_RAYS_PER_OBJECT=5;
 const u16	BLASTED_OBJ_PROCESSED_PER_FRAME=3;
 const float	exp_dist_extinction_factor=3.f;//(>1.f, 1.f -means no dist change of exp effect)	on the dist of m_fBlastRadius exp. wave effect in exp_dist_extinction_factor times less than maximum
-extern ENGINE_API Fvector4 ps_ssfx_int_grass_params_2;
+extern Fvector4 ps_ssfx_int_grass_params_2;
 
 CExplosive::CExplosive(void) 
 {

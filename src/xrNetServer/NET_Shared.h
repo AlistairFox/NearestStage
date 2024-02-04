@@ -1,8 +1,8 @@
 #pragma once
 #ifdef XR_NETSERVER_EXPORTS
-	#define XRNETSERVER_API __declspec(dllexport)
+	#define XRNETSERVER_API 
 #else
-	#define XRNETSERVER_API __declspec(dllimport)
+	#define XRNETSERVER_API 
 
 	#ifndef _EDITOR
 		#pragma comment(lib,	"xrNetServer"	)

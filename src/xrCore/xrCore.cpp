@@ -14,8 +14,6 @@
 #endif // DEBUG
 
 XRCORE_API		xrCore	Core;
-XRCORE_API		u32		build_id;
-XRCORE_API		LPCSTR	build_date;
 
 namespace CPU
 {
@@ -154,11 +152,8 @@ void xrCore::_destroy		()
 #ifndef XRCORE_STATIC
 
 //. why ??? 
-#ifdef _EDITOR
-	BOOL WINAPI DllEntryPoint(HINSTANCE hinstDLL, DWORD ul_reason_for_call, LPVOID lpvReserved)
-#else
-	BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD ul_reason_for_call, LPVOID lpvReserved)
-#endif
+
+bool DllMainXrCore(HINSTANCE hinstDLL, DWORD ul_reason_for_call, LPVOID lpvReserved)
 {
 	switch (ul_reason_for_call)
 	{

@@ -7,10 +7,10 @@
 #include "inventory_upgrade_manager.h"
 
 u64		g_qwStartGameTime		= 12*60*60*1000;
-float	g_fTimeFactor			= pSettings->r_float("alife","time_factor");
+float	g_fTimeFactor			= 10;
 u64		g_qwEStartGameTime		= 12*60*60*1000;
 
-ENGINE_API	bool g_dedicated_server;
+extern ENGINE_API	bool g_dedicated_server;
 EGameIDs ParseStringToGameType(LPCSTR str);
 
 game_PlayerState::game_PlayerState(NET_Packet* account_info)
@@ -33,6 +33,8 @@ game_PlayerState::game_PlayerState(NET_Packet* account_info)
 	m_bPayForSpawn		= false;
 
 	clear				();
+
+	g_fTimeFactor = pSettings->r_float("alife", "time_factor");
 
 	if (account_info)
 	{

@@ -4,9 +4,9 @@
 
 
 #ifdef XRXMLPARSER_EXPORTS
-	#define XRXMLPARSER_API __declspec(dllexport)
+	#define XRXMLPARSER_API 
 #else
-	#define XRXMLPARSER_API __declspec(dllimport)
+	#define XRXMLPARSER_API 
 	#pragma comment			(lib,"xrXMLParser.lib")
 #endif
 

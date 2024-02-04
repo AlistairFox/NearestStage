@@ -10,26 +10,7 @@
 #endif
 
 #include <ddraw.h>
-#include "../3rd party/cximage/cximage/ximage.h"
-#include "../3rd party/cximage/cximage/xmemfile.h"
 
-#pragma comment(lib,"cximage.lib")
-#pragma comment(lib,"jpeg.lib")
-
-void*	cxalloc(size_t size)
-{
-	return xr_malloc(size);
-}
-
-void	cxfree(void* ptr)
-{
-	xr_free(ptr);
-}
-
-void*	cxrealloc(void* ptr, size_t size)
-{
-	return xr_realloc(ptr, size);
-}
 /*
 void jpeg_encode_callback(long progress)
 {
@@ -120,50 +101,6 @@ void screenshot_manager::prepare_image()
 	*height = RESULT_HEIGHT;
 }
 
-void screenshot_manager::make_jpeg_file()
-{
-	u32*	sizes = reinterpret_cast<u32*>(m_result_writer.pointer());
-	u32		width = *sizes;
-	u32		height = *(++sizes);
-	u8* rgb24data = reinterpret_cast<u8*>(m_result_writer.pointer() + 2*sizeof(u32) );
-	
-	CxImage jpg_image;
-	
-	jpg_image.CreateFromArray(
-		rgb24data,
-		width,		//width
-		height,		//height
-		24,
-		width * 3,
-		true);
-	
-	jpg_image.SetJpegQuality	(30);
-
-	realloc_jpeg_buffer			(m_result_writer.size() + screenshots::writer::info_max_size);
-
-	CxMemFile					tmp_mem_file(m_jpeg_buffer, m_jpeg_buffer_capacity);
-	jpg_image.Encode			(&tmp_mem_file, CXIMAGE_FORMAT_JPG);
-	
-	m_jpeg_buffer_size			= static_cast<u32>(tmp_mem_file.Tell());
-
-#ifdef DEBUG
-	Msg("* JPEG encoded to %d bytes", m_jpeg_buffer_size);
-#endif
-}
-
-void screenshot_manager::sign_jpeg_file()
-{
-	screenshots::writer	tmp_writer		(m_jpeg_buffer, m_jpeg_buffer_size, m_jpeg_buffer_capacity);
-	game_cl_mp*	tmp_cl_game				= smart_cast<game_cl_mp*>(&Game());
-	tmp_writer.set_player_name			(tmp_cl_game->local_player->getName());
-	shared_str tmp_cdkey_digest			= Level().get_cdkey_digest();
-	if (tmp_cdkey_digest.size() == 0)
-		tmp_cdkey_digest = "null";
-	tmp_writer.set_player_cdkey_digest	(tmp_cdkey_digest);
-	m_jpeg_buffer_size					= tmp_writer.write_info(&g_jpeg_encode_delegate);
-}
-
-
 void screenshot_manager::shedule_Update(u32 dt)
 {
 	R_ASSERT(m_state & making_screenshot || m_state & drawing_download_states);
@@ -173,8 +110,6 @@ void screenshot_manager::shedule_Update(u32 dt)
 		if (!m_make_done_event)
 		{
 			prepare_image	();
-			make_jpeg_file	();
-			sign_jpeg_file	();
 			compress_image	();
 			m_complete_callback(m_buffer_for_compress, m_buffer_for_compress_size, m_jpeg_buffer_size);
 			m_state &= ~making_screenshot;
@@ -216,9 +151,6 @@ void screenshot_manager::shedule_Update(u32 dt)
 			GetCurrentProcess(),
 			&process_affinity_mask,
 			&tmp_dword);
-		process_screenshot(
-			btwCount1(static_cast<u32>(process_affinity_mask)) == 1
-		);
 #else 
 		DWORD	process_affinity_mask;
 		DWORD	tmp_dword;
@@ -281,40 +213,6 @@ void screenshot_manager::set_draw_downloads(bool draw)
 	}
 }
 
-void screenshot_manager::process_screenshot(bool singlecore)
-{
-	if (singlecore)
-	{
-		//g_jpeg_encode_cb = &jpeg_encode_callback;
-		g_jpeg_encode_delegate.bind(this,
-			&screenshot_manager::jpeg_compress_cb);
-	} else
-	{
-		//g_jpeg_encode_cb = NULL;
-		g_jpeg_encode_delegate.clear();
-	}
-		
-	if (m_make_start_event)
-	{
-		SetEvent(m_make_start_event);
-		return;
-	}
-	m_make_start_event	= CreateEvent(NULL, FALSE, TRUE, NULL);
-	m_make_done_event	= CreateEvent(NULL, FALSE, FALSE, NULL);
-	thread_spawn	(&screenshot_manager::screenshot_maker_thread, "screenshot_maker", 0, this);
-}
-void	__stdcall	screenshot_manager::jpeg_compress_cb(long progress)
-{
-/*#ifdef DEBUG
-	Msg("* JPEG encoding progress : %d%%", progress);
-#endif*/
-	if (progress % 5 == 0)
-	{
-		if (!SwitchToThread())
-			Sleep(10);
-	}
-}
-
 void screenshot_manager::screenshot_maker_thread(void* arg_ptr)
 {
 	screenshot_manager* this_ptr	= static_cast<screenshot_manager*>(arg_ptr);
@@ -327,10 +225,8 @@ void screenshot_manager::screenshot_maker_thread(void* arg_ptr)
 		this_ptr->prepare_image	();
 		this_ptr->timer_end();
 		this_ptr->timer_begin("making jpeg");
-		this_ptr->make_jpeg_file();
 		this_ptr->timer_end();
 		this_ptr->timer_begin("signing jpeg data");
-		this_ptr->sign_jpeg_file();
 		this_ptr->timer_end();
 		this_ptr->timer_begin("compressing_image");
 		this_ptr->compress_image();

@@ -134,8 +134,8 @@ extern int		g_sv_server_goodwill = 0;
 BOOL Alife_Sheduler = FALSE;
 
 void XRNETSERVER_API DumpNetCompressorStats	(bool brief);
-BOOL XRNETSERVER_API g_net_compressor_enabled;
-BOOL XRNETSERVER_API g_net_compressor_gather_stats;
+extern BOOL XRNETSERVER_API g_net_compressor_enabled;
+extern BOOL XRNETSERVER_API g_net_compressor_gather_stats;
 
 class CCC_Restart : public IConsole_Command {
 public:

@@ -7,14 +7,17 @@
 
 namespace
 {
-	shared_str	strImpulseSize("size");
-	shared_str	strImpulseCenter("center");
-	shared_str	strSplatColor("splatColor");
+	shared_str	strImpulseSize;
+	shared_str	strImpulseCenter;
+	shared_str	strSplatColor;
 }
 
 dx103DFluidEmitters::dx103DFluidEmitters(int gridWidth, int gridHeight, int gridDepth, dx103DFluidGrid *pGrid)
 	:	m_pGrid(pGrid)
 {
+	strImpulseSize = "size";
+	strImpulseCenter = "center";
+	strSplatColor = "splatColor";
 	m_vGridDim[0] = float(gridWidth);
 	m_vGridDim[1] = float(gridHeight);
 	m_vGridDim[2] = float(gridDepth);

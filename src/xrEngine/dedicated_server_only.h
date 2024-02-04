@@ -6,7 +6,7 @@
 #ifdef DEDICATED_SERVER_ONLY
 #	define PROTECT_API
 #else// #ifdef DEDICATED_SERVER_ONLY
-#	define PROTECT_API	__declspec(dllexport)
+#	define PROTECT_API
 #endif // #ifdef DEDICATED_SERVER_ONLY
 
 #ifdef	BENCHMARK_BUILD

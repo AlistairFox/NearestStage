@@ -21,7 +21,7 @@
 #define WIND_RADIUS (4*Radius())	//расстояние до актера, когда появляется ветер 
 #define FASTMODE_DISTANCE (50.f)	//distance to camera from sphere, when zone switches to fast update sequence
 
-extern ENGINE_API Fvector4 ps_ssfx_int_grass_params_1;
+extern Fvector4 ps_ssfx_int_grass_params_1;
 
 CCustomZone::CCustomZone(void) 
 {

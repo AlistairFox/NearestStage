@@ -5,9 +5,9 @@
 // XRD3D9NULL_API functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
 #ifdef XRD3D9NULL_EXPORTS
-#define XRD3D9NULL_API __declspec(dllexport)
+#define XRD3D9NULL_API 
 #else
-#define XRD3D9NULL_API __declspec(dllimport)
+#define XRD3D9NULL_API 
 #endif
 //---------------------------------
 #include <stdlib.h>

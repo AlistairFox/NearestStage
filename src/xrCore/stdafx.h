@@ -13,7 +13,6 @@
 //.#include "../../Include/xrAPI/xrAPI.h"
 #endif
 
-int (WINAPIV* __vsnprintf)(char*, size_t, const char*, va_list) = _vsnprintf;
 
 #pragma hdrstop
 

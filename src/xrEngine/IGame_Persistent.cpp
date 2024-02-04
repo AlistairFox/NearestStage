@@ -22,6 +22,8 @@
 #	include "editor_environment_manager.hpp"
 #endif // INGAME_EDITOR
 
+extern Fvector4 ps_ssfx_grass_interactive;
+
 ENGINE_API	IGame_Persistent*		g_pGamePersistent	= NULL;
 
 bool IsMainMenuActive()

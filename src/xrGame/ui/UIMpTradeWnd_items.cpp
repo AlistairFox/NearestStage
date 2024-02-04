@@ -13,10 +13,10 @@
 #include "UICellCustomItems.h"
 
 extern "C"
-DLL_Pure*	__cdecl xrFactory_Create		(CLASS_ID clsid);
+DLL_Pure*	 xrFactory_Create		(CLASS_ID clsid);
 
 extern "C"
-void	__cdecl xrFactory_Destroy		(DLL_Pure* O);
+void	 xrFactory_Destroy		(DLL_Pure* O);
 
 CUICellItem*	create_cell_item(CInventoryItem* itm);
 

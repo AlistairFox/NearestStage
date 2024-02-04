@@ -151,6 +151,17 @@ float		ps_r__ssaHZBvsTEX			=  96.f	;					//RO
 int			ps_r__tf_Anisotropic		= 8		;
 float ps_r__tf_Mipbias = 0.0f;
 
+float ps_r2_tnmp_a = .205f; // r2-only
+float ps_r2_tnmp_b = .35f; // r2-only
+float ps_r2_tnmp_c = .55f; // r2-only
+float ps_r2_tnmp_d = .20f; // r2-only
+float ps_r2_tnmp_e = .02f; // r2-only
+float ps_r2_tnmp_f = .15f; // r2-only
+float ps_r2_tnmp_w = 7.5f; // r2-only
+float ps_r2_tnmp_exposure = 7.0f; // r2-only
+float ps_r2_tnmp_gamma = .25f; // r2-only
+float ps_r2_tnmp_onoff = .0f; // r2-only
+
 // R1
 float		ps_r1_ssaLOD_A				= 64.f	;
 float		ps_r1_ssaLOD_B				= 48.f	;
@@ -268,19 +279,19 @@ extern ENGINE_API float ps_r2_img_saturation;	// r2-only
 extern ENGINE_API Fvector ps_r2_img_cg;			// r2-only
 
 // Ascii1457's Screen Space Shaders
-extern ENGINE_API Fvector3 ps_ssfx_shadow_cascades;
-extern ENGINE_API Fvector4 ps_ssfx_grass_shadows;
-extern ENGINE_API Fvector4 ps_ssfx_grass_interactive;
-extern ENGINE_API Fvector4 ps_ssfx_int_grass_params_1;
-extern ENGINE_API Fvector4 ps_ssfx_int_grass_params_2;
-extern ENGINE_API Fvector4 ps_ssfx_hud_drops_1;
-extern ENGINE_API Fvector4 ps_ssfx_hud_drops_2;
-extern ENGINE_API Fvector4 ps_ssfx_blood_decals;
-extern ENGINE_API Fvector4 ps_ssfx_rain_1;
-extern ENGINE_API Fvector4 ps_ssfx_rain_2;
-extern ENGINE_API Fvector4 ps_ssfx_rain_3;
-extern ENGINE_API Fvector4 ps_ssfx_wind_grass;
-extern ENGINE_API Fvector4 ps_ssfx_wind_trees;
+Fvector3 ps_ssfx_shadow_cascades = { 20.f, 60.f, 200.f };
+Fvector4 ps_ssfx_grass_shadows = { 2.f, 1.f, 30.0f, .0f };
+Fvector4 ps_ssfx_grass_interactive = { 1.0f, 8.f, 200.0f, 1.0f };
+Fvector4 ps_ssfx_int_grass_params_1 = { 0.5f, 1.0f, 1.0f, 50.0f };
+Fvector4 ps_ssfx_int_grass_params_2 = { 1.0f, 5.0f, 1.0f, 5.0f };
+Fvector4 ps_ssfx_hud_drops_1 = { 1.0f, 1.0f, 30.f, .05f }; // Anim Speed, Int, Reflection, Refraction
+Fvector4 ps_ssfx_hud_drops_2 = { .0225f, 1.f, 0.0f, 2.0f }; // Density, Size, Extra Gloss, Gloss
+Fvector4 ps_ssfx_blood_decals = { 1.f, 0.7f, 0.f, 0.f };
+Fvector4 ps_ssfx_rain_1 = { 2.0f, 0.1f, 0.5f, 2.f }; // Len, Width, Speed, Quality
+Fvector4 ps_ssfx_rain_2 = { 0.3f, 2.0f, 1.0f, 0.5f }; // Alpha, Brigthness, Refraction, Reflection
+Fvector4 ps_ssfx_rain_3 = { 0.01f, 1.0f, 0.0f, 0.0f }; // Alpha, Refraction ( Splashes ) - Yohji: Alpha was edited (0.5->0.01f) due to a bug with transparency and other particles.
+Fvector4 ps_ssfx_wind_grass = { 9.5f, 1.4f, 1.5f, 0.4f };
+Fvector4 ps_ssfx_wind_trees = { 11.0f, 0.15f, 0.5f, 0.15f };
 
 
 Fvector3	ps_r2_dof					= Fvector3().set(-1.25f, 1.4f, 10000.f);

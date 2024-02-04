@@ -16,10 +16,15 @@
 //#include "luabind/library_linkage.h"
 
 //#pragma comment(lib,"ode.lib")
-#pragma comment(lib,"xrEngine.lib")
+#pragma comment(lib, "openal32.lib")
+#pragma comment(lib, "libogg_static.lib")
+#pragma comment(lib, "xrcore.lib")
+
+#pragma    comment(lib, "libvorbis_static.lib")
+#pragma comment(lib, "libvorbisfile_static.lib")
 
 extern "C" {
-	DLL_API DLL_Pure*	__cdecl xrFactory_Create		(CLASS_ID clsid)
+	DLL_API DLL_Pure*	 xrFactory_Create		(CLASS_ID clsid)
 	{
 		DLL_Pure			*object = object_factory().client_object(clsid);
 #ifdef DEBUG
@@ -30,7 +35,7 @@ extern "C" {
 		return				(object);
 	}
 
-	DLL_API void		__cdecl	xrFactory_Destroy		(DLL_Pure* O)
+	DLL_API void			xrFactory_Destroy		(DLL_Pure* O)
 	{
 		xr_delete			(O);
 	}
@@ -39,7 +44,7 @@ extern "C" {
 void CCC_RegisterCommands	();
 void setup_luabind_allocator();
 
-BOOL APIENTRY DllMain(HANDLE hModule, u32 ul_reason_for_call, LPVOID lpReserved)
+bool DllMainXrGame(HANDLE hModule, u32 ul_reason_for_call, LPVOID lpReserved)
 {
 	switch (ul_reason_for_call) {
 		case DLL_PROCESS_ATTACH: {

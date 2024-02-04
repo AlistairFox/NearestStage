@@ -5,7 +5,7 @@
 #include "xrD3D9-Null.h"
 #include "xrD3D9-Null_OutProc.h"
 
-BOOL APIENTRY DllMain( HANDLE hModule, 
+BOOL DllMainIgnor4( HANDLE hModule, 
                        DWORD  ul_reason_for_call, 
                        LPVOID lpReserved
 					 )

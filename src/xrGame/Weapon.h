@@ -33,7 +33,9 @@ private:
 public:
 							CWeapon				();
 	virtual					~CWeapon			();
-
+	shared_str wpn_scope = "wpn_scope";
+	shared_str wpn_silencer = "wpn_silencer";
+	shared_str wpn_grenade_launcher = "wpn_launcher";
 	// [FFT++]: àääîíû è óïðàâëåíèå àääîíàìè
 	bool					bUseAltScope;
 	bool					bScopeIsHasTexture;

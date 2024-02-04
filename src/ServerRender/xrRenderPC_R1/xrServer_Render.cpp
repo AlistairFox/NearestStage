@@ -6,9 +6,7 @@
 #include "../xrRender/dxUIRender.h"
 #include "../xrRender/dxDebugRender.h"
 
-#pragma comment(lib,"xrEngine.lib")
-
-BOOL APIENTRY DllMain( HANDLE hModule, 
+BOOL DllMainXrServerRender( HANDLE hModule, 
                        DWORD  ul_reason_for_call, 
                        LPVOID lpReserved
 					 )

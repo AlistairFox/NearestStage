@@ -71,7 +71,7 @@
 
 #include "embedded_editor/embedded_editor_main.h"
 
-ENGINE_API bool g_dedicated_server;
+extern ENGINE_API bool g_dedicated_server;
 
 //extern BOOL	g_bDebugDumpPhysicsStep;
 extern CUISequencer * g_tutorial;

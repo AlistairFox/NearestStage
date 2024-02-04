@@ -25,7 +25,7 @@
 #include "xrServer_Objects_ALife_Items.h"
 #include "Weapon.h"
 
-ENGINE_API	bool	g_dedicated_server;
+extern ENGINE_API	bool	g_dedicated_server;
 
 //CUIXml*				pWpnScopeXml = NULL;
 extern float m_fFactor;

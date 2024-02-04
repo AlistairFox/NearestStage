@@ -74,7 +74,7 @@ int CObjectSpace::GetNearest		( xr_vector<ISpatial*>& q_spatial, xr_vector<CObje
 }
 
 //----------------------------------------------------------------------
-IC int	CObjectSpace::GetNearest	( xr_vector<CObject*>&	q_nearest, const Fvector &point, float range, CObject* ignore_object )
+int	CObjectSpace::GetNearest	( xr_vector<CObject*>&	q_nearest, const Fvector &point, float range, CObject* ignore_object )
 {
 	return							(
 		GetNearest(

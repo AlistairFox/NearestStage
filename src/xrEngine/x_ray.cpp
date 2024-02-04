@@ -40,8 +40,8 @@ extern	int PASCAL IntroDSHOW_wnd	(HINSTANCE hInstC, HINSTANCE hInstP, LPSTR lpCm
 //int		max_load_stage = 0;
 
 // computing build id
-XRCORE_API	LPCSTR	build_date;
-XRCORE_API	u32		build_id;
+XRCORE_API LPCSTR	build_date;
+XRCORE_API u32		build_id;
 
 #ifdef MASTER_GOLD
 //#	define NO_MULTI_INSTANCES
@@ -160,6 +160,9 @@ void compute_build_id	()
 
 	for (int i=0; i<start_month-1; ++i)
 		build_id		-= days_in_month[i];
+
+
+	Msg("build: %s : %d", build_date, build_id);
 }
 //---------------------------------------------------------------------
 // 2446363
@@ -947,28 +950,20 @@ int stack_overflow_exception_filter	(int exception_code)
 }
 
 #include <boost/crc.hpp>
-
+extern BOOL  DllMainXrPhysics(HMODULE hModule,
+	DWORD  ul_reason_for_call,
+	LPVOID lpReserved
+);
+extern bool DllMainXrCore(HINSTANCE hinstDLL, DWORD ul_reason_for_call, LPVOID lpvReserved);
 int APIENTRY WinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
                      char *    lpCmdLine,
                      int       nCmdShow)
 {
-	//FILE* file				= 0;
-	//fopen_s					( &file, "z:\\development\\call_of_prypiat\\resources\\gamedata\\shaders\\r3\\objects\\r4\\accum_sun_near_msaa_minmax.ps\\2048__1___________4_11141_", "rb" );
-	//u32 const file_size		= 29544;
-	//char* buffer			= (char*)malloc(file_size);
-	//fread					( buffer, file_size, 1, file );
-	//fclose					( file );
+	DllMainXrCore(NULL, DLL_PROCESS_ATTACH, NULL);
+	DllMainXrPhysics(NULL, DLL_PROCESS_ATTACH, NULL);
 
-	//u32 const& crc			= *(u32*)buffer;
-
-	//boost::crc_32_type		processor;
-	//processor.process_block	( buffer + 4, buffer + file_size );
-	//u32 const new_crc		= processor.checksum( );
-	//VERIFY					( new_crc == crc );
-
-	//free					(buffer);
-
+	DllMainXrCore(NULL, DLL_THREAD_ATTACH, NULL);
 	__try 
 	{
 		WinMain_impl		(hInstance,hPrevInstance,lpCmdLine,nCmdShow);
@@ -978,6 +973,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 		_resetstkoflw		();
 		FATAL				("stack overflow");
 	}
+	DllMainXrPhysics(NULL, DLL_PROCESS_DETACH, NULL);
+	DllMainXrCore(NULL, DLL_PROCESS_DETACH, NULL);
 
 	return					(0);
 }

@@ -5,9 +5,7 @@
 #include "../xrRender/dxUIRender.h"
 #include "../xrRender/dxDebugRender.h"
 
-#pragma comment(lib,"xrEngine.lib")
-
-BOOL APIENTRY DllMain( HANDLE hModule, 
+BOOL DllMainXrRenderR4( HANDLE hModule, 
                        DWORD  ul_reason_for_call, 
                        LPVOID lpReserved
 					 )
@@ -38,10 +36,10 @@ BOOL APIENTRY DllMain( HANDLE hModule,
 
 extern "C"
 {
-	bool _declspec(dllexport) SupportsDX11Rendering();
+	bool  SupportsDX11Rendering();
 };
 
-bool _declspec(dllexport) SupportsDX11Rendering()
+bool  SupportsDX11Rendering()
 {
 	return xrRender_test_hw()?true:false;
 	/*

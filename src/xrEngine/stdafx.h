@@ -19,6 +19,15 @@
 #include "../xrCore/xrCore.h"
 #include "../Include/xrAPI/xrAPI.h"
 
+#pragma comment(lib, "opus.lib")
+#pragma comment(lib, "libspeexdsp.lib")
+#pragma comment(lib, "oalib.lib")
+#pragma comment(lib, "libogg_static.lib")
+#pragma comment(lib, "libprotobuf.lib")
+
+#pragma    comment(lib, "libvorbis_static.lib")
+#pragma comment(lib, "libvorbisfile_static.lib")
+
 #ifdef _DEBUG
 #	define D3D_DEBUG_INFO
 #endif
@@ -32,12 +41,12 @@
 // and not define it if you are about to build DLL
 #ifndef NO_ENGINE_API
 	#ifdef	ENGINE_BUILD
-		#define DLL_API			__declspec(dllimport)
-		#define ENGINE_API		__declspec(dllexport)
+		#define DLL_API			
+		#define ENGINE_API		
 	#else
 		#undef	DLL_API
-		#define DLL_API			__declspec(dllexport)
-		#define ENGINE_API		__declspec(dllimport)
+		#define DLL_API			
+		#define ENGINE_API		
 	#endif
 #else
 	#define ENGINE_API

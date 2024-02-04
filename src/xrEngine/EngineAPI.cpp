@@ -8,6 +8,31 @@
 
 #include "securom_api.h"
 
+#pragma comment(lib, "Ws2_32.lib")
+#pragma comment(lib, "vfw32.lib")
+#pragma comment(lib, "nvapi.lib")
+#pragma comment(lib, "xrgame.lib")
+#pragma comment(lib, "xrphysics.lib")
+#pragma comment(lib, "ode.lib")
+#pragma comment(lib, "GameNetworkingSockets.lib")
+#ifdef DEDICATED_SERVER
+
+#pragma comment(lib, "xrServerRender.lib")
+
+#else
+#pragma comment(lib, "xrRender_R4.lib")
+#pragma comment(lib, "GFSDK_SSAO_D3D11.win64.lib")
+#pragma comment(lib, "dxguid.lib")
+#pragma comment(lib, "d3dx11.lib")
+#pragma comment(lib, "D3DCompiler.lib")
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "d3d10.lib")
+
+#endif // DEDICATED_SERVER
+
+
+
 extern xr_token* vid_quality_token;
 
 //////////////////////////////////////////////////////////////////////
@@ -49,6 +74,16 @@ ENGINE_API bool is_enough_address_space_available	()
 	return			(*(u32*)&system_info.lpMaximumApplicationAddress) > 0x90000000;	
 }
 
+
+#ifndef DEDICATED_SERVER
+extern BOOL DllMainXrRenderR4(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved);
+#define DLL_MAIN_RENDER DllMainXrRenderR4
+#else
+extern BOOL DllMainXrServerRender(HANDLE hModule, DWORD ul_reason_for_call, LPVOID lpReserved);
+#define DLL_MAIN_RENDER DllMainXrServerRender
+#endif // !DEDICATED_SERVER
+
+
 LPCSTR r1_name = "xrServerRender.dll";
 LPCSTR r2_name = "xrRender_R2.dll";
 LPCSTR r4_name = "xrRender_R4.dll";
@@ -56,49 +91,29 @@ LPCSTR r4_name = "xrRender_R4.dll";
 #ifndef DEDICATED_SERVER
 void CEngineAPI::InitializeNotDedicated()
 {
-	SECUROM_MARKER_HIGH_SECURITY_ON(2)
-
-	// try to initialize R4
-	if (psDeviceFlags.test(rsR4))
+	//if (psDeviceFlags.test(rsR4))
 	{
-		Log				("Loading DLL:",	r4_name);
-		hRender			= LoadLibrary		(r4_name);
-		g_current_renderer = 2;
-
-		// R4 not supported
-		if (NULL == hRender)
-		{
-			psDeviceFlags.set(rsR4, FALSE);
-			psDeviceFlags.set(rsR2, TRUE);
-			renderer_value = 3;
-		}
+		// try to initialize R4
+		psDeviceFlags.set(rsR2, FALSE);
+		Log("Loading DLL:", r4_name);
+		DllMainXrRenderR4(NULL, DLL_PROCESS_ATTACH, NULL);
+		//hRender = LoadLibrary(r4_name);
+	//if (0 == hRender)
+	//{
+	//    // try to load R1
+	//    Msg("! ...Failed - incompatible hardware/pre-Vista OS.");
+	//    psDeviceFlags.set(rsR2, TRUE);
+		//}
+		g_current_renderer = 0;
 	}
-
-	// try to initialize R2
-	if (psDeviceFlags.test(rsR2) || NULL == hRender)
-	{
-		Log("Loading DLL:", r2_name);
-		hRender = LoadLibrary(r2_name);
-		g_current_renderer = 2;
-
-		// R2 not supported
-		if (NULL == hRender)
-		{
-			psDeviceFlags.set(rsR2, FALSE);
-			renderer_value = 0;
-		}
-	}
-
-	// try to initialize R1
-	if (NULL == hRender)
-	{
-		R_ASSERT(hRender);
-	}
-
-	SECUROM_MARKER_HIGH_SECURITY_OFF(2)
 }
 #endif // DEDICATED_SERVER
 
+extern bool DllMainXrGame(HANDLE hModule, u32 ul_reason_for_call, LPVOID lpReserved);
+extern "C"
+DLL_Pure *  xrFactory_Create(CLASS_ID clsid);
+extern "C"
+void  xrFactory_Destroy(DLL_Pure * O);
 void CEngineAPI::Initialize(void)
 {
 	//////////////////////////////////////////////////////////////////////////
@@ -112,39 +127,28 @@ void CEngineAPI::Initialize(void)
 		renderer_value = 0; //con cmd
 
 		Log("Loading DLL:", r1_name);
-		hRender = LoadLibrary(r1_name);
-		if (0 == hRender)	R_CHK(GetLastError());
-		R_ASSERT(hRender);
+		DllMainXrServerRender(NULL, DLL_PROCESS_ATTACH, NULL);
 		g_current_renderer = 1;
 	#else
 		InitializeNotDedicated();
-		// try to initialize upper renderers
-		if (NULL == hRender)
-		{
-			renderer_value = 5; //con cmd
-			psDeviceFlags.set(rsR4, TRUE);
-			psDeviceFlags.set(rsR2, FALSE);
-			InitializeNotDedicated();
-		}
-		// all renderers not supported
-		if (NULL == hRender)
-		{
-			R_CHK(GetLastError());
-			R_ASSERT(hRender);
-		}
 	#endif // DEDICATED_SERVER
 
 	Device.ConnectToRender();
 
-	// game	
+	// game
 	{
-		LPCSTR			g_name	= "xrGame.dll";
-		Log				("Loading DLL:",g_name);
-		hGame			= LoadLibrary	(g_name);
-		if (0==hGame)	R_CHK			(GetLastError());
-		R_ASSERT2		(hGame,"Game DLL raised exception during loading or there is no game DLL at all");
-		pCreate			= (Factory_Create*)		GetProcAddress(hGame,"xrFactory_Create"		);	R_ASSERT(pCreate);
-		pDestroy		= (Factory_Destroy*)	GetProcAddress(hGame,"xrFactory_Destroy"	);	R_ASSERT(pDestroy);
+		LPCSTR g_name = "xrGame.dll";
+		Log("Loading DLL:", g_name);
+		//hGame = LoadLibrary(g_name);
+		DllMainXrGame(NULL, DLL_PROCESS_ATTACH, NULL);
+		//if (0 == hGame) R_CHK(GetLastError());
+		//R_ASSERT2(hGame, "Game DLL raised exception during loading or there is no game DLL at all");
+		//pCreate = (Factory_Create*)GetProcAddress(hGame, "xrFactory_Create");
+		pCreate = xrFactory_Create;
+		R_ASSERT(pCreate);
+		//pDestroy = (Factory_Destroy*)GetProcAddress(hGame, "xrFactory_Destroy");
+		pDestroy = xrFactory_Destroy;
+		R_ASSERT(pDestroy);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
@@ -164,28 +168,27 @@ void CEngineAPI::Initialize(void)
 
 void CEngineAPI::Destroy	(void)
 {
-	if (hGame)				{ FreeLibrary(hGame);	hGame	= 0; }
-	if (hRender)			{ FreeLibrary(hRender); hRender = 0; }
-	pCreate					= 0;
-	pDestroy				= 0;
-	Engine.Event._destroy	();
-	XRC.r_clear_compact		();
+	//if (hGame) { FreeLibrary(hGame); hGame = 0; }
+	DllMainXrGame(NULL, DLL_PROCESS_DETACH, NULL);
+	//if (hRender) { FreeLibrary(hRender); hRender = 0; }
+	DLL_MAIN_RENDER(NULL, DLL_PROCESS_DETACH, NULL);
+	pCreate = 0;
+	pDestroy = 0;
+	Engine.Event._destroy();
+	XRC.r_clear_compact();
 }
 
 extern "C" {
-	typedef bool __cdecl SupportsAdvancedRendering	(void);
-	//typedef bool _declspec(dllexport) SupportsDX10Rendering();
-	typedef bool _declspec(dllexport) SupportsDX11Rendering();
+	typedef bool __cdecl SupportsAdvancedRenderingREF(void);
+	typedef bool /*_declspec(dllexport)*/ SupportsDX10RenderingREF();
+	typedef bool /*_declspec(dllexport)*/ SupportsDX11RenderingREF();
 };
 
-void add_renderer_mode(LPCSTR name, int id)
-{
-	static int i = 0;
-	vid_quality_token[i].id = id;
-	vid_quality_token[i].name = name;
-	i++;
-	return;
-}
+extern "C" {
+
+	bool /*_declspec(dllexport)*/ SupportsDX11Rendering();
+
+};
 
 void CEngineAPI::CreateRendererList()
 {
@@ -199,67 +202,71 @@ void CEngineAPI::CreateRendererList()
 	vid_quality_token[1].name = NULL;
 #else
 	
-	BOOL bSupports_r2 = FALSE;
-	Log("Try loading DLL:", r2_name);
-	hRender = LoadLibrary(r2_name);
-	if (hRender)
+	// TODO: ask renderers if they are supported!
+	if (vid_quality_token != NULL) return;
+	bool bSupports_r2 = false;
+	bool bSupports_r2_5 = false;
+	bool bSupports_r3 = false;
+	bool bSupports_r4 = false;
+
+	LPCSTR r2_name = "xrRender_R2.dll";
+	LPCSTR r3_name = "xrRender_R3.dll";
+	LPCSTR r4_name = "xrRender_R4.dll";
+
+	if (strstr(Core.Params, "-perfhud_hack"))
 	{
-		SupportsAdvancedRendering* test_rendering = (SupportsAdvancedRendering*)GetProcAddress(hRender, "SupportsAdvancedRendering");
-		R_ASSERT(test_rendering);
-		bSupports_r2 = test_rendering();
-		FreeLibrary(hRender);
+		bSupports_r2 = true;
+		bSupports_r2_5 = true;
+		bSupports_r3 = true;
+		bSupports_r4 = true;
 	}
-	Log("* supports: ", bSupports_r2);
-
-	BOOL bSupports_r4 = FALSE;
-	Log("Try loading DLL:", r4_name);
-	SetErrorMode(SEM_FAILCRITICALERRORS);
-	hRender = LoadLibrary(r4_name);
-	SetErrorMode(0);
-	if (hRender)
+	else
 	{
-		SupportsDX11Rendering* test_dx11_rendering = (SupportsDX11Rendering*)GetProcAddress(hRender, "SupportsDX11Rendering");
-		R_ASSERT(test_dx11_rendering);
-		bSupports_r4 = test_dx11_rendering();
-		FreeLibrary(hRender);
-	}
-	Log("* supports: ", bSupports_r4);
 
-	hRender = 0;
 
-	u32 size = 1;
-	
-	if (bSupports_r2) // r2a, r2, r2.5
-		size += 4; 
 
-	if (bSupports_r4) // r4
-		size += 1; 
-
-	if(!bSupports_r2 && !bSupports_r4)
-		CHECK_OR_EXIT(!FAILED(E_FAIL), 
-			make_string("Ты зачем рендер украл?\n%s:%s\n%s:%s\n%s:%s\n%s:%s\n%s:%s", r1_name, "украдено", r2_name, "спизженно", r4_name, "потеряно", "xrRender_R5.dll", "coming soon!", "xrRender_R6.dll", "cumming soon!!"));
-
-	vid_quality_token = xr_alloc<xr_token>(size);
-	
-	if (bSupports_r2)
-	{
-		add_renderer_mode("renderer_r2a", 1);
-		//add_renderer_mode("renderer_r2", 2);
-		add_renderer_mode("renderer_r2.5", 3);
+		// try to initialize R4
+		Log("Loading DLL:", r4_name);
+		// Hide "d3d10.dll not found" message box for XP
+		SetErrorMode(SEM_FAILCRITICALERRORS);
+		//hRender = LoadLibrary(r4_name);
+		DllMainXrRenderR4(NULL, DLL_PROCESS_ATTACH, NULL);
+		// Restore error handling
+		SetErrorMode(0);
+		//if (hRender)
+		{
+			//SupportsDX11RenderingREF* test_dx11_rendering = (SupportsDX11RenderingREF*)GetProcAddress(hRender, "SupportsDX11Rendering");
+			SupportsDX11RenderingREF* test_dx11_rendering = SupportsDX11Rendering;
+			R_ASSERT(test_dx11_rendering);
+			bSupports_r4 = test_dx11_rendering();
+			//FreeLibrary(hRender);
+		}
 	}
 
-	if (bSupports_r4)
-	{
-		add_renderer_mode("renderer_r4", 5);
-	}
+	//hRender = 0;
+	bool proceed = true;
+	xr_vector<LPCSTR> _tmp;
+	if (proceed &= bSupports_r4, proceed)
+		_tmp.push_back("renderer_r4");
 
-	vid_quality_token[size - 1].id = -1;
-	vid_quality_token[size - 1].name = NULL;
+	R_ASSERT2(_tmp.size() != 0, "No valid renderer found, please use a render system that's supported by your PC");
 
-	Msg("Available render modes[%d]:", size - 1);
-	for (u32 i = 0; i < size - 1; ++i)
+	u32 _cnt = _tmp.size() + 1;
+	vid_quality_token = xr_alloc<xr_token>(_cnt);
+
+	vid_quality_token[_cnt - 1].id = -1;
+	vid_quality_token[_cnt - 1].name = NULL;
+
+	//#ifdef DEBUG
+	Msg("Available render modes[%d]:", _tmp.size());
+	//#endif // DEBUG
+	for (u32 i = 0; i < _tmp.size(); ++i)
 	{
-		Msg("[%s]", vid_quality_token[i].name);
+		vid_quality_token[i].id = i;
+		vid_quality_token[i].name = _tmp[i];
+		//#ifdef DEBUG
+		Msg("[%s]", _tmp[i]);
+		//#endif // DEBUG
 	}
-#endif
+#endif //#ifndef DEDICATED_SERVER
 }

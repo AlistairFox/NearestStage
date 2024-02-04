@@ -5,9 +5,9 @@
 //#include "../include/xrapi/xrapi.h"
 
 #ifdef XRSOUND_EXPORTS
-	#define XRSOUND_API __declspec(dllexport)
+	#define XRSOUND_API 
 #else
-	#define XRSOUND_API __declspec(dllimport)
+	#define XRSOUND_API 
 #endif
 
 #ifdef __BORLANDC__

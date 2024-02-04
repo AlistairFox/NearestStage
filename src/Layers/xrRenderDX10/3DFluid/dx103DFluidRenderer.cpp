@@ -17,23 +17,23 @@ namespace
 {
 	// For render call
 	//pZNearVar = pEffect->GetVariableByName("ZNear")->AsScalar();
-	shared_str	strZNear("ZNear");
+	shared_str	strZNear;
 	//pZFarVar = pEffect->GetVariableByName("ZFar")->AsScalar();
-	shared_str	strZFar("ZFar");
+	shared_str	strZFar;
 	//pGridScaleFactorVar = pEffect->GetVariableByName( "gridScaleFactor")->AsScalar();
-	shared_str	strGridScaleFactor("gridScaleFactor");
+	shared_str	strGridScaleFactor;
 	//pEyeOnGridVar = pEffect->GetVariableByName("eyeOnGrid")->AsVector();
-	shared_str	strEyeOnGrid("eyeOnGrid");
+	shared_str	strEyeOnGrid;
 	//pWorldViewProjectionVar = pEffect->GetVariableByName("WorldViewProjection")->AsMatrix();
-	shared_str	strWorldViewProjection("WorldViewProjection");
+	shared_str	strWorldViewProjection;
 	//pInvWorldViewProjectionVar = pEffect->GetVariableByName("InvWorldViewProjection")->AsMatrix();
-	shared_str	strInvWorldViewProjection("InvWorldViewProjection");
+	shared_str	strInvWorldViewProjection;
 	//pRTWidthVar = pEffect->GetVariableByName("RTWidth")->AsScalar();
-	shared_str	strRTWidth("RTWidth");
+	shared_str	strRTWidth;
 	//pRTHeightVar = pEffect->GetVariableByName("RTHeight")->AsScalar();
-	shared_str	strRTHeight("RTHeight");
+	shared_str	strRTHeight;
 
-	shared_str	strDiffuseLight("DiffuseLight");
+	shared_str	strDiffuseLight;
 }
 
 LPCSTR			dx103DFluidRenderer::m_pRTNames[ RRT_NumRT ] = 
@@ -69,6 +69,17 @@ dx103DFluidRenderer::~dx103DFluidRenderer()
 void dx103DFluidRenderer::Initialize(int gridWidth, int gridHeight, int gridDepth)
 {
 	Destroy();
+
+	strZNear = "ZNear";
+	strZFar = "ZFar";
+	strGridScaleFactor = "gridScaleFactor";
+	strEyeOnGrid = "eyeOnGrid";
+	strWorldViewProjection = "WorldViewProjection";
+	strInvWorldViewProjection = "InvWorldViewProjection";
+	strRTWidth = "RTWidth";
+	strRTHeight = "RTHeight";
+
+	strDiffuseLight = "DiffuseLight";
 
 	m_vGridDim[0] = float(gridWidth);
 	m_vGridDim[1] = float(gridHeight);

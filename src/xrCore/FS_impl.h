@@ -37,9 +37,9 @@ struct find_chunk_counter
 };
 
 #ifdef INCLUDE_FROM_ENGINE
-extern __declspec(dllimport) find_chunk_counter g_find_chunk_counter;
+extern  find_chunk_counter g_find_chunk_counter;
 #else //INCLUDE_FROM_ENGINE
-extern __declspec(dllexport) find_chunk_counter g_find_chunk_counter;
+extern  find_chunk_counter g_find_chunk_counter;
 #endif //INCLUDE_FROM_ENGINE
 
 extern bool g_initialize_cpu_called;

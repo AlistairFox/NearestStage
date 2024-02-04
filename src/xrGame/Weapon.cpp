@@ -1599,13 +1599,6 @@ bool CWeapon::SilencerAttachable()
 	return (ALife::eAddonAttachable == m_eSilencerStatus);
 }
 
-shared_str wpn_scope				= "wpn_scope";
-shared_str wpn_silencer				= "wpn_silencer";
-shared_str wpn_grenade_launcher		= "wpn_launcher";
-
-
-
-
 void CWeapon::UpdateHUDAddonsVisibility()
 {//actor only
 	if(!GetHUDmode())										return;

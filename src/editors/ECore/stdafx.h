@@ -58,14 +58,14 @@ __inline float expf	(float val)                           	{ return ::exp(val);}
 
 
 #ifdef	_ECOREB
-    #define ECORE_API		__declspec(dllexport)
-    #define ENGINE_API		__declspec(dllexport)
+    #define ECORE_API		
+    #define ENGINE_API		
 #else
-    #define ECORE_API		__declspec(dllimport)
-    #define ENGINE_API		__declspec(dllimport)
+    #define ECORE_API		
+    #define ENGINE_API		
 #endif
 
-#define DLL_API			__declspec(dllimport)
+#define DLL_API			
 #define PropertyGP(a,b)	__declspec( property( get=a, put=b ) )
 #define THROW			FATAL("THROW");
 #define THROW2(a)		FATAL(a);

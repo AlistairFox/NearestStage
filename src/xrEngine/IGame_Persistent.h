@@ -203,21 +203,6 @@ extern ENGINE_API	float ps_r2_img_saturation; // r2-only
 extern ENGINE_API	Fvector ps_r2_img_cg; // r2-only
 
 
-// Ascii's shaders
-extern ENGINE_API	Fvector4 ps_ssfx_grass_shadows;
-extern ENGINE_API	Fvector3 ps_ssfx_shadow_cascades;
-extern ENGINE_API	Fvector4 ps_ssfx_grass_interactive;
-extern ENGINE_API	Fvector4 ps_ssfx_int_grass_params_1;
-extern ENGINE_API	Fvector4 ps_ssfx_int_grass_params_2;
-extern ENGINE_API	Fvector4 ps_ssfx_hud_drops_1;
-extern ENGINE_API	Fvector4 ps_ssfx_hud_drops_2;
-extern ENGINE_API	Fvector4 ps_ssfx_blood_decals;
-extern ENGINE_API	Fvector4 ps_ssfx_rain_1;
-extern ENGINE_API	Fvector4 ps_ssfx_rain_2;
-extern ENGINE_API	Fvector4 ps_ssfx_rain_3;
-extern ENGINE_API Fvector4 ps_ssfx_wind_grass;
-extern ENGINE_API Fvector4 ps_ssfx_wind_trees;
-
 extern ENGINE_API	bool g_dedicated_server;
 extern ENGINE_API	IGame_Persistent*	g_pGamePersistent;
 #endif //IGame_PersistentH

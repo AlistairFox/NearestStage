@@ -132,6 +132,32 @@ extern ECORE_API int			ps_r2_dhemi_count;			// 5
 extern ECORE_API float			ps_r2_slight_fade;			// 1.f
 extern ECORE_API int			ps_r2_wait_sleep;
 
+extern ECORE_API Fvector3 ps_ssfx_shadow_cascades;
+extern ECORE_API Fvector4 ps_ssfx_grass_shadows;
+extern ECORE_API Fvector4 ps_ssfx_grass_interactive;
+extern ECORE_API Fvector4 ps_ssfx_int_grass_params_1;
+extern ECORE_API Fvector4 ps_ssfx_int_grass_params_2;
+extern ECORE_API Fvector4 ps_ssfx_hud_drops_1;
+extern ECORE_API Fvector4 ps_ssfx_hud_drops_2;
+extern ECORE_API Fvector4 ps_ssfx_blood_decals;
+extern ECORE_API Fvector4 ps_ssfx_rain_1;
+extern ECORE_API Fvector4 ps_ssfx_rain_2;
+extern ECORE_API Fvector4 ps_ssfx_rain_3;
+extern ECORE_API Fvector4 ps_ssfx_wind_grass;
+extern ECORE_API Fvector4 ps_ssfx_wind_trees;
+
+
+extern ECORE_API float ps_r2_tnmp_a; // r2-only
+extern ECORE_API float ps_r2_tnmp_b; // r2-only
+extern ECORE_API float ps_r2_tnmp_c; // r2-only
+extern ECORE_API float ps_r2_tnmp_d; // r2-only
+extern ECORE_API float ps_r2_tnmp_e; // r2-only
+extern ECORE_API float ps_r2_tnmp_f; // r2-only
+extern ECORE_API float ps_r2_tnmp_w; // r2-only
+extern ECORE_API float ps_r2_tnmp_exposure; // r2-only
+extern ECORE_API float ps_r2_tnmp_gamma; // r2-only
+extern ECORE_API float ps_r2_tnmp_onoff; // r2-only
+
 //	x - min (0), y - focus (1.4), z - max (100)
 extern ECORE_API Fvector3		ps_r2_dof;
 extern ECORE_API float			ps_r2_dof_sky;				//	distance to sky

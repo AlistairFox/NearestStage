@@ -17,10 +17,10 @@ namespace
 
 	// For render call
 	//DrawTextureShaderVariable = pEffect->GetVariableByName( "textureNumber")->AsScalar();
-	shared_str	strDrawTexture("textureNumber");
+	shared_str	strDrawTexture;
 	// For project, advect
 	//ModulateShaderVariable = pEffect->GetVariableByName( "modulate")->AsScalar();
-	shared_str	strModulate("modulate");
+	shared_str	strModulate;
 	// For gaussian
 	//ImpulseSizeShaderVariable = pEffect->GetVariableByName( "size")->AsScalar();
 	//shared_str	strImpulseSize("size");
@@ -30,16 +30,16 @@ namespace
 	//shared_str	strSplatColor("splatColor");
 	// For confinement
 	//EpsilonShaderVariable = pEffect->GetVariableByName( "epsilon")->AsScalar();
-	shared_str	strEpsilon("epsilon");
+	shared_str	strEpsilon;
 	// For confinement, advect
-	shared_str	strTimeStep("timestep");
+	shared_str	strTimeStep;
 	// For advect BFECC
 	//ForwardShaderVariable = pEffect->GetVariableByName( "forward")->AsScalar();
-	shared_str	strForward("forward");
+	shared_str	strForward;
 	//HalfVolumeDimShaderVariable = pEffect->GetVariableByName( "halfVolumeDim")->AsVector();
-	shared_str	strHalfVolumeDim("halfVolumeDim");
+	shared_str	strHalfVolumeDim;
 
-	shared_str	strGravityBuoyancy("GravityBuoyancy");
+	shared_str	strGravityBuoyancy;
 }
 
 LPCSTR dx103DFluidManager::m_pEngineTextureNames[ NUM_RENDER_TARGETS ] = 
@@ -102,6 +102,31 @@ void dx103DFluidManager::Initialize( int width, int height, int depth )
 	//if (strstr(Core.Params,"-no_volumetric_fog"))
 	if (!RImplementation.o.volumetricfog)
 		return;
+
+	strDrawTexture = "textureNumber";
+	// For project, advect
+	//ModulateShaderVariable = pEffect->GetVariableByName( "modulate")->AsScalar();
+	strModulate = "modulate";
+	// For gaussian
+	//ImpulseSizeShaderVariable = pEffect->GetVariableByName( "size")->AsScalar();
+	//shared_str	strImpulseSize("size");
+	//ImpulseCenterShaderVariable = pEffect->GetVariableByName( "center")->AsVector();
+	//shared_str	strImpulseCenter("center");
+	//SplatColorShaderVariable = pEffect->GetVariableByName( "splatColor")->AsVector();
+	//shared_str	strSplatColor("splatColor");
+	// For confinement
+	//EpsilonShaderVariable = pEffect->GetVariableByName( "epsilon")->AsScalar();
+	strEpsilon = "epsilon";
+	// For confinement, advect
+	strTimeStep = "timestep";
+	// For advect BFECC
+	//ForwardShaderVariable = pEffect->GetVariableByName( "forward")->AsScalar();
+	strForward = "forward";
+	//HalfVolumeDimShaderVariable = pEffect->GetVariableByName( "halfVolumeDim")->AsVector();
+	strHalfVolumeDim = "halfVolumeDim";
+
+	strGravityBuoyancy = "GravityBuoyancy";
+
 
 	Destroy();
 

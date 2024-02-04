@@ -5,10 +5,10 @@
 #include "..\..\Include\xrRender\RenderFactory.h"
 
 #define RENDER_FACTORY_DECLARE(Class) \
-	virtual I##Class* Create##Class(); \
-	virtual void Destroy##Class(I##Class *pObject);
+	 I##Class* Create##Class(); \
+	 void Destroy##Class(I##Class *pObject);
 
-class dxRenderFactory : public IRenderFactory
+class dxRenderFactory
 {
 #ifndef _EDITOR	
 	RENDER_FACTORY_DECLARE(UISequenceVideoItem)

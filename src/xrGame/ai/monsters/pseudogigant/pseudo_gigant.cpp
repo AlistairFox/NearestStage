@@ -17,7 +17,7 @@
 #include "../control_path_builder_base.h"
 #include "../../../actor_mp_client.h"
 
-extern ENGINE_API Fvector4 ps_ssfx_grass_interactive;
+extern Fvector4 ps_ssfx_grass_interactive;
 CPseudoGigant::CPseudoGigant()
 {
 	CControlled::init_external(this);

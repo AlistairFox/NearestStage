@@ -124,7 +124,7 @@ void CStateBurerAttackGravi<Object>::ExecuteGraviContinue()
 	}
 }
 
-extern ENGINE_API Fvector4 ps_ssfx_grass_interactive;
+extern Fvector4 ps_ssfx_grass_interactive;
 
 template <typename Object>
 void CStateBurerAttackGravi<Object>::ExecuteGraviFire()

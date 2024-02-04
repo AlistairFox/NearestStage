@@ -9,9 +9,9 @@
 // XRCDB_API functions as being imported from a DLL, wheras this DLL sees symbols
 // defined with this macro as being exported.
 #ifdef XRCDB_EXPORTS
-#define XRCDB_API __declspec(dllexport)
+#define XRCDB_API 
 #else
-#define XRCDB_API __declspec(dllimport)
+#define XRCDB_API 
 #endif
 #ifdef M_VISUAL
 #define ALIGN(a) __declspec(align(a))

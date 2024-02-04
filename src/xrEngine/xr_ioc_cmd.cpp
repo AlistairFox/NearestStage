@@ -527,21 +527,6 @@ ENGINE_API float ps_r2_img_gamma = 1.0f; // r2-only
 ENGINE_API float ps_r2_img_saturation = 1.0f; // r2-only
 ENGINE_API Fvector ps_r2_img_cg = { .0f, .0f, .0f }; // r2-only
 
-// Ascii1457's Screen Space Shaders
-ENGINE_API Fvector3 ps_ssfx_shadow_cascades = { 20.f, 60.f, 200.f };
-ENGINE_API Fvector4 ps_ssfx_grass_shadows = { 2.f, 1.f, 30.0f, .0f };
-ENGINE_API Fvector4 ps_ssfx_grass_interactive = { 1.0f, 8.f, 200.0f, 1.0f };
-ENGINE_API Fvector4 ps_ssfx_int_grass_params_1 = { 0.5f, 1.0f, 1.0f, 50.0f };
-ENGINE_API Fvector4 ps_ssfx_int_grass_params_2 = { 1.0f, 5.0f, 1.0f, 5.0f };
-ENGINE_API Fvector4 ps_ssfx_hud_drops_1 = { 1.0f, 1.0f, 30.f, .05f }; // Anim Speed, Int, Reflection, Refraction
-ENGINE_API Fvector4 ps_ssfx_hud_drops_2 = { .0225f, 1.f, 0.0f, 2.0f }; // Density, Size, Extra Gloss, Gloss
-ENGINE_API Fvector4 ps_ssfx_blood_decals = { 1.f, 0.7f, 0.f, 0.f };
-ENGINE_API Fvector4 ps_ssfx_rain_1 = { 2.0f, 0.1f, 0.5f, 2.f }; // Len, Width, Speed, Quality
-ENGINE_API Fvector4 ps_ssfx_rain_2 = { 0.3f, 2.0f, 1.0f, 0.5f }; // Alpha, Brigthness, Refraction, Reflection
-ENGINE_API Fvector4 ps_ssfx_rain_3 = { 0.01f, 1.0f, 0.0f, 0.0f }; // Alpha, Refraction ( Splashes ) - Yohji: Alpha was edited (0.5->0.01f) due to a bug with transparency and other particles.
-ENGINE_API Fvector4 ps_ssfx_wind_grass = { 9.5f, 1.4f, 1.5f, 0.4f };
-ENGINE_API Fvector4 ps_ssfx_wind_trees = { 11.0f, 0.15f, 0.5f, 0.15f };
-
 u32	renderer_value	= 3;
 //void fill_render_mode_list();
 //void free_render_mode_list();
