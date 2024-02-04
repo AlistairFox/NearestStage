@@ -2492,7 +2492,8 @@ public:
 			}
 			else
 			{
-			CL->ps->team = team;
+				CL->ps->team = team;
+				Level().Server->game->signal_Syncronize();
 			}
 
 		}
