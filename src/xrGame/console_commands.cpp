@@ -1558,16 +1558,6 @@ public		:
 	}
 };
 
-class CCC_Crash : public IConsole_Command {
-public:
-	CCC_Crash(LPCSTR N) : IConsole_Command(N)  { bEmptyArgsHandled = true; };
-	virtual void Execute(LPCSTR /**args/**/) {
-		VERIFY3					(false,"This is a test crash","Do not post it as a bug");
-		int						*pointer = 0;
-		*pointer				= 0;
-	}
-};
-
 #ifdef DEBUG_MEMORY_MANAGER
 
 class CCC_MemAllocShowStats : public IConsole_Command {
@@ -1712,6 +1702,16 @@ public:
 }; // CCC_InvDropAllItems
 
 #endif // DEBUG
+
+class CCC_Crash : public IConsole_Command {
+public:
+	CCC_Crash(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = true; };
+	virtual void Execute(LPCSTR /**args/**/) {
+		VERIFY3(false, "This is a test crash", "Do not post it as a bug");
+		int* pointer = 0;
+		*pointer = 0;
+	}
+};
 
 class CCC_DumpObjects : public IConsole_Command {
 public:
@@ -2236,6 +2236,7 @@ CMD4(CCC_FloatBlock,		"dbg_text_height_scale",	&dbg_text_height_scale	,			0.2f	,
 	g_uCommonFlags.set(flAiUseTorchDynamicLights, TRUE);
 
 	CMD3(CCC_Mask,		"ai_use_torch_dynamic_lights",	&g_uCommonFlags, flAiUseTorchDynamicLights);
+	CMD1(CCC_Crash, "Crash_game");
 
 #ifndef MASTER_GOLD
 	CMD4(CCC_Vector3,		"psp_cam_offset",				&CCameraLook2::m_cam_offset, Fvector().set(-1000,-1000,-1000),Fvector().set(1000,1000,1000));
