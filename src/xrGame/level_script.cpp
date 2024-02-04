@@ -956,6 +956,7 @@ void change_team(u32 ClientID, u16 team)
 		if (!OnServer()) return;
 	xrClientData* CL = static_cast<xrClientData*>(Level().Server->GetClientByID(ClientID));
 		CL->ps->team = team;
+		Level().Server->game->signal_Syncronize();
 }
 
 void object_destroy(CScriptGameObject* object)
