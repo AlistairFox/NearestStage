@@ -96,6 +96,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "oalib", "..\SDK\sources\Ope
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libspeexdsp", "..\SDK\sources\speexdsp\win32\VS2019\libspeexdsp\libspeexdsp.vcxproj", "{03207781-0D1C-4DB3-A71D-45C608F28DBD}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xrCPU_Pipe", "xrCPU_Pipe\xrCPU_Pipe.vcxproj", "{CA0649DD-D089-423A-981C-46B57A884EB9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -433,6 +435,18 @@ Global
 		{03207781-0D1C-4DB3-A71D-45C608F28DBD}.Release|x64.Build.0 = Release|x64
 		{03207781-0D1C-4DB3-A71D-45C608F28DBD}.Release|x86.ActiveCfg = Release|Win32
 		{03207781-0D1C-4DB3-A71D-45C608F28DBD}.Release|x86.Build.0 = Release|Win32
+		{CA0649DD-D089-423A-981C-46B57A884EB9}.Debug|x64.ActiveCfg = Release|x64
+		{CA0649DD-D089-423A-981C-46B57A884EB9}.Debug|x64.Build.0 = Release|x64
+		{CA0649DD-D089-423A-981C-46B57A884EB9}.Debug|x86.ActiveCfg = Release|Win32
+		{CA0649DD-D089-423A-981C-46B57A884EB9}.Debug|x86.Build.0 = Release|Win32
+		{CA0649DD-D089-423A-981C-46B57A884EB9}.Release_Dedicated|x64.ActiveCfg = Release|x64
+		{CA0649DD-D089-423A-981C-46B57A884EB9}.Release_Dedicated|x64.Build.0 = Release|x64
+		{CA0649DD-D089-423A-981C-46B57A884EB9}.Release_Dedicated|x86.ActiveCfg = Release|Win32
+		{CA0649DD-D089-423A-981C-46B57A884EB9}.Release_Dedicated|x86.Build.0 = Release|Win32
+		{CA0649DD-D089-423A-981C-46B57A884EB9}.Release|x64.ActiveCfg = Release|x64
+		{CA0649DD-D089-423A-981C-46B57A884EB9}.Release|x64.Build.0 = Release|x64
+		{CA0649DD-D089-423A-981C-46B57A884EB9}.Release|x86.ActiveCfg = Release|Win32
+		{CA0649DD-D089-423A-981C-46B57A884EB9}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

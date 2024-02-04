@@ -266,13 +266,6 @@ int			ps_r2_wait_sleep			= 0;
 float		ps_r2_lt_smooth				= 1.f;				// 1.f
 float		ps_r2_slight_fade			= 0.5f;				// 1.f
 
-// Screen Space Shaders Stuff
-// Anomaly
-extern ENGINE_API float ps_r2_img_exposure;		// r2-only
-extern ENGINE_API float ps_r2_img_gamma;		// r2-only
-extern ENGINE_API float ps_r2_img_saturation;	// r2-only
-extern ENGINE_API Fvector ps_r2_img_cg;			// r2-only
-
 // Ascii1457's Screen Space Shaders
 Fvector3 ps_ssfx_shadow_cascades = { 20.f, 60.f, 200.f };
 Fvector4 ps_ssfx_grass_shadows = { 2.f, 1.f, 30.0f, .0f };

@@ -266,7 +266,6 @@ void xrSASH::GetAllOptions()
 	oaNamedOptionStruct Option; 
 	oaInitOption(&Option);
 	
-	DescribeOption("renderer",		Option.Dependency);
 	DescribeOption("vid_mode",		Option.Dependency);
 	DescribeOption("rs_fullscreen", Option.Dependency);
 
@@ -278,10 +277,8 @@ void xrSASH::GetAllOptions()
 	DescribeOption("ai_use_torch_dynamic_lights",	Option.Dependency);
 
 	//	r1 only
-	Option.Dependency.ParentName = TEXT("renderer");
 	Option.Dependency.ComparisonOp = OA_COMP_OP_EQUAL;
 	Option.Dependency.ComparisonVal.Enum = TEXT("renderer_r1");
-	Option.Dependency.ComparisonValType = GetOptionType("renderer");
 	{
 		DescribeOption("r__supersample",		Option.Dependency);
 		DescribeOption("r1_no_detail_textures", Option.Dependency);
@@ -351,7 +348,6 @@ void xrSASH::GetCurrentOptions()
 	Msg("SASH:: GetCurrentOptions.");
 	TryInitEngine();
 
-	GetOption("renderer");
 	GetOption("vid_mode");
 	GetOption("rs_fullscreen");
 

@@ -11,6 +11,7 @@
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "vfw32.lib")
 #pragma comment(lib, "nvapi.lib")
+#pragma comment(lib,"xrCPU_Pipe.lib")
 #pragma comment(lib, "xrgame.lib")
 #pragma comment(lib, "xrphysics.lib")
 #pragma comment(lib, "ode.lib")
@@ -87,19 +88,12 @@ LPCSTR r4_name = "xrRender_R4";
 #ifndef DEDICATED_SERVER
 void CEngineAPI::InitializeNotDedicated()
 {
-	//if (psDeviceFlags.test(rsR4))
 	{
 		// try to initialize R4
 		psDeviceFlags.set(rsR2, FALSE);
+		psDeviceFlags.set(rsR4, TRUE);
 		Log("Loading DLL:", r4_name);
 		DllMainXrRenderR4(NULL, DLL_PROCESS_ATTACH, NULL);
-		//hRender = LoadLibrary(r4_name);
-	//if (0 == hRender)
-	//{
-	//    // try to load R1
-	//    Msg("! ...Failed - incompatible hardware/pre-Vista OS.");
-	//    psDeviceFlags.set(rsR2, TRUE);
-		//}
 	}
 }
 #endif // DEDICATED_SERVER
@@ -115,9 +109,7 @@ void CEngineAPI::Initialize(void)
 	// render
 
 	#ifdef DEDICATED_SERVER
-		// try to load R1
 		psDeviceFlags.set(rsR4, FALSE);
-		//psDeviceFlags.set	(rsR3,FALSE);
 		psDeviceFlags.set(rsR2, FALSE);
 
 		Log("Loading DLL:", r1_name);
@@ -132,14 +124,9 @@ void CEngineAPI::Initialize(void)
 	{
 		LPCSTR g_name = "xrGame.dll";
 		Log("Loading DLL:", g_name);
-		//hGame = LoadLibrary(g_name);
 		DllMainXrGame(NULL, DLL_PROCESS_ATTACH, NULL);
-		//if (0 == hGame) R_CHK(GetLastError());
-		//R_ASSERT2(hGame, "Game DLL raised exception during loading or there is no game DLL at all");
-		//pCreate = (Factory_Create*)GetProcAddress(hGame, "xrFactory_Create");
 		pCreate = xrFactory_Create;
 		R_ASSERT(pCreate);
-		//pDestroy = (Factory_Destroy*)GetProcAddress(hGame, "xrFactory_Destroy");
 		pDestroy = xrFactory_Destroy;
 		R_ASSERT(pDestroy);
 	}
@@ -161,9 +148,7 @@ void CEngineAPI::Initialize(void)
 
 void CEngineAPI::Destroy	(void)
 {
-	//if (hGame) { FreeLibrary(hGame); hGame = 0; }
 	DllMainXrGame(NULL, DLL_PROCESS_DETACH, NULL);
-	//if (hRender) { FreeLibrary(hRender); hRender = 0; }
 	DLL_MAIN_RENDER(NULL, DLL_PROCESS_DETACH, NULL);
 	pCreate = 0;
 	pDestroy = 0;
@@ -173,13 +158,13 @@ void CEngineAPI::Destroy	(void)
 
 extern "C" {
 	typedef bool __cdecl SupportsAdvancedRenderingREF(void);
-	typedef bool /*_declspec(dllexport)*/ SupportsDX10RenderingREF();
-	typedef bool /*_declspec(dllexport)*/ SupportsDX11RenderingREF();
+	typedef bool SupportsDX10RenderingREF();
+	typedef bool SupportsDX11RenderingREF();
 };
 
 extern "C" {
 
-	bool /*_declspec(dllexport)*/ SupportsDX11Rendering();
+	bool SupportsDX11Rendering();
 
 };
 
@@ -250,16 +235,12 @@ void CEngineAPI::CreateRendererList()
 	vid_quality_token[_cnt - 1].id = -1;
 	vid_quality_token[_cnt - 1].name = NULL;
 
-	//#ifdef DEBUG
 	Msg("Available render modes[%d]:", _tmp.size());
-	//#endif // DEBUG
 	for (u32 i = 0; i < _tmp.size(); ++i)
 	{
 		vid_quality_token[i].id = i;
 		vid_quality_token[i].name = _tmp[i];
-		//#ifdef DEBUG
 		Msg("[%s]", _tmp[i]);
-		//#endif // DEBUG
 	}
 #endif //#ifndef DEDICATED_SERVER
 }

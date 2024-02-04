@@ -145,18 +145,10 @@ extern ECORE_API Fvector4 ps_ssfx_rain_2;
 extern ECORE_API Fvector4 ps_ssfx_rain_3;
 extern ECORE_API Fvector4 ps_ssfx_wind_grass;
 extern ECORE_API Fvector4 ps_ssfx_wind_trees;
-
-
-extern ECORE_API float ps_r2_tnmp_a; // r2-only
-extern ECORE_API float ps_r2_tnmp_b; // r2-only
-extern ECORE_API float ps_r2_tnmp_c; // r2-only
-extern ECORE_API float ps_r2_tnmp_d; // r2-only
-extern ECORE_API float ps_r2_tnmp_e; // r2-only
-extern ECORE_API float ps_r2_tnmp_f; // r2-only
-extern ECORE_API float ps_r2_tnmp_w; // r2-only
-extern ECORE_API float ps_r2_tnmp_exposure; // r2-only
-extern ECORE_API float ps_r2_tnmp_gamma; // r2-only
-extern ECORE_API float ps_r2_tnmp_onoff; // r2-only
+extern ECORE_API float ps_r2_img_exposure;
+extern ECORE_API float ps_r2_img_gamma;
+extern ECORE_API float ps_r2_img_saturation;
+extern ECORE_API Fvector ps_r2_img_cg;
 
 //	x - min (0), y - focus (1.4), z - max (100)
 extern ECORE_API Fvector3		ps_r2_dof;

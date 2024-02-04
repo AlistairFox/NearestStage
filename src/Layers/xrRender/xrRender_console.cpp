@@ -151,17 +151,6 @@ float		ps_r__ssaHZBvsTEX			=  96.f	;					//RO
 int			ps_r__tf_Anisotropic		= 8		;
 float ps_r__tf_Mipbias = 0.0f;
 
-float ps_r2_tnmp_a = .205f; // r2-only
-float ps_r2_tnmp_b = .35f; // r2-only
-float ps_r2_tnmp_c = .55f; // r2-only
-float ps_r2_tnmp_d = .20f; // r2-only
-float ps_r2_tnmp_e = .02f; // r2-only
-float ps_r2_tnmp_f = .15f; // r2-only
-float ps_r2_tnmp_w = 7.5f; // r2-only
-float ps_r2_tnmp_exposure = 7.0f; // r2-only
-float ps_r2_tnmp_gamma = .25f; // r2-only
-float ps_r2_tnmp_onoff = .0f; // r2-only
-
 // R1
 float		ps_r1_ssaLOD_A				= 64.f	;
 float		ps_r1_ssaLOD_B				= 48.f	;
@@ -273,10 +262,11 @@ float		ps_r2_slight_fade			= 0.5f;				// 1.f
 
 // Screen Space Shaders Stuff
 // Anomaly
-extern ENGINE_API float ps_r2_img_exposure;		// r2-only
-extern ENGINE_API float ps_r2_img_gamma;		// r2-only
-extern ENGINE_API float ps_r2_img_saturation;	// r2-only
-extern ENGINE_API Fvector ps_r2_img_cg;			// r2-only
+// Anomaly
+float ps_r2_img_exposure = 1.0f; // r2-only
+float ps_r2_img_gamma = 1.0f; // r2-only
+float ps_r2_img_saturation = 1.0f; // r2-only
+Fvector ps_r2_img_cg = { .0f, .0f, .0f }; // r2-only
 
 // Ascii1457's Screen Space Shaders
 Fvector3 ps_ssfx_shadow_cascades = { 20.f, 60.f, 200.f };

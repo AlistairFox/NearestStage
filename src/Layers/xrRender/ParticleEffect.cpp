@@ -5,8 +5,6 @@
 
 #ifndef _EDITOR
 #include <xmmintrin.h>
-#include "../../xrCPU_Pipe/ttapi.h"
-#pragma comment(lib,"xrCPU_Pipe.lib")
 #endif
 
 using namespace PAPI;

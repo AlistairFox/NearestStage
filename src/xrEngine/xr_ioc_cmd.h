@@ -8,11 +8,6 @@
 
 #include "xrSASH.h"
 
-// Anomaly
-extern ENGINE_API float ps_r2_img_exposure;
-extern ENGINE_API float ps_r2_img_gamma;
-extern ENGINE_API float ps_r2_img_saturation;
-extern ENGINE_API Fvector ps_r2_img_cg;
 extern ENGINE_API int psSVPFrameDelay;
 
 

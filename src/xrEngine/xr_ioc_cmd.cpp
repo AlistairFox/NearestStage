@@ -518,58 +518,9 @@ ENGINE_API float VIEWPORT_NEAR = 0.2f;
 ENGINE_API float psSVPImageSizeK = 0.7f;
 ENGINE_API int psSVPFrameDelay = 3;
 
-// Anomaly
-ENGINE_API float ps_r2_img_exposure = 1.0f; // r2-only
-ENGINE_API float ps_r2_img_gamma = 1.0f; // r2-only
-ENGINE_API float ps_r2_img_saturation = 1.0f; // r2-only
-ENGINE_API Fvector ps_r2_img_cg = { .0f, .0f, .0f }; // r2-only
-
 //void fill_render_mode_list();
 //void free_render_mode_list();
 
-class CCC_r2 : public CCC_Token
-{
-	typedef CCC_Token inherited;
-public:
-	CCC_r2(LPCSTR N);
-	virtual			~CCC_r2	()
-	{
-		//free_render_mode_list();
-	}
-	virtual void	Execute	(LPCSTR args)
-	{
-
-		tokens					= vid_quality_token;
-
-		inherited::Execute		(args);
-#ifdef  DEDICATED_SERVER
-		psDeviceFlags.set(rsR2, FALSE);
-		psDeviceFlags.set(rsR4, FALSE);
-#else
-		psDeviceFlags.set(rsR2, TRUE);
-		psDeviceFlags.set(rsR4, TRUE);
-
-#endif //  DEDICATED_SERVER
-
-
-	}
-
-	virtual void	Save	(IWriter *F)	
-	{
-		//fill_render_mode_list	();
-		tokens					= vid_quality_token;
-		if( !strstr(Core.Params, "-r2") )
-		{
-			inherited::Save(F);
-		}
-	}
-	virtual xr_token* GetToken()
-	{
-		tokens					= vid_quality_token;
-		return					inherited::GetToken();
-	}
-
-};
 #ifndef DEDICATED_SERVER
 class CCC_soundDevice : public CCC_Token
 {
@@ -821,8 +772,6 @@ void CCC_Register()
 	// Camera
 	CMD2(CCC_Float,		"cam_inert",			&psCamInert);
 	CMD2(CCC_Float,		"cam_slide_inert",		&psCamSlideInert);
-
-	CMD1(CCC_r2,		"renderer"				);
 
 #ifndef DEDICATED_SERVER
 	CMD1(CCC_soundDevice, "snd_device"			);

@@ -196,13 +196,6 @@ public:
 };
 
 
-// Anomaly
-extern ENGINE_API	float ps_r2_img_exposure; // r2-only
-extern ENGINE_API	float ps_r2_img_gamma; // r2-only
-extern ENGINE_API	float ps_r2_img_saturation; // r2-only
-extern ENGINE_API	Fvector ps_r2_img_cg; // r2-only
-
-
 extern ENGINE_API	bool g_dedicated_server;
 extern ENGINE_API	IGame_Persistent*	g_pGamePersistent;
 #endif //IGame_PersistentH
