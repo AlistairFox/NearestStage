@@ -29,8 +29,6 @@ static const float		OPTIMIZATION_DISTANCE		= 100.f;
 
 static bool stalker_use_dynamic_lights	= false;
 
-extern ENGINE_API int g_current_renderer;
-
 CTorch::CTorch(void) 
 {
 	light_render				= ::Render->light_create();
@@ -58,13 +56,6 @@ CTorch::CTorch(void)
 
 	m_bNightVisionOn = false;
 
-	// Disabling shift by x and z axes for 1st render, 
-	// because we don't have dynamic lighting in it. 
-	if( g_current_renderer == 1 )
-	{
-		TORCH_OFFSET.x = 0;
-		TORCH_OFFSET.z = 0;
-	}
 }
 
 CTorch::~CTorch() 

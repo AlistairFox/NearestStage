@@ -199,7 +199,7 @@ void dxRainRender::Render(CEffect_Rain &owner)
 		RCache.Render				(D3DPT_TRIANGLELIST,vOffset,0,vCount,0,vCount/2);
 		//HW.pDevice->SetRenderState	(D3DRS_CULLMODE,D3DCULL_CCW);
 		RCache.set_CullMode(CULL_CCW);
-		RCache.set_c(s_shader_setup, ps_ssfx_rain_2); // Alpha, Brigthness, Refraction, Reflection
+		RCache.set_c(s_shader_setup, 0.f, 0.f, 0.f, 0.f); // Alpha, Brigthness, Refraction, Reflection
 	}
 
 	// Particles
@@ -210,7 +210,7 @@ void dxRainRender::Render(CEffect_Rain &owner)
 		float	dt				= Device.fTimeDelta;
 		_IndexStream& _IS		= RCache.Index;
 		RCache.set_Shader(_splash_SH);
-		RCache.set_c(s_shader_setup, ps_ssfx_rain_3); // Alpha, Refraction
+		RCache.set_c(s_shader_setup, 0.f, 0.f, 0.f, 0.f); // Alpha, Refraction
 
 		Fmatrix					mXform,mScale;
 		int						pcount  = 0;

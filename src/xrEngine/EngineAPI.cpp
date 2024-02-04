@@ -58,9 +58,6 @@ CEngineAPI::~CEngineAPI()
 	xr_free(vid_quality_token);
 }
 
-extern u32 renderer_value; //con cmd
-ENGINE_API int g_current_renderer = 0; // R1 or R2, used in xrGame
-
 ENGINE_API bool is_enough_address_space_available	()
 {
 	SYSTEM_INFO		system_info;
@@ -84,9 +81,8 @@ extern BOOL DllMainXrServerRender(HANDLE hModule, DWORD ul_reason_for_call, LPVO
 #endif // !DEDICATED_SERVER
 
 
-LPCSTR r1_name = "xrServerRender.dll";
-LPCSTR r2_name = "xrRender_R2.dll";
-LPCSTR r4_name = "xrRender_R4.dll";
+LPCSTR r1_name = "xrServerRender";
+LPCSTR r4_name = "xrRender_R4";
 
 #ifndef DEDICATED_SERVER
 void CEngineAPI::InitializeNotDedicated()
@@ -104,7 +100,6 @@ void CEngineAPI::InitializeNotDedicated()
 	//    Msg("! ...Failed - incompatible hardware/pre-Vista OS.");
 	//    psDeviceFlags.set(rsR2, TRUE);
 		//}
-		g_current_renderer = 0;
 	}
 }
 #endif // DEDICATED_SERVER
@@ -124,11 +119,9 @@ void CEngineAPI::Initialize(void)
 		psDeviceFlags.set(rsR4, FALSE);
 		//psDeviceFlags.set	(rsR3,FALSE);
 		psDeviceFlags.set(rsR2, FALSE);
-		renderer_value = 0; //con cmd
 
 		Log("Loading DLL:", r1_name);
 		DllMainXrServerRender(NULL, DLL_PROCESS_ATTACH, NULL);
-		g_current_renderer = 1;
 	#else
 		InitializeNotDedicated();
 	#endif // DEDICATED_SERVER

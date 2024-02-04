@@ -509,9 +509,6 @@ public:
 #endif
 */
 
-ENGINE_API BOOL r2_sun_static = TRUE;
-ENGINE_API BOOL r2_advanced_pp = FALSE;	//	advanced post process and effects
-
 ENGINE_API float ps_r2_sun_shafts_min = 0.f;
 ENGINE_API float ps_r2_sun_shafts_value = 1.f;
 int updatecl_frames = 10;
@@ -527,7 +524,6 @@ ENGINE_API float ps_r2_img_gamma = 1.0f; // r2-only
 ENGINE_API float ps_r2_img_saturation = 1.0f; // r2-only
 ENGINE_API Fvector ps_r2_img_cg = { .0f, .0f, .0f }; // r2-only
 
-u32	renderer_value	= 3;
 //void fill_render_mode_list();
 //void free_render_mode_list();
 
@@ -535,7 +531,7 @@ class CCC_r2 : public CCC_Token
 {
 	typedef CCC_Token inherited;
 public:
-	CCC_r2(LPCSTR N) :inherited(N, &renderer_value, NULL){renderer_value=3;};
+	CCC_r2(LPCSTR N);
 	virtual			~CCC_r2	()
 	{
 		//free_render_mode_list();
@@ -546,12 +542,16 @@ public:
 		tokens					= vid_quality_token;
 
 		inherited::Execute		(args);
-		psDeviceFlags.set		(rsR2, ((renderer_value>0) && renderer_value<4) );
-		psDeviceFlags.set		(rsR4, (renderer_value>=5) );
+#ifdef  DEDICATED_SERVER
+		psDeviceFlags.set(rsR2, FALSE);
+		psDeviceFlags.set(rsR4, FALSE);
+#else
+		psDeviceFlags.set(rsR2, TRUE);
+		psDeviceFlags.set(rsR4, TRUE);
 
-		r2_sun_static	= (renderer_value<2);
+#endif //  DEDICATED_SERVER
 
-		r2_advanced_pp  = (renderer_value>=3);
+
 	}
 
 	virtual void	Save	(IWriter *F)	
