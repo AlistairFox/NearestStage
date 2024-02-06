@@ -220,7 +220,7 @@ void fs_registrator::script_register(lua_State *L)
 
 			.def("file_rename",							&CLocatorAPI::file_rename)
 			.def("file_length",							&CLocatorAPI::file_length)
-			.def("file_copy",							&CLocatorAPI::file_copy)
+			//.def("file_copy",							&CLocatorAPI::file_copy)
 
 			.def("exist",								(const CLocatorAPI::file*	(CLocatorAPI::*)(LPCSTR)) (&CLocatorAPI::exist))
 			.def("exist",								(const CLocatorAPI::file*	(CLocatorAPI::*)(LPCSTR, LPCSTR)) (&CLocatorAPI::exist))
