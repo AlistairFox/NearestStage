@@ -15,7 +15,6 @@ protected:
 
 public:
 
-	u32								oldTime = 0;
 
 	struct inventory_boxes
 	{
@@ -138,7 +137,7 @@ public:
 	virtual		void				LoadInvBox(CSE_ALifeInventoryBox* box, CInifile* file);
 	///////File InvBox Save ////////
 
-
+	bool use_mt_save = false;
 	///////Binnar Player Save ////////
 	enum ActorChunks
 	{
@@ -152,6 +151,8 @@ public:
 	virtual		bool				BinnarLoadPlayer(game_PlayerState* ps, string_path& filepath);
 	virtual		bool				HasBinnarSaveFile(game_PlayerState* ps);
 	virtual		bool				load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos, Fvector& angle);
+	virtual void MtSavePlayer();
+	std::thread* playersave_thread;
 	///////Binnar Player Save ////////
 
 
@@ -193,3 +194,4 @@ extern int save_time2;
 extern int save_time3;
 extern int box_respawn_time;
 extern BOOL		set_next_music;
+extern	BOOL	save_thread;

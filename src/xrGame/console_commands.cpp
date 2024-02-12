@@ -82,6 +82,7 @@ extern	int		x_m_x;
 extern	int		x_m_z;
 extern	BOOL	net_cl_inputguaranteed	;
 extern	BOOL	net_sv_control_hit		;
+extern	BOOL	save_thread = false;
 
 extern	int		g_dwInputUpdateDelta	;
 #ifdef DEBUG
@@ -1884,6 +1885,7 @@ void CCC_RegisterCommands()
 	CMD3(CCC_Mask,				"hud_weapon",			&psHUD_Flags,	HUD_WEAPON);
 	CMD3(CCC_Mask,				"hud_info",				&psHUD_Flags,	HUD_INFO);
 	CMD3(CCC_Mask,				"hud_draw",				&psHUD_Flags,	HUD_DRAW);
+	CMD4(CCC_Integer, "use_mt_saving", &save_thread, 0, 1);
 
 	// hud
 	psHUD_Flags.set(HUD_CROSSHAIR,		false);

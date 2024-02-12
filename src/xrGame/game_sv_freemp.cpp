@@ -30,11 +30,29 @@ game_sv_freemp::game_sv_freemp()
 
 	DynamicBoxFileCreate();
 	DynamicMusicFileCreate();
+
+	if (save_thread)
+		use_mt_save = true;
+	else
+		use_mt_save = false;
+
+
+
+
+	if(use_mt_save)
+		playersave_thread = new std::thread([&]()
+			{
+			thread_name("Save thread");
+			MtSavePlayer();
+			}
+		);
 }
 
 game_sv_freemp::~game_sv_freemp()
 {
-	
+	if(use_mt_save)
+		playersave_thread->detach();
+
 	xr_delete(spawn_trash);
 	xr_delete(spawn_boosters);
 	xr_delete(spawn_weapons_devices);
@@ -43,6 +61,127 @@ game_sv_freemp::~game_sv_freemp()
 	xr_delete(spawn_weapons);
 	xr_delete(Music);
 	xr_delete(curr_box_file);
+}
+
+void game_sv_freemp::MtSavePlayer()
+{
+	Msg(" -- SaveThread Start");
+	while (true)
+	{
+		if (g_pGameLevel)
+		{
+
+			if (Level().game && Device.dwFrame % save_time == 0)
+			{
+				for (const auto &player : Level().game->players)
+				{
+					if (player.second->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
+					{
+						if (player.first == server().GetServerClient()->ID)
+							continue;
+
+						CObject* obj = Level().Objects.net_Find(player.second->GameID);
+						CActor* actor = smart_cast<CActor*>(obj);
+						if (!actor)
+							return;
+						if (!actor->g_Alive())
+							return;
+
+						if (Binnar_save_connect)
+						{
+							string_path file_name_path;
+							string32 file_name;
+							xr_strcpy(file_name, player.second->getName());
+							xr_strcat(file_name, ".binsave");
+							FS.update_path(file_name_path, "$mp_saves_players_bin$", file_name);
+							BinnarSavePlayer(player.second, file_name_path);
+						}
+						else
+						{
+							string_path file_name;
+							string32 filename;
+							xr_strcpy(filename, player.second->getName());
+							xr_strcat(filename, ".ltx");
+
+							FS.update_path(file_name, "$mp_saves_players$", filename);
+							CInifile* file = xr_new<CInifile>(file_name, false, false);
+							SavePlayer(player.second, file);
+							file->save_as(file_name);
+							xr_delete(file);
+						}
+						SavePlayerOutfits(player.second, nullptr);
+						SavePlayerDetectors(player.second, nullptr);
+					}
+				}
+			}
+
+			if (Binnar_save_connect)
+				ServerEnvSaveUpdateBin();
+			else
+				ServerEnvSaveUpdateFile();
+
+			if (Level().game && Device.dwFrame % save_time2 == 0)
+			{
+				for (const auto &entity : inventory_boxes_cse)
+				{
+					CSE_Abstract* abs = entity.second.entity;
+					CSE_ALifeInventoryBox* box = smart_cast<CSE_ALifeInventoryBox*>(abs);
+					if (box)
+					{
+						if (Binnar_save_connect)
+						{
+							string_path path_name;
+							string64 invbox_name;
+							xr_strcpy(invbox_name, box->name_replace());
+							xr_strcat(invbox_name, ".binsave");
+							FS.update_path(path_name, "$mp_saves_invbox_bin$", invbox_name);
+
+							//check saving box or not
+							LPCSTR box_name = box->name_replace();
+							//
+							if (!entity.second.loaded)
+							{
+								Msg("%s", path_name);
+								inventory_boxes_cse[entity.first].loaded = true;
+								BinnarLoadInvBox(box, path_name);
+							}
+							else if (curr_box_file->line_exist("saving_boxes", box_name))
+								BinnarSaveInvBox(box, path_name);
+						}
+						else
+						{
+							string_path path_name;
+							string64 invbox_name;
+							xr_strcpy(invbox_name, box->name_replace());
+							xr_strcat(invbox_name, ".ltx");
+							FS.update_path(path_name, "$mp_saves_invbox$", invbox_name);
+
+							//check saving box or not
+							LPCSTR box_name = box->name_replace();
+							//
+
+							if (!entity.second.loaded)
+							{
+								inventory_boxes_cse[entity.first].loaded = true;
+								CInifile* boxFile = xr_new<CInifile>(path_name, true);
+								LoadInvBox(box, boxFile);
+								xr_delete(boxFile);
+							}
+							else if (curr_box_file->line_exist("saving_boxes", box_name))
+							{
+								CInifile* boxFile = xr_new<CInifile>(path_name, false, false);
+								bool can_write = FS.can_modify_file(path_name);
+								if (!can_write)                         FS.file_delete(path_name);
+								SaveInvBox(box, boxFile);
+								boxFile->save_as(path_name);
+								xr_delete(boxFile);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 void game_sv_freemp::Create(shared_str & options)
@@ -58,7 +197,6 @@ void game_sv_freemp::Create(shared_str & options)
 	::Random.seed(GetTickCount());
 	m_CorpseList.clear();
 
-	oldTime = 0;
 }
 
 void game_sv_freemp::OnAlifeCreate(CSE_Abstract* E)
@@ -538,121 +676,123 @@ void game_sv_freemp::Update()
 	if (!g_pGameLevel)
 		return;
 
-	if (Level().game && Device.dwFrame % save_time == 0)
-	{
-		for (auto player : Level().game->players)
-		{
-			if (player.second->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
-			{
-				if (player.first == server().GetServerClient()->ID)
-					continue;
-
-				CObject* obj = Level().Objects.net_Find(player.second->GameID);
-				CActor* actor = smart_cast<CActor*>(obj);
-				if (!actor)
-					return;
-				if (!actor->g_Alive())
-					return;
-
-
-				if (Binnar_save_connect)
-				{
-					string_path file_name_path;
-					string32 file_name;
-					xr_strcpy(file_name, player.second->getName());
-					xr_strcat(file_name, ".binsave");
-					FS.update_path(file_name_path, "$mp_saves_players_bin$", file_name);
-					BinnarSavePlayer(player.second, file_name_path);
-				}
-				else
-				{
-					string_path file_name;
-					string32 filename;
-					xr_strcpy(filename, player.second->getName());
-					xr_strcat(filename, ".ltx");
-
-					FS.update_path(file_name, "$mp_saves_players$", filename);
-					CInifile* file = xr_new<CInifile>(file_name, false, false);
-					SavePlayer(player.second, file);
-					file->save_as(file_name);
-					xr_delete(file);
-				}
-				SavePlayerOutfits(player.second, nullptr);
-				SavePlayerDetectors(player.second, nullptr);
-			}
-		}
-	}
-
-	if (Binnar_save_connect)
-		ServerEnvSaveUpdateBin();
-	else
-		ServerEnvSaveUpdateFile();
-
 	DynamicWeatherUpdate();
 	DynamicMusicUpdate();
 	DynamicBoxUpdate();
 
+	if (!use_mt_save)
+	{
+		if (Level().game && Device.dwFrame % save_time == 0)
+		{
+			for (const auto &player : Level().game->players)
+			{
+				if (player.second->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
+				{
+					if (player.first == server().GetServerClient()->ID)
+						continue;
+
+					CObject* obj = Level().Objects.net_Find(player.second->GameID);
+					CActor* actor = smart_cast<CActor*>(obj);
+					if (!actor)
+						return;
+					if (!actor->g_Alive())
+						return;
+
+
+					if (Binnar_save_connect)
+					{
+						string_path file_name_path;
+						string32 file_name;
+						xr_strcpy(file_name, player.second->getName());
+						xr_strcat(file_name, ".binsave");
+						FS.update_path(file_name_path, "$mp_saves_players_bin$", file_name);
+						BinnarSavePlayer(player.second, file_name_path);
+					}
+					else
+					{
+						string_path file_name;
+						string32 filename;
+						xr_strcpy(filename, player.second->getName());
+						xr_strcat(filename, ".ltx");
+
+						FS.update_path(file_name, "$mp_saves_players$", filename);
+						CInifile* file = xr_new<CInifile>(file_name, false, false);
+						SavePlayer(player.second, file);
+						file->save_as(file_name);
+						xr_delete(file);
+					}
+					SavePlayerOutfits(player.second, nullptr);
+					SavePlayerDetectors(player.second, nullptr);
+				}
+			}
+		}
+
+		if (Binnar_save_connect)
+			ServerEnvSaveUpdateBin();
+		else
+			ServerEnvSaveUpdateFile();
+
 		if (Level().game && Device.dwFrame % save_time2 == 0)
 		{
-		//for (int i = 0; i != server().GetEntitiesNum(); i++)
-			for(auto entity:inventory_boxes_cse)
+			//for (int i = 0; i != server().GetEntitiesNum(); i++)
+			for (const auto &entity : inventory_boxes_cse)
 			{
-			CSE_Abstract* abs = entity.second.entity;
-			CSE_ALifeInventoryBox* box = smart_cast<CSE_ALifeInventoryBox*>(abs);
-			if (box)
-			{
-				if (Binnar_save_connect)
+				CSE_Abstract* abs = entity.second.entity;
+				CSE_ALifeInventoryBox* box = smart_cast<CSE_ALifeInventoryBox*>(abs);
+				if (box)
 				{
-					string_path path_name;
-					string64 invbox_name;
-					xr_strcpy(invbox_name, box->name_replace());
-					xr_strcat(invbox_name, ".binsave");
-					FS.update_path(path_name, "$mp_saves_invbox_bin$", invbox_name);
-
-					//check saving box or not
-					LPCSTR box_name = box->name_replace();
-					//
-					if (!entity.second.loaded)
+					if (Binnar_save_connect)
 					{
-						Msg("%s", path_name);
-						inventory_boxes_cse[entity.first].loaded = true;
-						BinnarLoadInvBox(box, path_name);
+						string_path path_name;
+						string64 invbox_name;
+						xr_strcpy(invbox_name, box->name_replace());
+						xr_strcat(invbox_name, ".binsave");
+						FS.update_path(path_name, "$mp_saves_invbox_bin$", invbox_name);
+
+						//check saving box or not
+						LPCSTR box_name = box->name_replace();
+						//
+						if (!entity.second.loaded)
+						{
+							Msg("%s", path_name);
+							inventory_boxes_cse[entity.first].loaded = true;
+							BinnarLoadInvBox(box, path_name);
+						}
+						else if (curr_box_file->line_exist("saving_boxes", box_name))
+							BinnarSaveInvBox(box, path_name);
 					}
-					else if (curr_box_file->line_exist("saving_boxes", box_name))
-						BinnarSaveInvBox(box, path_name);
-				}
-				else
-				{
-					string_path path_name;
-					string64 invbox_name;
-					xr_strcpy(invbox_name, box->name_replace());
-					xr_strcat(invbox_name, ".ltx");
-					FS.update_path(path_name, "$mp_saves_invbox$", invbox_name);
-
-					//check saving box or not
-					LPCSTR box_name = box->name_replace();
-					//
-
-					if (!entity.second.loaded)
+					else
 					{
-						inventory_boxes_cse[entity.first].loaded = true;
-						CInifile* boxFile = xr_new<CInifile>(path_name, true);
-						LoadInvBox(box, boxFile);
-						xr_delete(boxFile);
-					}
-					else if (curr_box_file->line_exist("saving_boxes", box_name))
-					{
-						CInifile* boxFile = xr_new<CInifile>(path_name, false, false);
-						bool can_write = FS.can_modify_file(path_name);
-						if (!can_write)                         FS.file_delete(path_name);
-						SaveInvBox(box, boxFile);
-						boxFile->save_as(path_name);
-						xr_delete(boxFile);
+						string_path path_name;
+						string64 invbox_name;
+						xr_strcpy(invbox_name, box->name_replace());
+						xr_strcat(invbox_name, ".ltx");
+						FS.update_path(path_name, "$mp_saves_invbox$", invbox_name);
+
+						//check saving box or not
+						LPCSTR box_name = box->name_replace();
+						//
+
+						if (!entity.second.loaded)
+						{
+							inventory_boxes_cse[entity.first].loaded = true;
+							CInifile* boxFile = xr_new<CInifile>(path_name, true);
+							LoadInvBox(box, boxFile);
+							xr_delete(boxFile);
+						}
+						else if (curr_box_file->line_exist("saving_boxes", box_name))
+						{
+							CInifile* boxFile = xr_new<CInifile>(path_name, false, false);
+							bool can_write = FS.can_modify_file(path_name);
+							if (!can_write)                         FS.file_delete(path_name);
+							SaveInvBox(box, boxFile);
+							boxFile->save_as(path_name);
+							xr_delete(boxFile);
+						}
 					}
 				}
 			}
 		}
-		oldTime = Device.dwTimeGlobal;
 	}
 
 }

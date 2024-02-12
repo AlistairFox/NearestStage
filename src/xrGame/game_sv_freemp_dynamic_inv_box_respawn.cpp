@@ -7,7 +7,7 @@ void game_sv_freemp::DynamicBoxUpdate()
 {
 	if (Level().game && Device.dwFrame % box_respawn_time == 0)
 	{
-		for (auto entity : inventory_boxes_cse)
+		for (const auto &entity : inventory_boxes_cse)
 		{
 			CSE_Abstract* abs = entity.second.entity;
 			CSE_ALifeInventoryBox* box = smart_cast<CSE_ALifeInventoryBox*>(abs);;
