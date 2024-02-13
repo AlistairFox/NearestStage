@@ -28,6 +28,7 @@
 #include "xrServer_Objects_ALife_All.h"
 
 
+
 #pragma warning(push)
 #pragma warning(disable:4995)
 #include <malloc.h>
@@ -1357,7 +1358,11 @@ void xrServer::GetServerInfo( CServerInfo* si )
 
 	si->AddItem( "Server port", itoa( GetPort(), tmp, 10 ), RGB(128,128,255) );
 	LPCSTR time = InventoryUtilities::GetTimeAsString( Device.dwTimeGlobal, InventoryUtilities::etpTimeToSecondsAndDay ).c_str();
+	shared_str full_date = InventoryUtilities::GetGameDateAsString(InventoryUtilities::edpDateToNormal);
+	LPCSTR WeatherName = g_pGamePersistent->Environment().CurrentWeatherName.c_str();
 	si->AddItem( "Uptime", time, RGB(255,228,0) );
+	si->AddItem("GameDate", full_date.c_str(), RGB(255, 228, 0));
+	si->AddItem("Current Weather", WeatherName, RGB(255, 228, 0));
 
 //	xr_strcpy( tmp256, get_token_name(game_types, game->Type() ) );
 	xr_strcpy( tmp256, GameTypeToString( game->Type(), true ) );
