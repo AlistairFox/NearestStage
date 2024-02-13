@@ -271,6 +271,15 @@ const shared_str InventoryUtilities::Get_GameTimeAndDate_AsString()
 	return GetTimeAndDateAsString( Level().GetGameTime() );
 }
 
+const u32 InventoryUtilities::GetGameDay(ALife::_TIME_ID date)
+{
+	u32 year = 0, month = 0, day = 0, hours = 0, mins = 0, secs = 0, milisecs = 0;
+
+	split_time(date, year, month, day, hours, mins, secs, milisecs);
+
+	return day;
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 const shared_str InventoryUtilities::GetTimeAsString(ALife::_TIME_ID time, ETimePrecision timePrec, char timeSeparator, bool full_mode )

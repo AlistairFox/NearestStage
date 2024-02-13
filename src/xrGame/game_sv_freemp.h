@@ -80,6 +80,9 @@ public:
 	virtual void ServerEnvSaveUpdateFile();
 	virtual void ServerEnvSaveUpdateBin();
 
+	u32 nowday;
+	bool		weather_will_change = false;
+	bool		first_update = false;
 	bool		need_change_weather = false;
 
 	enum EnvSavingChunks

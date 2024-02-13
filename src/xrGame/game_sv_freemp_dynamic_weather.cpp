@@ -49,12 +49,19 @@ void game_sv_freemp::DynamicWeatherUpdate()
 	/// calculate dynamic weather
 	if (Level().game)
 	{
-		shared_str envtime = InventoryUtilities::GetGameTimeAsString(InventoryUtilities::etpTimeToMinutes);
+		u32 nextday = InventoryUtilities::GetGameDay(GetGameTime());
+		
+		if (!first_update)
+		{
+			nowday = nextday;
+			first_update = true;
+		}
 
 		if (!need_change_weather)
 		{
-			if (xr_strcmp(envtime, "01:00") == 0)
+			if (nowday != nextday)
 			{
+				nowday = nextday;
 				bool	changeweather = false;
 				float random = 0.0f;
 				need_change_weather = true;
@@ -109,6 +116,13 @@ void game_sv_freemp::DynamicWeatherUpdate()
 
 					if (random > 0.75f && (xr_strcmp(curr_weather, "[main_cycle_thunder_year]") != 0) && !changeweather)
 					{
+						NET_Packet P;
+						GenerateGameMessage(P);
+						P.w_u32(GAME_EVENT_WEATHER_UPDATE);
+						P.w_stringZ("Погода");
+						P.w_stringZ("Внимание! Приближается буря!");
+						P.w_stringZ("ui_inGame2_Vibros");
+						server().SendBroadcast(BroadcastCID, P, net_flags(true, true));
 						random = 0.0f;
 						def = "[main_cycle_thunder_year]";
 						changeweather = true;
@@ -120,18 +134,17 @@ void game_sv_freemp::DynamicWeatherUpdate()
 					Msg("- Calculate end");
 					g_pGamePersistent->Environment().SetWeather(def, true);
 					changeweather = false;
+					weather_will_change = true;
 				}
 
 			}
 		}
 	}
 
-	if (need_change_weather)
+	if (need_change_weather && weather_will_change)
 	{
-		if (Level().game && Device.dwFrame % 4000 == 0)
-		{
 			need_change_weather = false;
-		}
+			weather_will_change = false;
 	}
 	/// calculate dynamic weather
 }

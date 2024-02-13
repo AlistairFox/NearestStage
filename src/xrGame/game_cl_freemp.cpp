@@ -387,7 +387,40 @@ void game_cl_freemp::OnChatMessage(NET_Packet* P)
 
 void game_cl_freemp::TranslateGameMessage(u32 msg, NET_Packet& P) 
 {
-	switch (msg) {
+	switch (msg) 
+	{
+
+	case (GAME_EVENT_WEATHER_UPDATE):
+	{
+		CInventoryOwner* pInvOwner = smart_cast<CInventoryOwner*>(Level().CurrentEntity());
+		if (!pInvOwner)
+			return;
+
+		CActor* pActor = smart_cast<CActor*>(pInvOwner);
+		if (!pActor)
+			return;
+
+		shared_str caption, text, icon;
+
+		P.r_stringZ(caption);
+		P.r_stringZ(text);
+		P.r_stringZ(icon);
+
+		GAME_NEWS_DATA news_data;
+		news_data.m_type = (GAME_NEWS_DATA::eNewsType)0;
+		news_data.news_caption = caption;
+		news_data.news_text = text;
+		news_data.show_time = 3000;// override default
+
+		news_data.texture_name = icon;
+
+		if (pActor->inventory().m_slots[PDA_SLOT].m_pIItem && !g_dedicated_server)
+		{
+			pActor->AddGameNews(news_data);
+			pActor->PlayAnmSound("device\\pda\\pda_tip");
+		}
+		
+	}break;
 
 	case (GAME_EVENT_NEWS_MESSAGE): 
 	{

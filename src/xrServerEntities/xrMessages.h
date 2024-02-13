@@ -279,6 +279,7 @@ enum EGameMessages {  //game_cl <----> game_sv messages
 	GAME_EVENT_MP_TRADE,
 	GAME_EVENT_TRANSFER_MONEY,
 	GAME_EVENT_NEWS_MESSAGE,
+	GAME_EVENT_WEATHER_UPDATE,
 	GAME_EVENT_NEWS_MONEY_MESSAGE,
 
 	//-----------------------------------------
