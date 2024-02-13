@@ -39,20 +39,21 @@ game_sv_freemp::game_sv_freemp()
 
 
 
-	if(use_mt_save)
+	if (use_mt_save)
+	{
 		playersave_thread = new std::thread([&]()
 			{
-			thread_name("Save thread");
-			MtSavePlayer();
+				thread_name("Save thread");
+				MtSavePlayer();
 			}
 		);
+		playersave_thread->detach();
+	}
+
 }
 
 game_sv_freemp::~game_sv_freemp()
 {
-	if(use_mt_save)
-		playersave_thread->detach();
-
 	xr_delete(spawn_trash);
 	xr_delete(spawn_boosters);
 	xr_delete(spawn_weapons_devices);
