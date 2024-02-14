@@ -95,6 +95,13 @@ void game_sv_freemp::DynamicWeatherUpdate()
 
 					if (random <= 0.25f && (xr_strcmp(curr_weather, "[main_cycle_multy]") != 0) && !changeweather)
 					{
+						NET_Packet P;
+						GenerateGameMessage(P);
+						P.w_u32(GAME_EVENT_WEATHER_UPDATE);
+						P.w_stringZ("Weather News");
+						P.w_stringZ("По прогнозу на завтра: Переменная облачность");
+						P.w_stringZ("ui_inGame2_Radiopomehi");
+						server().SendBroadcast(BroadcastCID, P, net_flags(true, true));
 						def = "[main_cycle_multy]";
 						random = 0.0f;
 						changeweather = true;
@@ -102,6 +109,13 @@ void game_sv_freemp::DynamicWeatherUpdate()
 
 					if (random <= 0.50f && (xr_strcmp(curr_weather, "[main_cycle_foggy_day]") != 0) && !changeweather)
 					{
+						NET_Packet P;
+						GenerateGameMessage(P);
+						P.w_u32(GAME_EVENT_WEATHER_UPDATE);
+						P.w_stringZ("Weather News");
+						P.w_stringZ("По прогнозу завтра сильная туманность!");
+						P.w_stringZ("ui_inGame2_Radiopomehi");
+						server().SendBroadcast(BroadcastCID, P, net_flags(true, true));
 						def = "[main_cycle_foggy_day]";
 						random = 0.0f;
 						changeweather = true;
@@ -109,6 +123,13 @@ void game_sv_freemp::DynamicWeatherUpdate()
 
 					if (random <= 0.75f && (xr_strcmp(curr_weather, "[main_cycle_sunny_day]") != 0) && !changeweather)
 					{
+						NET_Packet P;
+						GenerateGameMessage(P);
+						P.w_u32(GAME_EVENT_WEATHER_UPDATE);
+						P.w_stringZ("Weather News");
+						P.w_stringZ("Завтрашний день обещает быть солнечным!");
+						P.w_stringZ("ui_inGame2_Radiopomehi");
+						server().SendBroadcast(BroadcastCID, P, net_flags(true, true));
 						random = 0.0f;
 						def = "[main_cycle_sunny_day]";
 						changeweather = true;
@@ -119,9 +140,9 @@ void game_sv_freemp::DynamicWeatherUpdate()
 						NET_Packet P;
 						GenerateGameMessage(P);
 						P.w_u32(GAME_EVENT_WEATHER_UPDATE);
-						P.w_stringZ("Погода");
-						P.w_stringZ("Внимание! Приближается буря!");
-						P.w_stringZ("ui_inGame2_Vibros");
+						P.w_stringZ("Weather News");
+						P.w_stringZ("Внимание! Завтра будет сильная буря!");
+						P.w_stringZ("ui_inGame2_Radiopomehi");
 						server().SendBroadcast(BroadcastCID, P, net_flags(true, true));
 						random = 0.0f;
 						def = "[main_cycle_thunder_year]";
