@@ -79,6 +79,7 @@ private:
 public:
 										CActor				();
 	virtual								~CActor				();
+	bool mp_actor = false;
 
 	//Script Animation
 protected:

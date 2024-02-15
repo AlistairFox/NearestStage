@@ -147,6 +147,7 @@ CActor::CActor() : CEntityAlive(),current_ik_cam_shift(0)
 	fFPCamPitchMagnitude = 0.0f; //--#SM+#--
 	// эффекторы
 	pCamBobbing				= 0;
+	mp_actor = false;
 
 
 	r_torso.yaw				= 0;
@@ -288,6 +289,8 @@ bool CActor::MpInvisibility() const
 {
 	if (!g_Alive())
 		return false;
+	if (!mp_actor)
+		return true;
 
 	game_PlayerState* ps = Game().GetPlayerByGameID(ID());
 	return (ps && ps->testFlag(GAME_PLAYER_MP_INVIS));
