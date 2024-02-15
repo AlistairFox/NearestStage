@@ -35,7 +35,6 @@
 BOOL	b_toggle_weapon_aim		= FALSE;
 BOOL	b_hud_collision = TRUE;
 BOOL	b_hud_rotate = TRUE;
-BOOL safemode_rot = FALSE;
 extern CUIXml* pWpnScopeXml = NULL;
 float m_fFactor;
 extern float m_fZoomPower = 1.0f;
@@ -2207,13 +2206,10 @@ void CWeapon::UpdateHudAdditional(Fmatrix& trans)
 		clamp(m_zoom_params.m_fZoomRotationFactor, 0.f, 1.f);
 	}
 
-	if (b_hud_collision && safemode_rot == FALSE)
+	if (b_hud_collision && !pActor->MpSafeMODE())
 	{
-		CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
-		u8 idx = GetCurrentHudOffsetIdx();
 		float dist = GetRayQueryDist();
 
-		attachable_hud_item* hi = HudItemData();
 		R_ASSERT(hi);
 		Fvector						curr_offs, curr_rot;
 		curr_offs = hi->m_measures.m_collision_offset[0];//pos,aim
@@ -2268,22 +2264,9 @@ void CWeapon::UpdateHudAdditional(Fmatrix& trans)
 	}
 
 	CActor* pA = smart_cast<CActor*>(H_Parent());
-	
-	if (pA->MpSafeMODE())
-	{
-		safemode_rot = TRUE;
-	}
-	else
-	{
-		safemode_rot = FALSE;
-	}
 
 	if (b_hud_rotate)
 	{
-		CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
-		u8 idx = GetCurrentHudOffsetIdx();
-
-		attachable_hud_item* hi = HudItemData();
 		R_ASSERT(hi);
 		Fvector						curr_offs, curr_rot;
 		curr_offs = hi->m_measures.m_safemodeoffset[0];//pos,aim
@@ -2291,7 +2274,7 @@ void CWeapon::UpdateHudAdditional(Fmatrix& trans)
 		curr_offs.mul(m_sFactor);
 		curr_rot.mul(m_sFactor);
 
-		if (safemode_rot)
+		if (pActor->MpSafeMODE())
 			m_sFactor += Device.fTimeDelta / 0.3;
 		else
 			m_sFactor -= Device.fTimeDelta / 0.3;
