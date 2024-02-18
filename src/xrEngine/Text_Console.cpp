@@ -223,6 +223,14 @@ void CTextConsole::OnPaint()
 
 u32 FPS_min = 1000;
 
+
+extern u32 stalkers;
+extern u32 monsters;
+extern u32 zones;
+extern u32 camps;
+extern u32 physic_objects;
+extern u32 all_objects;
+
 void CTextConsole::DrawLog( HDC hDC, RECT* pRect )
 {
 	TEXTMETRIC tm;
@@ -335,10 +343,39 @@ void CTextConsole::DrawLog( HDC hDC, RECT* pRect )
 		FPS_min = FPS;
 	}
 
-
 	sprintf(tmp, "FPS_min:%d", FPS_min);
 	SetTextColor(hDC, RGB(255, 255, 255));
 	TextOut(hDC, 10, ypos+40, tmp, xr_strlen(tmp));
+
+	string128 temp;
+	sprintf(temp, "Stalkers Online: %d", stalkers);
+	SetTextColor(hDC, RGB(36, 167, 82));
+	TextOut(hDC, 400, 10, temp, xr_strlen(temp));
+
+	sprintf(temp, "Monsters Online: %d", monsters);
+	SetTextColor(hDC, RGB(36, 167, 82));
+	TextOut(hDC, 400, 30, temp, xr_strlen(temp));
+
+	sprintf(temp, "Zones Online: %d", zones);
+	SetTextColor(hDC, RGB(255, 128, 128));
+	TextOut(hDC, 400, 50, temp, xr_strlen(temp));
+
+	sprintf(temp, "Camps Online: %d", camps);
+	SetTextColor(hDC, RGB(36, 36, 255));
+	TextOut(hDC, 400, 70, temp, xr_strlen(temp));
+
+	sprintf(temp, "physics Online: %d", physic_objects);
+	SetTextColor(hDC, RGB(36, 36, 255));
+	TextOut(hDC, 400, 90, temp, xr_strlen(temp));
+
+	sprintf(temp, "Offline Objects: %d", all_objects - (stalkers + monsters + zones + camps + physic_objects));
+	SetTextColor(hDC, RGB(100, 100, 150));
+	TextOut(hDC, 400, 110, temp, xr_strlen(temp));
+
+	sprintf(temp, "All Objects: %d", all_objects);
+	SetTextColor(hDC, RGB(255, 0, 255));
+	TextOut(hDC, 400, 130, temp, xr_strlen(temp));
+
 }
 /*
 void CTextConsole::IR_OnKeyboardPress( int dik ) !!!!!!!!!!!!!!!!!!!!!

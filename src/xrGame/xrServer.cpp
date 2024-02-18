@@ -1351,6 +1351,14 @@ extern	BOOL	g_bCollectStatisticData;
 //xr_token game_types[];
 LPCSTR GameTypeToString(EGameIDs gt, bool bShort);
 
+
+extern u32 stalkers = 0;
+extern u32 monsters = 0;
+extern u32 zones = 0;
+extern u32 camps = 0;
+extern u32 physic_objects = 0;
+extern u32 all_objects = 0;
+
 void xrServer::GetServerInfo( CServerInfo* si )
 {
 	string32  tmp;
@@ -1419,58 +1427,42 @@ void xrServer::GetServerInfo( CServerInfo* si )
 		si->AddItem( "Game time", tmp256, RGB(205,228,178) );
 	}
 
+	stalkers = 0;
+	monsters = 0;
+	zones = 0;
+	camps = 0;
+	physic_objects = 0;
+	all_objects = 0;
 
-	u32 stalkers = 0;
-	u32 monsters = 0;
-	u32 offline_stalker = 0;
-	u32 offline_monster = 0;
-	u32 zones = 0;
-	u32 camps = 0;
-	u32 physic_objects = 0;
-
-	for (auto ent : entities)
+	for (const auto &ent : entities)
 	{
 		CSE_ALifeHumanStalker* stalker = smart_cast<CSE_ALifeHumanStalker*>(ent.second);
 		CSE_ALifeMonsterBase* monster = smart_cast<CSE_ALifeMonsterBase*>(ent.second);
 		CSE_ALifeAnomalousZone* zone = smart_cast<CSE_ALifeAnomalousZone*>(ent.second);
 		CSE_ALifeObjectPhysic* ph = smart_cast<CSE_ALifeObjectPhysic*>(ent.second);
 
+		all_objects++;
+
 		if (zone && zone->m_bOnline)
 		{
-			zones += 1;
+			zones++;
 			CZoneCampfire* camp = smart_cast<CZoneCampfire*>(Level().Objects.net_Find(zone->ID));
 			if (camp)
-				camps += 1;
+				camps++;
 		}
 
 		if (stalker && stalker->m_bOnline)
-			stalkers += 1;
-		else if (stalker)
-			offline_stalker += 1;
+			stalkers++;
+
 
 		if (monster && monster->m_bOnline)
-			monsters += 1;
-		else if (monster)
-			offline_monster += 1;
+			monsters++;
+
 
 		if (ph && ph->m_bOnline)
-			physic_objects += 1;
+			physic_objects++;
 
 	}
-	//string256 tmp2;
-	//sprintf(tmp2, "stalkers[%d], mutants[%d], zones[%d], camps[%d], PHYSIC_OBJECTS[%d]",
-	//	stalkers, monsters, zones, camps, physic_objects
-	//);
-
-	//si->AddItem("stats = ", tmp2, RGB(255, 128, 128));
-	// si->AddItem("FPS", itoa(1000 / Device.dwTimeDelta, tmp, 10), RGB(128, 255, 255));
-	
-
-	si->AddItem("stalkers", itoa(stalkers, tmp, 10), RGB(36, 167, 82));
-	si->AddItem("monsters", itoa(monsters, tmp, 10), RGB(196, 19, 28));
-	si->AddItem("zones", itoa(zones, tmp, 10), RGB(255, 128, 128));
-	si->AddItem("camps", itoa(camps, tmp, 10), RGB(255, 128, 128));
-	si->AddItem("PHYSIC_OBJECTS", itoa(physic_objects, tmp, 10), RGB(255, 128, 128));
 }
 
 void xrServer::AddCheater			(shared_str const & reason, ClientID const & cheaterID)
