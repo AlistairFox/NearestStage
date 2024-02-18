@@ -17,7 +17,6 @@ void xrDiscordPresense::Initialize()
 	ZeroMemory(&nullHandlers, sizeof(nullHandlers));
 	Discord_Initialize(discord_app_id, &nullHandlers, TRUE, nullptr);
 	presenseInfo.startTimestamp = time(0);
-	bGameRPCInfoInit = true;
 	bInitialize = true;
 }
 
@@ -31,33 +30,43 @@ void xrDiscordPresense::Shutdown()
 	}
 }
 
-void xrDiscordPresense::SetStatus1()
+void xrDiscordPresense::SetStatusMainMenu()
 {
 
-	DiscordRichPresence discordPresence;
-	memset(&discordPresence, 0, sizeof(discordPresence));
-	discordPresence.startTimestamp = time(0);
-	discordPresence.details = "In Main Menu";
-	discordPresence.largeImageKey = "logo";
-	discordPresence.largeImageText = "test2";
-	discordPresence.smallImageKey = "logos";
-	discordPresence.smallImageText = "test";
-	Discord_UpdatePresence(&discordPresence);
+	memset(&presenseInfo, 0, sizeof(presenseInfo));
+	presenseInfo.startTimestamp = time(0);
+	presenseInfo.details = "In Main Menu";
+	presenseInfo.largeImageKey = "logo";
+	presenseInfo.largeImageText = "Pre-Alpha testing";
+	presenseInfo.smallImageKey = "logos";
+	presenseInfo.smallImageText = "Public-Version 1.0";
+	Discord_UpdatePresence(&presenseInfo);
 }
 
 
-void xrDiscordPresense::SetStatus()
+void xrDiscordPresense::SetStatusOnServer()
 {
+	memset(&presenseInfo, 0, sizeof(presenseInfo));
+	presenseInfo.startTimestamp = time(0);
+	presenseInfo.details = "Playing on Server";
+	presenseInfo.largeImageKey = "logo";
+	presenseInfo.largeImageText = "Pre-Alpha testing";
+	presenseInfo.smallImageKey = "logos";
+	presenseInfo.smallImageText = "Public-Version 1.0";
+	Discord_UpdatePresence(&presenseInfo);
+}
 
-	DiscordRichPresence discordPresence;
-	memset(&discordPresence, 0, sizeof(discordPresence));
-	discordPresence.startTimestamp = time(0);
-	discordPresence.details = "Playing on Server";
-	discordPresence.largeImageKey = "logo";
-	discordPresence.largeImageText = "test2";
-	discordPresence.smallImageKey = "logos";
-	discordPresence.smallImageText = "test";
-	Discord_UpdatePresence(&discordPresence);
+
+void xrDiscordPresense::SetStatusHostServer()
+{
+	memset(&presenseInfo, 0, sizeof(presenseInfo));
+	presenseInfo.startTimestamp = time(0);
+	presenseInfo.details = "Hosted Server";
+	presenseInfo.largeImageKey = "logo";
+	presenseInfo.largeImageText = "Pre-Alpha testing";
+	presenseInfo.smallImageKey = "logos";
+	presenseInfo.smallImageText = "Public-Version 1.0";
+	Discord_UpdatePresence(&presenseInfo);
 }
 
 xrDiscordPresense::~xrDiscordPresense()

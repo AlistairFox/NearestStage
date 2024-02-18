@@ -72,7 +72,7 @@ void game_sv_freemp::MtSavePlayer()
 		if (g_pGameLevel)
 		{
 
-			if (Level().game && Device.dwFrame % save_time == 0)
+			if (Level().game)
 			{
 				for (const auto &player : Level().game->players)
 				{
@@ -121,7 +121,7 @@ void game_sv_freemp::MtSavePlayer()
 			else
 				ServerEnvSaveUpdateFile();
 
-			if (Level().game && Device.dwFrame % save_time2 == 0)
+			if (Level().game)
 			{
 				for (const auto &entity : inventory_boxes_cse)
 				{
@@ -182,6 +182,8 @@ void game_sv_freemp::MtSavePlayer()
 				}
 			}
 		}
+
+		Sleep(1000);
 	}
 }
 

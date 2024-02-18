@@ -8,14 +8,14 @@ public:
 	void Initialize();
 	void Shutdown();
 
-	void SetStatus();
-	void SetStatus1();
+	void SetStatusOnServer();
+	void SetStatusMainMenu();
+	void SetStatusHostServer();
 
 	~xrDiscordPresense();
 
 private:
 	bool bInitialize = false;
-	bool bGameRPCInfoInit = false;
 };
 
 extern ENGINE_API xrDiscordPresense g_discord;

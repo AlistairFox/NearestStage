@@ -42,8 +42,8 @@ public:
 	virtual		bool				UseSKin() const { return false; }
 
 	virtual		LPCSTR				type_name() const { return "freemp"; };
-	void		ChangeGameTime(u32 day, u32 hour, u32 minute);
-	void __stdcall		net_Relcase(CObject* O) {};
+	void							ChangeGameTime(u32 day, u32 hour, u32 minute);
+	void __stdcall					net_Relcase(CObject* O) {};
 
 	// helper functions
 	void									AddMoneyToPlayer(game_PlayerState* ps, s32 amount);
@@ -62,7 +62,7 @@ public:
 	virtual		ALife::_TIME_ID		GetStartGameTime();
 	virtual		ALife::_TIME_ID		GetGameTime();
 
-	virtual		ALife::_TIME_ID GetEnvironmentGameTime();
+	virtual		ALife::_TIME_ID		GetEnvironmentGameTime();
 
 	virtual		BOOL				OnTouch(u16 eid_who, u16 eid_what, BOOL bForced = FALSE);
 
@@ -72,7 +72,7 @@ public:
 	virtual		void				OnTransferMoney(NET_Packet &P, ClientID const & clientID);
 
 	virtual		void				RespawnPlayer(ClientID id_who, bool NoSpectator);
-	bool Binnar_save_connect = false;
+				bool				Binnar_save_connect = false;
 
 
 	///////////Dynamic Weather ////////////////
@@ -154,7 +154,7 @@ public:
 	virtual		bool				BinnarLoadPlayer(game_PlayerState* ps, string_path& filepath);
 	virtual		bool				HasBinnarSaveFile(game_PlayerState* ps);
 	virtual		bool				load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos, Fvector& angle);
-	virtual void MtSavePlayer();
+	virtual		void				MtSavePlayer();
 	std::thread* playersave_thread;
 	///////Binnar Player Save ////////
 

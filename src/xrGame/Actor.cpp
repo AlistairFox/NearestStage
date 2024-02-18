@@ -2759,12 +2759,6 @@ void CActor::EndClearMask()
 	}
 }
 
-void CActor::PlayAnmSound(shared_str sndname)
-{
-	snd.create(sndname.c_str(), st_Effect, sg_SourceType);
-	snd.play(NULL, sm_2D);
-}
-
 void CActor::EventHideState()
 {
 	CActor* pA = smart_cast<CActor*>(Level().CurrentControlEntity());
@@ -2779,6 +2773,22 @@ void CActor::PlayPPEffect(LPCSTR pp_name)
 	CPostprocessAnimator* pp = xr_new<CPostprocessAnimator>(20, true);
 	pp->Load(pp_name);
 	Actor()->Cameras().AddPPEffector(pp);
+}
+
+float CActor::add_cam_effector(LPCSTR fn, int id, bool cyclic, LPCSTR cb_func)
+{
+	CAnimatorCamEffectorScriptCB* e = xr_new<CAnimatorCamEffectorScriptCB>(cb_func);
+	e->SetType((ECamEffectorType)id);
+	e->SetCyclic(cyclic);
+	e->Start(fn);
+	Actor()->Cameras().AddCamEffector(e);
+	return						e->GetAnimatorLength();
+}
+
+void CActor::PlayAnmSound(shared_str sndname)
+{
+	snd.create(sndname.c_str(), st_Effect, sg_SourceType);
+	snd.play(NULL, sm_2D);
 }
 
 void CActor::TimeBlockAction(LPCSTR anim_sect)
@@ -2820,16 +2830,6 @@ void CActor::TimeUnblockAction()
 		Actor()->SetWeaponHideState(INV_STATE_BLOCK_ALL, false);
 		DontInv = false;
 	}
-}
-
-float CActor::add_cam_effector(LPCSTR fn, int id, bool cyclic, LPCSTR cb_func)
-{
-	CAnimatorCamEffectorScriptCB* e = xr_new<CAnimatorCamEffectorScriptCB>(cb_func);
-	e->SetType((ECamEffectorType)id);
-	e->SetCyclic(cyclic);
-	e->Start(fn);
-	Actor()->Cameras().AddCamEffector(e);
-	return						e->GetAnimatorLength();
 }
 
 void CActor::StartTorchAnm()

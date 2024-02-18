@@ -1253,7 +1253,10 @@ PROTECT_API void CApplication::LoadDraw		()
 	Render->currentViewPort = MAIN_VIEWPORT;
 	Render->needPresenting = true;
 
-	g_discord.SetStatus();
+	if (g_dedicated_server)
+		g_discord.SetStatusHostServer();
+	else
+		g_discord.SetStatusOnServer();
 
 	if(!Device.Begin () )		return;
 

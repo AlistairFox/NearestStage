@@ -220,7 +220,7 @@ void CMainMenu::Activate	(bool bActivate)
 
 		if (g_pGameLevel == nullptr)
 		{
-			g_discord.SetStatus1();
+			g_discord.SetStatusMainMenu();
 		}
 
 
