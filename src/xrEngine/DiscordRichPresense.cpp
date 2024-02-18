@@ -36,10 +36,10 @@ void xrDiscordPresense::SetStatusMainMenu()
 	memset(&presenseInfo, 0, sizeof(presenseInfo));
 	presenseInfo.startTimestamp = time(0);
 	presenseInfo.details = "In Main Menu";
-	presenseInfo.largeImageKey = "logo";
+	presenseInfo.largeImageKey = "nearestrpc";
 	presenseInfo.largeImageText = "Pre-Alpha testing";
 	presenseInfo.smallImageKey = "logos";
-	presenseInfo.smallImageText = "Public-Version 1.0";
+	presenseInfo.smallImageText = "Client-Version 3.5";
 	Discord_UpdatePresence(&presenseInfo);
 }
 
@@ -49,10 +49,10 @@ void xrDiscordPresense::SetStatusOnServer()
 	memset(&presenseInfo, 0, sizeof(presenseInfo));
 	presenseInfo.startTimestamp = time(0);
 	presenseInfo.details = "Playing on Server";
-	presenseInfo.largeImageKey = "logo";
+	presenseInfo.largeImageKey = "nearestrpc";
 	presenseInfo.largeImageText = "Pre-Alpha testing";
 	presenseInfo.smallImageKey = "logos";
-	presenseInfo.smallImageText = "Public-Version 1.0";
+	presenseInfo.smallImageText = "Client-Version 3.5";
 	Discord_UpdatePresence(&presenseInfo);
 }
 
@@ -62,10 +62,10 @@ void xrDiscordPresense::SetStatusHostServer()
 	memset(&presenseInfo, 0, sizeof(presenseInfo));
 	presenseInfo.startTimestamp = time(0);
 	presenseInfo.details = "Hosted Server";
-	presenseInfo.largeImageKey = "logo";
+	presenseInfo.largeImageKey = "nearestrpc";
 	presenseInfo.largeImageText = "Pre-Alpha testing";
 	presenseInfo.smallImageKey = "logos";
-	presenseInfo.smallImageText = "Public-Version 1.0";
+	presenseInfo.smallImageText = "Dedicated-Version 3.5";
 	Discord_UpdatePresence(&presenseInfo);
 }
 
