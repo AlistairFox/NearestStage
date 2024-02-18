@@ -164,6 +164,7 @@ extern float			hbao_plus_radius = 1.5;
 extern float			hbao_plus_bias = 0.15;
 extern float hbao_plus_power_exponent = 1.5;
 extern float hbao_plus_blur_sharp = 32;
+extern Fvector3 sight_color = { 0,0,0};
 
 // R1-specific
 int			ps_r1_GlowsPerFrame			= 16	;					// r1-only
@@ -1024,9 +1025,10 @@ void		xrRender_initconsole	()
 	CMD4( CCC_DofFocus,	"r2_dof_focus", &ps_r2_dof.y, tw_min.y, tw_max.y);
 	CMD4( CCC_DofFar,	"r2_dof_far",	&ps_r2_dof.z, tw_min.z, tw_max.z);
 
-	CMD4(CCC_Float,		"r2_dof_kernel",&ps_r2_dof_kernel_size,				.0f,	10.f);
-	CMD4(CCC_Float,		"r2_dof_sky",	&ps_r2_dof_sky,						-10000.f,	10000.f);
-	CMD3(CCC_Mask,		"r2_dof_enable",&ps_r2_ls_flags,	R2FLAG_DOF);
+	CMD4(CCC_Float,		"r2_dof_kernel",	&ps_r2_dof_kernel_size,				.0f,	10.f);
+	CMD4(CCC_Float,		"r2_dof_sky",		&ps_r2_dof_sky,						-10000.f,	10000.f);
+	CMD3(CCC_Mask,		"r2_dof_enable",	&ps_r2_ls_flags,	R2FLAG_DOF);
+	CMD4(CCC_Vector3,	"r__color_sight",	&sight_color, Fvector3().set(0,0,0), Fvector3().set(255,255,255));
 	
 //	float		ps_r2_dof_near			= 0.f;					// 0.f
 //	float		ps_r2_dof_focus			= 1.4f;					// 1.4f

@@ -449,6 +449,21 @@ static class cl_screen_params : public R_constant_setup
 };
 static cl_screen_params binder_screen_params;
 
+
+extern Fvector3 sight_color;
+
+static class color_sight : public R_constant_setup
+{
+
+	virtual void setup(R_constant* C)
+	{
+		RCache.set_c(C, sight_color.x, sight_color.y, sight_color.z, 0.f);
+	}
+
+
+} binder_sight_color;
+
+
 static class cl_pda_params : public R_constant_setup
 {
 	u32 marker;
@@ -570,6 +585,7 @@ void	CBlender_Compile::SetMapping	()
 	//	Igor	temp solution for the texgen functionality in the shader
 	r_Constant				("m_texgen",			&binder_texgen);
 	r_Constant				("mVPTexgen",			&binder_VPtexgen);
+	r_Constant("sight_color", &binder_sight_color);
 
 #ifndef _EDITOR
 	// fog-params
