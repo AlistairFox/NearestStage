@@ -953,10 +953,16 @@ void object_give_to_actor(u16 gameid, LPCSTR name, u16 count)
 
 void change_team(u32 ClientID, u16 team)
 {
-		if (!OnServer()) return;
-	xrClientData* CL = static_cast<xrClientData*>(Level().Server->GetClientByID(ClientID));
+		if (OnClient()) 
+			return;
+
+	xrClientData* CL = smart_cast<xrClientData*>(Level().Server->GetClientByID(ClientID));
+
+	if (CL != nullptr)
+	{
 		CL->ps->team = team;
 		Level().Server->game->signal_Syncronize();
+	}
 }
 
 void object_destroy(CScriptGameObject* object)
