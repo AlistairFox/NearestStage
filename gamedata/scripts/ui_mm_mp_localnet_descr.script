@@ -1,0 +1,78 @@
+
+class "localnet_desc_page" (CUIScriptWnd)
+function localnet_desc_page:__init() super()
+   self:InitControls()
+   self:InitCallbacks()
+end
+
+function localnet_desc_page:InitControls()
+	local xml = CScriptXmlInit()
+	xml:ParseFile("ui_mm_mp_localnet_descr.xml")
+
+--	self:SetWndRect(Frect():set(0,0,1024,768))
+	
+	self:SetWndRect(Frect():set(0,0,1920,1080))
+
+	
+	self:Enable(true)
+	xml:InitStatic("background", self)
+
+	self.localnet_desc_page = CUIWindow()
+	xml:InitWindow("localnet_desc_page", 0, self.localnet_desc_page)
+	
+	self.localnet_desc_page:SetAutoDelete(true)
+	self:AttachChild(self.localnet_desc_page)
+	
+	xml:InitWindow("localnet_desc_page", 0, self.localnet_desc_page)
+	self.lp_header_login = xml:InitTextWnd("localnet_desc_page:cap_header_descr", self.localnet_desc_page)
+
+	local button = nil
+
+	button = xml:Init3tButton("localnet_desc_page:button_cancel", self.localnet_desc_page)
+	self:Register(button, "btn_cancel")
+    self.btn_cancel = button
+--------------------------------------------------------------------------------
+	
+	xml:InitTextWnd("localnet_desc_page:cap_descript", self.localnet_desc_page)
+	xml:InitTextWnd("localnet_desc_page:cap_descript2", self.localnet_desc_page)
+	xml:InitTextWnd("localnet_desc_page:cap_descript3", self.localnet_desc_page)
+	xml:InitTextWnd("localnet_desc_page:cap_descript4", self.localnet_desc_page)
+	xml:InitTextWnd("localnet_desc_page:cap_descript5", self.localnet_desc_page)
+	xml:InitTextWnd("localnet_desc_page:cap_descript6", self.localnet_desc_page)
+	xml:InitTextWnd("localnet_desc_page:cap_descript7", self.localnet_desc_page)
+	xml:InitTextWnd("localnet_desc_page:cap_descript8", self.localnet_desc_page)
+	xml:InitTextWnd("localnet_desc_page:cap_descript9", self.localnet_desc_page)
+	xml:InitTextWnd("localnet_desc_page:cap_descript10", self.localnet_desc_page)
+	xml:InitTextWnd("localnet_desc_page:cap_descript11", self.localnet_desc_page)
+	xml:InitTextWnd("localnet_desc_page:cap_descript12", self.localnet_desc_page)
+	xml:InitTextWnd("localnet_desc_page:cap_descript13", self.localnet_desc_page)
+	xml:InitTextWnd("localnet_desc_page:cap_descript14", self.localnet_desc_page)
+	xml:InitTextWnd("localnet_desc_page:cap_descript15", self.localnet_desc_page)
+	
+end
+
+function localnet_desc_page:InitCallbacks()
+	self:AddCallback("btn_cancel", ui_events.BUTTON_CLICKED, self.OnBtnCancel, self)
+	
+end 
+
+function localnet_desc_page:OnBtnCancel()
+	self:HideDialog()
+	self.owner:ShowDialog(true)
+	self.owner:Show(true)
+end
+
+function localnet_desc_page:OnKeyboard(dik, keyboard_action)
+	CUIScriptWnd.OnKeyboard(self,dik,keyboard_action)
+
+	local bind = dik_to_bind(dik)
+	local console = get_console()
+
+	if keyboard_action == ui_events.WINDOW_KEY_PRESSED then
+		if dik == DIK_keys.DIK_ESCAPE then
+			self:OnBtnCancel()
+		end
+	end
+	
+	return true
+end

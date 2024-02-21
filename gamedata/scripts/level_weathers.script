@@ -1,0 +1,423 @@
+--[[ -----------------------------------------------------------------------------------------------
+ File		 : level_weathers.script
+ Description : level weather manager
+ Copyright	 : 2004 © GSC Game World & 2022 © Stalker Weather Engine
+ Author		 : GSC Game World
+ Modified    : SWE by ggGhosTt & = MayLay2k =
+--]] -----------------------------------------------------------------------------------------------
+--/											  Variables
+--]] -----------------------------------------------------------------------------------------------
+local weather_manager = nil
+local weather_name = utils.cfg_get_string(ini_file("game.ltx"), level.name(), "weathers", db.actor, false, "", "[default]")
+
+local DYNAMIC_WEATHER = "dynamic"
+local INDOOR_WEATHER = "indoor"
+local WEATHER_RERIODS_SECTION = "weather_periods"
+local WEATHER_PRE_BLOWOUT = "pre_blowout"
+local WEATHER_PERIOR_TRANSITION = "transition"
+
+function SetConsoleSettingsFromSection(section, ini_weather)
+	local ini = ini_weather or system_ini()
+	if ini:section_exist(section) then
+		local rec_name, value = "", ""
+		local lines = ini:line_count(section)
+		
+		for current_line = 0, lines - 1 do
+			result, rec_name, value = ini:r_line(section, current_line, "", "")
+			get_console():execute(string.format("%s %s", rec_name, value))
+		end
+	end
+end
+
+--]] -----------------------------------------------------------------------------------------------
+--/											  Functions
+--]] -----------------------------------------------------------------------------------------------
+class "WeatherManager"
+function WeatherManager:__init()
+    self.transition_period = false
+    self.pre_blowout_period = false
+	self.last_hour = 0
+	self.last_period_change_hour = level.get_time_hours()
+	self.forced_weather_change_on_time_change = false
+    self.wfx_time = 0
+	self.weather_fx = nil
+	self.update_time = 0
+	self.update_level = ""
+	self.graphs_ini = ini_file("environment\\dynamic_weather_graphs.ltx")
+
+	self.state = {}
+	self.graphs = {}
+	
+	self.weather_periods_range = {}
+	self.weather_periods = {}
+	self.weather_periods_inverse = {}
+	
+	self.next_period_change_hour = 0
+	
+	self:SetWeatherPeriodsList()
+	
+	SetConsoleSettingsFromSection("weather_console_settings", self.graphs_ini)
+end
+
+function WeatherManager:SetWeatherPeriodsList()
+	if not self.graphs_ini:section_exist(WEATHER_RERIODS_SECTION) then
+		return
+	end
+
+	lines = self.graphs_ini:line_count(WEATHER_RERIODS_SECTION)
+	
+	if lines == 0 then
+		return
+	end
+	
+	for current_line = 1, lines do
+		result, rec_name, value = self.graphs_ini:r_line(WEATHER_RERIODS_SECTION, current_line - 1, "", "")
+		
+		self.weather_periods_range[rec_name] = _G.parse_nums(value)
+		self.weather_periods[current_line] = rec_name
+		self.weather_periods_inverse[rec_name] = current_line
+	end
+	
+	self.current_period = self.weather_periods[1]
+end
+
+-- Called after load(). Weather state is already loaded.
+function WeatherManager:reset()	
+    self.levelWeather = weather_name -- Getting section.
+	self.weather_list = xr_logic.parse_condlist(db.actor, level.name(), "weather", weather_name)
+    -- Reading period hours if level is not underground.
+    if self:IsCanToUsePeriords(self.levelWeather) then
+	    self.next_period_change_hour = self:get_next_period_change_hour(self.current_period)
+	else
+		self.next_period_change_hour = math.mod(self.next_period_change_hour + 1, 24)
+	end
+
+    -- End reading period hours.
+	self.last_hour = level.get_time_hours()
+	
+    self:select_weather(true)
+end
+
+function WeatherManager:GetPeriodRange(period)
+	local period_curr = period or self.current_period
+	return self.weather_periods_range[period_curr]
+end
+
+function WeatherManager:get_next_period_change_hour(period)
+	local range = self:GetPeriodRange(period)
+	local hour = math.random(range[1], range[2])
+	hour = hour + self.last_period_change_hour + 1
+	hour = math.mod(hour, 24)
+	return hour
+end
+
+function WeatherManager:SetNextPeriod()
+	-- Get idx by current period name
+	local cp = self.weather_periods_inverse[self.current_period]
+	-- 1, 2, ..., N, 1, 2, ...
+	cp = math.mod(cp, #self.weather_periods) + 1
+	self.current_period = self.weather_periods[cp]
+		
+	self.next_period_change_hour = self:get_next_period_change_hour(self.current_period)
+	self.transition_period = true
+end
+
+function WeatherManager:change_period()
+	local current_hour = level.get_time_hours()
+	local surge_manager = surge_manager.get_surge_manager()
+	local g_time = game.get_game_time()
+	local diff_s = math.floor(surge_manager._delta - g_time:diffSec(surge_manager.last_surge_time))
+	local check_outdoor = utils.cfg_get_string(self.graphs_ini, level.name().."_surge_settings", "surge_state", db.actor, false, "", "")
+	if (diff_s < 7200) and check_outdoor == "1" or level.is_wfx_playing() then
+        self.pre_blowout_period = true
+		self.next_period_change_hour = math.mod(self.next_period_change_hour + 1, 24)
+	end
+    if current_hour == self.next_period_change_hour then
+		self.last_period_change_hour = current_hour
+		self:SetNextPeriod()
+	end
+end
+
+function ContainsSubString(str, substr)
+	str = string.lower(str)
+	substr = string.lower(substr)
+	return str ~= string.gsub(str, substr, "")
+end
+
+function WeatherManager:IsCanToUsePeriords(weather)
+	local name = weather or self.levelWeather
+	return ContainsSubString(name, DYNAMIC_WEATHER)
+end
+
+function WeatherManager:IsIndoor(weather)
+	local name = weather or self.levelWeather
+	return ContainsSubString(name, INDOOR_WEATHER)
+end
+
+function WeatherManager:GetSectionPreBlowout()
+	return WEATHER_PRE_BLOWOUT
+end
+
+function WeatherManager:IsSectionPreBlowout(weather)
+	local name = weather or self.levelWeather
+	return name == self:GetSectionPreBlowout()
+end
+
+function WeatherManager:GetSectionTransition()
+	return WEATHER_PERIOR_TRANSITION
+end
+
+function WeatherManager:IsSectionTransition(weather)
+	local name = weather or self.levelWeather
+	return name == self:GetSectionTransition()
+end
+
+function WeatherManager:forced_weather_change()
+	self.forced_weather_change_on_time_change = true
+end
+-- Weather is updated every hour. 
+function WeatherManager:update()
+	if (level.is_wfx_playing()) then
+		self.weather_fx = level.get_weather()
+	else
+		self.weather_fx = nil
+	end
+
+	if self.last_hour ~= level.get_time_hours() then
+		self.last_hour = level.get_time_hours()
+		for lvl,st in pairs(self.state) do
+			st.current_state = st.next_state
+			st.next_state = get_next_state(st.graph, st.current_state)
+		end
+ -- Changing period if weather is not undeground.
+		if not self:IsIndoor() then
+			self:change_period()
+		end
+ -- End changing period.
+ -- Setting weather on the current level.
+		self:select_weather(false)
+ -- End setting weather on the current level.
+	end
+ -- Getting data for debug
+	if swe_debug then
+	    local ltpd_cehr_dbg, ntpd_cehr_dbg, wthr_sect_dbg = ""
+		level_weathers.ltpd_cehr_dbg = self.last_period_change_hour
+		level_weathers.ntpd_cehr_dbg = self.next_period_change_hour
+		level_weathers.wthr_sect_dbg = self.levelWeather
+	end
+ --	End getting data for debug
+end
+-- Moon phases functional.
+-- function WeatherManager:get_moon_phase()
+	-- local months = {31,28,31,30,31,30,31,31,30,31,30,31}
+	-- local g_time = game.get_game_time()
+	-- local Y, M, D, h, m, s, ms = 0, 0, 0, 0, 0, 0, 0
+	-- Y, M, D, h, m, s, ms = g_time:get(Y, M, D, h, m, s, ms)
+	-- local day = 365 * (Y - 2010) + D
+	-- for mm = 1, M - 1 do
+		-- day = day + months[mm]
+	-- end
+	-- if h >= 12 then
+		-- day = day + 1
+	-- end
+	-- local phase = math.floor(math.mod (day, 28) / 3.5)
+       -- -- phase = math.mod(day, 8)
+    -- return tostring(phase)
+-- end
+-- End moon phases functional.
+function WeatherManager:select_weather(now)
+	local weather = xr_logic.pick_section_from_condlist(db.actor, db.actor, self.weather_list)
+    -- Breaking down outdoor weather to stated periods. 
+    if not self:IsIndoor(weather) then
+		if self:IsCanToUsePeriords(weather) then
+			if self.transition_period then
+				weather = self:GetSectionTransition()
+				self.transition_period = false
+			elseif self.pre_blowout_period then
+				weather = self:GetSectionPreBlowout()
+				self.pre_blowout_period = false
+			else
+				weather = self.current_period
+			end
+		else
+			if not self.transition_period then
+				weather = self.current_period
+			elseif self.pre_blowout_period then
+				weather = self:GetSectionPreBlowout()
+				self.pre_blowout_period = false
+			end
+		end
+	end
+
+    -- End breaking down outdoor weather to periods.
+    self.levelWeather = weather -- Getting broken section.
+	local graph = self:get_graph_by_name(weather)
+	local weather_section_name = ""
+    -- Checking if the current level graph matches the one obtained by the condlist.
+	if graph == nil then
+        -- Using static weather.
+	    self.state[weather] = nil
+	    weather_section_name = weather
+	else
+        -- Using dynamic weather.
+	    if self.state[weather] == nil or self.state[weather].graph_name ~= weather then
+		    self.state = {}
+		    self.state[weather] = self:init_by_graph(graph,weather)
+	    end
+        -- Getting section name according to the current state.
+	    local st = self.state[weather]
+
+	    weather_section_name = "default_"..st.current_state
+        -- Applying moon phase to the weather section name.   
+	    -- if st.current_state == "temp1" or st.current_state == "temp2" then
+		    -- weather_section_name = weather_section_name.."_"..self:get_moon_phase()
+        -- end  
+		-- End applying moon phase.
+	end
+	if now then
+		self.last_hour = level.get_time_hours()
+	end
+	if self.forced_weather_change_on_time_change then
+		now = true
+		self.forced_weather_change_on_time_change = false
+	end
+	if not(self.weather_fx) then
+		level.set_weather(weather_section_name, now)
+	else
+		level.start_weather_fx_from_time(self.weather_fx, self.wfx_time)
+	end
+end
+-- Returns initial weather state.
+function WeatherManager:init_by_graph(graph, graph_name)
+	local cur_state = get_next_state(graph ,"")
+	local next_state = get_next_state(graph, cur_state)
+	return {current_state = cur_state, next_state = next_state, graph_name = graph_name, graph = graph}
+end
+-- Returns graph state according to the listed probabilities.
+function get_next_state(graph, state)
+	local sum = 0
+	for st, prob in pairs(graph) do
+		sum = sum + prob
+	end
+	local rnd = math.random() * sum
+	local next_state
+	for st, prob in pairs(graph) do
+		next_state = st
+		rnd = rnd - prob
+		if (rnd <= 0) then
+			break
+		end
+	end
+	return next_state
+end
+-- Setting manager state by parsing state to string.
+function WeatherManager:set_state_as_string(ss)
+	self.state = {}
+	for lvlstring in string.gmatch(ss, "[^;]+") do
+		local i,j, grname, curs, nexs = string.find(lvlstring, "([^=]+)=([^,]+),([^,]+)")
+		if not grname then
+			abort("WeatherManager:set_state_as_string: malformed state string. "..ss)
+		end
+		local current_state = self:unpack_state(curs)
+		local next_state = self:unpack_state(nexs)
+		local graph_name = self:unpack_graph_name(grname)
+		local graph = self:get_graph_by_name(graph_name)
+        if graph == nil then
+        else
+		self.state[graph_name] = {current_state = current_state, next_state = next_state, graph_name = graph_name, graph = graph}
+        end
+    end
+end
+-- Turning current manager state to string.
+function WeatherManager:get_state_as_string()
+	local lvlstrings = {}
+	for lvl_name, st in pairs(self.state) do
+		local curs = self:pack_state(st.current_state)
+		local nexs = self:pack_state(st.next_state)
+		local grn = self:pack_graph_name(st.graph_name)
+		table.insert(lvlstrings,grn.."="..curs..","..nexs)
+	end
+	return table.concat(lvlstrings, ";")
+end
+-- Getting graph (table of weather state changes) by its and level name.
+function WeatherManager:get_graph_by_name(name)
+	if not self.graphs[name] then
+		self.graphs[name] = xr_s.parse_ini_section_to_array(self.graphs_ini, name)
+	end
+	return self.graphs[name]
+end
+-- Pack the name of the graph vertex.
+function WeatherManager:pack_state(state)
+    -- Not packing now
+	return state
+end
+-- Unpack the name of the graph vertex.
+function WeatherManager:unpack_state(st)
+    -- Not packing now
+	return st
+end
+-- Pack the name of the weather transitions graph.
+function WeatherManager:pack_graph_name(graph_name)
+    -- Not packing now
+	return graph_name
+end
+-- Unpack the name of the weather transitions graph.
+function WeatherManager:unpack_graph_name(grn)
+    -- Not packing now
+	return grn
+end
+
+function WeatherManager:load(F)
+	set_save_marker(F, "load", false, "WeatherManager")
+	printf("WEATHER LOAD")
+	self.levelWeather = F:r_stringZ()
+	self.current_period = F:r_stringZ()
+	if self:IsSectionTransition() then
+		self.transition_period = true
+	end
+    if self:IsSectionPreBlowout() then
+		self.pre_blowout_period = true
+	end
+	self.last_period_change_hour = F:r_u32();
+	self.next_period_change_hour = F:r_u32();
+	local state_string = F:r_stringZ();
+	printf("str = "..state_string)
+	if state_string == "" then
+		printf("str = empty string")
+	end
+	self:set_state_as_string(state_string)
+	self.update_time = F:r_u32();
+	local str = F:r_stringZ()
+	if(str ~= "nil") then
+		self.weather_fx = str
+		self.wfx_time = F:r_float()
+	end
+	set_save_marker(F, "load", true, "WeatherManager")
+end
+
+function WeatherManager:save(F)
+	set_save_marker(F, "save", false, "WeatherManager")
+	printf("WEATHER SAVE")
+	F:w_stringZ(self.levelWeather)
+	F:w_stringZ(self.current_period)
+	F:w_u32(self.last_period_change_hour);
+	F:w_u32(self.next_period_change_hour);
+	printf("str = "..tostring(self:get_state_as_string()))
+	if self:get_state_as_string() == "" then
+		printf("str = empty string")
+	end
+	F:w_stringZ(self:get_state_as_string())
+	F:w_u32(self.update_time)
+	F:w_stringZ(tostring(self.weather_fx))
+	if(self.weather_fx) then
+		F:w_float(level.get_wfx_time())
+	end
+	set_save_marker(F, "save", true, "WeatherManager")
+end
+
+function get_weather_manager ()
+	if weather_manager == nil then
+		weather_manager = WeatherManager()
+	end
+	return weather_manager
+end

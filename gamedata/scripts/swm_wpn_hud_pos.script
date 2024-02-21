@@ -1,0 +1,65 @@
+--[[ ----------------------------------------------------------------------------------------------
+ Платформы: CoP v1.6.02
+ Описание : Сохранение позиции ствола для ручной настройки
+ Поддержка: 2014 © Shoker Weapon Mod
+ Версия	  : 1.0 (23.03.2014)
+--]] -----------------------------------------------------------------------------------------------
+
+VAL_FILE_NAME	= user_name().."_hud_pos.ltx"
+local DIV		= '|'	--> Символ-разделитель
+
+--[[		wpn_sec =  {pos_x , pos_y , pos_z , rot_x , rot_y , rot_z}			]]
+POS_TBL			= {}
+
+--\\ Загрузка сохранённых данных
+function Initialization()
+	local file = io.open( VAL_FILE_NAME, "r" )
+	if file ~= nil then
+		for line in file:lines() do
+			if line then
+				local tbl = _u.string_expl(line, DIV)				
+				local sec = tbl[1]
+				if sec ~= nil and sec ~= "" then
+					RegPos(sec, tonumber(tbl[2]), tonumber(tbl[3]), tonumber(tbl[4]), tonumber(tbl[5]), tonumber(tbl[6]), tonumber(tbl[7]), true)
+				end
+			end
+		end
+		file:close()
+	else
+		ODS("FILE IS NULL TO READ")
+	end
+end
+
+--\\ Регистрируем настройки для указаной секции
+function RegPos(sec, pos_x, pos_y, pos_z, rot_x, rot_y, rot_z, bNoUpd)
+	POS_TBL[sec] = {}
+	table.insert(POS_TBL[sec], pos_x) -- px
+	table.insert(POS_TBL[sec], pos_y) -- py
+	table.insert(POS_TBL[sec], pos_z) -- pz
+	table.insert(POS_TBL[sec], rot_x) -- rx
+	table.insert(POS_TBL[sec], rot_y) -- ry
+	table.insert(POS_TBL[sec], rot_z) -- rz		
+	
+	if bNoUpd ~= true then
+		UpdateFile()
+	end
+end
+
+--\\ Удалить настройки для указаной секции
+function ClearPos(sec)
+	POS_TBL[sec] = nil
+	UpdateFile()
+end
+
+--\\ Сохранить настройки в файл
+function UpdateFile()
+	local file = io.open( VAL_FILE_NAME, "w" )
+	if file ~= nil then
+		for sec, data in pairs(POS_TBL) do
+			file:write( sec..DIV..tostring(data[1])..DIV..tostring(data[2])..DIV..tostring(data[3])..DIV..tostring(data[4])..DIV..tostring(data[5])..DIV..tostring(data[6]), "\n" )		
+		end
+		file:close()
+	else
+		ODS("FILE IS NULL TO WRITE")		
+	end
+end

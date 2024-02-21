@@ -1,0 +1,29 @@
+   function sv_msg()
+        msg("30 секунд до рестарта")
+	get_console():execute("chat %c[red]ВНИМАНИЕ! %с[white]30 секунд до рестарта сервера.")
+	server_restart.quit_timer
+   end
+ 
+   function start_timer()
+      local iTimer = time_global() + 60000
+ 
+      local function check_timer()
+         return time_global() > iTimer
+      end
+ 
+      level.add_call(check_timer, sv_msg)
+   end
+
+   function quit_timer()
+      local yTimer = time_global() + 30000
+ 
+      local function check_timer_quit()
+         return time_global() > yTimer
+      end
+ 
+      level.add_call(check_timer_quit, action_quit)
+   end
+ 
+   function action_quit()
+	get_console():execute("quit")
+   end

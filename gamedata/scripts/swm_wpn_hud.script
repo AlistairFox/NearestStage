@@ -1,0 +1,1151 @@
+--[[ ----------------------------------------------------------------------------------------------
+ Платформы: CoP 1.6.2
+ Описание : Скрипт для работы с худом оружия и его новыми особенностями
+ Поддержка: 2013 © Shoker Mod
+ Авторы   : Shoker
+ Версия	  : 2.1
+ Дата	  : 30.03.2014г
+ ToDo	  : Пофиксить резкость при инерции ствола >_<
+--]] ----------------------------------------------------------------------------------------------
+
+--[[
+--*** Новые параметры для конфигов ***--
+--\\ В конфиге оружия
+--;******[3D-Прицел]******;
+scope_hud_3d			= wpn_awm_scope_hud		--> Секция худа для 3D-прицела
+
+--;******[Альтернативный прицел]******;
+scope_zoom_factor_alt	= 35					--> Зум для альт. прицела
+			
+--\\ В секции худа
+disable_breath			--> Заблокировать отдышку
+disable_inertion		--> Заблокировать инерцию
+disable_strafe			--> Заблокировать стрейф
+disable_shot_shake		--> Заблокировать тряску при стрельбе
+disable_distance_mgr	--> Заблокировать подьём ствола у стен
+
+aim_hud_offset_pos_alt	--> Сдвиг для альт. прицела
+aim_hud_offset_rot_alt	--> Сдвиг для альт. прицела
+]]
+
+SCOPE_3D_FLAG		= false		--> Глобальный флаг, что сейчас активен 3D-прицел
+
+--***********************--
+--****** НАСТРОЙКИ ******--
+--***********************--
+
+local DISABLE_MEM	=	false	--> Если true, то позиция худа не будет переписываться в памяти (для настройки прицеливания)
+
+local Z_MODE		=	false	--> Показывать больше оружия на экране
+local ALT_POS_MODE	=	false	--> Сдвинуть оружие ближе к центру
+local MOVE_ENABLE	=	false	--> true - применить настройки ниже
+
+--\\  Инерция камеры \\--
+local CI_ENABLED				=	true	
+
+--\\  Двойные прицелы \\--
+local DS_ENABLED				=	true
+
+--\\  Отдышка \\--
+local BTH_ENABLED				=	true
+local BTH_SPEED_MOD				=	10		--> Чем больше, тем медленне будет трястись оружие при отдышке
+local BTH_UPDATE_TIME			=	60		--> Минимальная частота обновления тряски, подобрано оптимальное значение для FPS от 30 и боле, лучше не трогать.
+local BTH_FOV_POWER				=	1.5		--> Сила влияния FOV-а на отдышку (1)
+local BTH_FOV_MOD				=	0.8		--> Сила влияния FOV-а на отдышку (2 - видимо я это кодил ночью о_О)
+local BTH_VERT_SPEED			=	0.0001 * (BTH_UPDATE_TIME/5)	--> Вертикальная скорость отдышки 
+local BTH_VERT_LIM				=	0.02							--> Лимит вертикального сдвига
+local BTH_HORIZ_SPEED			=	0.000025 * (BTH_UPDATE_TIME/5)	--> Горизонтальная скорость отдышки 
+local BTH_HORIZ_LIM				=	0.01							--> Лимит горизонтального сдвига
+local BTH_VERT_POS_MOD			=	3								--> Модификатор (вертикаль) чем меньше, тем больше сдвинется
+local BTH_HORIZ_POS_MOD			=	1								--> Модификатор (горизонталь) чем меньше, тем больше сдвинется
+local BTH_SHAKE_MIN				=	0.01	--> Усталость, выше которой нужно включать отдышку					
+local BTH_RETURN_SPEED			= 	0.00005 * (BTH_UPDATE_TIME/5)	--> Скорость ослабления отдышки
+local BTH_RUN_POWER_INCR		=	0.0005		--> Увеличение отдышки от короткой пробежки
+local BTH_RUN_POWER_DECR		=	0.000025	--> Уменьшение отдышки от короткой пробежки
+local BTH_RUN_POWER_MAX			=	0.35		--> Макс. влияние короткой пробежки на тряску (0-1) 
+
+--\\  Инерциия ствола \\--
+local WI_ENABLED				=	true
+local WI_SPEED_MOD				=	2			--> Чем больше, тем медленне будет инерция
+local WI_MIN_CHANGE_Y 			=	0.05		--> Минимальный поворот игрока горизонтально, при котором срабатывает инерция
+local WI_MIN_CHANGE_X 			=	0.05		--> Минимальный поворот игрока вертикально, при котором срабатывает инерция
+local WI_CAN_RETURN_CNT			=	1			--> Чем больше число, тем позже инерция начнёт уменьшаться при прицеливании
+local WI_CAN_RETURN_TIME 		=	6000		--> Время (м\сек), через которое инерция начнёт уменьшаться от бедра если игрок не крутил камеру больше чем WI_MIN_CHANGE
+
+local WI_MAX_Y					=	0.013		--> Максимальный поворот ствола влево (от бедра)
+local WI_MAX_Y_R				=	0.008		--> Максимальный поворот ствола вправо (от бедра)
+local WI_MAX_ALT_Y				=	0.013		--> Максимальный поворот ствола влево (альт. позиция, от бедра)
+local WI_MAX_ALT_Y_R			=	0.013		--> Максимальный поворот ствола вправо (альт. позиция, от бедра)
+local WI_MAX_X					=	0.0 		--> Максимальный поворот ствола вертикально (от бедра)
+local WI_SPEED_Y				=	0.002		--> Скорость поворота ствола вбок (от бедра)
+local WI_SPEED_X				=	0.008		--> Скорость поворота ствола вертикально (от бедра)
+local WI_SPEED_RET_Y			=	0.001		--> Скорость возврата ствола вбок (от бедра)
+local WI_SPEED_RET_X			=	0.0008		--> Скорость возврата ствола вертикально (от бедра)
+	
+local WI_S_MAX_Y				=	0.01		--> Максимальный поворот ствола влево
+local WI_S_MAX_Y_R				=	0.01		--> Максимальный поворот ствола вправо
+local WI_S_MAX_X				=	0.009		--> Максимальный поворот ствола вертикально
+local WI_S_SPEED_Y				=	0.0006		--> Скорость поворота ствола вбок
+local WI_S_SPEED_X				=	0.0005		--> Скорость поворота ствола вертикально
+local WI_S_SPEED_RET_Y			=	0.00014		--> Скорость возврата ствола вбок
+local WI_S_SPEED_RET_X			=	0.00009		--> Скорость возврата ствола вертикально
+
+--\\  Косая ходьба \\--
+local SW_ENABLED				=	true
+local SW_POWER					=	4			--> Чем больше, тем сильнее будет сдвинут ствол (от бедра)
+local SW_S_POWER				=	1			--> Чем больше, тем сильнее будет сдвинут ствол
+local SW_ZMOD					=	-0.5		--> Сдвиг ствола вперёд\назад (от бедра)
+local SW_S_ZMOD					=	1			--> Сдвиг ствола вперёд\назад
+local SW_ROT_STEP				=	0.3			--> Скорость поворота ствола (от бедра)
+local SW_S_ROT_STEP				=	0.15		--> Скорость поворота ствола
+	
+--* Чем больше, тем меньше сдвиг в эту сторону
+local SW_X_MOD					=	150			--> Сдвиг вбок
+local SW_Y_MOD					=	280			--> Сдвиг вверх\вниз
+local SW_Z_MOD 					=	50			--> Сдвиг вперёд\назад
+	
+--\\ Тряска при стрельбе  \\--
+local SHAKE_ENABLED				=	true
+local SHAKE_VERT_MIN			=	5			--> Мин. сила сдвига по вертикали при выстреле
+local SHAKE_VERT_MAX			=	20			--> Макс. сила сдвига по вертикали при выстреле
+local SHAKE_HORIZ_MIN			=	5			--> Мин. сила сдвига по горизонтали при выстреле
+local SHAKE_HORIZ_MAX			=	20			--> Макс. сила сдвига по горизонтали при выстреле
+
+ --\\ Поднятие ствола у препятствий \\--
+local DMGR_ENABLED				= 	true
+local DMGR_MAX_DISTANCE			= 	1.0			--> Расстояние, ближе которого начинаем поднимать ствол
+local DMGR_MIN_DISTANCE			= 	0.5			--> Максимальное расстояние, на которое камера ГГ может упереться к стене
+local DMGR_SPEED_COEF			= 	2.3			--> Скорость поднятия\опускания ствола
+local DMGR_POS_Y				= 	-0.25		--> Сдвиг вверх\вниз
+local DMGR_POS_Z				= 	0.075		--> Сдвиг вперёд\назад
+local DMGR_ORI_Y				= 	39			--> Поворот ствола вверх\вниз
+local DMGR_POS_Z2				= 	-0.15		--> Сдвиг вперёд назад когда стреляем от бедра у стены
+	
+--***********************--
+
+class "HudData"	--> Класс для манипуляции с худом
+function HudData:__init(hud_name, postfix)
+	self.vec_table				= {}
+	self.hud_name				= hud_name
+	----------------------------------------------------------------------------------------------------------
+	self.vec_table["hands_position"]		 	= _u.ltx(hud_name, "hands_position"		..postfix, 	"vec")
+	self.vec_table["hands_orientation"]	 		= _u.ltx(hud_name, "hands_orientation"	..postfix, 	"vec")			
+	self.vec_table["aim_hud_offset_pos"]		= _u.ltx(hud_name, "aim_hud_offset_pos"	..postfix, 	"vec")		
+	self.vec_table["aim_hud_offset_rot"]		= _u.ltx(hud_name, "aim_hud_offset_rot"	..postfix, 	"vec")			
+	self.vec_table["item_position"]				= _u.ltx(hud_name, "item_position", 				"vec")	
+	self.vec_table["item_orientation"]			= _u.ltx(hud_name, "item_orientation", 				"vec")		
+end
+
+function HudData:Set(name, hud_x,hud_y,hud_z)
+	if hud_x ~= nil then
+		self.vec_table[name].x = hud_x
+	end
+	if hud_y ~= nil then
+		self.vec_table[name].y = hud_y
+	end
+	if hud_z ~= nil then
+		self.vec_table[name].z = hud_z
+	end	
+end
+
+function HudData:Add(name, hud_x,hud_y,hud_z)
+	if hud_x ~= nil then
+		self.vec_table[name].x = self.vec_table[name].x + hud_x
+	end
+	if hud_y ~= nil then
+		self.vec_table[name].y = self.vec_table[name].y + hud_y
+	end
+	if hud_z ~= nil then
+		self.vec_table[name].z = self.vec_table[name].z + hud_z
+	end	
+end
+
+function HudData:GetName()
+	return self.hud_name
+end
+
+
+function HudData:GetCurrent(name)
+	return self.vec_table[name]
+end
+
+function HudData:Apply()
+	if DISABLE_MEM == false then
+		swm_memory.SET_hands_position		(nil, nil, 	self.vec_table["hands_position"].x,		self.vec_table["hands_position"].y,		self.vec_table["hands_position"].z)
+		swm_memory.SET_hands_orientation	(nil, nil, 	self.vec_table["hands_orientation"].x, 	self.vec_table["hands_orientation"].y,	self.vec_table["hands_orientation"].z)			
+		swm_memory.SET_aim_hud_offset_pos	(nil, nil, 	self.vec_table["aim_hud_offset_pos"].x,	self.vec_table["aim_hud_offset_pos"].y, self.vec_table["aim_hud_offset_pos"].z)
+		swm_memory.SET_aim_hud_offset_rot	(nil, nil, 	self.vec_table["aim_hud_offset_rot"].x, self.vec_table["aim_hud_offset_rot"].y, self.vec_table["aim_hud_offset_rot"].z)
+	end
+	
+	--\\ Если в руке детектор то вместо оружия буду изменятся его свойства (косяк текущей врезки)
+	--\\ Так что пока заблочил, а вообще или врезку другую сделать или пытаться проверять на наличие детектора в руках и 
+	--\\ в эти моменты не делать ничего с этими параметрами. 
+--	swm_memory.SET_item_position		(nil, 		self.vec_table["item_position"].x, 		self.vec_table["item_position"].y, 		self.vec_table["item_position"].z)
+--	swm_memory.SET_item_orientation		(nil, 		self.vec_table["item_orientation"].x, 	self.vec_table["item_orientation"].y, 	self.vec_table["item_orientation"].z)
+end
+
+-----------------------------------------------------------------------
+local actor_flags = {}
+--[[
+1	-	вперёд			  		(1)
+2	-	назад			  		(2)
+3	-	влево			  		(4)
+4	-	вправо			  		(8)
+5	-	приседание		  		(16)
+6	-	красться		  		(32)
+7	-	поворорт ТЕЛА вбок? 	(64)	--> Направление поворота не хранит
+8	-	прыжок (старт)			(128)
+9	-	прыжок (полёт)			(256)
+10	-	прыжок (приземление)	(512)
+11	-							(1024)
+12	-	лестница				(2048)
+13	-	бег						(4096)
+14	-	наклон влево			(8192)
+15	-	наклон вправо			(16384)
+16	-							(32768)
+]]
+
+local aftershot_time		= nil		--> Счётчик, который после выстрела содержит время, после которого он снова станет nil
+local bShot					= false		--> Флаг, что игрок произвёл как минимум один выстрел
+local DS_state_tbl			= {}		--> Таблица для оружия с двойным прицелом
+
+--> Колбек на выстрел игроком
+function actor_shot_callback(who, Wpn, sWpn, ammo_name, isGL)
+	aftershot_time = time_global() + 300
+	bShot = true
+end
+
+--> Быстрый апдейт игрока
+local last_call		= nil		--> Время прошлого вызова
+local action_factor	= 1			--> Для плавной смены положения оружия
+local bLoadHudPos	= false		--> Флаг инициализации худовых смещений
+
+function actor_fastcall()
+
+	if bLoadHudPos == false then
+		if swm_wpn_hud_pos ~= nil then
+			swm_wpn_hud_pos.Initialization()
+		end
+		
+		bLoadHudPos = true
+	end
+	
+	local wpn = db.actor:active_item()				--> Активный предмет
+
+	if last_call == nil then
+		last_call = time_global()
+	end
+
+	local wpn_1_id	= -1
+	local wpn_2_id	= -1
+
+	local wpn_1		=	db.actor:item_in_slot(3)	--> Предмет в правом слоте
+	local wpn_2		=	db.actor:item_in_slot(2)	--> Предмет в левом слоте
+	
+	if wpn_1 ~= nil then
+		wpn_1_id = wpn_1:id()
+	end
+
+	if wpn_2 ~= nil then
+		wpn_2_id = wpn_2:id()
+	end
+
+	
+	-----------------------
+	--\\ Получаем флаг текущего состояния тела ГГ из памяти и разбираем его
+	local body_flag	 = swm_memory.GET_actor_body_flag() 
+
+	local iBite = 1
+
+	for i=1, 16 do
+		if body_flag ~= nil then
+			actor_flags[i] = ( bit_and(body_flag, iBite) ~= 0 )
+			iBite = iBite * 2
+		else
+			actor_flags[i] = false
+		end
+	end
+
+	if CI_ENABLED == true then				
+		CameraInertion()		--> Инерция камеры
+	end
+				
+	-----------------------
+	local target_fov	= nil
+	local delta 		= time_global() - last_call
+	local bIs3DScope	= false		--> Активен ли 3D-прицел	
+	
+	if wpn ~= nil then
+	--------------------------------------------------------------------------
+			local section		= wpn:section()							--> Секция текущего ствола
+			local EData			= wpn:Engine("CWeapon")					--> Данные из движка
+			local state			= EData:Get("m_cur_state_1")			--> Текущее действие ствола					
+			local rotate_f		= EData:Get("m_fZoomRotationFactor")	--> Текущая степень поворота ствола к прицеливанию
+		
+			--* Оставить\убрать прицельную сетку (1)
+			local bDisableTex = _u.ltx(section, "disable_scope", "bol")
+						
+			--* Получение текущего худа, а также все операции по его смене + 3D-прицел
+			local function GetSetHud()
+				local hud_cfg		= "hud"
+				if wpn:get_ammo_in_magazine() == 0 then
+					if _u.ltxExist(section, "hud_no_ammo") == true then
+						hud_cfg = "hud_no_ammo"	--> Секция худа, когда 0 патронов
+					end
+				end
+				
+				local hud_name_new 	= _u.ltx(section, hud_cfg, "str")				--> Секция худа, которая установится
+				local hud_name		= EData:Get("hud_sect")							--> Текущая секция худа
+				local scope_3d		= _u.ltx(section, "scope_hud_3d", "str")		--> Название 3D прицела
+				
+				--* Работает с разными прицелами
+				if swm_bind_wpn ~= nil then
+					local scope_name = swm_bind_wpn.SCOPES_INFO[wpn:id()]
+					if scope_name ~= nil then
+						--* Возможно нам нужно поменять секцию худа
+						local hud = _u.ltx(scope_name, hud_cfg, "str")
+						if hud ~= nil then
+							hud_name_new = hud
+						end
+						
+						--* Оставить\убрать прицельную сетку (2)
+						local bDisableTex_temp = _u.ltx(scope_name, "disable_scope", "bol")
+						if bDisableTex_temp ~= nil then
+							bDisableTex = bDisableTex_temp
+						end
+						
+						--* У нас сменилась секция 3D-прицела или мы его заблокировали
+						local scope_3d_new = _u.ltx(scope_name, "scope_hud_3d", "str")
+						if scope_3d_new ~= nil then
+							if scope_3d_new == "disabled" then
+								scope_3d = nil
+							else
+								scope_3d = scope_3d_new
+							end
+						end
+					end
+				end
+				
+				--* Оставить\убрать прицельную сетку (3)
+				if bDisableTex == true then
+					EData:Set("m_UIScope", 0)
+				end				
+				
+				--* Если есть 3D-прицел, то работаем с ним
+				if scope_3d ~= nil then			
+					--* Переключаем модель если уже прицелились
+					if rotate_f >= 1.0 then
+						hud_name_new = scope_3d
+					end
+					
+					--* Если прицел уже активен, то следим чтобы не было резкого выхода из прицеливания (иначе баги)
+					if rotate_f >= 0.7 then
+						if hud_name == scope_3d then
+							local bWasShoting	= false
+
+							--* Проверяем, стреляли ли мы недавно
+							if aftershot_time ~= nil then
+								if time_global() < aftershot_time then
+									bWasShoting = true
+								end
+							end
+	
+							--* Если мы недавно стреляли или вдруг начали перезаряжаться, то "не убираем" прицеливание
+							if (state == 5 or bWasShoting) or state == 7 then
+								hud_name_new = scope_3d
+								EData:Set("m_fZoomRotationFactor",	1.0)
+								
+								local scope_zf = _u.ltx(section, "scope_zoom_factor", "numf") or 60
+								target_fov = scope_zf - 3
+								if target_fov < 1 then target_fov = 1 end
+							end
+						end
+					end
+				end
+
+				--* Устанавливаем текущию секцию худа
+				if hud_name ~= hud_name_new then
+					hud_name = hud_name_new
+					EData:Set("hud_sect", hud_name_new)
+				end
+				
+				--* Проверяем, активен ли сейчас 3D-прицел.
+				if hud_name_new == scope_3d then
+					bIs3DScope = true
+				end
+
+				return hud_name
+			end
+			
+			local postifx = ""
+			
+			if swm_memory.isWideScreen() == true then
+				postifx = "_16x9"
+			end
+			
+			local hud_name = GetSetHud()
+			local data = HudData(hud_name, postifx)
+			local zoom_state = swm_main.IsZooming(wpn)
+			
+		
+			--* Изменение HUD FOV для айминга
+			local bDefHudFov	= true
+			local hud_fov_speed = 0.15
+			
+			if zoom_state == 2 then
+				local hf_prefix = ""
+				if DS_state_tbl[wpn:id()] == true then
+					hf_prefix = "_alt"
+				end	
+					
+				local new_hud_fov 	= _u.ltx(section, "scope_zoom_hud_fov"..hf_prefix, 					"numf") or nil
+					  hud_fov_speed = _u.ltx(section, "scope_zoom_hud_fov_speed"..hf_prefix, 			"numf") or 0.15
+
+				local scope_name	= swm_bind_wpn.SCOPES_INFO[wpn:id()]				
+				if scope_name ~= nil then
+					local t_hf			= _u.ltx(scope_name, "scope_zoom_hud_fov"..hf_prefix, 			"numf") or nil
+					local t_hf_speed	= _u.ltx(scope_name, "scope_zoom_hud_fov_speed"..hf_prefix, 	"numf") or nil
+					
+					if t_hf ~= nil then
+						new_hud_fov = t_hf
+					end
+					
+					if t_hf_speed ~= nil then
+						hud_fov_speed = t_hf_speed
+					end
+				end
+				
+				if new_hud_fov ~= nil then
+					local curnt_gl_mode	= false				
+					local wpn_clsid		= wpn:clsid()
+						
+					if wpn_clsid == clsid.wpn_ak74_s or wpn_clsid == clsid.wpn_groza_s then
+						curnt_gl_mode = EData:Get("m_bGrenadeMode")	--> В режиме гранатомёта?	
+					end
+					
+					if curnt_gl_mode == false then
+						bDefHudFov = false
+						swm_fov_mgr.UpdateHudFov(new_hud_fov, hud_fov_speed)
+					end
+				end
+			end
+			
+			if bDefHudFov == true then
+				swm_fov_mgr.UpdateHudFov(nil, hud_fov_speed)
+			end
+			
+			--* Альтернативная позиция рук для перезарядки
+			local hud_pos_on_reload = _u.ltx(hud_name, "hands_position_reload"..postifx, "vec")
+			if hud_pos_on_reload == nil then
+				hud_pos_on_reload = _u.ltx(hud_name, "hands_position_reload", "vec")
+			end
+			if hud_pos_on_reload ~= nil then
+				if state == 7 then
+					data:Set("hands_position", 	hud_pos_on_reload.x, hud_pos_on_reload.y, hud_pos_on_reload.z)
+				end
+			end
+
+			--* Альтернативный поворот рук для перезарядки
+			local hud_ori_on_reload = _u.ltx(hud_name, "hands_orientation_reload"..postifx, "vec")
+			if hud_ori_on_reload == nil then
+				hud_ori_on_reload = _u.ltx(hud_name, "hands_orientation_reload", "vec")
+			end
+			if hud_ori_on_reload ~= nil then
+				if state == 7 then
+					data:Set("hands_orientation", 	hud_ori_on_reload.x, hud_ori_on_reload.y, hud_ori_on_reload.z)
+				end
+			end
+			
+			if (wpn:id() == wpn_1_id or wpn:id() == wpn_2_id)  then	--> При переключении оружия всё равно будет "пробивать" при текущей реализации редактирования памяти (ссылка на новый худ обновляется раньше чем меняется active_wpn())
+			----------------------------------------			
+				if DS_ENABLED == true then
+					DualScope(EData, wpn, data, state, zoom_state, delta)	--> Двойной прицел
+				end
+				
+				if BTH_ENABLED == true and _u.ltx(hud_name, "disable_breath", "bol") ~= true then
+					BreathingMgr(data, state, zoom_state, delta)			--> Отдышка
+				end
+				
+				if WI_ENABLED == true and _u.ltx(hud_name, "disable_inertion", "bol") ~= true then
+					WeaponInertion(data, state, zoom_state, delta)			--> Инерция
+				end
+				
+				if SW_ENABLED == true and _u.ltx(hud_name, "disable_strafe", "bol") ~= true then
+					if _console.GetVal("hud.strafe") == true then				
+						StrafeWalk(data, state, zoom_state, delta)			--> Косая ходьба
+					end
+				end
+				
+				if SHAKE_ENABLED == true and _u.ltx(hud_name, "disable_shot_shake", "bol") ~= true then
+					ShotShake(data, state, zoom_state, delta)				--> Тряска при стрельбе
+				end
+				
+				if DMGR_ENABLED == true and bIs3DScope == false and _u.ltx(hud_name, "disable_distance_mgr", "bol") ~= true then
+					if actor_flags[13] == false then
+						if _console.GetVal("hud.walls") == true then						
+							DistanceMgr(data, state, zoom_state, delta)		--> Чтобы поднимал ствол у стен
+						end
+					end
+				end
+			----------------------------------------
+			end
+			
+			local move_factor = 1 - rotate_f
+			
+			--* Пользовательский сдвиг худа
+			if _console ~= nil then
+				MOVE_ENABLE = _console.GetVal("hud.movable")
+			end			
+			
+			local MOVE_HUD_X = 0
+			local MOVE_HUD_Y = 0
+			local MOVE_HUD_Z = 0
+			local ROT_HUD_X  = 0
+			local ROT_HUD_Y  = 0
+			local ROT_HUD_Z  = 0	
+				
+			if MOVE_ENABLE == true and _console ~= nil then
+				if swm_wpn_hud_pos ~= nil and swm_wpn_hud_pos.POS_TBL[section] ~= nil then
+					MOVE_HUD_X = swm_wpn_hud_pos.POS_TBL[section][1]
+					MOVE_HUD_Y = swm_wpn_hud_pos.POS_TBL[section][2]
+					MOVE_HUD_Z = swm_wpn_hud_pos.POS_TBL[section][3]
+					ROT_HUD_X  = swm_wpn_hud_pos.POS_TBL[section][4]
+					ROT_HUD_Y  = swm_wpn_hud_pos.POS_TBL[section][5]
+					ROT_HUD_Z  = swm_wpn_hud_pos.POS_TBL[section][6]				
+				else
+					MOVE_HUD_X = _console.GetVal("hud.pos_x")
+					MOVE_HUD_Y = _console.GetVal("hud.pos_y")
+					MOVE_HUD_Z = _console.GetVal("hud.pos_z")
+					ROT_HUD_X  = _console.GetVal("hud.rot_x")
+					ROT_HUD_Y  = _console.GetVal("hud.rot_y")
+					ROT_HUD_Z  = _console.GetVal("hud.rot_z")	
+				end
+			end
+
+			--* Альтернативный худ
+			if _console ~= nil then
+				ALT_POS_MODE = _console.GetVal("hud.alt_pos")
+			end			
+			
+			if ALT_POS_MODE == true then
+				MOVE_HUD_X = MOVE_HUD_X + (_u.ltx(hud_name, "alt_ofs_pos_x", "numf") or 0)
+				MOVE_HUD_Y = MOVE_HUD_Y + (_u.ltx(hud_name, "alt_ofs_pos_y", "numf") or 0)
+				MOVE_HUD_Z = MOVE_HUD_Z + (_u.ltx(hud_name, "alt_ofs_pos_z", "numf") or 0)
+				ROT_HUD_X  = ROT_HUD_X  + (_u.ltx(hud_name, "alt_ofs_rot_x", "numf") or 0)
+				ROT_HUD_Y  = ROT_HUD_Y  + (_u.ltx(hud_name, "alt_ofs_rot_y", "numf") or 0)
+				ROT_HUD_Z  = ROT_HUD_Z  + (_u.ltx(hud_name, "alt_ofs_rot_z", "numf") or 0)			
+			end
+			
+			--* Сдвиг оружия вперёд в зависимости от наклона головы
+			if _console ~= nil then
+				Z_MODE = _console.GetVal("hud.zmod")
+			end		
+			
+			if Z_MODE == true then
+				local Pitch		= device().cam_dir:getP()
+				local Min		= -1.3	--> Из конфига
+				MOVE_HUD_Z		= MOVE_HUD_Z + ((Pitch - Min) / 10) / 4
+				MOVE_HUD_Y		= MOVE_HUD_Y + ((Pitch - Min) / 10) / 8	
+			end
+			
+			--* Плавно убираем сдвиг при проигрывании анимаций
+			if ((state ~= 0 and state ~= 5) or actor_flags[13] == true) then
+				action_factor = action_factor - 0.05
+				if action_factor < 0 then action_factor = 0 end
+			else
+				action_factor = action_factor + 0.1
+				if action_factor > 1 then action_factor = 1 end
+			end
+			move_factor	= move_factor * action_factor
+			
+			MOVE_HUD_X = MOVE_HUD_X * move_factor
+			MOVE_HUD_Y = MOVE_HUD_Y * move_factor
+			MOVE_HUD_Z = MOVE_HUD_Z * move_factor
+			ROT_HUD_X  = ROT_HUD_X  * move_factor
+			ROT_HUD_Y  = ROT_HUD_Y  * move_factor
+			ROT_HUD_Z  = ROT_HUD_Z  * move_factor	
+				
+			if zoom_state ~= 2 then
+				data:Add("hands_position", 		MOVE_HUD_X, MOVE_HUD_Y, MOVE_HUD_Z)
+				data:Add("hands_orientation", 	ROT_HUD_X, 	ROT_HUD_Y, 	ROT_HUD_Z)					
+			end
+						
+			data:Apply()
+	--------------------------------------------------------------------------
+	end
+	
+	SCOPE_3D_FLAG = bIs3DScope
+	
+	swm_fov_mgr.UpdateFov(target_fov)
+	
+	if aftershot_time ~= nil and time_global() >= aftershot_time then
+		aftershot_time = nil
+	end
+	bShot = false
+	
+	last_call = time_global()
+end
+
+
+--****************************--
+--****** ИНЕРЦИЯ КАМЕРЫ ******--
+--****************************--
+
+local CI_last_cam_dir		= nil	--> Прошлая дирекцкия камеры
+local CI_Disable_time		= 0		--> Время, на которое нужно заблокировать инерцию
+function CameraInertion()
+	if _console.GetVal("hud.camera_shake") == true then
+		local cam_dir			= device().cam_dir
+		if CI_last_cam_dir ~= nil then
+			local old_y = CI_last_cam_dir:getH()
+			local new_y = cam_dir:getH()
+			local sub_y = math.abs(_u.calc_Y(new_y, old_y))
+
+			if sub_y > 0.15 then
+				CI_Disable_time = time_global() + 200
+			end
+		end
+		CI_last_cam_dir = cam_dir
+
+		if CI_Disable_time < time_global() then
+			--* Инерция при беге
+			if actor_flags[13] == true then
+				return get_console():execute("cam_inert 0.8")
+			end
+
+			--* Инерция при ходьбе сидя
+			if (actor_flags[1] == true or actor_flags[2] == true or actor_flags[3] == true or
+			   actor_flags[4] == true) and actor_flags[8] == false and actor_flags[9] == false and
+			   actor_flags[10] == false then
+				---------------------------------------
+				if actor_flags[5] == true and actor_flags[6] == true then
+					return get_console():execute("cam_inert 0.9")
+				elseif actor_flags[5] == true then
+					return get_console():execute("cam_inert 0.7")
+				end
+				---------------------------------------
+			end
+		end
+	end
+	
+	get_console():execute("cam_inert 0")	
+end
+
+--\\ Заблокировать инерцию на указанное время (в м\сек)
+function DisableCameraInertion(iTime)
+	CI_Disable_time = time_global() + iTime
+end
+
+--******************************--
+--****** ДВОЙНЫЕ ПРИЦЕЛЫ  ******--
+--******************************--
+
+function DualScope(EData, wpn, data, hud_state, zoom_state, delta)
+	local wpn_sec		= wpn:section()
+	local wpn_id		= wpn:id()
+	local hud_name		= data:GetName()
+	
+	local bZF			= _u.ltx(wpn_sec, "scope_zoom_factor", 	   "numf") or 60	
+	local bAltZF		= _u.ltx(wpn_sec, "scope_zoom_factor_alt", "numf") or nil
+
+	--* Если одет прицел, то берём параметры дефолтного зума из него
+	if swm_bind_wpn ~= nil then
+		local scope_name = swm_bind_wpn.SCOPES_INFO[wpn:id()]
+		if scope_name ~= nil then
+			local addon_sect	= _u.ltx(scope_name, "scope_name", 	  "str") or "scope_sect_is_nil"
+			bZF					= _u.ltx(addon_sect, "scope_zoom_factor", 	  "numf") or 60	
+			bAltZF				= _u.ltx(scope_name, "scope_zoom_factor_alt", "numf") or nil
+		end
+	end
+	
+	local wpn_clsid	=  wpn:clsid()
+	local curnt_gl_mode	= false
+		
+	if wpn_clsid == clsid.wpn_ak74_s or wpn_clsid == clsid.wpn_groza_s then
+		curnt_gl_mode = EData:Get("m_bGrenadeMode")	--> В режиме гранатомёта?	
+	end
+		
+	if curnt_gl_mode == true then
+		local bAltGL	= _u.ltx(wpn_sec, "scope_zoom_factor_gl",  "numf") or 60
+		EData:Set("m_fZoomFactor",	bAltGL)	
+	else
+		if bAltZF ~= nil then
+			if key_click ~= nil and key_click(___KEYS.SWITCH_SCOPE) then --> (Колёсико)
+				if DS_state_tbl[wpn_id] == nil then
+					DS_state_tbl[wpn_id] = true
+				else
+					DS_state_tbl[wpn_id] = nil
+				end
+			end 
+			
+			if DS_state_tbl[wpn_id] ~= nil then
+				local aim_pos = _u.ltx(hud_name, "aim_hud_offset_pos_alt", "vec")
+				local aim_rot = _u.ltx(hud_name, "aim_hud_offset_rot_alt", "vec")
+						
+				EData:Set("m_fZoomFactor", bAltZF)			
+					
+				data:Set("aim_hud_offset_pos", 	aim_pos.x, aim_pos.y, aim_pos.z)
+				data:Set("aim_hud_offset_rot",	aim_rot.x, aim_rot.y, aim_rot.z)
+			else
+				EData:Set("m_fZoomFactor",	bZF)	
+			end
+		end
+	end
+end
+				
+--**********************--
+--****** ОТДЫШКА  ******--
+--**********************--
+
+local BTH_last_power	= 1
+local BTH_shake_x		= 0
+local BTH_shake_y		= 0
+local BTH_run_power		= 0
+local BTH_bUp			= true
+local BTH_bDown			= true
+local BTH_bShakePlayed	= false
+
+function BreathingMgr(data, hud_state, zoom_state, delta)
+	if db.actor.power < BTH_last_power then
+		BTH_run_power = BTH_run_power + BTH_RUN_POWER_INCR
+		if BTH_run_power > BTH_RUN_POWER_MAX then BTH_run_power = BTH_RUN_POWER_MAX end
+	else
+		if BTH_run_power > 0 then
+			BTH_run_power = BTH_run_power - (BTH_RUN_POWER_DECR * (BTH_UPDATE_TIME/5))
+		else
+			BTH_run_power = 0
+		end
+	end
+	BTH_last_power = db.actor.power
+	
+	local shake_power = (1-db.actor.power) + BTH_run_power
+	if shake_power > 1 then shake_power = 1 end
+		
+	if shake_power == 0 then
+		BTH_bUp 	= (math.random(0, 1) == 1)
+		BTH_bDown 	= (math.random(0, 1) == 1)
+	end
+	
+	local def_fov		= swm_fov_mgr.GetFov()
+	local bIsZoom		= zoom_state > 0
+	local fov_factor	= (device().fov / def_fov) * BTH_FOV_POWER
+	local delta_mod		= swm_main.ACTOR_DELTA / BTH_SPEED_MOD
+	
+	--* Усиление отдышки
+	if shake_power > BTH_SHAKE_MIN and bIsZoom then
+		-- Y
+		local shake_y_spd = BTH_HORIZ_SPEED * shake_power * fov_factor * delta_mod
+		local shake_y_lim = BTH_HORIZ_LIM * shake_power * fov_factor
+					
+		if BTH_bUp == true then
+			BTH_shake_y = BTH_shake_y + shake_y_spd
+						
+			if BTH_shake_y > shake_y_lim then
+				BTH_bUp = false
+			end
+		else
+			BTH_shake_y = BTH_shake_y - shake_y_spd
+					
+			if BTH_shake_y < -shake_y_lim then
+				BTH_bUp = true
+			end			
+		end
+					
+		-- X
+		local shake_x_spd = BTH_VERT_SPEED * shake_power * fov_factor * delta_mod
+		local shake_x_lim = BTH_VERT_LIM * shake_power * fov_factor
+					
+		if BTH_bDown == true then
+			BTH_shake_x = BTH_shake_x + shake_x_spd
+						
+			if BTH_shake_x > shake_x_lim then
+				BTH_bDown = false
+			end
+		else
+			BTH_shake_x = BTH_shake_x - shake_x_spd
+						
+			if BTH_shake_x < -shake_x_lim then
+				BTH_bDown = true
+			end			
+		end	
+	end
+			
+	--* Ослабление отдышки
+	if shake_power <= BTH_SHAKE_MIN or not bIsZoom or (swm_slowmo ~= nil and swm_slowmo.IsActive()) then			
+		if BTH_shake_x > 0 then
+			BTH_shake_x = BTH_shake_x - BTH_RETURN_SPEED * BTH_FOV_MOD * fov_factor * delta_mod
+		else
+			BTH_shake_x = BTH_shake_x + BTH_RETURN_SPEED * BTH_FOV_MOD * fov_factor * delta_mod
+		end
+				
+		if BTH_shake_y > 0 then
+			BTH_shake_y = BTH_shake_y - BTH_RETURN_SPEED * BTH_FOV_MOD * fov_factor * delta_mod
+		else
+			BTH_shake_y = BTH_shake_y + BTH_RETURN_SPEED * BTH_FOV_MOD * fov_factor * delta_mod
+		end
+
+		if math.abs(BTH_shake_x) <= 0.001 * delta_mod then
+			BTH_shake_x = 0.00000
+		end
+		if math.abs(BTH_shake_y) <= 0.001 * delta_mod then
+			BTH_shake_y = 0.00000
+		end			
+	end				
+	
+	data:Add("aim_hud_offset_pos", 	-BTH_shake_y/BTH_HORIZ_POS_MOD, BTH_shake_x/BTH_VERT_POS_MOD, 	nil)
+	data:Add("aim_hud_offset_rot",	BTH_shake_x, 					BTH_shake_y, 					nil)
+end
+
+--******************************--
+--****** Инерциия ствола  ******--
+--******************************--
+
+local WI_last_cam_dir		= nil	--> Прошлая дирекцкия камеры
+local WI_last_inert_time	= 0		--> Время прошлого сильного изменения инерции
+local WI_next_inert_time	= 0		--> Время следующего изменения инерции
+local WI_current_y			= 0		--> Текущий сдвиг Y
+local WI_current_x			= 0		--> Текущий сдвиг X
+local WI_iCanReturn			= 0		--> Числовой флаг, определяющий можно ли сбавлять инерцию
+
+function WeaponInertion(data, hud_state, zoom_state, delta)
+	local cam_dir		= device().cam_dir
+	local def_fov		= swm_fov_mgr.GetFov()
+	local fov_factor	= (device().fov / def_fov) * 1
+	
+	local delta_coef	= swm_main.ACTOR_DELTA / WI_SPEED_MOD
+	
+	local max_y			= WI_MAX_Y
+	local max_y_r		= WI_MAX_Y_R
+	
+	if ALT_POS_MODE == true then
+		max_y			= WI_MAX_ALT_Y
+		max_y_r			= WI_MAX_ALT_Y_R	
+	end
+	
+	local max_x			= WI_MAX_X
+	local speed_y		= WI_SPEED_Y
+	local speed_x		= WI_SPEED_X
+	local speed_ret_y	= WI_SPEED_RET_Y
+	local speed_ret_x	= WI_SPEED_RET_X
+	
+	--* Сдвигаем модель ствола
+	if zoom_state == 0 then		--> От бедра
+	---------------------------
+		--* Забито в дефолте *--
+		if _console.GetVal("hud.inertion") == false then
+			return
+		end
+	---------------------------
+	elseif zoom_state == 1 then	--> В процессе прицеливания
+	---------------------------
+		--* Делаем сброс текущей инерции
+		WI_current_y = 0
+		WI_current_x = 0			
+	---------------------------
+	else						--> В прицеле
+	---------------------------
+		if _console.GetVal("hud.inertion_aim") == false then
+			return
+		end	
+		
+		max_y		= WI_S_MAX_Y
+		max_y_r		= WI_S_MAX_Y_R	
+		max_x		= WI_S_MAX_X
+		speed_y		= WI_S_SPEED_Y
+		speed_x		= WI_S_SPEED_X
+		speed_ret_y	= WI_S_SPEED_RET_Y
+		speed_ret_x	= WI_S_SPEED_RET_X	
+	---------------------------
+	end
+
+	speed_y		= speed_y		 * fov_factor * delta_coef
+	speed_x		= speed_x		 * fov_factor * delta_coef
+	speed_ret_y	= speed_ret_y	 * fov_factor * delta_coef
+	speed_ret_x	= speed_ret_x	 * fov_factor * delta_coef
+	
+	if time_global() > WI_next_inert_time then
+		if WI_last_cam_dir ~= nil then
+			local old_y = WI_last_cam_dir:getH()
+			local old_x = WI_last_cam_dir:getP()
+			local new_y = cam_dir:getH()
+			local new_x = cam_dir:getP()
+			local sub_y = _u.calc_Y(new_y, old_y)
+			local sub_x = -(new_x - old_x)
+						
+			if math.abs(sub_y) >= WI_MIN_CHANGE_Y or math.abs(sub_x) >= WI_MIN_CHANGE_X then
+				WI_last_inert_time = time_global() + WI_CAN_RETURN_TIME
+				WI_iCanReturn = WI_iCanReturn + 1
+				if WI_iCanReturn > WI_CAN_RETURN_CNT then WI_iCanReturn = WI_CAN_RETURN_CNT end
+			else
+				WI_iCanReturn = WI_iCanReturn - 1
+				if WI_iCanReturn < 0 then WI_iCanReturn = 0 end
+			end
+			
+			local function WI_add_Y(add_y)
+				WI_current_y = WI_current_y + add_y
+				if WI_current_y > max_y then
+					WI_current_y = max_y
+				end
+				if WI_current_y < -max_y_r then
+					WI_current_y = -max_y_r
+				end			
+			end
+			
+			local function WI_add_X(add_x)
+				WI_current_x = WI_current_x + add_x
+				if WI_current_x > max_x then
+					WI_current_x = max_x
+				end
+				if WI_current_x < -max_x then
+					WI_current_x = -max_x
+				end			
+			end
+			
+			WI_add_Y(sub_y * speed_y)
+			WI_add_X(sub_x * speed_x)
+		end
+		
+		WI_last_cam_dir = cam_dir
+		WI_next_inert_time = time_global() + 50
+	end
+	
+	--* При активном слоу-мо сбрасываем инерцию, ибо смотрится криво, аналогично для перезарядки
+	if hud_state == 7 or (swm_slowmo and swm_slowmo.IsActive() == true) then
+		WI_current_x	= 0	
+		WI_current_y	= 0
+	end
+	
+	--* Возврат в дефолтную позицию
+	--\\ Проверка нужно ли возвращать ствол
+	local function CanReturn()	--> От прицела возвращаем сразу, от бедра через некоторое время.
+		if zoom_state == 0 then
+			--* Условия возвращения от бедра
+			if time_global() > WI_last_inert_time then
+				return true
+			end
+		else
+			--* Условие возвращения от прицела 
+			return WI_iCanReturn == 0
+		end
+		
+		return false
+	end
+	
+	--\\ Сам возврат
+	if CanReturn() then
+		if WI_current_x > 0 then
+			WI_current_x = WI_current_x - speed_ret_x
+			if WI_current_x < 0 then WI_current_x = 0 end
+		else
+			WI_current_x = WI_current_x + speed_ret_x
+			if WI_current_x > 0 then WI_current_x = 0 end	
+		end
+		
+		if WI_current_y > 0 then
+			WI_current_y = WI_current_y - speed_ret_y
+			if WI_current_y < 0 then WI_current_y = 0 end
+		else
+			WI_current_y = WI_current_y + speed_ret_y
+			if WI_current_y > 0 then WI_current_y = 0 end	
+		end
+	end
+	
+	data:Add("hands_position", 		WI_current_y, WI_current_x, nil)		
+end
+
+--**********************************************--
+--****** Поворот ствола при косой ходьбе  ******--
+--**********************************************--
+	
+local SW_cur_rotate = 0
+function StrafeWalk(data, hud_state, zoom_state, delta)
+	if (zoom_state == 2 and hud_state == 5) or hud_state == 7 then
+		SW_cur_rotate = 0
+		return
+	end
+
+	--* Параметры от бедра
+	local ZMOD			= SW_ZMOD		--> Сдвиг ствола вперёд\назад при боковой ходьбе
+	local rotate_step	= SW_ROT_STEP	--> Величина шага изменения каждого параметра
+	local rotate 		= SW_POWER		--> Чем больше, тем сильнее ствол наклонится
+
+	--* Параметры при прицеливании
+	if zoom_state  == 2 then
+		rotate		= SW_S_POWER
+		ZMOD		= SW_S_ZMOD
+		rotate_step	= SW_S_ROT_STEP
+	end
+	
+	local target_rotate	= 0
+	
+	local def_fov		= swm_fov_mgr.GetFov()
+	local fov_factor	= (device().fov / def_fov)
+			
+	if actor_flags[5] == false and actor_flags[6] == false then
+		if actor_flags[3] then 		--> влево
+			target_rotate = -rotate
+		elseif actor_flags[4] then 	--> вправо
+			target_rotate = rotate
+		end
+	end
+	
+	--* Ускоряем ежели резко сменили направление
+	if math.abs(SW_cur_rotate) > 0.3 then
+		if (SW_cur_rotate > 0 and target_rotate < 0) or (SW_cur_rotate < 0 and target_rotate > 0) then
+			rotate_step = rotate_step * 3
+		end
+	end
+	
+	--* Насколько худ должен быть смещён в этом вызове относительно дефолтной позиции
+	local rotate_offset		= 	0
+
+	if target_rotate >= SW_cur_rotate then
+		rotate_offset = SW_cur_rotate + rotate_step
+		if rotate_offset > target_rotate then rotate_offset = target_rotate end
+	end
+	if target_rotate < SW_cur_rotate then
+		rotate_offset = SW_cur_rotate - rotate_step
+		if rotate_offset < target_rotate then rotate_offset = target_rotate end			
+	end	
+	
+	rotate_offset = rotate_offset * fov_factor
+	SW_cur_rotate = rotate_offset
+
+	if zoom_state == 2 then
+		rotate_offset = rotate_offset * -1
+	end
+		
+	--* Добавляем смещения в худ
+	data:Add("hands_orientation", 	nil, 						nil, 						rotate_offset)
+	data:Add("hands_position", 		rotate_offset/SW_X_MOD, 	(rotate_offset/SW_Y_MOD), 	ZMOD * math.abs(rotate_offset/SW_Z_MOD))		
+end
+
+
+--*******************************************--
+--****** Тряска при стрельбе  ******--
+--*******************************************--
+
+local shot_shake_timer 	=	0
+local shot_shake_vert	=	0
+local shot_shake_horiz	=	0
+	
+function ShotShake(data, hud_state, zoom_state, delta)
+	--* Проверяем стреляли ли мы недавно
+	if bShot == true then
+		shot_shake_timer	= 	time_global() + 100
+	end
+	
+	if time_global() < shot_shake_timer then	
+		if bShot == true then
+			local random_vert	=	(math.random(SHAKE_VERT_MIN, SHAKE_VERT_MAX) * math.random(-1,1)) / 100
+			local random_horiz	=	(math.random(SHAKE_HORIZ_MIN, SHAKE_HORIZ_MAX) * math.random(-1,1)) / 100
+			
+			shot_shake_vert		=	random_vert
+			shot_shake_horiz	=	random_horiz
+		end
+	else
+		shot_shake_vert		=	0
+		shot_shake_horiz	=	0	
+	end
+	
+	data:Add("hands_orientation", 	shot_shake_vert, shot_shake_horiz, nil)		
+end
+
+
+--*******************************************--
+--****** Поднятие ствола у препятствий ******--
+--*******************************************--
+	
+local cur_hp_offset = 0
+local cur_hpz_offset = 0
+local cur_ho_offset = 0
+		
+function DistanceMgr(data, hud_state, zoom_state, delta)
+	local dist = swm_memory.GET_Dist()
+	
+	local coef = 0
+	if dist ~= nil and dist <= DMGR_MAX_DISTANCE then
+		coef = (1 - (dist - DMGR_MIN_DISTANCE)/(DMGR_MAX_DISTANCE - DMGR_MIN_DISTANCE))
+	end
+	
+	--* Целевые смещения
+	local target_hp_y		= (DMGR_POS_Y * coef)
+	local target_hp_z		= (DMGR_POS_Z * coef)
+	local target_ho_y		= (DMGR_ORI_Y * coef)
+	
+	local bIsZooming	= zoom_state > 0
+	local bWasShoting	= false
+	
+	--* Проверяем стреляли ли мы недавно
+	if aftershot_time ~= nil then
+		if time_global() < aftershot_time then
+			bWasShoting = true
+		end
+	end
+	
+	--* Насколько худ должен быть смещён в этом вызове относительно дефолтной позиции
+	local hp_offset		= 	0
+	local hpz_offset	=	0
+	local ho_offset		=	0
+	
+	if bWasShoting == true then
+		if not bIsZooming then
+			hpz_offset		= (DMGR_POS_Z2 * coef)	--> Если стреляем, то просто отодвигаем ствол назад
+		end
+	else
+		local speed_coef = 1
+		if delta > 10 then
+			if delta > 30 then
+				speed_coef = 6
+			else
+				speed_coef = delta/5
+			end				
+		end
+		speed_coef = speed_coef * DMGR_SPEED_COEF
+		
+		--* Величина шага изменения каждого параметра
+		local hp_step		= 0.002 * speed_coef
+		local hpz_step		= 0.005 * speed_coef
+		local ho_step		= 0.4	* speed_coef			
+		
+		--* Просчитываем текущий сдвиг пушки
+		if not bWasShoting and not bIsZooming then
+			if target_hp_y >= cur_hp_offset then
+				hp_offset = cur_hp_offset + hp_step
+				if hp_offset > target_hp_y then
+					hp_offset = target_hp_y
+				end
+			end
+			if target_hp_y < cur_hp_offset then
+				hp_offset = cur_hp_offset - hp_step
+				if hp_offset < target_hp_y then hp_offset = target_hp_y end			
+			end	
+
+			if target_hp_z >= cur_hpz_offset then
+				hpz_offset = cur_hpz_offset + hpz_step
+				if hpz_offset > target_hp_z then hpz_offset = target_hp_z end
+			end
+			if target_hp_z < cur_hpz_offset then
+				hpz_offset = cur_hpz_offset - hpz_step
+				if hpz_offset < target_hp_z then hpz_offset = target_hp_z end			
+			end	
+
+			if target_ho_y >= cur_ho_offset then
+				ho_offset = cur_ho_offset + ho_step
+				if ho_offset > target_ho_y then ho_offset = target_ho_y end
+			end
+			if target_ho_y < cur_ho_offset then
+				ho_offset = cur_ho_offset - ho_step
+				if ho_offset < target_ho_y then ho_offset = target_ho_y end			
+			end	
+		end
+	end
+	
+	cur_hp_offset		= hp_offset
+	cur_hpz_offset		= hpz_offset
+	cur_ho_offset		= ho_offset
+	
+	--* Добавляем смещения в худ
+	data:Add("hands_position", 		nil, hp_offset, hpz_offset)
+	data:Add("hands_orientation", 	nil, ho_offset, nil)	
+end

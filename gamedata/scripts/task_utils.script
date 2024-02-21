@@ -1,0 +1,132 @@
+local goodwill = 0
+
+function recive_tasks_cl(P)
+	local ptype = P:r_u8()
+	if (ptype == 1) then 
+		local bool = P:r_u8()
+		local name = P:r_stringZ()
+		task_utils.recive_info(bool, name)
+	elseif (ptype == 2) then 
+		goodwill = P:r_u8()
+	end
+end
+
+function recive_tasks(SenderID, P)
+	local t = P:r_u8() 
+	local player = level.get_object_by_client(SenderID):id()
+	server_msg("recive_tasks: "..tostring(t))
+	if (t == 1) then
+		server_msg("t == 1")
+		local type = P:r_u8()
+		local size = P:r_u32()
+		local item = P:r_stringZ()
+		task_utils.recive_reward(type, size, item, player)
+	elseif (t == 2) then
+		server_msg("t == 2")
+		local size = P:r_u32()
+		local item = P:r_stringZ()
+		task_utils.recive_drop_item(size, item, player)
+	elseif (t == 3) then
+		local bool = P:r_u8()
+		local name = P:r_stringZ()
+		task_utils.recive_info(bool, name)
+	elseif (t == 4) then
+		task_utils.sync_goodwill()
+	elseif (t == 5) then
+		local quest = P:r_stringZ()
+		task_utils.recive_quest_save(player, quest)
+	elseif (t == 6) then
+		local team = P:r_u8()
+		mp.change_team(SenderID, team)
+	end
+end
+
+function send_reward(type, size, item)
+	server_msg("send_reward")
+	local P = mp_events.gen_event('TASKS') 
+	P:w_u8(1)
+	P:w_u8(type)
+	P:w_u32(size)
+	P:w_stringZ(item)
+	mp_events.send_to_server(P)
+end
+
+function recive_reward(type, size, item, player)
+	server_msg("recive_reward")
+	if (type == 1 or not item) then
+			mp.give_money(player, size)
+	elseif (type == 2) then
+			mp.object_give_to_actor(player, item, size)
+	end 
+end
+
+function recive_drop_item(size, item, player)
+	server_msg("recive_drop_item")
+	mp.send_news_item_drop(player, item, size)
+end
+
+function send_drop_item(size, item)
+	local P = mp_events.gen_event('TASKS') 
+	P:w_u8(2)
+	P:w_u32(size)
+	P:w_stringZ(item)
+	mp_events.send_to_server(P)
+end
+
+function recive_info(bool, name)
+	if bool == 1 then
+		db.get_actor():give_info_portion(name)
+	elseif bool == 0 then
+		db.get_actor():disable_info_portion(name)
+	end
+	server_msg("changed on server " .. name)
+	if OnServer() then
+		local P = mp_events.gen_event('TASKS') 
+		P:w_u8(1)
+		P:w_u8(bool)
+		P:w_stringZ(name)
+		mp_events.send_broadcast(P)
+		server_msg("broadcasted by server " .. name)
+	end
+end
+
+function send_info(bool, name)
+		local P = mp_events.gen_event('TASKS') 
+		P:w_u8(3)
+		P:w_u8(bool)
+		P:w_stringZ(name)
+		mp_events.send_to_server(P)
+end
+
+function send_info_changeteam_duty()
+		local P = mp_events.gen_event('TASKS') 
+		P:w_u8(6)
+		P:w_u8(2)
+		mp_events.send_to_server(P)
+end
+
+function sync_goodwill()
+		local P = mp_events.gen_event('TASKS')
+		local svgoodwill = GetGoodwill()
+		P:w_u8(2)
+		P:w_u8(svgoodwill)
+		mp_events.send_broadcast(P)
+end
+
+function cl_get_goodwill()
+	local P = mp_events.gen_event('TASKS') 
+	P:w_u8(4)
+	mp_events.send_to_server(P)
+	return goodwill
+end
+
+function recive_quest_save(player, quest)
+	mp.save_quest(player, quest)
+end
+
+function send_quest_save(quest)
+	local P = mp_events.gen_event('TASKS') 
+	P:w_u8(5)
+	P:w_stringZ(quest)
+	mp_events.send_to_server(P)
+end

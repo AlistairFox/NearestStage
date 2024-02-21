@@ -1,0 +1,70 @@
+function give_food_quest()
+   task_manager.get_task_manager():give_task("stalker_trader_lootquest")
+end
+
+function has_food()
+    if db.mp_actor:object("kolbasa") then
+        return true
+    end
+    return false
+end
+
+function transfer_kolbasa(first_speaker, second_speaker)
+    dialogs.relocate_item_section_from_actor(first_speaker, second_speaker, "kolbasa")
+end
+
+function complete_kolbasa()
+	local task_id = stalker_trader_lootquest:get_id()
+   task_manager.get_task_manager():task_complete("stalker_trader_lootquest")
+end
+
+function give_countdown_1_quest()
+	task_manager.get_task_manager():give_task("stalker_trader_countdown")
+	task_utils.send_reward(2, 5, "ammo_12x70_buck")
+	task_utils.send_reward(2, 1, "wpn_toz34")
+end
+
+function trader_countdown_novice_check()
+	if db.mp_actor:object("novice_outfit") then
+        return true
+    end
+    return false
+end
+
+function trader_countdown_check()
+	if db.mp_actor:object("wpn_beretta") then
+        return true
+    end
+    return false
+end
+
+function trader_countdown1_transfer(first_speaker, second_speaker)
+	dialogs.relocate_item_section_from_actor(first_speaker, second_speaker, "wpn_beretta")
+	task_utils.send_drop_item(1, "wpn_beretta")
+	task_utils.send_reward(2, 3, "ammo_12x70_buck")
+	task_utils.send_reward(1, 30000, "")
+end
+
+function give_rastyapa_quest()
+	   task_manager.get_task_manager():give_task("stalker_trader_rastyapa")
+end
+
+function trader_rastyapa_check()
+	if db.mp_actor:object("wpn_ak74u") then
+		return true
+	elseif db.mp_actor:object("wpn_kiparis") then
+		return true
+	end
+    return false
+end
+
+function trader_rastyapa_transfer(first_speaker, second_speaker)
+	if db.mp_actor:object("wpn_ak74u") then
+		dialogs.relocate_item_section_from_actor(first_speaker, second_speaker, "wpn_ak74u")
+		task_utils.send_drop_item(1, "wpn_ak74u")
+    elseif db.mp_actor:object("wpn_kiparis") then
+		dialogs.relocate_item_section_from_actor(first_speaker, second_speaker, "wpn_kiparis")
+		task_utils.send_drop_item(1, "wpn_kiparis")
+    end
+	task_utils.send_reward(1, 25000, "")
+end

@@ -1,0 +1,87 @@
+local sleep_control = nil
+
+class "sleep_dialog" (CUIScriptWnd)
+function sleep_dialog:__init() super()
+
+	self:SetWndRect(Frect():set(0,0,1024,768))
+
+	local xml = CScriptXmlInit()
+	xml:ParseFile("ui_save_and_disconnect_dialog.xml")
+
+	self.back = xml:InitStatic("background", self)
+
+	--self.static_cover = xml:InitStatic("static_cover", self.back)
+	--self.st_marker = xml:InitStatic("st_marker", self.static_cover)
+
+
+	self.btn_sleep = xml:Init3tButton("btn_sleep", self.back)
+	self:Register(self.btn_sleep, "btn_sleep")
+
+	self.btn_cancel = xml:Init3tButton("btn_cancel", self.back)
+	self:Register(self.btn_cancel, "btn_cancel")
+
+--------------------------------------------------------------------------------
+	self:AddCallback("btn_sleep", ui_events.BUTTON_CLICKED, self.OnButtonSleep, self)
+	self:AddCallback("btn_cancel", ui_events.BUTTON_CLICKED, self.OnButtonCancel, self)
+
+end
+
+
+function sleep_dialog:OnButtonSleep()
+	self:HideDialog()
+	xr_effects.disable_ui(db.actor, nil)
+	--level.add_cam_effector("camera_effects\\sleep.anm", 10, false, "ui_sleep_dialog.dream_callback")
+	level.add_pp_effector("sleep_fade.ppe", 11, false)
+	--db.actor:give_info_portion("actor_is_sleeping")
+	_G.mus_vol = get_console():get_float("snd_volume_music")
+	_G.amb_vol = get_console():get_float("snd_volume_eff")
+	get_console():execute("snd_volume_music 0")
+	get_console():execute("snd_volume_eff 0")
+
+	local rez = game.send_save_request()
+	while not rez do
+		msg("waiting answer")
+	end
+	get_console():execute("disconnect")
+	get_console():execute("quit")
+end
+
+function sleep_dialog:OnButtonCancel()
+	self:HideDialog()
+	--db.actor:give_info_portion("tutorial_sleep")
+	--disable_info("sleep_active")
+	--game.stop_tutorial()
+end
+--------------------------------------------------------------------------------
+function dream_callback()
+	level.add_cam_effector("camera_effects\\sleep.anm", 10, false, "ui_sleep_dialog.dream_callback2")
+	local hours = sleep_control.time_track:GetIValue()
+	level.change_game_time(0,hours,0)
+	level_weathers.get_weather_manager():forced_weather_change()
+	surge_manager.get_surge_manager().time_forwarded = true
+	if(surge_manager.is_started() and level_weathers.get_weather_manager().weather_fx) then
+		level.stop_weather_fx()
+--		level_weathers.get_weather_manager():select_weather(true)
+		level_weathers.get_weather_manager():forced_weather_change()
+	end
+	db.actor.power = 1
+    printf("dream_callback: time forwarded on [%d]", hours)
+end
+
+function dream_callback2()
+	xr_effects.enable_ui(db.actor, nil)
+	get_console():execute("snd_volume_music "..tostring(_G.mus_vol))
+	get_console():execute("snd_volume_eff "..tostring(_G.amb_vol))
+	_G.amb_vol = 0
+	_G.mus_vol = 0
+	db.actor:give_info_portion("tutorial_sleep")
+	disable_info("actor_is_sleeping")
+	disable_info("sleep_active")
+end
+
+function sleep()
+	if(sleep_control==nil) then
+		sleep_control = ui_save_and_disconnect_dialog.sleep_dialog()
+	end
+	sleep_control:ShowDialog(true)
+end

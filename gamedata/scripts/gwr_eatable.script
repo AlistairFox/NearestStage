@@ -1,0 +1,582 @@
+--gwr_eatable.script
+--Description: ������ ������������ "��������" �������� � ������������� ��������� � ���������� �� � ����� ������
+--Creator: Sin!
+--Last Edit: 13 Oct 2016
+
+--************************************************************
+--������� ������ ����� ����� ���������:
+--����� ����� ���-�� ���, ����������� ��������������� ������ � bind_stalker'e
+--� ���� ������� �� ���������, �������� �� "���������" ������� ��������� � �����; ���� ��������, �� ������� �������-������, ������� ������ � ��������� hud ���������� ��������
+--�����, �� ����� �����, ��������� � ��������� timing (����, ����� �������� ������ �����������), �������� ��������.
+--(����, ������� ��, ����� �� ��� ��� ���������� ������� ��� "������" � ����� :))
+--�� ������� ��� ������� ������� ������-������� (��������� � ������� "����"), ������� ��� �� �������.
+--************************************************************
+
+
+
+local ini = system_ini()
+
+--���� ������� ����, ������� ����� �������� ��� �������������
+local current_sound 
+
+--����������, ������������ �� ����� �������� ������������� ������������ ����������� ����������������, ������� ���������� �� �������
+--������ �������� ��������, � ���������� ���� ��� ����� �������� ��������
+--���� ������������ ����� ����������� ����������, ������� ������������ � ������� ������, �� ����� ����� ��������� false
+
+local check_quickslots = true 
+
+--��������� ����, �� ������� ��������� on_quickuse_suspected
+local quickuse_suspected_frame = 0
+
+
+function OnItemUsed(section)
+
+--������� ����������� � ���, ��� �� ������ ��� ���������.
+--���������, ���� �� � ����� �������� ���.
+--���� ��� ����, �� �������, � ��� ��� �������� ������.
+--���� ��� ���� ����������� ������� (�.�. "�����������" �������), �� ������� �������, � ������ � ��� ��, ��� ������� ������.
+--���� ��� ���� ������� ������ ������ (�.�. ���, ������� ����� ��� �� ����� "��������"), �� ������ ���������:
+--������� ������, ������� ������������� ������� �������� �����������.
+--����� ������, ����� ����������� �������� ���������� ��� ������� �������������
+--����� ���� � ��������� ������ �������� "���������" ����������� �������
+--���� �� �������� ��� �������, ������� �� ������ ��� �����, �� ������ �� ������, � ��������� ������ ���������� ��������� �������, ��� ���� ������� ������� ���������, � ������� ���������
+
+--������ ����������� � ���, ����� �� ��� ������ ������������ ����� ������� � ������ ������.
+--��� ����� ���������, �� ����� �� ��� ����, � ������� �������������� �������� ������� �������, ���-���� ������.
+--���� �����������, ��� �� �����, �� ������� ������� ������� �������, � ����������� ������������.
+--����� - ������� ��� ������� �������
+
+	if not(ini:line_exist(section, "hud")) then			-- ���� �� ����� ������� �������� ��� ����, �� � �������� �������� ������ ������������
+		if ini:line_exist(section, "anabiotic") and (ini:r_bool(section, "anabiotic")==true) then
+			if db.storage[db.mp_actor:id()].pstor["gwr_eat_slot"]~=nil then
+				db.storage[db.mp_actor:id()].pstor["gwr_eat_slot"] = 0
+			end
+			anabiotic()
+		end
+		return
+	end
+	
+
+	--���� � ��� ������� ������������� - ���� �������� "�����������" �������
+	if quickuse_suspected_frame == device().frame then 
+		-- ������, ����� ������� �������� �������
+		local base_obj = section	
+		if ini:line_exist(section, "base_object") then
+			base_obj = ini:r_string(section, "base_object")
+		end
+		
+		--������, ������� ������������� �������� �����������.
+		local uses_count = 1
+		if ini:line_exist(base_obj, "uses_count") then
+			uses_count = ini:r_s32(base_obj, "uses_count")
+		end
+		
+		--������ ����������, ����� ������ ������ ������������� �������������
+		local use_items = {}
+		local i
+			
+		
+		use_items[1] = base_obj
+		for i=2, uses_count do
+			use_items[i] = ini:r_string(base_obj, "using_"..tostring(i))		
+		end
+		
+		--���������� ��� �������� � ��������� ������, ��� �������� ����� ��������������
+		local last_found = 1
+		local min_object
+		db.mp_actor:iterate_inventory(function (tmp, item)	
+			local s = item:section()
+			for i=uses_count, last_found, -1 do
+				if (s==use_items[i]) and (i>=last_found) then
+					min_object = item
+					last_found = i
+				end
+			end
+		end, db.mp_actor)
+		
+		--log1("Object "..min_object:section().." ready to use")
+		
+		
+		--if (min_object~=nil) and (min_object:section() ~= section) then
+		if (min_object:section() ~= section) then
+			--��� �������, ������� �� ������ ��� ������������, �� ������� �������� �����������. ������� ���������, ������� ��������������, ������� ������ ������ ����������
+			alife():create(section, db.mp_actor:position(), db.mp_actor:level_vertex_id(), db.mp_actor:game_vertex_id(), db.mp_actor:id())
+			section = min_object:section()
+			alife():release(alife():object(min_object:id()), true)
+		end
+	end
+	
+	local helmet = db.mp_actor:item_in_slot(12)
+	local outfit = db.mp_actor:item_in_slot(7)	
+	
+	--������� ������ ��� �������� ��������
+	local section_for_spawn = section
+	
+	if outfit~=nil then 
+		local outfit_sect_param = "change_outfit_" .. outfit:section()
+		if (ini:line_exist(section, outfit_sect_param)) then
+			section = ini:r_string(section, outfit_sect_param)
+		end		
+	end	
+	
+	if level.get_game_difficulty()>=game_difficulty.master then
+--******************************************************************************��������, ����� �� �� ����� ������ ������� ��� ������� �����/�����*******************************************************
+				--��� ����� ������� ���������, ����� ��, ����������, ��� ���� :)
+				if helmet ~= nil then	
+					--���� �����. ���������, ��������� �� ������� ������������� ��� ������� �����
+					if ini:line_exist(section, "helm_prohibited") and (ini:r_bool(section, "helm_prohibited") == true) then
+						--��� ������� ����� ��� ���� ������... ����� ���������, �����, � ��� ���� ���������?
+						local helm_sect = helmet:section()
+						if not (ini:line_exist(helm_sect, "food_exclusive_allowed") and (ini:r_bool(helm_sect, "food_exclusive_allowed")==true))  then
+							--� ���� ��� ���� ������ �� ���������... ����� ����
+							--����� ���������� ������ ������� � ���������, ��� ��� ��� ��������...
+							alife():create(section, db.mp_actor:position(), db.mp_actor:level_vertex_id(), db.mp_actor:game_vertex_id(), db.mp_actor:id())
+							--�� � ���������� ��� � ���, ��� ��� � ���� - ���� �������������
+							messenger.gwr_messenger("gwr_remove_your_helm", 3000)
+							return
+						end
+					end
+				elseif  outfit ~= nil then  
+				--���������� ��� �����
+					if ini:line_exist(section, "full_outfit_prohibited") and (ini:r_bool(section, "full_outfit_prohibited") == true) then					
+						local out_sect = outfit:section()
+						if ini:line_exist(out_sect, "helmet_avaliable") and (ini:r_bool(out_sect, "helmet_avaliable")== false)  then
+							if not (ini:line_exist(out_sect, "food_exclusive_allowed") and (ini:r_bool(out_sect, "food_exclusive_allowed")==true))  then
+								alife():create(section, db.mp_actor:position(), db.mp_actor:level_vertex_id(), db.mp_actor:game_vertex_id(), db.mp_actor:id())							
+								messenger.gwr_messenger("gwr_remove_your_outfit", 3000)
+						
+								return
+							end
+						end
+					end
+					
+				end		
+--*******************************************************************************************************************************************************************************************************				
+	end
+	
+	--����������� �� ������.
+	local hud_sect = ini:r_string(section, "hud")
+	local hud_slot = ini:r_string(hud_sect, "slot")+1
+	
+	--���� ���� �������� �����, �� ���������� ��������� ������� �������, ����� ������� �������.
+	if (db.mp_actor:item_in_slot(hud_slot)~=nil) then
+		alife():create(section_for_spawn, db.mp_actor:position(), db.mp_actor:level_vertex_id(), db.mp_actor:game_vertex_id(), db.mp_actor:id())
+	else
+		alife():create(hud_sect, db.mp_actor:position(), db.mp_actor:level_vertex_id(), db.mp_actor:game_vertex_id(), db.mp_actor:id())
+	end
+	
+	
+end
+
+
+
+function init(obj)
+   local new_binder = gwr_eat_binder(obj)
+   obj:bind_object(new_binder)
+end
+
+class "gwr_eat_binder" (object_binder)
+function gwr_eat_binder:__init(obj) super(obj)
+
+	local sect = self.object:section()
+	--����� ������ �� ������� ���������, ������� ��� ���������� � ������
+	self.timing = ini:r_s32(sect, "timing")
+	
+	self.timing_trash = self.timing
+	if ini:line_exist(sect, "timing_trash") then
+		self.timing_trash = ini:r_s32(sect, "timing_trash")
+	end		
+	
+	self.eatable_section = ini:r_string(sect, "gwr_eatable_object")
+	self.fake_item_section = ini:r_string(sect, "gwr_changed_object")
+	
+	self.base_sect = self.fake_item_section
+	if ini:line_exist(self.fake_item_section, "base_object") then
+		self.base_sect = ini:r_string(self.fake_item_section, "base_object")
+	end
+	
+	if ini:line_exist(self.fake_item_section, "trash_object") then
+		self.trash_sect = ini:r_string(self.fake_item_section, "trash_object")
+	end	
+	
+	self.uses_count = 1
+	if ini:line_exist(self.base_sect, "uses_count") then
+		self.uses_count = ini:r_s32(self.base_sect, "uses_count")
+	end
+	
+	self.next_sect = nil
+	
+	if self.fake_item_section == self.base_sect then
+		if self.uses_count>1 then
+			self.next_sect = ini:r_string(self.base_sect, "using_2")
+		end
+	else
+		for i=2, self.uses_count-1 do
+			if ini:r_string(self.base_sect, "using_"..tostring(i)) == self.fake_item_section then
+				self.next_sect = ini:r_string(self.base_sect, "using_"..tostring(i+1))
+				break
+			end
+		end
+	end
+	
+	--����, ������� ����� ����������������
+	if ini:line_exist(sect, "snd_using") then
+		self.use_sound = ini:r_string(sect, "snd_using")
+	end
+	--log1(self.use_sound)
+	
+	db.storage[db.mp_actor:id()].pstor["gwr_eat_slot"] = db.mp_actor:active_slot()
+	--log1("Last active slot is: "..tostring(self.lastslot))
+	
+	self.taken = false --������ �� ��, ��� ��� ������ ��� ��� �������
+	self.slot = ini:r_string(sect, "slot")+1
+	self.eatable = nil
+	self.eaten = false
+	
+	--log1(self.next_sect)
+	
+end
+
+--������ ������� ������� ���������.
+
+function gwr_eat_binder:update()
+	object_binder.update(self, delta)
+	--���� �� ��� ���������� ��������� ������� � ������� ������� - ����� ����� ��� ������
+	if self.eatable~=nil then
+		local e = level.object_by_id(self.eatable.id)
+		db.mp_actor:eat(e)
+		ProcessQuickslotsMin(self)
+		self.eatable = nil
+		if not ((db.storage[db.mp_actor:id()].pstor["gwr_eat_unlockdone"]~=nil) and (db.storage[db.mp_actor:id()].pstor["gwr_eat_unlockdone"]==true)) then
+			db.mp_actor:activate_slot(db.storage[db.mp_actor:id()].pstor["gwr_eat_slot"])
+		end
+		db.storage[db.mp_actor:id()].pstor["gwr_eat_slot"] = nil
+		return	--�� ���� �������� ������� � ���� �������, ����� ���� �������������� ����� ��������������
+	end
+	
+	--��� ������ ��������, � ����� �� ������ �� ������� �������
+	local itm_in_slot = db.mp_actor:item_in_slot(self.slot)
+	if (itm_in_slot==nil) or (itm_in_slot:id()~=self.object:id()) then
+		--log1("Another item in slot!")
+				
+		if	self.eaten==false then
+			--���� ����� ����������� ����� - ������, ����� �������� ������������ �������� � �����, �� ���������� ������ � ��������. 
+			--�������� ��������, ������ ����� ������������
+			if db.storage[db.mp_actor:id()].pstor["gwr_eat_trash_spawned"]==true then
+				PrepareEffectorItem(self)
+				return
+			end	
+			
+			--� ��������� ������ �������� �� ���������... ��� ��, ���������� � ��������� ����������� �������� �������...
+			alife():create(self.fake_item_section, db.mp_actor:position(), db.mp_actor:level_vertex_id(), db.mp_actor:game_vertex_id(), db.mp_actor:id())
+			
+			--...������� ������� ����.
+			if current_sound~=nil then
+				--log1("Remove snd!")
+				if current_sound:playing()==true then current_sound:stop() end
+				current_sound = nil
+			end
+		end
+		ReleaseHudObject(self)
+		return
+	end
+	
+	local actslot = db.mp_actor:active_slot()
+	
+	if (actslot==nil) or (actslot ~= self.slot) then
+		--���� ����� � ��� �������������� ����, � ������� ������ ������������ ������� - ����� ����� ��� ���������
+		if (bind_stalker.check_for_weapon_hide_by_zones()) and (db.storage[db.mp_actor:id()].pstor["gwr_eat_unlockdone"]==nil or db.storage[db.mp_actor:id()].pstor["gwr_eat_unlockdone"]~=true) then
+			local actor_binder = db.mp_actor:binded_object()
+			if (actor_binder.weapon_hide~=nil) and (actor_binder.weapon_hide==true) then
+				db.mp_actor:restore_weapon()
+				db.storage[db.mp_actor:id()].pstor["gwr_eat_unlockdone"] = true
+				--�.�. ������� ����� �� ��� - �� �� ���� ��� ���������
+				self.taken = false
+			end
+		end
+		
+		if self.taken == true then
+			if	self.eaten==false then
+				--���� ����� ����������� ����� - ������, ����� �������� ������������ �������� � �����, �� ���������� ������ � ��������. 
+				--�������� ��������, ������ ����� ������������
+				if db.storage[db.mp_actor:id()].pstor["gwr_eat_trash_spawned"]==true then
+					PrepareEffectorItem(self)
+					db.storage[db.mp_actor:id()].pstor["gwr_eat_slot"] = db.mp_actor:active_slot()
+					return					
+				end	
+				
+				alife():create(self.fake_item_section, db.mp_actor:position(), db.mp_actor:level_vertex_id(), db.mp_actor:game_vertex_id(), db.mp_actor:id())
+				
+				if current_sound~=nil then
+					--log1("Remove snd!")
+					if current_sound:playing()==true then current_sound:stop() end
+					current_sound = nil
+				end
+			end
+			ReleaseHudObject(self)
+			return
+		else 
+			--log1("activating my slot...")
+			
+			db.mp_actor:activate_slot(self.slot)
+		end
+	else
+		if self.taken==false then
+			--������� ������ ��� ����� � ����
+			self.taken = true
+			--���� ��������� - ������ ����
+			if (self.use_sound~=nil) then
+				current_sound = sound_object(self.use_sound)
+				current_sound:play_at_pos(db.mp_actor, vector ():set (0, 0, 0), 0, sound_object.s2d)			
+			end
+			self.starttime = device():time_global()
+		else
+			if self.trash_sect~=nil then
+				if (device():time_global() - self.starttime > self.timing_trash) and (db.storage[db.mp_actor:id()].pstor["gwr_eat_trash_spawned"]==nil) then
+					--log1("Create: "..self.trash_sect)
+					local pos = device().cam_pos
+					if ini:line_exist(self.trash_sect, "throw_offset_y") then
+						pos.y = pos.y+ini:r_float(self.trash_sect, "throw_offset_y")
+					else 
+						pos.y = pos.y+0.2
+					end										
+					local dir = device().cam_dir
+					if ini:line_exist(self.trash_sect, "throw_offset_x") then
+						dir:mul(ini:r_float(self.trash_sect, "throw_offset_x"))
+					else					
+						dir:mul(-1*0.1)
+					end
+					
+					if ini:line_exist(self.trash_sect, "throw_offset_z") then
+						local cd =device().cam_dir; 
+						cd:mul(ini:r_float(self.trash_sect, "throw_offset_z"))
+						dir:add(TransformDir(cd, ini:r_string(self.trash_sect, "throw_dir")))
+					end
+					
+					alife():create(self.trash_sect, pos:add(dir), db.mp_actor:level_vertex_id(), db.mp_actor:game_vertex_id())					
+					db.storage[db.mp_actor:id()].pstor["gwr_eat_trash_spawned"]=true
+				end
+			end
+			if (device():time_global() - self.starttime > self.timing) and (self.eaten==false) then
+				PrepareEffectorItem(self)
+				db.mp_actor:drop_item(db.mp_actor:active_item());
+			end
+		end
+	end
+end
+
+function PrepareEffectorItem(hud_binder)
+	if hud_binder.next_sect~=nil then
+		alife():create(hud_binder.next_sect, db.mp_actor:position(), db.mp_actor:level_vertex_id(), db.mp_actor:game_vertex_id(), db.mp_actor:id())
+	end
+	hud_binder.eatable = alife():create(hud_binder.eatable_section, db.mp_actor:position(), db.mp_actor:level_vertex_id(), db.mp_actor:game_vertex_id(), db.mp_actor:id())
+	hud_binder.eaten = true	
+end
+
+function ReleaseHudObject(caller)
+	if (db.storage[db.mp_actor:id()].pstor["gwr_eat_unlockdone"]~=nil) and (db.storage[db.mp_actor:id()].pstor["gwr_eat_unlockdone"]==true) then
+		db.mp_actor:hide_weapon()	--������ �����������, ���� ���� ��������� �������� � ������� ������
+	end
+	db.storage[db.mp_actor:id()].pstor["gwr_eat_trash_spawned"]=nil
+	db.storage[db.mp_actor:id()].pstor["gwr_eat_unlockdone"] = nil
+	db.storage[db.mp_actor:id()].pstor["gwr_eat_slot"] = nil
+	alife():release(alife():object(caller.object:id()), true)
+end
+
+
+--������� ���������� ���������� ����������� ����������������
+--����� ��� ��������� ��������� � ��������� ��������������
+--������������ �� ��������, ���� �� ���� ����������� ����������� ������������ ����������� ���������� � ������ ������
+function ProcessQuickslotsMin(caller)
+	--���� ����� �������� ������ ����� ����������� ��� � ��������� �������� ��� ������ �������� - �� ��������� ������
+	if (check_quickslots==false) or (caller.uses_count==1) then
+		return
+	end	
+	if db.mp_actor:object(caller.fake_item_section) then
+		return
+	end
+	
+	--������ ��������� ��� ���������, � ���������, � ����� ��� ������� �����
+	--������� ���������� � ��� �������
+	local target_slots = {}
+	local console = get_console()
+	local i
+	for i=0, 3 do
+		local sect_in_slot = console:get_string("slot_"..tostring(i))
+		if sect_in_slot == caller.fake_item_section then 
+			table.insert(target_slots, "slot_"..tostring(i)) 
+		end		
+	end
+	
+	--���� � ������ ������ �������� ��� - �� � �������� ������ ������������
+	if #target_slots == 0 then return end
+	
+	--�������, ����� ������� �� ������ ����� ������������� ���� � ��������� ������; ��������� - �������� �����������������
+	local change_to
+	if db.mp_actor:object(caller.base_sect) then 
+		change_to = caller.base_sect
+	else
+		for i=2, caller.uses_count do		
+			local itm = ini:r_string(caller.base_sect, "using_"..tostring(i))		
+			if change_to==nil then 
+				if db.mp_actor:object(itm) then 
+					change_to = itm
+					break
+				end 
+			end
+		end
+	end
+	
+	--���� �������� ��� - ������ ����� �� �������
+	change_to = change_to or caller.base_sect
+	--������ �������� � ������
+	for i=1, #target_slots do
+		console:execute(target_slots[i].." "..change_to)
+	end	
+end
+
+
+--���������� ����������, ���������� �� ������� ������
+--����������� ProcessQuickslotsMin
+function ProcessQuickslotsUpdate()
+	--���������� ProcessQuickslotsMin, ��� �������� �� ����
+	check_quickslots=false
+	
+	--��������� ��� �������� � ����������
+	local console = get_console()
+	for j=0, 3 do while true do		
+		local current_section = console:get_string("slot_"..tostring(j))
+		--��������, ������� �� ������� � ��� �����
+		if not(ini:line_exist(current_section, "hud")) then
+			break
+		end
+		local base_section = current_section	
+		if ini:line_exist(current_section, "base_object") then
+			base_section = ini:r_string(current_section, "base_object")
+		end
+		local uses_count = 1
+		if ini:line_exist(base_section, "uses_count") then
+			uses_count = ini:r_s32(base_section, "uses_count")
+		end
+		
+		--���� ������� ����������� - �� ��������� ������������
+		if uses_count==1 then
+			break
+		end
+		--������ ���������, ����� ������� � ��������� �������� �����		
+		local change_to
+		if db.mp_actor:object(base_section) then 
+			change_to = base_section 
+		else
+			for i=2, uses_count do		
+				local tmp = ini:r_string(base_section, "using_"..tostring(i))		
+				if change_to==nil then 
+					if db.mp_actor:object(tmp) then 
+						change_to = tmp 
+						break
+					end 
+				end
+			end
+		end
+		--���� ��������� ��� ������ - ������ �������
+		change_to = change_to or base_section
+		if change_to~=current_section then
+			console:execute("slot_"..tostring(j).." "..change_to)		
+		end
+	break end end
+end
+
+function anabiotic()
+	xr_effects.disable_ui_only(db.mp_actor, nil)
+	level.add_cam_effector("camera_effects\\surge_02.anm", 10, false, "bind_stalker.anabiotic_callback")
+	level.add_pp_effector("surge_fade.ppe", 11, false)
+	give_info("anabiotic_in_process")
+	_G.mus_vol = get_console():get_float("snd_volume_music")
+	_G.amb_vol = get_console():get_float("snd_volume_eff")
+	get_console():execute("snd_volume_music 0")
+	get_console():execute("snd_volume_eff 0")
+end
+
+function init_trash(obj)
+   local new_binder = gwr_trash_binder(obj)
+   obj:bind_object(new_binder)
+end
+
+class "gwr_trash_binder" (object_binder)
+function gwr_trash_binder:__init(obj) super(obj)
+	self.throw_dir = ini:r_string(self.object:section(), "throw_dir")
+	self.timing = 30
+	if ini:line_exist(self.object:section(), "remove_time") then
+		self.timing = ini:r_s32(self.object:section(), "remove_time")
+	end
+	
+	self.impulse = 50
+	if ini:line_exist(self.object:section(), "throw_impulse_z") then
+		self.impulse = ini:r_float(self.object:section(), "throw_impulse_z")
+	end
+	
+	self.impulse_y = 0.05
+	if ini:line_exist(self.object:section(), "throw_impulse_y") then
+		self.impulse_y = ini:r_float(self.object:section(), "throw_impulse_y")
+	end	
+	
+	self.timing = self.timing*1000
+	self.starttime = device():time_global()
+end
+
+function gwr_trash_binder:update(delta)
+	object_binder.update(self, delta)
+	if device():time_global() - self.starttime < self.timing then
+		if db.mp_actor~=nil and db.storage[db.mp_actor:id()].pstor["gwr_eat_trash_"..tostring(self.object:id())]==nil then
+			--���� ����� ������ � ������� �� ������
+			local dir = device().cam_dir
+			dir.y = self.impulse_y
+
+			dir=TransformDir(dir,self.throw_dir) 
+			
+			local h = hit()			
+			h.direction = dir
+			h.draftsman = db.mp_actor
+			h.impulse = self.impulse
+			h.power = 0
+			h.type = 2
+			self.object:hit(h)
+			if db.mp_actor~=nil then
+				db.storage[db.mp_actor:id()].pstor["gwr_eat_trash_"..tostring(self.object:id())]= true
+			end
+		end	
+	else
+		--log1("releasing...")
+		if db.mp_actor~=nil then
+			db.storage[db.mp_actor:id()].pstor["gwr_eat_trash_"..tostring(self.object:id())]= nil
+		end
+		alife():release(alife():object(self.object:id()), true)
+	end
+end
+
+function TransformDir(v, dir)
+		if dir=="left" then 
+			local tmp = v.x
+			v.x = -v.z
+			v.z = tmp
+		elseif dir=="right" then
+			local tmp = v.x
+			v.x = v.z
+			v.z = -tmp
+		end
+		return v
+end
+
+function gwr_trash_binder:net_destroy()
+	--log1("releasing...(net_destroy)")
+	if db.mp_actor~=nil then
+		db.storage[db.mp_actor:id()].pstor["gwr_eat_trash_"..tostring(self.object:id())]= nil
+	end
+	alife():release(alife():object(self.object:id()), true)
+    object_binder.net_destroy(self)
+end
+
+function on_quickuse_suspected(temp1, temp2)
+--	get_console():execute("load quickuse_suspected")
+	quickuse_suspected_frame = device().frame
+end

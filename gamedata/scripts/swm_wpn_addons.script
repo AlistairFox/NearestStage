@@ -1,0 +1,248 @@
+--[[ ----------------------------------------------------------------------------------------------
+ ���������: CoP v1.6.02 (� ������ �������������)
+ �������� : ������ ��� ���������� ������� ������� �� ������
+ ���������: 2013 � Shoker Weapon Mod
+ ������	  : 3.0 (18.12.2013)
+ �������  :
+	* �������� ������ �� �������������.
+	* � �� �� �� ������������ ������ ������ ����� �������� ������ � ���� �� �������, ���������� ����������� ���
+ �����������: sm_net_utils.script (���-������)
+ �����������: � bind_stalker.script � ������� �� ������������� �������� actor_binder:use_inventory_item(obj) �������� ����� actor_item_use(obj)
+ ��������� ������� Artos-� �� ������ ������ � ���-��������
+--]] -----------------------------------------------------------------------------------------------
+-- TODO: �������� ����� ��������� ������ �������� �������� � ��������� ������, � ����� ���-�������, ���� � ��� ����.
+
+local ADDONS_DETACH_SECTION		= "addons_box"	--\\ ������� ��� ������ ���� �������
+
+local bInited		= false		--> ���� �������������
+local ADDONS_LIST	= {}		--> ������� ���� ������� ���� ����� = ���
+local addons_types	= {}		--> ������� ����� �������, ��� ������������� � ��� �������, � ������� ������ ���� � ����� ������
+local addons_unload = {}		--> ������� ����� �������, ��� �������� ������� ����� ��������� �������
+
+--\\ ����������� ������ ��� ������ ������
+function addons_initialization()
+	ADDONS_LIST         = _u.collect_sections(system_ini(), "addons_list")			--> ������ �������
+	addons_unload		= _u.collect_sections(system_ini(), "addons_with_unload")	--> ������ � ���������	
+	addons_types		= _u.ltx("addons_types",  "list", "tbl1")					--> ���� �������
+end
+
+--\\ ���������� ��� ������ ��������
+function actor_item_use(obj)
+	local sec = obj:section()
+
+	--* ���� ������ �����, �� �������������� ������
+	if bInited == false then
+		addons_initialization()
+		bInited = true
+	end
+ 
+	--* ���� ��� ����� - �������� �����
+	if ADDONS_LIST[sec] then
+		on_addon_use(sec, false)
+	end
+
+	--* ������� �������� �������
+	if sec == ADDONS_DETACH_SECTION then
+		on_addon_use(sec, true)
+	end
+end
+
+--\\ ������ �� ������������� ������
+function on_addon_use(sec, bDetach)
+	local wpn  = db.mp_actor:active_item()  
+	local slot = db.mp_actor:active_slot()
+
+	--* ��� ������ � ����� - ���������� ����� �� �����
+	if wpn == nil then
+		spawn_in_inv(sec)
+		return 
+	end
+	
+	local wpn_sec 	 = wpn:section()	--> ������� ������ ������
+	local addon_type = ADDONS_LIST[sec]	--> ��� ���������������� ������	
+	
+	if bDetach == false then
+		--* � ����� �� ������ ����� ����� ��������� �� ��� �����
+		local variable_addons = _u.ltx(wpn_sec, addon_type, "tbl1") or nil
+
+		if variable_addons == nil or variable_addons[1] == "none" then
+			--\\ ����� ��� ������� �� �������������� ������	
+			spawn_in_inv(sec)
+			return
+		else
+			--\\ ��������� ���� ����� ������ ����������
+			local bValid = false
+			for i=1,#variable_addons do
+				local var_addon = variable_addons[i]
+				if var_addon == sec then
+					bValid = true
+					break
+				end
+			end
+			if bValid == false then
+				spawn_in_inv(sec)
+				return		
+			end
+		end
+	end
+	
+	--* ��������� ���� �� ������������� �������
+	local installed, bEmpty = collect_addons(wpn_sec)
+
+	--* � ��� �� ����� ������� ������� - ������ �������
+	if bDetach == true and bEmpty == true then
+		spawn_in_inv(sec)
+		return 		
+	end
+	
+	--* ���� ����� ����� ��� �����, �� �� �������� ��������� ��� ����� (����. �������� ��� ���������)
+	if bDetach == false and installed[addon_type] == sec then
+		spawn_in_inv(sec)
+		return 	
+	end
+	
+	--* ��������� ���� � ������� ������
+	local sWpnOld	= alife():object(wpn:id()) 	
+	local defPacket	= sm_net_utils.Get_Data_AnyWeapon(sWpnOld, true)
+	
+	local ammo_name	= defPacket.updammo_name		--> ������ ��������
+	local ammo_num	= wpn:get_ammo_in_magazine()	--> ���-�� �������� � ��������
+ 
+ 
+	--* � ������ ���������� �� ��������� ����
+	if defPacket.updgrenade_mode == 1 then
+		db.mp_actor:give_game_news(game.translate_string("st_tip"), game.translate_string("st_addons_gl_stop"), "ui_inGame2_Neizvestnoe_oruzhie", 0, 6000)
+		spawn_in_inv(sec)
+		return 
+	end
+ 
+	--* ������� ������ �����
+	alife():release(sWpnOld, true)
+	
+	local bDropAmmo = false	--> ����, ��� ����� �������� ������� � ���������
+	
+	--* ������ ����� � ���������� ������	
+	if bDetach == false then
+		--\\ � ��� ��� ����� ����� ������ ���� - ���������� ��� � ��������� 
+		if installed[addon_type] ~= nil then
+			spawn_in_inv(installed[addon_type])
+		end
+		installed[addon_type] = sec	--> �������� ��� ����� � ������ �� ����������
+	else
+		--\\ ������� ��� ������
+		for addon_type, addon_sec in pairs(installed) do
+			if addons_unload[addon_type] ~= nil then
+				bDropAmmo = true
+			end
+			
+			spawn_in_inv(addon_sec)
+		end			
+	end
+	
+	--\\ ������������ ����� ������
+	local new_section = _u.ltx(wpn_sec, "parent_section", "str")
+	if bDetach == false then
+		for i=1,#addons_types do
+			local _type			= addons_types[i]
+			local addon_name	= installed[_type]
+			if addon_name ~= nil then
+				new_section = new_section.."_"..addon_name
+			end
+		end
+	end
+	
+	--* ������ ����� �����
+	local vSpawnPos = db.mp_actor:position(); vSpawnPos.y = vSpawnPos.y + 3;
+	local sWpnNew   = alife():create(new_section, vSpawnPos, db.mp_actor:level_vertex_id(), db.mp_actor:game_vertex_id())
+	local newPacket = sm_net_utils.Get_Data_AnyWeapon(sWpnNew)
+	 
+	newPacket.condition      = defPacket.condition
+	newPacket.addon_flags    = defPacket.addon_flags
+	newPacket.upgrade_count  = defPacket.upgrade_count
+	newPacket.upgrades       = defPacket.upgrades       
+	newPacket.ammo_type      = defPacket.ammo_type
+	newPacket.custom_data	 = defPacket.custom_data
+	
+	--\\ ������ ��� ������ � ���������
+	if bDropAmmo == true or addons_unload[addon_type] ~= nil then
+		newPacket.ammo_current 	 = 0
+		newPacket.ammo_elapsed 	 = 0
+		spawn_in_inv(ammo_name, ammo_num)	--> ������� ������� � ���������		
+	else
+		newPacket.ammo_current 	 = ammo_num
+		newPacket.ammo_elapsed 	 = ammo_num
+	end
+	
+	--\\ ������������� ���������
+	sm_net_utils.Set_Data_AnyWeapon(newPacket, sWpnNew)
+	level.client_spawn_manager():add( sWpnNew.id, -1, spawn_callback)
+	
+	--\\ ���� ��� �������� �������, �� ���������� � � ���������
+	if bDetach == true then
+		spawn_in_inv(sec)
+	end	
+end
+
+--* ��������� ���� �� ������������� �������
+function collect_addons(wpn_sec)
+	local installed = {}
+	local size		= 0
+	for addon_sec, addon_type in pairs(ADDONS_LIST) do
+		if string.find(wpn_sec, addon_sec) then
+			size = size + 1
+			installed[addon_type] = addon_sec
+		end
+	end	
+	return installed, (size == 0)
+end
+
+--* ������ �� ��������� ������������ ����� � �������
+function spawn_callback(id, wpn)
+	local sec	= wpn:section()
+	local slot	= _u.ltx(sec, "slot", "num") + 1
+		
+	--\\ ���� � ��� ������� ���� ��� ��� �� �����, �� ���� ���������� ���
+	local item_in_slot = db.mp_actor:item_in_slot(slot)		
+	if item_in_slot ~= nil then
+		db.mp_actor:drop_item(item_in_slot)
+	end
+	
+	--\\ ���������� ����� ����� � ���������
+	db.mp_actor:transfer_item(wpn, db.mp_actor)
+	
+	--\\ ���������� ��������� ����� (���� ���)
+	if item_in_slot ~= nil then
+		db.mp_actor:transfer_item(item_in_slot, db.mp_actor)
+	end	
+end
+
+								-- ;;;;;;;;;;;;;;;;;;;;;;; --
+								-- ��������������� ������� --
+								-- ;;;;;;;;;;;;;;;;;;;;;;; --
+
+--* ������� ������ � ��������� ��
+function spawn_in_inv(section, ammo_cnt)
+	if ammo_cnt ~= nil then
+		--* ������� �������
+		if ammo_cnt > 0 then
+			create_ammo(section, ammo_cnt)
+		end
+	else
+		--* ����� ������ �������
+		return alife():create(section, db.mp_actor:position(), db.mp_actor:level_vertex_id(), db.mp_actor:game_vertex_id(), db.mp_actor:id())
+	end 
+end
+
+--* ������� ������� � ��������� ��
+function create_ammo(section, count)
+  local ini = system_ini()
+
+  local num_in_box = ini:r_u32(section, "box_size")
+
+  while count > num_in_box do
+    alife():create_ammo(section, db.mp_actor:position(), db.mp_actor:level_vertex_id(), db.mp_actor:game_vertex_id(), db.mp_actor:id(), num_in_box)
+    count = count - num_in_box
+  end
+  
+  alife():create_ammo(section, db.mp_actor:position(), db.mp_actor:level_vertex_id(), db.mp_actor:game_vertex_id(), db.mp_actor:id(), count)
+end

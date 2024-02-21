@@ -1,0 +1,127 @@
+--gunsl_bloodscreen.script
+--Description: покраснение экрана при хреновом здоровье
+--Creator: Sin!
+--Last Edit: 30 Mar 2017
+
+local bloodscreen_bleeding_treasure = 0.6 														--при более сильном кровотечении появится кровавый экран
+local bloodscreen_health_treasure = 0.15													 	--при меньшем здоровье появится кровавый экран
+
+local bloodscreen_health_delta_master = 0.15													--дельта здоровья, при которой однократно вспыхнет экран
+local bloodscreen_health_delta_veteran = 0.20
+local bloodscreen_health_delta_stalker = 0.18
+local bloodscreen_health_delta_novice = 0.15
+
+
+local last_health = nil
+local snd = sound_object("affects\\heartbeat")
+local vol_speed = 2000 --время нарастания звука до максимума
+local vol_speed_down = 2000 --время затухания звука с максимума
+local cur_vol = 0
+
+local main_starttime = nil
+local main_period = 1000 * (101/150)
+
+
+function Update(dt)
+	local act = db.mp_actor
+	local hud = get_hud()
+	
+	if (act~=nil) and act:alive() then		
+		local bleeding = act.bleeding
+		local health = act.health
+		if bleeding>bloodscreen_bleeding_treasure or health<bloodscreen_health_treasure then
+			--необходим bloodscreen_main(циклический)
+			if not snd:playing() then
+				--звук кончился. Перезапускаем звук и циклический статик(для синхронизации)
+				snd:play_at_pos(db.actor, vector():set (0, 0, 0), 0, sound_object.s2d)
+				main_starttime = device():time_global()
+				
+				if hud:GetCustomStatic("gunsl_bloodyscreen_end")~=nil then
+					hud:RemoveCustomStatic("gunsl_bloodyscreen_end")
+				end	
+
+				if hud:GetCustomStatic("gunsl_bloodyscreen_main")~=nil then
+					hud:RemoveCustomStatic("gunsl_bloodyscreen_main")				
+				end
+				hud:AddCustomStatic("gunsl_bloodyscreen_main", true)
+			end
+			if cur_vol<1 then
+				cur_vol = cur_vol+dt/vol_speed
+			end				
+			snd.volume = cur_vol						
+		else
+			--Состояние в норме. Если есть циклический статик - убираем его и показываем статик-завершитель 
+			if hud:GetCustomStatic("gunsl_bloodyscreen_main")~=nil then
+				--проверяем, что мы находимся около наивысшей точки кровавого экрана				
+				local periods_cnt = (device():time_global() - main_starttime)/main_period
+				local last_period_val = periods_cnt - math.floor(periods_cnt)				
+				if ( last_period_val > 0.9 ) then
+					--сейчас циклический статик в самом начале пути (уменьшение прозрачности). Самое время подменить его.
+					hud:RemoveCustomStatic("gunsl_bloodyscreen_main")
+					hud:AddCustomStatic("gunsl_bloodyscreen_end", true)
+				end								
+			end	
+			
+			if (cur_vol > 0) then
+				--звук должен играться. Пересчитываем громкость.
+				if cur_vol < dt/vol_speed_down then
+					cur_vol = 0
+				else
+					cur_vol = cur_vol - dt/vol_speed_down
+				end
+				
+				if snd:playing() then
+					snd.volume = cur_vol
+					if cur_vol <= 0 then
+						snd:stop()
+					end	
+				else
+					if cur_vol > 0 then
+						snd:play_at_pos(db.actor, vector():set (0, 0, 0), 0, sound_object.s2d)
+					end
+				end				
+			end				
+		end	
+		
+		--Реакция на попадания
+		if last_health~=nil then
+			local deltahealth = last_health - health
+			local bloodscreen_health_delta = 1.0
+			
+			if level.get_game_difficulty() == game_difficulty.master then
+				bloodscreen_health_delta = bloodscreen_health_delta_master
+			elseif level.get_game_difficulty() == game_difficulty.veteran then
+				bloodscreen_health_delta = bloodscreen_health_delta_veteran
+			elseif level.get_game_difficulty() == game_difficulty.stalker then
+				bloodscreen_health_delta = bloodscreen_health_delta_stalker
+			else
+				bloodscreen_health_delta = bloodscreen_health_delta_novice
+			end
+			
+			if deltahealth>=bloodscreen_health_delta and hud:GetCustomStatic("gunsl_bloodyscreen_main")==nil then
+				if hud:GetCustomStatic("gunsl_bloodyscreen_end")~=nil then
+					hud:RemoveCustomStatic("gunsl_bloodyscreen_end")
+				end	
+				hud:AddCustomStatic("gunsl_bloodyscreen_end", true)	
+
+			end
+		end
+		
+		last_health = health
+	else
+		if hud:GetCustomStatic("gunsl_bloodyscreen_main")~=nil then
+			hud:RemoveCustomStatic("gunsl_bloodyscreen_main")
+		end
+		
+		if hud:GetCustomStatic("gunsl_bloodyscreen_end")~=nil then
+			hud:RemoveCustomStatic("gunsl_bloodyscreen_end")
+		end
+		
+		if snd:playing() and not act:alive()then
+			snd:stop()
+			cur_vol = 0
+		end
+	end
+end
+
+

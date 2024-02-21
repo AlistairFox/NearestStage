@@ -1,0 +1,697 @@
+--[[ ----------------------------------------------------------------------------------------------
+ Платформы: CoP v1.6.02
+ Описание : Корневой скрипт мода, подключает другие + содержит некоторые нужные функции
+ Поддержка: 2013 © Shoker Weapon Mod
+ Авторы   : Shoker
+ Версия	  : 2.0 (01.01.2014)
+--]] ----------------------------------------------------------------------------------------------
+
+ACTOR_DELTA 		= 1		--> Хранит время между апдейтами биндера игрока
+
+bLuaCap				= (ODS ~= nil)			--> Флаг того, что игра запущена под перехватчиком
+always_keep_items	=	{	--> death_manager.script: Предметы, которые всегда должны оставаться на трупе
+	device_torch	=	true,
+}
+
+--\\ Вызов функции из указанного скрипта 
+-- s_name - Название вызываемого скрипта
+-- f_name - Название вызываемой функции
+function _Call(s_name, f_name, ...)
+	if _G[s_name] ~= nil then
+		if SWM_DEBUG == true then
+			if _G[s_name][f_name] == nil then
+				abort("Function not found: %s.%s()", tostring(s_name), tostring(f_name))
+			end
+		end	
+		return _G[s_name][f_name](...)
+	else
+		if SWM_DEBUG == true then
+			abort("Script not found: %s.%s()", tostring(s_name), tostring(f_name))
+		end
+	end
+end
+
+function _DbgCall(s_name, f_name, ...)
+	if _G[s_name] then
+		if _G[s_name][f_name] then
+			--* Замеряем время вызова функции
+			local result
+			local pt = profile_timer()
+			pt:start()
+			result = _G[s_name][f_name](...)
+			pt:stop()
+			save_time(s_name, f_name, pt:time())
+			return result
+		else
+			mDbg(s_name, f_name, "Cant finde function")	
+		end
+	else
+		mDbg(s_name, "SCRIPT FILE IS MISSING OR BROKEN")	
+	end 
+end
+
+--\\ Ведёт статистику скорости работы скриптов, вызываемых из _DbgCall 
+local save_time__time_tbl =  {}
+
+function save_time(s_name, f_name, ptime)
+	if save_time__time_tbl[s_name..f_name] == nil then
+		save_time__time_tbl[s_name..f_name] = {}
+		save_time__time_tbl[s_name..f_name].init_time = -1		
+		save_time__time_tbl[s_name..f_name].cur_time = -1
+		save_time__time_tbl[s_name..f_name].max_time = -1	
+	end
+
+	if save_time__time_tbl[s_name..f_name].init_time == -1 then
+		--* init_time	
+		save_time__time_tbl[s_name..f_name].init_time = ptime
+		mDbg(s_name, f_name, ptime, "InitWorkTime")		
+	else
+		--* cur_time
+		save_time__time_tbl[s_name..f_name].cur_time = ptime
+
+		--* max_time
+		if save_time__time_tbl[s_name..f_name].max_time < ptime then
+			save_time__time_tbl[s_name..f_name].max_time = ptime
+		end
+	 
+		local cur_text, max_text
+		
+		if db.actor then
+			max_text = string.format("%f [%02d:%02d]", save_time__time_tbl[s_name..f_name].max_time, level.get_time_hours(), level.get_time_minutes())	
+			cur_text = string.format("%f [%02d:%02d]", save_time__time_tbl[s_name..f_name].cur_time, level.get_time_hours(), level.get_time_minutes())
+		else
+			max_text = string.format("%f", save_time__time_tbl[s_name..f_name].max_time)	
+			cur_text = string.format("%f", save_time__time_tbl[s_name..f_name].cur_time)	
+		end
+		
+		mDbg(s_name, f_name, max_text, "MaxWorkTime")
+		mDbg(s_name, f_name, cur_text, "CurWorkTime")			
+	end
+end
+
+--\\ Для хранения отладочной информации о скрипте\функции
+-- s_name    - Название скрипта, к которому относится инфа
+-- lable     - Название раздела в этом скрипте (обычно это название функции)
+-- *err_text - Текст, который надо добавить к данному lable (не изменяем после записи)
+-- *variable - Строка, обозначает название ячейки. Значение такой ячейки можно обновлять.
+--             Если присутствует, то err_text используется как значение
+local mDbg__DbgTbl = {}
+
+function mDbg(s_name, lable, err_text, variable)
+	if  mDbg__DbgTbl[s_name] == nil then
+		mDbg__DbgTbl[s_name] =  {}
+	end
+
+	if  mDbg__DbgTbl[s_name][lable] == nil then
+		mDbg__DbgTbl[s_name][lable] =  {}
+		mDbg__DbgTbl[s_name][lable].vars = {}		
+		mDbg__DbgTbl[s_name][lable].msgs = {}	
+	end
+	
+	if variable then
+		mDbg__DbgTbl[s_name][lable].vars[variable] = err_text
+	else
+		if err_text then
+			mDbg__DbgTbl[s_name][lable].msgs[err_text] = true
+		end
+	end
+end
+
+--\\ Распечатка данных из mDbg__DbgTbl в консоль
+function mDbg_Flush()
+	ODS("[debug_list]:")
+	for s_name, lables in pairs(mDbg__DbgTbl) do
+		ODS("   *SCRIPT:["..s_name..".script]")
+		for lable,ldata in pairs(lables) do
+			ODS("       >>>"..lable)				
+			for var, param in pairs(ldata.vars) do
+				ODS("         ->"..var..": "..tostring(param))					
+			end
+			for text, _bol in pairs(ldata.msgs) do
+				ODS("         -*"..text)						
+			end			
+		end
+	end
+end
+
+--*****************************************--
+--************* Инициализация *************--
+--*****************************************--
+
+--\\ Вызывается каждый раз при компиляции скриптов
+function onModInit()	
+	--\\ Инициализация скрипта для работы с памятью
+	if bLuaCap == true then
+		_Call("swm_memory", "onModInit")
+	end
+	
+	--\\ Функции чтения\записи в пстор
+	_G.WriteVar		= WriteVariable
+	_G.ReadVar		= ReadVariable
+	_G.DelVar		= DelVariable
+	
+	--\\ Инициализация других скриптов
+	_Call("swm_wpn_mgr", "onModInit")
+	_Call("swm_slowmo",  "onModInit")		
+end
+
+--*****************************************--
+--**************** Колбеки ****************--
+--*****************************************--
+local UpdTimeTbl = {}		--> Таблица, которая хранит последнее время обновления НПС
+
+local items_to_spawn = {	--> Предметы для спавна после интро
+	--// Секция			Позиция								Поворот			 	Game Vertex Спавнить на АИ-сетке
+	{"wpn_wunderwaffe",	vector():set(-101.5,-31.3,90.6),	vector():set(0,90,90),	880,	false},
+	{"ammo_gauss",		vector():set(-91.2,-31.3,79.4),		vector():set(0,0,90),	880,	false},	
+	{"ammo_gauss",		vector():set(-96.2,-28.3,68.4),		vector():set(45,0,45),	880,	false},	
+	{"ammo_gauss",		vector():set(-116.2,-27.0,90.4),	vector():set(0,0,90),	880,	false},	
+		
+	{"wpn_axe",			vector():set(119.0,-2.7,175.7),		vector():set(0,120,90),	297,	false},	
+	{"medkit_scientic",	vector():set(119.0,-2.7,176.1),		vector():set(0,0,0),	297,	false},	
+	
+	{"wpn_usas12",		vector():set(154.0, -5, -140.0),	vector():set(0,0,0),	13,		false},		
+}
+
+--\\ Вызывается по завершению интро или одного из его кадров
+function new_game_intro_callback()	
+	--* Спавним предметы из таблицы
+	for sec,tdata in pairs(items_to_spawn) do
+		local sobj = alife():create(tdata[1], tdata[2], 1, tdata[4])
+		sobj:use_ai_locations(tdata[5])	
+		sobj.angle = tdata[3]
+		-- ODS("Spawn "..sobj:name().." at X = "..sobj.position.x.." Y = "..sobj.position.y.." Z = "..sobj.position.z)
+	end
+
+	if swm_cutscene ~= nil and SWM_DEBUG ~= true then
+		--* Спавним кат-сцену при старте игры
+		if 		is_swtc ~= nil and is_swtc.INSTALLED then
+			level.set_weather("default_clear_overcast", true)
+		elseif	is_atmosfear ~= nil and is_atmosfear.INSTALLED then
+			level.set_weather("af3_day_partly", true)
+		else
+			level.set_weather("default_clear", true)
+		end
+		
+		level.add_pp_effector("black.ppe", 1313, false)
+		level.disable_input()
+		level.hide_indicators_safe()
+		db.actor:set_actor_position(vector():set(456,37,-60))
+		swm_cutscene.spawn_and_play("cutscene_intro", vector():set(462.202,37.026,-67.126), 3000)
+	else
+		xr_effects.scenario_autosave(nil, nil, {"st_save_zat_a1_game_start"})
+	end
+	
+	db.actor:give_game_news("Shoker Weapon Mod v"..___ver.GetFullVer(), game.translate_string("ui_swm_credits_1"), "ui_inGame2_Otryad_Skat", 13 * 1000, 8  * 1000, 0)	
+	db.actor:give_game_news("Shoker Weapon Mod v"..___ver.GetFullVer(), game.translate_string("ui_swm_credits_2"), "ui_inGame2_Otryad_Skat", 23 * 1000, 8  * 1000, 0)	
+	db.actor:give_game_news("Shoker Weapon Mod v"..___ver.GetFullVer(), game.translate_string("ui_swm_credits_3"), "ui_inGame2_Otryad_Skat", 33 * 1000, 8  * 1000, 0)
+	db.actor:give_game_news("Shoker Weapon Mod v"..___ver.GetFullVer(), game.translate_string("ui_swm_credits_4"), "ui_inGame2_Otryad_Skat", 43 * 1000, 13 * 1000, 0)		
+	db.actor:give_game_news("Shoker Weapon Mod v"..___ver.GetFullVer(), game.translate_string("ui_swm_credits_9"), "ui_inGame2_Otryad_Skat", 58 * 1000, 15 * 1000, 0)		
+	db.actor:give_game_news("Shoker Weapon Mod v"..___ver.GetFullVer(), game.translate_string("ui_swm_credits_8"), "ui_inGame2_Otryad_Skat", 58 * 1000, 15 * 1000, 0)		
+	db.actor:give_game_news("Shoker Weapon Mod v"..___ver.GetFullVer(), game.translate_string("ui_swm_credits_7"), "ui_inGame2_Otryad_Skat", 58 * 1000, 15 * 1000, 0)		
+	db.actor:give_game_news("Shoker Weapon Mod v"..___ver.GetFullVer(), game.translate_string("ui_swm_credits_6"), "ui_inGame2_Otryad_Skat", 58 * 1000, 15 * 1000, 0)	
+	db.actor:give_game_news("Shoker Weapon Mod v"..___ver.GetFullVer(), game.translate_string("ui_swm_credits_5"), "ui_inGame2_Otryad_Skat", 58 * 1000, 15 * 1000, 0)	
+	
+	
+end
+
+--\\ Вызывается при заходе в меню
+function on_main_menu_on()	
+	_Call("swm_slowmo", "on_main_menu_on")	
+end
+
+local cheatDlg = nil
+--\\ Вызывается при нажатии клавиши в меню
+function OnMenuKeyboardPress(dik, menu)
+	--* Спавн-меню
+	if __cheat_menu ~= nil and CHEAT_MODE == true then
+		if dik == DIK_keys.DIK_F1 then
+			if menu.spawn_dlg == nil then
+				menu.spawn_dlg = __cheat_menu.cheat_dialog()
+				menu.spawn_dlg.owner = menu
+			end
+
+			menu.spawn_dlg:ShowDialog(true)
+			menu:HideDialog()
+			menu:Show(false)
+		end
+	end
+	
+	--* Мод-консоль
+	if _console ~= nil then
+		if dik == _console.MENU_KEY then
+			_console.Show()
+		end	
+	end
+end
+
+--\\ Апдейт игрока
+local bFirstUpd = true
+local bTorch	= false
+function actor_update(delta)
+	_Call("__cheat_timers",		"actor_update")		
+	_Call("_console",			"actor_update")	
+	_Call("swm_key", 			"actor_update")	
+	_Call("swm_turret", 		"actor_update")	
+	_Call("swm_cutscene",		"actor_update")	
+	_Call("swm_shell",			"actor_update")		
+	_Call("swm_blood_mgr",		"actor_update")		
+	_Call("swm_legs",			"actor_update")		
+	_Call("swm_dof",			"actor_update")		
+	_Call("swm_wpn_mgr",		"actor_update")		
+	_Call("swm_dispersion_mod",	"actor_update")
+	_Call("swm_visuals",		"actor_update")
+	_Call("swm_slowmo", 		"actor_update", delta)	
+	
+	--* Сохраняем delta апдейда игрока
+	ACTOR_DELTA = delta
+	
+	--* Проверяем, что у нас нету зависших НПС
+	for npc_id, tbl in pairs(UpdTimeTbl) do
+		if time_global() - tbl.time > 20000 then
+			if tbl.bAlert == false then
+				tbl.time   = time_global() - 17000 --> Доп. защита от "пробивов"
+				tbl.bAlert = true
+			else
+				if level.object_by_id(npc_id) ~= nil then
+					local save_param = user_name().." - npc stop updating crash"
+					get_console():execute("save "..save_param)
+					
+					abort("NPC with name [%s] stop updating.", tbl.name)
+					local crash = nil + 1
+				else
+					UpdTimeTbl[npc_id] = nil
+				end
+			end
+		end
+	end
+	
+	--* Принудительно ставим сложность мастер ^_^
+	if bFirstUpd == true then
+		get_console():execute("g_game_difficulty gd_master")	--> Сложность мастер
+		get_console():execute("ai_aim_predict_time 0")			--> Настройки аима нпс
+		bFirstUpd = false
+	end
+	
+	--* Включаем выбранную погоду из ПЗ
+	if __cheat_main then
+		if ReadVar("weather_state", false) == true then
+			local wt = ReadVar("weather_type", "none")
+			if wt ~= "none" then
+				if ReadVar("weather_fx", false) == false then
+					level.set_weather(wt, true)
+				else
+					level.set_weather_fx(wt)
+				end
+			end
+		end
+	end
+	
+	--* После смерти одеваем фонарик на голову ГГ обратно (требует auto_attach = true в конфиге)
+	if db.actor:alive() == false and bTorch == false then
+		local torch = db.actor:item_in_slot(10)
+		db.actor:transfer_item(torch, db.actor)
+		bTorch = true
+	end
+end
+
+--\\ Быстрый апдейт игрока
+function actor_fastcall()
+	_Call("swm_wind_mgr",	"actor_fastcall")		
+	_Call("swm_wpn_hud",	"actor_fastcall")		
+	_Call("swm_fov_mgr",	"actor_fastcall")		
+	_Call("swm_xmark",		"actor_fastcall")
+	_Call("swm_nuke",		"actor_fastcall")				
+	return false
+end
+
+--\\ Колбек на потерю предмета из инвентаря
+function actor_item_drop(obj)
+	if _u.ltx(obj:section(), "dont_check_drop", "bol") then	
+		return
+	end
+end
+
+--\\ Колбек на взятие предмета из инвентаря
+function actor_item_take(obj)
+	_Call("swm_shell",			"actor_item_take", obj)		
+	_Call("swm_attachments",	"actor_item_take", obj)		
+end
+
+--\\ Колбек на использование предмета
+function actor_item_use(obj)
+	_Call("swm_wpn_addons", "actor_item_use", obj)	
+	
+	local sec = obj:section()
+	if sec == "dev_tutorial" then
+		--------------
+		db.actor:give_game_news(game.translate_string("st_tutorial"), game.translate_string("st_tutorial_1"),  "ui_inGame2_V_zone_nedavno_proshel_vibros", 1   * 100 , 35 * 1000, 0)	
+		db.actor:give_game_news(game.translate_string("st_tutorial"), game.translate_string("st_tutorial_2"),  "ui_inGame2_V_zone_nedavno_proshel_vibros", 37  * 1000, 45 * 1000, 0)	
+		db.actor:give_game_news(game.translate_string("st_tutorial"), game.translate_string("st_tutorial_3"),  "ui_inGame2_V_zone_nedavno_proshel_vibros", 37  * 1000, 45 * 1000, 0)	
+		db.actor:give_game_news(game.translate_string("st_tutorial"), game.translate_string("st_tutorial_4"),  "ui_inGame2_V_zone_nedavno_proshel_vibros", 71  * 1000, 45 * 1000, 0)	
+		db.actor:give_game_news(game.translate_string("st_tutorial"), game.translate_string("st_tutorial_5"),  "ui_inGame2_V_zone_nedavno_proshel_vibros", 71  * 1000, 45 * 1000, 0)	
+		db.actor:give_game_news(game.translate_string("st_tutorial"), game.translate_string("st_tutorial_6"),  "ui_inGame2_V_zone_nedavno_proshel_vibros", 71  * 1000, 45 * 1000, 0)	
+		db.actor:give_game_news(game.translate_string("st_tutorial"), game.translate_string("st_tutorial_7"),  "ui_inGame2_V_zone_nedavno_proshel_vibros", 105 * 1000, 30 * 1000, 0)	
+		db.actor:give_game_news(game.translate_string("st_tutorial"), game.translate_string("st_tutorial_8"),  "ui_inGame2_V_zone_nedavno_proshel_vibros", 105 * 1000, 30 * 1000, 0)	
+		db.actor:give_game_news(game.translate_string("st_tutorial"), game.translate_string("st_tutorial_9"),  "ui_inGame2_V_zone_nedavno_proshel_vibros", 140 * 1000, 20 * 1000, 0)			
+		db.actor:give_game_news(game.translate_string("st_tutorial"), game.translate_string("st_tutorial_10"), "ui_inGame2_V_zone_nedavno_proshel_vibros", 165 * 1000, 35 * 1000, 0)
+		--------------
+		alife():create(sec, db.actor:position(), db.actor:level_vertex_id(), db.actor:game_vertex_id(), db.actor:id())
+	end
+end
+
+--\\ Колбек на сохранение игрока
+function actor_save()
+	_Call("swm_wpn_mgr", "actor_save")	
+end
+
+--\\ Колбек на выстрел из оружия
+function shot_callback(who, Wpn, sWpn, ammo_name, isGL, bActor)
+	_Call("swm_shell", "shot_callback", who, Wpn, sWpn, ammo_name, isGL, bActor)	
+
+	--\\ Для скрипта тряски
+	if bActor then
+		_Call("swm_wpn_hud", 		"actor_shot_callback", who, Wpn, sWpn, ammo_name, isGL)	
+		_Call("swm_flamer",  		"actor_shot_callback", who, Wpn, sWpn, ammo_name, isGL)
+		_Call("swm_script_light",  	"actor_shot_callback", who, Wpn, sWpn, ammo_name, isGL)		
+		_Call("swm_nuke",			"actor_shot_callback", who, Wpn, sWpn, ammo_name, isGL)			
+	end
+end
+
+--\\ Колбек на старт перезарядки оружия из swm_bind_wpn
+function reload_callback(wpn, owner, bIsActor, bIsEmpty)
+	-- swm_dof.reload_callback(wpn, owner, bIsActor, bIsEmpty)
+end
+
+--\\ Колбек на процесс перезарядки оружия из swm_bind_wpn
+function process_reload(wpn, owner, bIsActor, bIsEmpty)
+	_Call("swm_dof", "process_reload", wpn, owner, bIsActor, bIsEmpty)		
+end
+
+--\\ Апдейт онлайн-НПС
+local aiDisabledTbl = {}
+function npc_update(npc, bAlive)
+	local ret_flag = true
+	local temp
+	local id = npc:id()
+
+	--[[-- Чтобы у НПС принудительно завис биндер (для теста)
+	if npc:position():distance_to(db.actor:position()) <= 4 then
+		_u.log(npc:name())
+		npc:kill()
+	end
+	]]
+	
+	--[[
+	if npc:section() == "pri_a17_military_captain_tarasov" and db.storage[id] ~= nil then
+		_u.log(db.storage[id].active_section)
+	end
+	]]
+	
+	if UpdTimeTbl[id] == nil then
+		UpdTimeTbl[id] = {}
+	end
+	
+	UpdTimeTbl[id].time 	= time_global()
+	UpdTimeTbl[id].name 	= npc:name()
+	UpdTimeTbl[id].bAlert 	= false
+	
+	_Call("swm_danger", 		"npc_update", npc, bAlive)	
+	_Call("swm_wpn_mgr", 		"npc_update", npc)	
+
+	if swm_flamer ~= nil then
+		temp = swm_flamer.npc_update(npc)
+		if temp == false then
+			ret_flag = false
+		end
+	end
+	
+	if _console ~= nil and _console.GetVal("ai.disable") == true then
+		xr_logic.mob_capture(npc, true)
+		npc:movement_enabled(false)
+		aiDisabledTbl[npc:id()] = true
+		--ret_flag = false		
+	else
+		if aiDisabledTbl[npc:id()] == true then
+			xr_logic.mob_release(npc)
+			npc:movement_enabled(true)
+			aiDisabledTbl[npc:id()] = nil
+		end
+	end
+	
+	return ret_flag
+end
+
+--\\ Колбек на урон по НПС
+function npc_on_hit(obj, amount, local_direction, who, bone_index, bFake)
+	-- amount - урон нанесённый НПС БЕЗ учёта его брони и прочего. (делить на 100)
+	if amount > 0 then
+		-- if local_direction.x == 0 and local_direction.y == 1 and local_direction.z == 0 then	--> Теперь в xr_motivator
+		if bFake == true then
+			--* С вероятностью 99% фейковы хит с уроном (от set_enemy_go())
+			--ODS("FAKE - "..obj:name().." from "..who:name().." At "..tostring(time_global()))
+			return
+		else
+			_Call("swm_flamer", 		"npc_on_hit", obj, amount, local_direction, who, bone_index)		
+			_Call("swm_attachments", 	"npc_on_hit", obj, amount, local_direction, who, bone_index)		
+			_Call("swm_turret", 		"obj_on_hit", obj, amount, local_direction, who, bone_index)		
+			_Call("swm_xmark", 			"obj_on_hit", obj, amount, local_direction, who, bone_index, true)			
+		end
+	end
+end
+
+--\\ Колбек на убийство НПС
+function npc_on_kill(victim, who)
+
+end
+
+--\\ Колбек на спавн НПС
+function npc_on_spawn(sobj)
+	_Call("swm_npc_inv", 	 "npc_on_spawn", sobj)	
+	_Call("swm_attachments", "npc_on_spawn", sobj)	
+end
+
+--\\ Колбек НПС на звук
+function hear_callback(obj, who_id, s_type, sound_position, sound_power)
+	_Call("swm_danger", "hear_callback", obj, who_id, s_type, sound_position, sound_power)
+end
+
+--\\ Колбек на удаление НПС
+function npc_on_unregister(sobj)
+	UpdTimeTbl[sobj.id] = nil
+	
+	_Call("swm_wpn_mgr", "npc_on_unregister", sobj)	
+end
+
+--\\ Колбек на переход НПС в оффлайн
+function npc_switch_offline(sobj)
+	UpdTimeTbl[sobj.id] = nil
+	_Call("swm_wpn_mgr", "npc_switch_offline", sobj)	
+end
+
+--\\ Апдейт онлайн-монстра
+function mob_update(mob)
+	local ret_flag = true
+	local temp
+	
+	_Call("swm_flamer", "mob_update", mob)	
+	
+	if _console ~= nil and _console.GetVal("ai.disable") == true then
+		xr_logic.mob_capture(mob, true)
+		mob:movement_enabled(false)
+		aiDisabledTbl[mob:id()] = true
+		--ret_flag = false
+	else
+		if aiDisabledTbl[mob:id()] == true then
+			xr_logic.mob_release(mob)
+			mob:movement_enabled(true)
+			aiDisabledTbl[mob:id()] = false
+		end
+	end
+	
+	return ret_flag
+end
+
+--\\ Колбек на урон по монстру
+local mob_dmg_min = _u.ltx("mob_damage", "min", "num") or 0
+local mob_dmg_max = _u.ltx("mob_damage", "max", "num") or 0
+
+function mob_on_hit(obj, amount, local_direction, who, bone_index)
+	-- amount - здесь делить на 100 не надо !!!, идёт уже сразу поделенный, возможно даже с учётом брони
+	if amount > 0 then
+		_Call("swm_flamer", "mob_on_hit", obj, amount, local_direction, who, bone_index)		
+		_Call("swm_turret", "obj_on_hit", obj, amount, local_direction, who, bone_index)	
+		_Call("swm_xmark",	"obj_on_hit", obj, amount, local_direction, who, bone_index, false)			
+
+		
+		--\\ Доп урон монстрам
+		if mob_dmg_max > 0 then
+			obj.health = -(amount * (math.random(mob_dmg_min,mob_dmg_max) / 100))
+		end
+	end
+end
+
+--\\ Регистрация объекта в db.storage
+function on_registre_obj(obj, id)
+
+end
+
+--\\ АнРегистрация объекта в db.storage
+function on_unregistre_obj(obj, id)
+	UpdTimeTbl[id] = nil
+	_Call("swm_wpn_mgr", "on_unregistre_obj", obj, id)	
+end
+
+--*****************************************--
+--******** Вспомогательные функции ********--
+--*****************************************--
+
+--\\ Записываем переменную в пстор
+function WriteVariable(variable_name, value)
+	xr_logic.pstor_store(db.actor, variable_name, value)
+end
+
+--\\ Загружаем переменную из пстора
+function ReadVariable(variable_name, value_if_not_found)
+	return xr_logic.pstor_retrieve(db.actor, variable_name, value_if_not_found)
+end
+
+--\\ Удаляем переменную из пстора
+function DelVariable(variable_name)
+	if db.storage[db.actor:id()].pstor[variable_name] then
+		db.storage[db.actor:id()].pstor[variable_name] = nil
+	end
+end
+
+local hitted_npc = {}
+--\\ Делаем указанного НПС врагом для другого, показываем его позицию НПС и при необходимости (bSendToEnemy) говорим двигаться к нему
+--   Если bIgnoreSurge == true, то функция сработает, даже если идёт выброс, иначе во время выброса она не будет действовать
+--	 Если bStoryTo	   == true, то функция сработает и на сюжетном НПС (иначе сюжетные НПС будут игнорированны)
+
+function set_enemy_go(npc, enemy, bSendToEnemy, bIgnoreSurge, bStoryTo)
+	if bIgnoreSurge ~= true and xr_conditions.surge_started() == true then
+		return
+	end
+	
+	if bStoryTo ~= true and IsSim(npc:id()) == false then --> Возможно лучше делать проверку на наличие логики, но и так пойдёт
+		return
+	end
+	
+	if not xr_wounded.is_wounded(npc) then
+		local bValidNpc = xr_combat_ignore.is_enemy(npc, enemy, db.storage[npc:id()].combat_ignore, true)
+
+		if bValidNpc then
+			if (hitted_npc[npc:id()] == nil or hitted_npc[npc:id()] < time_global()) then
+				local h = hit()
+				
+				h.direction = vector():set(0,1,0) --> По дирекции будем отсекать этот хит в колбеке как фейковый
+				h.impulse = 1
+				h.draftsman = enemy
+				h.power = 0.00001
+				h.type = hit.telepatic
+
+				-- ODS("reg_fake - "..npc:name().." from "..enemy:name().." At "..tostring(time_global()))
+				
+				npc:hit(h)
+				hitted_npc[npc:id()] = time_global() + 6000
+			end
+			
+			if bSendToEnemy then
+				utils.send_to_nearest_accessible_vertex( npc, enemy:level_vertex_id() )				
+			end
+			
+			-- Со сквадами работает плохо, поэтому приходится юзать хит =\
+			-- npc:make_object_visible_somewhen(enemy)
+			-- npc:enable_memory_object(enemy, true)
+			-- npc:set_enemy(enemy)
+		end
+	end
+end
+
+--\\ Проверка, что мы целимся
+function IsZooming(wpn)
+	--local def_fov = swm_memory.GET_FOV() or 65
+	--return math.abs(def_fov - device().fov) > 3
+	
+	local EData			= wpn:Engine("CWeapon")					--> Данные из движка	
+	local rotate_f		= EData:Get("m_fZoomRotationFactor")	--> Текущая степень поворота ствола к прицеливанию
+	local state			= 0	--> Не прицеливаемся
+	
+	if rotate_f >= 0.1 and rotate_f <= 0.92 then
+		state = 1	--> В процессе прицеливания
+	end
+	
+	if rotate_f > 0.92 then
+		state = 2	--> Прицелились
+	end
+	
+	return state, rotate_f
+end
+
+--\\ Проверка, что активен 3D-прицел
+function Is3DScopeActive(wpn)
+	if swm_wpn_hud ~= nil then
+		return swm_wpn_hud.SCOPE_3D_FLAG 
+	end
+	
+	return false
+end
+
+--\\ Проверка что данный НПС является симуляционным (99% что не сюжетный)
+local cached_list = {}
+function IsSim(id)
+	if cached_list[id] ~= nil then
+		return cached_list[id]
+	end
+
+	local sobj = alife():object(id)
+	if sobj ~= nil then
+		local squad = get_object_squad(sobj)
+		if squad ~= nil then
+			local sec = squad:section_name()
+			if string.find(sec, "_sim_") or string.find(sec, "simulation") then
+				cached_list[id]  = true
+				return true
+			else
+				cached_list[id]  = false
+				return false
+			end
+		end
+		
+		if string.find(sobj:name(), "sim_default_") then
+			cached_list[id]  = true
+			return true
+		else
+			cached_list[id]  = false
+			return false			
+		end		
+	end
+	
+	return false
+end
+
+--\\ Запретить стрельбу
+function disableFire()
+	get_console():execute("unbind wpn_fire")
+	get_console():execute("unbind_sec wpn_fire")
+end
+
+--\\ Разрешить стрельбу
+function enableFire()
+	get_console():execute("bind wpn_fire mouse1")
+end
+
+--\\ Запустить приложение (срабатывает не у всех, так что лучше не пользоваться)
+function RunExe(exe_name, exe_param_1, exe_param_2)
+	if exe_param_1 == nil then
+		exe_param_1 = ""
+	end
+	
+	if exe_param_2 == nil then
+		exe_param_2 = ""
+	end
+	
+	local gamedataPath = getFS():update_path("$game_data$", "_EXE\\RunExe.bat") --> Запускаю приложения черещ .bat, задел на будущее 
+	local finPath	   = [["]]..gamedataPath..[["]]
+	os.execute(finPath.." "..tostring(exe_name).." "..tostring(exe_param_1).." "..tostring(exe_param_2))
+end

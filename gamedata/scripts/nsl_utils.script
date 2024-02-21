@@ -1,0 +1,48 @@
+function darkscape()
+	get_console():execute("start client(26.35.167.57:5447)")
+end
+
+function escape_noguid()
+   --if not getFS():exist("$app_data_root$", "nickname.txt") then
+	--local n_fname = getFS():update_path("$app_data_root$", "nickname.txt")
+   	--local n_file = io.open(n_fname,"w")
+	--n_file:write("Сталкер")
+	--n_file:close ()
+   --end
+
+   --local fname = getFS():update_path("$app_data_root$", "ip.txt")
+   --local file = io.open(fname,"r")
+   --local ip = file:read( 21 )
+   --file:close ()
+	get_console():execute("start client(26.35.167.57)")
+end
+
+function darkvalley_noguid()
+   --if not getFS():exist("$app_data_root$", "nickname.txt") then
+	--local n_fname = getFS():update_path("$app_data_root$", "nickname.txt")
+   	--local n_file = io.open(n_fname,"w")
+	--n_file:write("Сталкер")
+	--n_file:close ()
+   --end
+
+   --local fname = getFS():update_path("$app_data_root$", "ip.txt")
+   --local file = io.open(fname,"r")
+   --local ip = file:read( 21 )
+   --file:close ()
+	get_console():execute("start client(26.35.167.57:5448)")
+end
+
+function goto_garbage()
+   get_console():execute("disconnect")
+   garbage_wait()
+end
+
+
+function garbage_wait()
+
+end
+
+function goto_escape()
+   get_console():execute("disconnect")
+   get_console():execute("start client(localhost:5446)")
+end

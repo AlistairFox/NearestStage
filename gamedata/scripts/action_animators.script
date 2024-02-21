@@ -1,0 +1,79 @@
+--биндер для аниматора, не являющегося оружием (чтобы в noweapon-зонах работало)
+local ini = system_ini()
+
+function init(obj)
+   local new_binder = action_animator_noweapon_binder(obj)
+   obj:bind_object(new_binder)
+end
+
+class "action_animator_noweapon_binder" (object_binder)
+function action_animator_noweapon_binder:__init(obj) super(obj)
+end
+
+function action_animator_noweapon_binder:net_spawn(srv_obj)
+	local sect = self.object:section()
+	if (db.actor~=nil) and (bind_stalker.check_for_weapon_hide_by_zones()) then
+		local actor_binder = db.actor:binded_object()
+		if (actor_binder.weapon_hide~=nil) and (actor_binder.weapon_hide==true) then
+			--db.actor:restore_weapon()
+			db.actor:restore_weapon_immediatly()
+			db.storage[db.actor:id()].pstor["gwr_aa_unlockdone"] = true
+			slot = ini:r_u32(sect, "slot")+1
+			db.actor:activate_slot(slot)
+		else
+			db.storage[db.actor:id()].pstor["gwr_aa_unlockdone"] = nil
+		end
+	end
+	
+	self.spawn_time = device():time_global()
+	self.effector_id = nil
+	self.ppe = nil
+	self.ppe_start = -1
+	self.ppe_end = 1000000
+	
+	if ini:line_exist(sect, "activation_ppe") then
+		self.ppe = ini:r_string(sect,"activation_ppe")
+		if ini:line_exist(sect, "activation_ppe_start_time") then
+			self.ppe_start = math.floor(ini:r_float(sect, "activation_ppe_start_time")*1000)
+		end
+		if ini:line_exist(sect, "activation_ppe_end_time") then
+			self.ppe_end = math.floor(ini:r_float(sect, "activation_ppe_end_time")*1000)
+		end		
+	end
+end
+
+function action_animator_noweapon_binder:update()
+	local t = device():time_global()
+	local dt = t-self.spawn_time
+	
+	if self.ppe~=nil then	
+		if dt>self.ppe_start and dt<self.ppe_end then
+			if self.effector_id == nil then
+				self.effector_id = 2015
+				level.add_pp_effector(self.ppe, self.effector_id, true)
+				--level.set_pp_effector_factor(self.effector_id, 1)
+			end
+		else
+			if self.effector_id ~= nil then
+				level.set_pp_effector_factor(self.effector_id, 0.001)
+				level.remove_pp_effector(self.effector_id)
+				self.effector_id = nil
+			end		
+		end
+	end
+end
+
+function action_animator_noweapon_binder:net_destroy()
+	if db.actor~=nil then
+		if db.storage[db.actor:id()].pstor["gwr_aa_unlockdone"] then
+			db.actor:hide_weapon()	--делаем обязательно, ДАЖЕ ЕСЛИ отработал анхайдер в апдейте актора
+		end
+		db.storage[db.actor:id()].pstor["gwr_aa_unlockdone"] = nil
+	end
+	
+	if self.effector_id ~= nil then
+		level.set_pp_effector_factor(self.effector_id, 0.001)
+		level.remove_pp_effector(self.effector_id)
+		self.effector_id = nil
+	end
+end

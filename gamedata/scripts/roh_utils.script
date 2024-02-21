@@ -1,0 +1,58 @@
+function get_nick()
+
+   if not getFS():exist("$app_data_root$", "nickname.txt") then
+	local n_fname = getFS():update_path("$app_data_root$", "nickname.txt")
+   	local n_file = io.open(n_fname,"w")
+	n_file:write("Сталкер")
+	n_file:close ()
+   end
+
+   local fname = getFS():update_path("$app_data_root$", "nickname.txt")
+   local file = io.open(fname,"r")
+   local nick = file:read( 21 )
+   file:close ()
+
+   return nick
+end
+
+function save_nick(nick)
+   local n_fname = getFS():update_path("$app_data_root$", "nickname.txt")
+   local n_file = io.open(n_fname,"w")
+   n_file:write(nick)
+   n_file:close ()
+end
+
+function get_dist_between(obj1, obj2)
+	local pos1 = obj1:position()
+	local pos2 = obj2:position()
+	local dist = math.sqrt( (pos2.x - pos1.x)*(pos2.x - pos1.x) + (pos2.y - pos1.y)*(pos2.y - pos1.y) + (pos2.z - pos1.z)*(pos2.z - pos1.z) )
+	return dist
+end
+
+function mp_actor_binder_net_spawn(object)
+
+	--Выставим группировку по скину! НЕ МЕНЯЕТСЯ ГРУППИРОВКА!!!!!
+
+	--Сменим TEAM для корректного распознавания игроков друг друга
+	if string.find(object:get_visual_name(), "freedom") then
+		object:change_team(4, object:squad(), object:group())
+	elseif string.find(object:get_visual_name(), "merc") then
+		object:change_team(5, object:squad(), object:group())
+	elseif string.find(object:get_visual_name(), "neutral") then
+		object:change_team(9, object:squad(), object:group())
+	elseif string.find(object:get_visual_name(), "dolg") then
+		object:change_team(2, object:squad(), object:group())
+	elseif string.find(object:get_visual_name(), "monolith") then
+		object:change_team(7, object:squad(), object:group())
+	elseif string.find(object:get_visual_name(), "bandit") then
+		object:change_team(1, object:squad(), object:group())
+	end
+	--Конец
+
+msg("ACTOR_TEAM="..object:team()..";COMM="..object:character_community())
+end
+
+function save_and_disconnect()
+	ui_save_and_disconnect_dialog.sleep()
+end
+
