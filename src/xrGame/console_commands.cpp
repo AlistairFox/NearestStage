@@ -48,6 +48,8 @@
 
 #include "GameSpy/GameSpy_Full.h"
 #include "GameSpy/GameSpy_Patching.h"
+#include "game_sv_freemp.h"
+#include "game_base.h"
 
 #include "ai_debug_variables.h"
 #include "../xrphysics/console_vars.h"
@@ -340,6 +342,28 @@ public:
 		}
 		else
 			Log("!Not a single player game!");
+	}
+};
+
+
+class CCC_LoadPortions : public IConsole_Command
+{
+public:
+	CCC_LoadPortions(LPCSTR N) : IConsole_Command(N) {};
+	virtual void Execute(LPCSTR args)
+	{
+		game_sv_freemp* fmp = smart_cast<game_sv_freemp*>(Level().Server->game);
+
+		ClientID client_id(0);
+		u32 tmp_client_id;
+
+		sscanf_s(args, "%u", &tmp_client_id);
+
+		client_id.set(tmp_client_id);
+
+		game_PlayerState* ps = fmp->get_id(client_id);
+
+		fmp->LoadPlayerPortions(ps, false);
 	}
 };
 
@@ -2067,6 +2091,7 @@ CMD4(CCC_Integer,			"hit_anims_tune",						&tune_hit_anims,		0, 1);
 		CMD4(CCC_Integer, "savetime_server_time", &save_time3, 1, 10000000);
 		CMD4(CCC_Integer, "box_respawn_time", &box_respawn_time, 1, 1000000000);
 		CMD4(CCC_Integer, "sv_binnar_save", &binar_save, 0, 1);
+		CMD1(CCC_LoadPortions, "sv_load_player_portions");
 	}
 	CMD1(CCC_ReloadSystemLtx, "reload_system_ltx");
 	

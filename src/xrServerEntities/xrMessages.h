@@ -134,6 +134,7 @@ enum {
 	GE_ACTOR_JUMPING,			//actor press jump key
 	GE_ACTOR_MAX_POWER,
 	GE_ACTOR_MAX_HEALTH,
+	GE_GET_SAVE_PORTIONS,
 
 	GE_CHANGE_POS,
 

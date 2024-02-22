@@ -41,6 +41,7 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 	P.r_u16		(destination);
 
 	CSE_Abstract*	receiver	= game->get_entity_from_eid	(destination);
+	game_sv_freemp* fmp = smart_cast<game_sv_freemp*>(Level().Server->game);
 	if (receiver)	
 	{
 		R_ASSERT(receiver->owner);
@@ -57,6 +58,17 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 			game->AddDelayedEvent(P,game_event_type,timestamp,sender);
 		}break;
 	case GE_INFO_TRANSFER:
+	{
+		u16				id;
+		shared_str		info_id;
+		u8				add_info;
+
+		P.r_u16(id);				//отправитель
+		P.r_stringZ(info_id);		//номер полученной информации
+		P.r_u8(add_info);			//добавление или убирание информации
+
+		fmp->SavePlayerPortions(sender, info_id, add_info);
+	}
 	case GE_WPN_STATE_CHANGE:
 	case GE_ZONE_STATE_CHANGE:
 	case GE_ACTOR_JUMPING:

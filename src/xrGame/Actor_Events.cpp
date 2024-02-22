@@ -358,6 +358,26 @@ void CActor::OnEvent(NET_Packet& P, u16 type)
 	{
 		ReciveSoundPlay(P);
 	}	break;
+
+	case GE_GET_SAVE_PORTIONS:
+	{
+		xr_vector<shared_str>Player_portions;
+		load_data(Player_portions, P);
+
+		bool first_load = P.r_u8();
+
+		for (const auto& info : Player_portions)
+		{
+			if (info.size() > 0)
+			{
+				if (first_load)
+					Actor()->TransferInfo(info, true);
+				else
+					Actor()->OnReceiveInfo(info);
+			}
+		}
+
+	}	break;
 	}
 }
 

@@ -30,6 +30,7 @@ public:
 	};
 	xr_map<u16, Physics_objects> phy_objects_cse;
 
+
 	virtual		void				OnAlifeCreate(CSE_Abstract* E);
 	virtual void					OnObjectsCreate(CSE_Abstract* E);
 
@@ -74,6 +75,15 @@ public:
 	virtual		void				RespawnPlayer(ClientID id_who, bool NoSpectator);
 				bool				Binnar_save_connect = false;
 
+				///////////Info portions saving ////////////////
+	virtual void					SavePlayerPortions(ClientID sender, shared_str info_id, bool add);
+	virtual void					LoadPlayerPortions(game_PlayerState* ps, bool first);
+	enum DialogsSavingChunks
+	{
+		INFO_PORTIONS_CHUNK = 0
+	};
+	xr_map<LPCSTR, xr_vector<shared_str>> Player_portions;
+	///////////Info portions saving\ ////////////////
 
 	///////////Dynamic Weather ////////////////
 	virtual void DynamicWeatherUpdate();
