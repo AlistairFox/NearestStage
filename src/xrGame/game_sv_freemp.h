@@ -75,7 +75,7 @@ public:
 	virtual		void				RespawnPlayer(ClientID id_who, bool NoSpectator);
 				bool				Binnar_save_connect = false;
 
-				///////////Info portions saving ////////////////
+	///////////Info portions saving ////////////////
 	virtual void					SavePlayerPortions(ClientID sender, shared_str info_id, bool add);
 	virtual void					LoadPlayerPortions(game_PlayerState* ps, bool first);
 	enum DialogsSavingChunks

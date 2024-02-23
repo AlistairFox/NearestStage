@@ -1008,6 +1008,12 @@ void send_news_item_drop(u16 gameid, LPCSTR name, int count)
 	}
 }
 
+u8 get_actor_team()
+{
+	Msg("Actor team: %d", Actor()->g_Team());
+	return Actor()->g_Team();
+}
+
 // script events
 
 void send_script_event_to_server(NET_Packet& P)
@@ -1213,7 +1219,8 @@ def("game_id", &GameID),
 		def("object_destroy", object_destroy),
 		def("object_give_to_actor", object_give_to_actor),
 		def("send_news_item_drop", send_news_item_drop),
-		def("change_team", change_team)
+		def("change_team", change_team),
+		def("get_actor_team", get_actor_team)
 	],
 	
 
