@@ -38,6 +38,67 @@ function trader_countdown_check()
     return false
 end
 
+function check_player_money_100000 ()
+	if db.mp_actor:money() >= 100000 then
+		return true
+	else
+		return false
+	end
+end
+
+function action_test ()
+print_msg("dialog_start")
+
+end
+
+function morning()
+	if in_time_interval(6, 12) then
+		return true
+	else
+		return false
+	end
+end
+
+function day()
+	if in_time_interval(12, 18) then
+		return true
+	else
+		return false
+	end
+end
+
+function evening()
+	if in_time_interval(18, 22) then
+		return true
+	else
+		return false
+	end
+end
+
+function night()
+	if in_time_interval(22, 6) then
+		return true
+	else
+		return false
+	end
+end
+
+function check_player_money_50000 ()
+	if db.mp_actor:money() >= 50000 then
+		return true
+	else
+		return false
+	end
+end
+
+function check_player_money_20000 ()
+	if db.mp_actor:money() >= 20000 then
+		return true
+	else
+		return false
+	end
+end
+
 function trader_countdown1_transfer(first_speaker, second_speaker)
 	dialogs.relocate_item_section_from_actor(first_speaker, second_speaker, "wpn_beretta")
 	task_utils.send_drop_item(1, "wpn_beretta")
@@ -47,6 +108,62 @@ end
 
 function give_rastyapa_quest()
 	   task_manager.get_task_manager():give_task("stalker_trader_rastyapa")
+end
+
+function send_info_changeteam_duty()
+		task_utils.send_event_money(false, 100000)
+		local P = mp_events.gen_event('TASKS') 
+		P:w_u8(6)
+		P:w_u8(2)
+		mp_events.send_to_server(P)
+end
+
+function send_info_changeteam_freedom()
+		task_utils.send_event_money(false, 100000)
+		local P = mp_events.gen_event('TASKS') 
+		P:w_u8(6)
+		P:w_u8(4)
+		mp_events.send_to_server(P)
+end
+
+function check_actor_no_team ()
+	if mp.get_actor_team() == 8 then
+		return true
+	else
+		return false
+	end
+end
+
+function check_actor_in_team ()
+	if mp.get_actor_team() ~= 8 then
+		return true
+	else
+		return false
+	end
+end
+
+function send_info_changeteam_merc()
+		task_utils.send_event_money(false, 100000)
+		local P = mp_events.gen_event('TASKS') 
+		P:w_u8(6)
+		P:w_u8(5)
+		mp_events.send_to_server(P)
+end
+
+function send_info_changeteam_leave_all()
+		task_utils.send_event_money(false, 50000)
+		local P = mp_events.gen_event('TASKS') 
+		P:w_u8(6)
+		P:w_u8(8)
+		mp_events.send_to_server(P)
+end
+
+
+function send_info_changeteam_ecolog()
+		local P = mp_events.gen_event('TASKS') 
+		P:w_u8(6)
+		P:w_u8(3)
+		mp_events.send_to_server(P)
 end
 
 function trader_rastyapa_check()

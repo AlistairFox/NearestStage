@@ -204,6 +204,14 @@ u32 get_time_hours()
 	return			hours;
 }
 
+u32 get_time_hours_mp()
+{
+	u32 year = 0, month = 0, day = 0, hours = 0, mins = 0, secs = 0, milisecs = 0;
+	split_time(Level().GetGameTime(), year, month, day, hours, mins, secs, milisecs);
+
+	return hours;
+}
+
 u32 get_time_minutes()
 {
 	u32 year = 0, month = 0, day = 0, hours = 0, mins = 0, secs = 0, milisecs = 0;
@@ -1220,7 +1228,8 @@ def("game_id", &GameID),
 		def("object_give_to_actor", object_give_to_actor),
 		def("send_news_item_drop", send_news_item_drop),
 		def("change_team", change_team),
-		def("get_actor_team", get_actor_team)
+		def("get_actor_team", get_actor_team),
+		def("get_game_time_mp", get_time_hours_mp)
 	],
 	
 

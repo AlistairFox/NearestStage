@@ -38,6 +38,12 @@ function recive_tasks(SenderID, P)
 	elseif (t == 6) then
 		local team = P:r_u8()
 		mp.change_team(SenderID, team)
+	elseif (t == 7) then
+		local money = P:r_u32()
+		mp.give_money(player, money)
+	elseif (t == 8) then
+		local money = P:r_u32()
+		mp.remove_money(player, money)
 	end
 end
 
@@ -98,19 +104,25 @@ function send_info(bool, name)
 		mp_events.send_to_server(P)
 end
 
-function send_info_changeteam_duty()
-		local P = mp_events.gen_event('TASKS') 
-		P:w_u8(6)
-		P:w_u8(2)
-		mp_events.send_to_server(P)
-end
-
 function sync_goodwill()
 		local P = mp_events.gen_event('TASKS')
 		local svgoodwill = GetGoodwill()
 		P:w_u8(2)
 		P:w_u8(svgoodwill)
 		mp_events.send_broadcast(P)
+end
+
+function send_event_money (add, count)
+	local P = mp_events.gen_event('TASKS') 
+	if add then
+	P:w_u8(7)
+	P:w_u32(count)
+	else
+	P:w_u8(8)
+	P:w_u32(count)
+	end
+	mp_events.send_to_server(P)
+
 end
 
 function cl_get_goodwill()
