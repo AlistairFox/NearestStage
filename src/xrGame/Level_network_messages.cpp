@@ -23,6 +23,7 @@ ref_sound snd1;
 ref_sound snd2;
 ref_sound snd3;
 ref_sound snd4;
+bool IsMusicActive = false;
 LPSTR remove_version_option(LPCSTR opt_str, LPSTR new_opt_str, u32 new_opt_str_size)
 {
 	LPCSTR temp_substr = strstr(opt_str, map_ver_string);
@@ -493,6 +494,9 @@ void CLevel::ClientReceive()
 
 		case M_MUSIC_UPDATE:
 		{
+
+			IsMusicActive = true;
+
 			shared_str name;
 			P->r_stringZ(name);
 			Fvector pos = P->r_vec3();
@@ -528,6 +532,9 @@ void CLevel::ClientReceive()
 
 		case M_MUSIC_STOP:
 		{
+			if (!IsMusicActive)
+				break;
+
 			snd1.stop();
 			snd1.destroy();
 			Msg("! snd1 destroed");
@@ -543,6 +550,8 @@ void CLevel::ClientReceive()
 			snd4.stop();
 			snd4.destroy();
 			Msg("! snd4 destroed");
+
+			IsMusicActive = false;
 
 		}break;
 
