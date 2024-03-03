@@ -15,6 +15,7 @@
 #include "debug_renderer.h"
 #include "xrGameSpyServer.h"
 #include "GamePersistent.h"
+#include "Actor.h"
 
 extern ENGINE_API	bool g_dedicated_server;
 
@@ -540,7 +541,15 @@ void	game_sv_GameState::assign_RP				(CSE_Abstract* E, game_PlayerState* ps_who)
 			R_ASSERT2(false/*tpTeamed*/,"Non-teamed object is assigning to respawn point!");
 		}
 	}
-	R_ASSERT2(l_uc_team < TEAM_COUNT, make_string("not found rpoint for team [%d]",l_uc_team).c_str());
+	if (l_uc_team < TEAM_COUNT)
+	{
+		E->o_Position.set(Actor()->Position());
+		E->o_Angle.set(0,0,0);
+		
+		Msg("Not found rpoint for team [%d]", l_uc_team);
+		return;
+	}
+	//R_ASSERT2(l_uc_team < TEAM_COUNT, make_string("not found rpoint for team [%d]",l_uc_team).c_str());
 	
 	xr_vector<RPoint>&	rp	= rpoints[l_uc_team];
 	//-----------------------------------------------------------
