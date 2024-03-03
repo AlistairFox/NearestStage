@@ -294,7 +294,7 @@ void CActorCondition::UpdateCondition()
 	if( IsGameTypeSingle() )
 		UpdateTutorialThresholds();
 
-	if(GetHealth()<0.05f && m_death_effector==NULL && IsGameTypeSingle())
+	if(GetHealth()<0.05f && m_death_effector==NULL && IsGameTypeSingle())// need mp
 	{
 		if(pSettings->section_exist("actor_death_effector"))
 			m_death_effector = xr_new<CActorDeathEffector>(this, "actor_death_effector");
@@ -447,7 +447,7 @@ void CActorCondition::UpdateRadiation()
 
 void CActorCondition::UpdateSatiety()
 {
- 	if (!IsGameTypeSingle()) 
+ 	if (!IsGameTypeSingle())  //need mp fix
 	{
 		m_fDeltaPower += m_fV_SatietyPower * m_fDeltaTime;
  		return;
@@ -470,7 +470,7 @@ void CActorCondition::UpdateSatiety()
 //M.F.S. Team Thirst
 void CActorCondition::UpdateThirst()
 {
-	if (!IsGameTypeSingle())
+	if (!IsGameTypeSingle()) // need mp
 	{
 		m_fDeltaPower += m_fV_ThirstPower * m_fDeltaTime;
 		return;
