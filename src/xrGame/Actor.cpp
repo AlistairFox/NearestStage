@@ -2859,13 +2859,16 @@ void CActor::ChangeInventoryFullness(int val)
 {
 	if (Level().CurrentControlEntity() == this)
 	{
-		m_iInventoryFullness += val;
+		if (this != nullptr)
+		{
+			m_iInventoryFullness += val;
 
-		if (m_iInventoryFullness < 0)
-			m_iInventoryFullness = 0;
+			if (m_iInventoryFullness < 0)
+				m_iInventoryFullness = 0;
 
-		if (val > 0)
-			m_iInventoryFullnessCtrl = m_iInventoryFullness;
+			if (val > 0)
+				m_iInventoryFullnessCtrl = m_iInventoryFullness;
+		}
 	}
 	else
 		return;
