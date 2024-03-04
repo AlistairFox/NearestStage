@@ -73,11 +73,7 @@ CActorCondition::CActorCondition(CActor *object) :
 	m_max_power_restore_speed	= 0.0f;
 	m_max_wound_protection		= 0.0f;
 	m_max_fire_wound_protection = 0.0f;
-
-	if (!IsGameTypeSingle())
-	{
-		psActorFlags.set(AF_GODMODE_RT, FALSE);
-	}
+	psActorFlags.set(AF_GODMODE_RT, FALSE);
 }
 
 CActorCondition::~CActorCondition()
@@ -193,21 +189,6 @@ float CActorCondition::GetZoneMaxPower( ALife::EHitType hit_type ) const
 
 void CActorCondition::UpdateCondition()
 {
-	if(psActorFlags.test(AF_GODMODE_RT))
-	{
-		UpdateSatiety();
-		UpdateBoosters();
-		UpdateThirst();
-
-		m_fAlcohol		+= m_fV_Alcohol*m_fDeltaTime;
-		clamp			(m_fAlcohol,			0.0f,		1.0f);
-		if(Actor() && Actor()->ID() == m_object->ID())
-		{
-			CEffectorCam* ce = Actor()->Cameras().GetCamEffector((ECamEffectorType)effAlcohol);
-			if(ce)
-				RemoveEffector(m_object,effAlcohol);
-		}
-	}
 
 	if (GodMode() || object().MpGodMode())				return;
 	if (!object().g_Alive())	return;
@@ -227,20 +208,10 @@ void CActorCondition::UpdateCondition()
 		ConditionStand( cur_weight / base_weight );
 	}
 	
-	if ( IsGameTypeSingle() )
-	{
 		float k_max_power = 1.0f;
-		if( true )
-		{
 			k_max_power = 1.0f + _min(cur_weight, base_weight) / base_weight
 				+ _max(0.0f, (cur_weight - base_weight) / 10.0f);
-		}
-		else
-		{
-			k_max_power = 1.0f;
-		}
 		SetMaxPower		(GetMaxPower() - m_fPowerLeakSpeed * m_fDeltaTime * k_max_power);
-	}
 
 
 	m_fAlcohol		+= m_fV_Alcohol*m_fDeltaTime;
@@ -288,13 +259,14 @@ void CActorCondition::UpdateCondition()
 
 	UpdateSatiety();
 	UpdateBoosters();
+	UpdateThirst();
 
 	inherited::UpdateCondition();
 
 	if( IsGameTypeSingle() )
 		UpdateTutorialThresholds();
 
-	if(GetHealth()<0.05f && m_death_effector==NULL && IsGameTypeSingle())// need mp
+	if(GetHealth()<0.05f && m_death_effector==NULL)// need mp
 	{
 		if(pSettings->section_exist("actor_death_effector"))
 			m_death_effector = xr_new<CActorDeathEffector>(this, "actor_death_effector");
@@ -317,7 +289,7 @@ void CActorCondition::UpdateBoosters()
 		BOOSTER_MAP::iterator it = m_booster_influences.find((EBoostParams)i);
 		if(it!=m_booster_influences.end())
 		{
-			it->second.fBoostTime -= m_fDeltaTime/(IsGameTypeSingle()?Level().GetGameTimeFactor():1.0f);
+			it->second.fBoostTime -= m_fDeltaTime/(1.0f);
 			if(it->second.fBoostTime<=0.0f)
 			{
 				DisableBoostParameters(it->second);
@@ -447,46 +419,51 @@ void CActorCondition::UpdateRadiation()
 
 void CActorCondition::UpdateSatiety()
 {
- 	if (!IsGameTypeSingle())  //need mp fix
+ 	//if (!IsGameTypeSingle())  //need mp fix
+	//{
+	//	m_fDeltaPower += m_fV_SatietyPower * m_fDeltaTime;
+ 	//	return;
+	//}
+	if (Level().CurrentControlEntity())
 	{
-		m_fDeltaPower += m_fV_SatietyPower * m_fDeltaTime;
- 		return;
-	}
+		if (m_fSatiety > 0)
+		{
+			m_fSatiety -= m_fV_Satiety * m_fDeltaTime;
+			clamp(m_fSatiety, 0.0f, 1.0f);
+		}
 
-	if(m_fSatiety>0)
-	{
-		m_fSatiety -= m_fV_Satiety*m_fDeltaTime;
-		clamp(m_fSatiety, 0.0f, 1.0f);
-	}
-		
-	float satiety_health_koef = (m_fSatiety-m_fSatietyCritical)/(m_fSatiety>=m_fSatietyCritical?1-m_fSatietyCritical:m_fSatietyCritical);
-	if(CanBeHarmed() && !psActorFlags.test(AF_GODMODE_RT) && !object().MpGodMode())
-	{
-		m_fDeltaHealth += m_fV_SatietyHealth*satiety_health_koef*m_fDeltaTime;
-		m_fDeltaPower += m_fV_SatietyPower*m_fSatiety*m_fDeltaTime;
+		float satiety_health_koef = (m_fSatiety - m_fSatietyCritical) / (m_fSatiety >= m_fSatietyCritical ? 1 - m_fSatietyCritical : m_fSatietyCritical);
+		if (Actor()->g_Alive() && !object().MpGodMode())
+		{
+			m_fDeltaHealth += m_fV_SatietyHealth * satiety_health_koef * m_fDeltaTime;
+			m_fDeltaPower += m_fV_SatietyPower * m_fSatiety * m_fDeltaTime;
+		}
 	}
 }
 
 //M.F.S. Team Thirst
 void CActorCondition::UpdateThirst()
 {
-	if (!IsGameTypeSingle()) // need mp
-	{
-		m_fDeltaPower += m_fV_ThirstPower * m_fDeltaTime;
-		return;
-	}
+	//if (!IsGameTypeSingle()) // need mp
+	//{
+	//	m_fDeltaPower += m_fV_ThirstPower * m_fDeltaTime;
+	//	return;
+	//}
 
-	if (m_fThirst > 0)
+	if (Level().CurrentControlEntity())
 	{
-		m_fThirst -= m_fV_Thirst * m_fDeltaTime;
-		clamp(m_fThirst, 0.0f, 1.0f);
-	}
+		if (m_fThirst > 0)
+		{
+			m_fThirst -= m_fV_Thirst * m_fDeltaTime;
+			clamp(m_fThirst, 0.0f, 1.0f);
+		}
 
-	float thirst_health_koef = (m_fThirst - m_fThirstCritical) / (m_fThirst >= m_fThirstCritical ? 1 - m_fThirstCritical : m_fThirstCritical);
-	if (CanBeHarmed() && !psActorFlags.test(AF_GODMODE_RT))
-	{
-		m_fDeltaHealth += m_fV_ThirstHealth * thirst_health_koef * m_fDeltaTime;
-		m_fDeltaPower += m_fV_ThirstPower * m_fThirst * m_fDeltaTime;
+		float thirst_health_koef = (m_fThirst - m_fThirstCritical) / (m_fThirst >= m_fThirstCritical ? 1 - m_fThirstCritical : m_fThirstCritical);
+		if (Actor()->g_Alive() && !object().MpGodMode())
+		{
+			m_fDeltaHealth += m_fV_ThirstHealth * thirst_health_koef * m_fDeltaTime;
+			m_fDeltaPower += m_fV_ThirstPower * m_fThirst * m_fDeltaTime;
+		}
 	}
 }
 
