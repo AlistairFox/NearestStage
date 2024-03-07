@@ -288,9 +288,6 @@ public:
 			shared_str		level_version		(const shared_str &server_options) const;
 	static	LPCSTR			get_map_download_url(LPCSTR level_name, LPCSTR level_version);
 
-	static LPCSTR			get_path_download_url();
-	static LPCSTR				get_update_version();
-
 	void					create_direct_client();
 	BOOL					IsDedicated			() const	{return m_bDedicated;};
 

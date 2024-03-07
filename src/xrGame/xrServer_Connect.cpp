@@ -37,42 +37,6 @@ LPCSTR xrServer::get_map_download_url(LPCSTR level_name, LPCSTR level_version)
 	return ret_url;
 }
 
-LPCSTR xrServer::get_path_download_url()
-{
-	string_path path;
-	shared_str url = "";
-	FS.update_path(path, "$app_data_root$", "urls.ltx");
-	CInifile* file = xr_new<CInifile>(path, true, true);
-	
-	if (file)
-	{
-		url = file->r_string_wb("game_update", "url");
-	}
-
-	xr_delete(file);
-
-	return url.c_str();
-}
-
-LPCSTR xrServer::get_update_version()
-{
-	string_path path;
-	LPCSTR ver = 0;
-	FS.update_path(path, "$app_data_root$", "update_ver.ltx");
-	CInifile* file = xr_new<CInifile>(path, true, true);
-	if (file)
-	{
-		if (file->section_exist("version"))
-		{
-			ver = file->r_string("version", "ver");
-			xr_delete(file);
-			return ver;
-		}
-	}
-	xr_delete(file);
-	return "none";
-}
-
 xrServer::EConnect xrServer::Connect(shared_str &session_name, GameDescriptionData & game_descr)
 {
 #ifdef DEBUG
@@ -118,8 +82,6 @@ xrServer::EConnect xrServer::Connect(shared_str &session_name, GameDescriptionDa
 	xr_strcpy(game_descr.map_name, game->level_name(session_name.c_str()).c_str());
 	xr_strcpy(game_descr.map_version, game_sv_GameState::parse_level_version(session_name.c_str()).c_str());
 	xr_strcpy(game_descr.download_url, get_map_download_url(game_descr.map_name, game_descr.map_version));
-	xr_strcpy(game_descr.GamePathUrl, get_path_download_url());
-	xr_strcpy(game_descr.UpdateVer, get_update_version());
 
 	game->Create			(session_name);
 

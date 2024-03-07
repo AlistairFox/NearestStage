@@ -7515,9 +7515,6 @@
     <ClInclude Include="UIPdaChat.h">
       <Filter>Chat</Filter>
     </ClInclude>
-    <ClInclude Include="HTTPURLmon.h">
-      <Filter>HTTP</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -11251,9 +11248,6 @@
     </ClCompile>
     <ClCompile Include="xrServer_process_event_chatpda.cpp">
       <Filter>Core\Server\ServerProcess</Filter>
-    </ClCompile>
-    <ClCompile Include="HTTPURLmon.cpp">
-      <Filter>HTTP</Filter>
     </ClCompile>
     <ClCompile Include="game_sv_freemp_save_inv_boxes_bin.cpp">
       <Filter>Core\Server\Games\server\freemp\Save Bin</Filter>

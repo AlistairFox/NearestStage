@@ -13,8 +13,6 @@
 #include "string_table.h"
 #include "UIGameCustom.h"
 #include "ui/UICDkey.h"
-#include "ui/UIMessageBoxEx.h"
-#include <thread>
 
 int		g_cl_save_demo = 0;
 extern XRCORE_API bool g_allow_heap_min;
@@ -248,10 +246,6 @@ bool CLevel::net_start5				()
 	return true;
 }
 
-shared_str url;
-#include "HTTPURLmon.h"
-CDownloadCallback call;
-extern bool	need_draw_download = false;
 bool CLevel::net_start6				()
 {
 	//init bullet manager
@@ -328,46 +322,6 @@ bool CLevel::net_start6				()
 		{
 			DEL_INSTANCE	(g_pGameLevel);
 			Console->Execute("main_menu on");
-		}
-
-		if (need_download)
-		{
-			MainMenu()->OnSessionTerminate("загрузка обновления - Не закрывайте игру!");
-
-			string_path urls_file_path;
-			FS.update_path(urls_file_path, "$app_data_root$", "urls.ltx");
-			CInifile* file = xr_new<CInifile>(urls_file_path,true, true);
-			
-			if (file)
-			{
-				url = file->r_string_wb("game_update", "url");
-				need_draw_download = true;
-				std::thread* th = new std::thread([&]() 
-				{
-					Msg("%s", url.c_str());
-					Msg("Download Thread Spawn");
-					URLDownloadToFile(NULL, url.c_str(), "UpdatePath.zip", 0, &call);
-					Msg("Download Thread End");
-					need_draw_download = false;
-					MainMenu()->MainMenuMessage("загрузка завершенна! Начало Установки.");
-					Sleep(2000);
-					string_path path_curr_dir;
-					FS.update_path(path_curr_dir, "$fs_root$", "");
-					MainMenu()->MainMenuMessage("Установка обновление! Перезапуск игры!");
-					Sleep(2000);
-					
-					string512 tmp;
-					xr_sprintf(tmp, "start %s\\update.bat", path_curr_dir);
-					system(tmp);
-					Msg("Game exit - UPDATE");
-					quick_exit(-1);
-				}
-				);
-				th->detach();
-			}
-
-			xr_delete(file);
-			need_download = false;
 		}
 
 		return true;

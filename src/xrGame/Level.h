@@ -41,7 +41,6 @@ class	CZoneList;
 class	message_filter;
 class	demoplay_control;
 class	demo_info;
-class CDownloadCallback;
 
 #ifdef DEBUG
 	class	CDebugRenderer;
@@ -222,7 +221,6 @@ protected:
 	LevelMapSyncData			map_data;
 	bool						synchronize_map_data	();
 	bool						synchronize_client		();
-	bool						need_download = false;
 
 	bool	xr_stdcall			net_start1				();
 	bool	xr_stdcall			net_start2				();

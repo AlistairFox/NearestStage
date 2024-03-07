@@ -81,8 +81,6 @@ bool	CLevel::net_start_client3				()
 		LPCSTR					level_name = NULL;
 		LPCSTR					level_ver = NULL;
 		LPCSTR					download_url = NULL;
-		LPCSTR					gamepath_url = NULL;
-		LPCSTR					update_version = NULL;
 
 		if (psNET_direct_connect)	//single
 		{
@@ -95,58 +93,6 @@ bool	CLevel::net_start_client3				()
 			level_name		= get_net_DescriptionData().map_name;
 			level_ver		= get_net_DescriptionData().map_version;
 			download_url	= get_net_DescriptionData().download_url;
-			gamepath_url	= get_net_DescriptionData().GamePathUrl;
-			update_version = get_net_DescriptionData().UpdateVer;
-
-
-			if (!OnServer())
-			{
-				string_path urls_file_path;
-				LPCSTR our_ver;
-				FS.update_path(urls_file_path, "$app_data_root$", "urls.ltx");
-				CInifile* file = xr_new<CInifile>(urls_file_path, false, true, true);
-
-				string_path our_update_ver;
-				LPCSTR version = "vxcgfds";
-				FS.update_path(our_update_ver, "$app_data_root$", "update_ver.ltx");
-				CInifile* update_file = xr_new<CInifile>(our_update_ver,false, true, true);
-				if (update_file->section_exist("version"))
-					version = update_file->r_string("version", "ver");
-
-				xr_delete(update_file);
-
-					if (file->line_exist("game_update", "url"))
-						our_ver = file->r_string_wb("game_update", "url").c_str();
-					else
-						our_ver = "__";
-
-					if (xr_strcmp(version, update_version) != 0)
-						our_ver = "__";
-					
-
-					if (xr_strcmp(our_ver, gamepath_url) != 0)
-					{
-
-						string512 tmp;
-						xr_sprintf(tmp, "\"%s\"", gamepath_url);
-						
-						if (file->line_exist("game_update", "url"))
-							file->remove_line("game_update", "url");
-						file->w_string("game_update", "url", tmp);
-
-						connected_to_server = FALSE;
-						need_download = true;
-					}
-					file->save_as(urls_file_path);
-					xr_delete(file);
-
-					if (!connected_to_server)
-					{
-						Disconnect();
-						return false;
-					}
-				
-			}
 
 			rescan_mp_archives(); //because if we are using psNET_direct_connect, we not download map...
 		}
