@@ -208,6 +208,33 @@ extern  Fvector4 ps_ssfx_hud_drops_2;
 extern  Fvector4 ps_ssfx_blood_decals;
 extern  Fvector4 ps_ssfx_wind_grass;
 extern  Fvector4 ps_ssfx_wind_trees;
+extern Fvector4 ps_ssfx_ssr_2;
+extern Fvector4 ps_ssfx_volumetric;
+extern Fvector3 ps_ssfx_shadow_bias;
+
+static class ssfx_ssr_2 : public R_constant_setup
+{
+	virtual void setup(R_constant* C)
+	{
+		RCache.set_c(C, ps_ssfx_ssr_2);
+	}
+}    ssfx_ssr_2;
+
+static class ssfx_shadow_bias : public R_constant_setup
+{
+	virtual void setup(R_constant* C)
+	{
+		RCache.set_c(C, ps_ssfx_shadow_bias.x, ps_ssfx_shadow_bias.y, 0, 0);
+	}
+}    ssfx_shadow_bias;
+
+static class ssfx_volumetric : public R_constant_setup
+{
+	virtual void setup(R_constant* C)
+	{
+		RCache.set_c(C, ps_ssfx_volumetric);
+	}
+}    ssfx_volumetric;
 
 static class ssfx_wind_grass : public R_constant_setup
 {
@@ -538,6 +565,9 @@ void	CBlender_Compile::SetMapping	()
 	r_Constant("ssfx_wsetup_trees", &ssfx_wind_trees);
 	r_Constant("wind_params", &binder_wind_params);
 	r_Constant("pp_img_corrections", &pp_image_corrections);
+	r_Constant("ssfx_volumetric", &ssfx_volumetric);
+	r_Constant("ssfx_shadow_bias", &ssfx_shadow_bias);
+	r_Constant("ssfx_ssr_2", &ssfx_ssr_2);
 
 	// DWM: out to shaders view to world mat, weather params, alternative screen res
 	r_Constant("m_view2world", &binder_m_v2w);

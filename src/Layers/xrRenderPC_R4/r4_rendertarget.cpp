@@ -69,6 +69,15 @@ void	CRenderTarget::u_setrt			(const ref_rt& _1, const ref_rt& _2, const ref_rt&
 //	RImplementation.rmNormal				();
 }
 
+D3D_VIEWPORT custom_viewport[1] = { 0, 0, 0, 0, 0.f, 1.f };
+
+void CRenderTarget::set_viewport_size(ID3DDeviceContext* dev, float w, float h)
+{
+	custom_viewport[0].Width = w;
+	custom_viewport[0].Height = h;
+	dev->RSSetViewports(1, custom_viewport);
+}
+
 void	CRenderTarget::u_setrt			(const ref_rt& _1, const ref_rt& _2, ID3DDepthStencilView* zb)
 {
 	VERIFY									(_1||zb);
@@ -352,6 +361,10 @@ CRenderTarget::CRenderTarget		()
 	//SFZ Lens Flares
 	b_lfx = xr_new<CBlender_LFX>();
 
+	// Screen Space Shaders Stuff
+	b_ssfx_ssr = xr_new<CBlender_ssfx_ssr>(); // [Ascii1457] SSS new Phase
+	b_ssfx_volumetric_blur = xr_new<CBlender_ssfx_volumetric_blur>(); // [Ascii1457] SSS new Phase
+
 	// HDAO
 	b_hdao_cs               = xr_new<CBlender_CS_HDAO>			();
 	if( RImplementation.o.dx10_msaa )
@@ -453,6 +466,14 @@ CRenderTarget::CRenderTarget		()
 		rt_blur_h_8.create(r2_RT_blur_h_8, RtCreationParams(Device.dwWidth / 8, Device.dwHeight / 8, MAIN_VIEWPORT), DXGI_FORMAT_R8G8B8A8_UNORM, SRV_RTV, 1);
 		rt_blur_8.create(r2_RT_blur_8, RtCreationParams(Device.dwWidth / 8, Device.dwHeight / 8, MAIN_VIEWPORT), DXGI_FORMAT_R8G8B8A8_UNORM, SRV_RTV, 1);
 
+		// Screen Space Shaders Stuff
+		rt_ssfx.create(r2_RT_ssfx, vp_params_main_secondary, DXGI_FORMAT_B8G8R8A8_UNORM, SRV_RTV); // Generic RT
+		rt_ssfx_temp.create(r2_RT_ssfx_temp, vp_params_main_secondary, DXGI_FORMAT_B8G8R8A8_UNORM, SRV_RTV); // Temp RT
+		rt_ssfx_temp2.create(r2_RT_ssfx_temp2, vp_params_main_secondary, DXGI_FORMAT_B8G8R8A8_UNORM, SRV_RTV); // Temp RT 8B
+		rt_ssfx_accum.create(r2_RT_ssfx_accum, vp_params_main_secondary, DXGI_FORMAT_R16G16B16A16_FLOAT,SRV_RTV, SampleCount); // Temp RT 16B
+
+		rt_ssfx_hud.create(r2_RT_ssfx_hud, vp_params_main_secondary, DXGI_FORMAT_R8_UNORM, SRV_RTV); // Temp RT 8B
+
 		if (RImplementation.o.dx10_msaa)
 			rt_Generic_temp.create("$user$generic_temp", vp_params_main_secondary, DXGI_FORMAT_R8G8B8A8_UNORM, SRV_RTV, SampleCount);
 		else
@@ -483,6 +504,10 @@ CRenderTarget::CRenderTarget		()
 	s_blur.create(b_blur, "r2\\blur");
 	// OCCLUSION
 	s_occq.create					(b_occq,		"r2\\occq");
+
+	// Screen Space Shaders Stuff
+	s_ssfx_ssr.create(b_ssfx_ssr, "r2\\ssfx_ssr"); // SSR
+	s_ssfx_volumetric_blur.create(b_ssfx_volumetric_blur, "r2\\ssfx_volumetric_blur"); // Volumetric Blur
 
 	//Hud Blood
 	s_hud_blood.create(b_hud_blood, "r3\\hud_blood");
@@ -1161,6 +1186,8 @@ CRenderTarget::~CRenderTarget	()
 	xr_delete					(b_hud_thirst			); //thirst
 	xr_delete(b_sunshafts);
 	xr_delete(b_lfx); //SFZ Lens Flares
+	xr_delete(b_ssfx_ssr); // [Ascii1457] SSS new Phase
+	xr_delete(b_ssfx_volumetric_blur); // [Ascii1457] SSS new Phase
 
    if( RImplementation.o.dx10_msaa )
    {

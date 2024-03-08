@@ -254,6 +254,18 @@ void R_dsgraph_structure::r_dsgraph_insert_static	(dxRender_Visual *pVisual)
 	if (0==sh)								return;
 	if (!pmask[sh->flags.iPriority/2])		return;
 
+	// Water rendering
+	if (sh->flags.isWater)
+	{
+		mapWater_Node* N = mapWater.insertInAnyWay(distSQ);
+		N->val.ssa = SSA;
+		N->val.pObject = NULL;
+		N->val.pVisual = pVisual;
+		N->val.Matrix = Fidentity;
+		N->val.se = sh;
+		return;
+	}
+
 	// strict-sorting selection
 	if (sh->flags.bStrictB2F) {
 		mapSorted_Node* N			= mapSorted.insertInAnyWay(distSQ);
@@ -485,10 +497,16 @@ void R_dsgraph_structure::r_dsgraph_insert_static	(dxRender_Visual *pVisual)
 					return false;
 				else if ((sphere_volume < o_optimize_static_l5_size.z) && (adjusted_distane > o_optimize_static_l5_dist.z))
 					return false;
+
+				return true;
 			}
 
 			if (isStatic)
 			{
+				if (pVisual->Type == MT_LOD || pVisual->Type == MT_TREE_PM || pVisual->Type == MT_TREE_ST)
+
+					return true;
+
 				if (opt_static == 2)
 				{
 					if ((sphere_volume < o_optimize_static_l1_size.y) && (adjusted_distane > o_optimize_static_l1_dist.y))

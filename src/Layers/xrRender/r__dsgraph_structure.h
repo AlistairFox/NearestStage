@@ -47,6 +47,7 @@ public:
 	R_dsgraph::mapSorted_T										mapEmissive;
 	R_dsgraph::mapSorted_T										mapHUDEmissive;
 	R_dsgraph::mapHUD_T											mapHUDSorted;
+	R_dsgraph::mapWater_T										mapWater;
 
 	// Runtime structures 
 	xr_vector<R_dsgraph::mapNormalVS::TNode*,render_alloc<R_dsgraph::mapNormalVS::TNode*> >				nrmVS;
@@ -145,6 +146,7 @@ public:
 		mapEmissive.destroy		();
 		mapHUDEmissive.destroy();
 		mapHUDSorted.destroy();
+		mapWater.destroy();
 	}
 
 	void		r_pmask											(bool _1, bool _2, bool _wm=false)				{ pmask[0]=_1; pmask[1]=_2;	pmask_wmark = _wm; }
@@ -163,7 +165,7 @@ public:
 	void		r_dsgraph_render_subspace						(IRender_Sector* _sector, CFrustum* _frustum, Fmatrix& mCombined, Fvector& _cop, BOOL _dynamic, BOOL _precise_portals=FALSE	);
 	void		r_dsgraph_render_subspace						(IRender_Sector* _sector, Fmatrix& mCombined, Fvector& _cop, BOOL _dynamic, BOOL _precise_portals=FALSE	);
 	void		r_dsgraph_render_R1_box							(IRender_Sector* _sector, Fbox& _bb, int _element);
-
+	void		r_dsgraph_render_water();
 
 public:
 	virtual		u32						memory_usage			()

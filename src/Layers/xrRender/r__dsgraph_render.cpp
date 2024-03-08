@@ -583,6 +583,12 @@ void	R_dsgraph_structure::r_dsgraph_render_emissive	()
 	RCache.set_xform_project	(Device.mProject);
 }
 
+void R_dsgraph_structure::r_dsgraph_render_water()
+{
+	mapWater.traverseLR(sorted_L1);
+	mapWater.clear();
+}
+
 //////////////////////////////////////////////////////////////////////////
 // strict-sorted render
 void	R_dsgraph_structure::r_dsgraph_render_wmarks	()

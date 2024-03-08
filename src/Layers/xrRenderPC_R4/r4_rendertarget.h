@@ -62,6 +62,9 @@ public:
     // compute shader for hdao
     IBlender*                   b_hdao_cs;
     IBlender*                   b_hdao_msaa_cs;
+	// [SSS Stuff]
+	IBlender* b_ssfx_ssr;
+	IBlender* b_ssfx_volumetric_blur;
 
 #ifdef DEBUG
 	struct		dbg_line_t		{
@@ -109,6 +112,13 @@ public:
 
 	ref_rt rt_blur_h_8;
 	ref_rt rt_blur_8;
+
+	// Screen Space Shaders Stuff
+	ref_rt rt_ssfx;
+	ref_rt rt_ssfx_temp;
+	ref_rt rt_ssfx_temp2;
+	ref_rt rt_ssfx_accum;
+	ref_rt rt_ssfx_hud;
 
 	//	Igor: for volumetric lights
 	ref_rt						rt_Generic_2;		// 32bit		(r,g,b,a)				// post-process, intermidiate results, etc.
@@ -173,6 +183,10 @@ private:
 
 	//SFZ Lens Falres
 	ref_shader					s_lfx;
+
+	// Screen Space Shaders Stuff
+	ref_shader s_ssfx_ssr;
+	ref_shader s_ssfx_volumetric_blur;
 
 	// SSAO
 	ref_rt						rt_ssao_temp;
@@ -402,6 +416,11 @@ public:
 	virtual void				set_cm_imfluence	(float	f)		{ param_color_map_influence = f;							}
 	virtual void				set_cm_interpolate	(float	f)		{ param_color_map_interpolate = f;							}
 	virtual void				set_cm_textures		(const shared_str &tex0, const shared_str &tex1) {color_map_manager.SetTextures(tex0, tex1);}
+
+	// SSS Stuff
+	void phase_ssfx_ssr(); // SSR Phase
+	void phase_ssfx_volumetric_blur(); // Volumetric Blur
+	void set_viewport_size(ID3DDeviceContext* dev, float w, float h);
 
 	//	Need to reset stencil only when marker overflows.
 	//	Don't clear when render for the first time

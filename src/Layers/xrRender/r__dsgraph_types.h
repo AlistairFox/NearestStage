@@ -100,4 +100,7 @@ namespace	R_dsgraph
 
 	typedef FixedMAP<float,_LodItem,render_allocator>				mapLOD_T;
 	typedef mapLOD_T::TNode							mapLOD_Node;
+
+	typedef FixedMAP<float, _MatrixItemS, render_allocator> mapWater_T;
+	typedef mapWater_T::TNode mapWater_Node;
 };

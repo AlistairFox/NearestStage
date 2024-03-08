@@ -67,6 +67,7 @@ ShaderElement::ShaderElement()
 	flags.bEmissive		= FALSE;
 	flags.bDistort		= FALSE;
 	flags.bWmark		= FALSE;
+	flags.isWater		= FALSE;
 }
 
 BOOL ShaderElement::equal	(ShaderElement& S)

@@ -176,6 +176,10 @@ extern ECORE_API int			ps_r2_lfx;
 
 extern ECORE_API Flags32 ps_r3_pbr_flags;
 extern ECORE_API Flags32 ps_r2_static_flags;
+extern ECORE_API int ps_ssfx_ssr_quality;
+extern ECORE_API Fvector4 ps_ssfx_ssr;
+extern ECORE_API Fvector4 ps_ssfx_ssr_2;
+extern ECORE_API Fvector4 ps_ssfx_volumetric;
 
 
 enum

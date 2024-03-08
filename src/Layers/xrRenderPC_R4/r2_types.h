@@ -21,6 +21,13 @@
 #define		r2_RT_ssao_temp		"$user$ssao_temp"		//temporary rt for ssao calculation
 #define		r2_RT_half_depth	"$user$half_depth"		//temporary rt for ssao calculation
 
+
+#define		r2_RT_ssfx			"$user$ssfx" // [Ascii1457] SSS new Phase
+#define		r2_RT_ssfx_temp		"$user$ssfx_temp" // [Ascii1457] SSS new Phase
+#define		r2_RT_ssfx_temp2	"$user$ssfx_temp2" // [ SSS ] Full res - D3DFMT_A8B8G8R8F
+#define		r2_RT_ssfx_accum	"$user$ssfx_accum" // [ SSS ] Full res - D3DFMT_A16B16G16R16F
+#define		r2_RT_ssfx_hud		"$user$ssfx_hud" // ...
+
 //ogse ss
 #define		r2_RT_sunshafts0	"$user$sun_shafts0"		// first rt
 #define		r2_RT_sunshafts1	"$user$sun_shafts1"		// second rt

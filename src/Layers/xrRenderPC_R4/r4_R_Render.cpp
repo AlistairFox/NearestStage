@@ -538,6 +538,12 @@ void CRender::Render		()
 		PIX_EVENT(DEFER_LIGHT_OCCQ);
 		//render_lights(LP_pending);
 	}
+
+
+	{
+		if (RImplementation.o.ssfx_volumetric)
+			Target->phase_ssfx_volumetric_blur();
+	}
 	Device.Statistic->RenderLights.End();
 
 	Device.Statistic->Render_postprocess.Begin();
@@ -571,7 +577,6 @@ void CRender::render_forward				()
 		r_dsgraph_render_graph					(1)	;					// normal level, secondary priority
 		PortalTraverser.fade_render				()	;					// faded-portals
 		r_dsgraph_render_sorted					()	;					// strict-sorted geoms
-		g_pGamePersistent->Environment().RenderLast()	;					// rain/thunder-bolts
 	}
 
 	RImplementation.o.distortion				= FALSE;				// disable distorion

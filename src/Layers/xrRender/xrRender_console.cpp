@@ -284,6 +284,11 @@ Fvector4 ps_ssfx_rain_3 = { 0.01f, 1.0f, 0.0f, 0.0f }; // Alpha, Refraction ( Sp
 Fvector4 ps_ssfx_wind_grass = { 9.5f, 1.4f, 1.5f, 0.4f };
 Fvector4 ps_ssfx_wind_trees = { 11.0f, 0.15f, 0.5f, 0.15f };
 
+int ps_ssfx_ssr_quality = 0; // Quality
+Fvector4 ps_ssfx_ssr = { 1.0f, 0.3f, 0.6f, 0.0f }; // Res, Blur, Temp, Noise
+Fvector4 ps_ssfx_ssr_2 = { 0.0f, 1.3f, 1.0f, 0.015f }; // Quality, Fade, Int, Wpn Int
+Fvector4 ps_ssfx_volumetric = { 0, 1.0f, 3.0f, 8.0f };
+Fvector3 ps_ssfx_shadow_bias = { 0.4f, 0.03f, 0.0f };
 
 Fvector3	ps_r2_dof					= Fvector3().set(-1.25f, 1.4f, 10000.f);
 float		ps_r2_dof_sky				= 30;				//	distance to sky
@@ -843,6 +848,12 @@ void		xrRender_initconsole	()
 	CMD4(CCC_Integer,	"r__supersample",		&ps_r__Supersample,			1,		8		);
 	CMD4(CCC_Vector4, "ssfx_wind_grass", &ps_ssfx_wind_grass, Fvector4().set(0.0, 0.0, 0.0, 0.0), Fvector4().set(20.0, 5.0, 5.0, 5.0));
 	CMD4(CCC_Vector4, "ssfx_wind_trees", &ps_ssfx_wind_trees, Fvector4().set(0.0, 0.0, 0.0, 0.0), Fvector4().set(20.0, 5.0, 5.0, 1.0));
+	// Screen Space Shaders
+	CMD4(CCC_Integer, "ssfx_ssr_quality", &ps_ssfx_ssr_quality, 0, 5);
+	CMD4(CCC_Vector4, "ssfx_ssr", &ps_ssfx_ssr, Fvector4().set(1, 0, 0, 0), Fvector4().set(2, 1, 1, 1));
+	CMD4(CCC_Vector4, "ssfx_ssr_2", &ps_ssfx_ssr_2, Fvector4().set(0, 0, 0, 0), Fvector4().set(2, 2, 2, 2));
+	CMD4(CCC_Vector4, "ssfx_volumetric", &ps_ssfx_volumetric, Fvector4().set(0, 0, 1.0, 1.0), Fvector4().set(1.0, 5.0, 5.0, 16.0));
+	CMD4(CCC_Vector3, "ssfx_shadow_bias", &ps_ssfx_shadow_bias, Fvector3().set(0, 0, 0), Fvector3().set(1.0, 1.0, 1.0));
 
 	Fvector	tw_min,tw_max;
 	
