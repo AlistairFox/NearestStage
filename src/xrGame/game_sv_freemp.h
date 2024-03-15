@@ -76,8 +76,8 @@ public:
 				bool				Binnar_save_connect = false;
 
 	///////////Info portions saving ////////////////
-	virtual void					SavePlayerPortions(ClientID sender, shared_str info_id, bool add);
-	virtual void					LoadPlayerPortions(game_PlayerState* ps, bool first);
+	 void					SavePlayerPortions(ClientID sender, shared_str info_id, bool add);
+	 void					LoadPlayerPortions(game_PlayerState* ps, bool first);
 	enum DialogsSavingChunks
 	{
 		INFO_PORTIONS_CHUNK = 0
@@ -86,9 +86,9 @@ public:
 	///////////Info portions saving\ ////////////////
 
 	///////////Dynamic Weather ////////////////
-	virtual void DynamicWeatherUpdate();
-	virtual void ServerEnvSaveUpdateFile();
-	virtual void ServerEnvSaveUpdateBin();
+	 void DynamicWeatherUpdate();
+	 void ServerEnvSaveUpdateFile();
+	 void ServerEnvSaveUpdateBin();
 
 	u32 nowday;
 	bool		weather_will_change = false;
@@ -109,18 +109,18 @@ public:
 	CInifile* spawn_ammo;
 	CInifile* spawn_explosive;
 	CInifile* spawn_weapons;
-	virtual void				   SpawnInvBoxesItems(CSE_ALifeInventoryBox* box);
-	virtual void				   OnStartSpawnInvBoxesItems(CSE_ALifeInventoryBox* box);
+	 void				   SpawnInvBoxesItems(CSE_ALifeInventoryBox* box);
+	 void				   OnStartSpawnInvBoxesItems(CSE_ALifeInventoryBox* box);
 								   
-	virtual void				   DynamicBoxFileCreate();
-	virtual void				   DynamicBoxUpdate();
+	 void				   DynamicBoxFileCreate();
+	 void				   DynamicBoxUpdate();
 	///////////Dynamic Box Respawn //////////////
 
 
 	//////Dynamic Music /////////////
-	virtual void				   DynamicMusicUpdate();
-	virtual void				   DynamicMusicFileCreate();
-	virtual void				   MusicPlay(CSE_ALifeObjectPhysic* obj, int pass, int obj_num);
+	 void				   DynamicMusicUpdate();
+	 void				   DynamicMusicFileCreate();
+	 void				   MusicPlay(CSE_ALifeObjectPhysic* obj, int pass, int obj_num);
 	int numb = 0;
 	int obj_count = 4;
 	int	MusicCount;
@@ -140,14 +140,14 @@ public:
 	{
 		INVBOX_ITEMS_CHUNK = 0
 	};
-	virtual		void				BinnarSaveInvBox(CSE_ALifeInventoryBox* box, string_path& filepath);
-	virtual		void				BinnarLoadInvBox(CSE_ALifeInventoryBox* box, string_path& filepath);
+			void				BinnarSaveInvBox(CSE_ALifeInventoryBox* box, string_path& filepath);
+			void				BinnarLoadInvBox(CSE_ALifeInventoryBox* box, string_path& filepath);
 	///////Binnar InvBox Save ////////
 	CInifile* curr_box_file;
 	string_path curr_invbox_name;
 	///////File InvBox Save ////////
-	virtual		void				SaveInvBox(CSE_ALifeInventoryBox* box, CInifile* file);
-	virtual		void				LoadInvBox(CSE_ALifeInventoryBox* box, CInifile* file);
+			void				SaveInvBox(CSE_ALifeInventoryBox* box, CInifile* file);
+			void				LoadInvBox(CSE_ALifeInventoryBox* box, CInifile* file);
 	///////File InvBox Save ////////
 
 	bool use_mt_save = false;
@@ -160,11 +160,23 @@ public:
 		ACTOR_POS = 3,
 		ACTOR_TEAM = 4
 	};
-	virtual		void				BinnarSavePlayer(game_PlayerState* ps, string_path& filepath);
-	virtual		bool				BinnarLoadPlayer(game_PlayerState* ps, string_path& filepath);
-	virtual		bool				HasBinnarSaveFile(game_PlayerState* ps);
-	virtual		bool				load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos, Fvector& angle);
-	virtual		void				MtSavePlayer();
+
+	struct Players_stats
+	{
+		float satiety = 1.f;
+		float thirst = 1.f;
+		float health = 1.f;
+		float radiation = 0.f;
+	};
+	xr_map<LPCSTR, Players_stats> Players_condition;
+
+	 void SavePlayersConditions(float satiety, float thirst, float health, float radiation, game_PlayerState* ps);
+
+			void				BinnarSavePlayer(game_PlayerState* ps, string_path& filepath);
+			bool				BinnarLoadPlayer(game_PlayerState* ps, string_path& filepath);
+			bool				HasBinnarSaveFile(game_PlayerState* ps);
+			bool				load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos, Fvector& angle);
+			void				MtSavePlayer();
 	std::thread* playersave_thread;
 	///////Binnar Player Save ////////
 
@@ -173,8 +185,8 @@ public:
 	virtual		bool				HasSaveFile(game_PlayerState* ps);
 	virtual		void				assign_RP(CSE_Abstract* E, game_PlayerState* ps_who);
 	virtual		bool				load_position_RP(game_PlayerState* ps, Fvector& pos, Fvector& angle);
-	virtual     void				SavePlayer(game_PlayerState* ps, CInifile* file);
-	virtual     bool				LoadPlayer(game_PlayerState* ps, CInifile* file);
+	     void				SavePlayer(game_PlayerState* ps, CInifile* file);
+	     bool				LoadPlayer(game_PlayerState* ps, CInifile* file);
 	///////File Player Save ///////
 
 
@@ -194,10 +206,10 @@ public:
 		float detector_cond;
 	};
 	xr_vector<detectors> save_detectors;
-	virtual     void				SavePlayerOutfits(game_PlayerState* ps, CInifile* outfsFile);
-	virtual     void				SavePlayerDetectors(game_PlayerState* ps, CInifile* detsFile);
-	virtual     void				LoadPlayerOtfits(game_PlayerState* ps, CInifile* outfsFile);
-	virtual     void				LoadPlayerDetectors(game_PlayerState* ps, CInifile* detsFile);
+	     void				SavePlayerOutfits(game_PlayerState* ps, CInifile* outfsFile);
+	     void				SavePlayerDetectors(game_PlayerState* ps, CInifile* detsFile);
+	     void				LoadPlayerOtfits(game_PlayerState* ps, CInifile* outfsFile);
+	     void				LoadPlayerDetectors(game_PlayerState* ps, CInifile* detsFile);
 	////////Death items save ////////
 };
 

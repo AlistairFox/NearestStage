@@ -1191,6 +1191,35 @@ void CActor::UpdateCL	()
 
 	if(g_Alive() && Level().CurrentViewEntity() == this)
 	{
+		if (OnClient())
+		{
+			if (need_set_cond && g_Alive())
+			{
+				SetActorSatiety(satiety);
+				SetActorThirst(thirst);
+				SetfHealth(health);
+				SetfRadiation(radiation);
+				satiety = 1.f;
+				thirst = 1.f;
+				health = 1.f;
+				radiation = 0.f;
+				need_set_cond = false;
+				Msg("Actor SET Cond: Satiety: %f, Thirst: %f", conditions().GetSatietyActor(), conditions().GetThirstActor());
+			}
+
+			if (g_Alive() && Device.dwFrame % 1000 == 0)
+			{
+				Msg("-- Process save stats");
+				NET_Packet P;
+				u_EventGen(P, GE_PLAYER_IMPORT_CONDITIONS, Actor()->ID());
+				P.w_float(conditions().GetThirstActor());
+				P.w_float(conditions().GetSatietyActor());
+				P.w_float(GetfHealth());
+				P.w_float(conditions().GetRadiation());
+				u_EventSend(P);
+			}
+		}
+
 		if (Actor()->MpLootMODE() && !ANIMSET)
 		{
 			SetAnim(30);

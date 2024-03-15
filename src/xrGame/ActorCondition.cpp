@@ -207,26 +207,40 @@ void CActorCondition::UpdateCondition()
 	{
 		ConditionStand( cur_weight / base_weight );
 	}
-	
-		float k_max_power = 1.0f;
-			k_max_power = 1.0f + _min(cur_weight, base_weight) / base_weight
-				+ _max(0.0f, (cur_weight - base_weight) / 10.0f);
-		SetMaxPower		(GetMaxPower() - m_fPowerLeakSpeed * m_fDeltaTime * k_max_power);
 
+
+	//
+	//	float k_max_power = 1.0f;
+	//
+	//
+	//
+	//		k_max_power = 1.0f + _min(cur_weight, base_weight) / base_weight+ _max(0.0f, (cur_weight - base_weight) / 10.0f);
+	//
+	//	SetMaxPower(GetMaxPower() - m_fPowerLeakSpeed * m_fDeltaTime * k_max_power);
+	//
+	//	if (Device.dwFrame % 100 == 0)
+	//	{
+	//		Msg("k_max_power: %f", k_max_power);
+	//		Msg("m_FMaxPower: %f", GetMaxPower());
+	//	}
 
 	m_fAlcohol		+= m_fV_Alcohol*m_fDeltaTime;
 	clamp			(m_fAlcohol,			0.0f,		1.0f);
 
 	if (Actor() && Actor()->ID() == m_object->ID())
 	{	
-		CEffectorCam* ce = Actor()->Cameras().GetCamEffector((ECamEffectorType)effAlcohol);
-		if	((m_fAlcohol>0.0001f) ){
-			if(!ce){
-				AddEffector(m_object,effAlcohol, "effector_alcohol", GET_KOEFF_FUNC(this, &CActorCondition::GetAlcohol));
+		if (OnClient())
+		{
+			CEffectorCam* ce = Actor()->Cameras().GetCamEffector((ECamEffectorType)effAlcohol);
+			if ((m_fAlcohol > 0.0001f)) {
+				if (!ce) {
+					AddEffector(m_object, effAlcohol, "effector_alcohol", GET_KOEFF_FUNC(this, &CActorCondition::GetAlcohol));
+				}
 			}
-		}else{
-			if(ce)
-				RemoveEffector(m_object,effAlcohol);
+			else {
+				if (ce)
+					RemoveEffector(m_object, effAlcohol);
+			}
 		}
 
 		
@@ -424,6 +438,7 @@ void CActorCondition::UpdateSatiety()
 	//	m_fDeltaPower += m_fV_SatietyPower * m_fDeltaTime;
  	//	return;
 	//}
+
 	if (Level().CurrentControlEntity())
 	{
 		if (m_fSatiety > 0)
@@ -431,6 +446,10 @@ void CActorCondition::UpdateSatiety()
 			m_fSatiety -= m_fV_Satiety * m_fDeltaTime;
 			clamp(m_fSatiety, 0.0f, 1.0f);
 		}
+
+		if(OnClient())
+		if (Device.dwFrame % 100 == 0)
+			Msg("Satiety: %f Name: %s", m_fSatiety, Actor()->Name());
 
 		float satiety_health_koef = (m_fSatiety - m_fSatietyCritical) / (m_fSatiety >= m_fSatietyCritical ? 1 - m_fSatietyCritical : m_fSatietyCritical);
 		if (Actor()->g_Alive() && !object().MpGodMode())
@@ -450,6 +469,7 @@ void CActorCondition::UpdateThirst()
 	//	return;
 	//}
 
+
 	if (Level().CurrentControlEntity())
 	{
 		if (m_fThirst > 0)
@@ -457,6 +477,10 @@ void CActorCondition::UpdateThirst()
 			m_fThirst -= m_fV_Thirst * m_fDeltaTime;
 			clamp(m_fThirst, 0.0f, 1.0f);
 		}
+
+		if (OnClient())
+		if (Device.dwFrame % 100 == 0)
+			Msg("Thirst: %f Name: %s", m_fThirst, Actor()->Name());
 
 		float thirst_health_koef = (m_fThirst - m_fThirstCritical) / (m_fThirst >= m_fThirstCritical ? 1 - m_fThirstCritical : m_fThirstCritical);
 		if (Actor()->g_Alive() && !object().MpGodMode())

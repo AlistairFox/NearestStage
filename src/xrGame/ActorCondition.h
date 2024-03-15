@@ -87,7 +87,10 @@ public:
 			float	xr_stdcall	GetPsy				()	{return 1.0f-GetPsyHealth();}
 	IC		float				GetSatietyPower		() const {return m_fV_SatietyPower*m_fSatiety;};
 	IC		float				GetThirstPower		() const { return m_fV_ThirstPower * m_fThirst; };
-
+	void				SetThirst(float thirst) { m_fThirst = thirst; }
+	void				SetSatiety(float satiety) { m_fSatiety = satiety; }
+	float				GetThirstActor() { return m_fThirst; }
+	float				GetSatietyActor() { return m_fSatiety; }
 			void		AffectDamage_InjuriousMaterialAndMonstersInfluence();
 			float		GetInjuriousMaterialDamage	();
 			

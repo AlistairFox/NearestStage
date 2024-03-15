@@ -378,6 +378,15 @@ void CActor::OnEvent(NET_Packet& P, u16 type)
 		}
 
 	}	break;
+	case GE_PLAYER_LOAD_CONDITIONS:
+	{
+		P.r_float(satiety);
+		P.r_float(thirst);
+		P.r_float(health);
+		P.r_float(radiation);
+		need_set_cond = true;
+		Msg("-- Set condition: S: %f, T: %f, H: %f, R: %f", satiety, thirst, health, radiation);
+	}break;
 	}
 }
 

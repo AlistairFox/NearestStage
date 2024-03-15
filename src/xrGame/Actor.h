@@ -18,6 +18,7 @@
 #include "step_manager.h"
 #include "script_export_space.h"
 #include "xr_level_controller.h"
+#include "ActorCondition.h"
 
 using namespace ACTOR_DEFS;
 
@@ -147,7 +148,11 @@ public:
 	bool						MpWoundMODE() const;
 	bool						MpLootMODE() const;
 
-
+	float satiety = 1.f;
+	float thirst = 1.f;
+	float health = 1.f;
+	float radiation = 0.f;
+	bool need_set_cond = false;
 
 	void					SetAnim(int ANIM);
 	bool					ANIMSET = false;
@@ -524,6 +529,12 @@ public:
 	bool					CanRun					();
 	void					StopAnyMove				();
 	void					StopSprint() { mstate_wishful &= ~mcSprint; }
+
+	float					GetActorThirst()  const { return conditions().GetThirstActor(); }
+	float					GetActorSatiety() const { return conditions().GetSatietyActor(); }
+
+	void					SetActorThirst(float thirst) { conditions().SetThirst(thirst); }
+	void					SetActorSatiety(float satiety) { conditions().SetSatiety(satiety); }
 
 	bool					AnyAction				()	{return (mstate_real & mcAnyAction) != 0;};
 	bool					AnyMove					()	{return (mstate_real & mcAnyMove) != 0;};

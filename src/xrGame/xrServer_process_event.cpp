@@ -566,6 +566,17 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 		Process_event_PDA_CHAT(P, sender);
 	}break;
 
+	case GE_PLAYER_IMPORT_CONDITIONS:
+	{
+		xrClientData* CL = ID_to_client(sender);
+		float satiety, thirst, health, radiation;
+		P.r_float(thirst);
+		P.r_float(satiety);
+		P.r_float(health);
+		P.r_float(radiation);
+		fmp->SavePlayersConditions(satiety, thirst, health, radiation, CL->ps);
+	}break;
+
 	default:
 		R_ASSERT2	(0,"Game Event not implemented!!!");
 		break;

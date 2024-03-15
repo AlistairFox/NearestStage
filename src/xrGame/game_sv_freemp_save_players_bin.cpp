@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "game_sv_freemp.h"
 #include "Level.h"
 #include "Actor.h"
@@ -14,13 +14,13 @@
 void game_sv_freemp::BinnarSavePlayer(game_PlayerState* ps, string_path& filepath)
 {
 	/*
-	Î÷åðåäíîñòü ÷òåíèÿ ôàéëà:
+	ÐžÑ‡ÐµÑ€ÐµÐ´Ð½Ð¾ÑÑ‚ÑŒ Ñ‡Ñ‚ÐµÐ½Ð¸Ñ Ñ„Ð°Ð¹Ð»Ð°:
 	CHUNK: ACTOR_STATS_CHUNK
 	u32: money
 	u8: team
 
 	CHUNK: ACTOR_POS
-	u8: bool ïðîâåðÿåì áûëà ëè çàñåéâëåíà ïîçèöèÿ
+	u8: bool Ð¿Ñ€Ð¾Ð²ÐµÑ€ÑÐµÐ¼ Ð±Ñ‹Ð»Ð° Ð»Ð¸ Ð·Ð°ÑÐµÐ¹Ð²Ð»ÐµÐ½Ð° Ð¿Ð¾Ð·Ð¸Ñ†Ð¸Ñ
 	if(true)
 	fvector3: position
 	fvector3: direction
@@ -29,14 +29,14 @@ void game_sv_freemp::BinnarSavePlayer(game_PlayerState* ps, string_path& filepat
 
 	CHUNK: ACTOR_DEVICES_CHUNK
 
-	u8: bool ïðîâåðÿåì åñòü ëè ôîíàðèê
+	u8: bool Ð¿Ñ€Ð¾Ð²ÐµÑ€ÑÐµÐ¼ ÐµÑÑ‚ÑŒ Ð»Ð¸ Ñ„Ð¾Ð½Ð°Ñ€Ð¸Ðº
 	if true
 	stringZ: item
 	float: Condition
 	if false
 	skip
 
-	u8: bool ïðîâåðÿåì åñòü ëè äåòåêòîð
+	u8: bool Ð¿Ñ€Ð¾Ð²ÐµÑ€ÑÐµÐ¼ ÐµÑÑ‚ÑŒ Ð»Ð¸ Ð´ÐµÑ‚ÐµÐºÑ‚Ð¾Ñ€
 	if true
 	stringZ: item
 	float: Condition
@@ -78,6 +78,10 @@ void game_sv_freemp::BinnarSavePlayer(game_PlayerState* ps, string_path& filepat
 	{
 		writer->open_chunk(ACTOR_STATS_CHUNK);
 		writer->w_u32(ps->money_for_round); // Player Money
+		writer->w_float(Players_condition[ps->getName()].satiety);
+		writer->w_float(Players_condition[ps->getName()].thirst);
+		writer->w_float(Players_condition[ps->getName()].health);
+		writer->w_float(Players_condition[ps->getName()].radiation);
 		writer->close_chunk();
 
 		writer->open_chunk(ACTOR_TEAM);
@@ -100,7 +104,7 @@ void game_sv_freemp::BinnarSavePlayer(game_PlayerState* ps, string_path& filepat
 
 		writer->open_chunk(ACTOR_DEVICES_CHUNK);
 		CTorch* pTorch = smart_cast<CTorch*>(actor->inventory().ItemFromSlot(TORCH_SLOT));
-		//ñîõðàíåíèå ôîíàðèêà
+		//ÑÐ¾Ñ…Ñ€Ð°Ð½ÐµÐ½Ð¸Ðµ Ñ„Ð¾Ð½Ð°Ñ€Ð¸ÐºÐ°
 		if (pTorch)
 		{
 			writer->w_u8(1); // cheking torch
@@ -111,7 +115,7 @@ void game_sv_freemp::BinnarSavePlayer(game_PlayerState* ps, string_path& filepat
 			writer->w_u8(0); // cheking torch
 
 		CCustomDetector* detector = smart_cast<CCustomDetector*>(actor->inventory().ItemFromSlot(DETECTOR_SLOT));
-		//ñîõðàíåíèå äåòåêòîðà
+		//ÑÐ¾Ñ…Ñ€Ð°Ð½ÐµÐ½Ð¸Ðµ Ð´ÐµÑ‚ÐµÐºÑ‚Ð¾Ñ€Ð°
 		if (detector)
 		{
 			writer->w_u8(1); // cheking detector
@@ -123,7 +127,7 @@ void game_sv_freemp::BinnarSavePlayer(game_PlayerState* ps, string_path& filepat
 
 
 		CDetectorAnomaly* pAnDet = smart_cast<CDetectorAnomaly*>(actor->inventory().ItemFromSlot(DOSIMETER_SLOT));
-		//ñîõðàíåíèå äåòåêòîðà àíîìàëèé
+		//ÑÐ¾Ñ…Ñ€Ð°Ð½ÐµÐ½Ð¸Ðµ Ð´ÐµÑ‚ÐµÐºÑ‚Ð¾Ñ€Ð° Ð°Ð½Ð¾Ð¼Ð°Ð»Ð¸Ð¹
 		if (pAnDet)
 		{
 			writer->w_u8(1); // check anom detector
@@ -134,7 +138,7 @@ void game_sv_freemp::BinnarSavePlayer(game_PlayerState* ps, string_path& filepat
 			writer->w_u8(0); // checking anom detector
 
 		CPda* pPda = smart_cast<CPda*>(actor->inventory().ItemFromSlot(PDA_SLOT));
-		//ñîõðàíåíèÿ ïäà
+		//ÑÐ¾Ñ…Ñ€Ð°Ð½ÐµÐ½Ð¸Ñ Ð¿Ð´Ð°
 		if (pPda)
 		{
 			writer->w_u8(1); // check pda
@@ -207,6 +211,13 @@ bool game_sv_freemp::BinnarLoadPlayer(game_PlayerState* ps, string_path& filepat
 		if (reader->open_chunk(ACTOR_STATS_CHUNK))
 		{
 			ps->money_for_round = reader->r_u32();// money
+			NET_Packet P;
+			u_EventGen(P, GE_PLAYER_LOAD_CONDITIONS, ps->GameID);
+			P.w_float(reader->r_float());
+			P.w_float(reader->r_float());
+			P.w_float(reader->r_float());
+			P.w_float(reader->r_float());
+			u_EventSend(P);
 		}
 
 		if (reader->open_chunk(ACTOR_TEAM))
@@ -411,4 +422,113 @@ bool game_sv_freemp::load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos,
 		return false;
 	}
 	return false;
+}
+
+
+/////////////// Ð½ÐµÐ¾Ð±Ñ…Ð¾Ð´Ð¸Ð¼Ð¾ Ð¿Ñ€Ð¾Ð´ÑƒÐ¼Ð°Ñ‚ÑŒ ÐºÐ°Ðº Ð¾Ñ‡Ð¸ÑÑ‚Ð¸Ñ‚ÑŒ Ð¿Ð°Ñ€Ð°Ð¼ÐµÑ‚Ñ€Ñ‹ Ð¿Ñ€Ð¸ ÑÐ¼ÐµÑ€Ñ‚Ð¸ Ð¸Ð³Ñ€Ð¾ÐºÐ° Ð² Ð±ÑƒÐ´ÑƒÑ‰ÐµÐ¼
+void game_sv_freemp::SavePlayersConditions(float satiety, float thirst, float health, float radiation, game_PlayerState* ps)
+{
+	if (!ps)
+		return;
+
+	Players_condition[ps->getName()].satiety = satiety;
+	Players_condition[ps->getName()].thirst = thirst;
+	Players_condition[ps->getName()].health = health;
+	Players_condition[ps->getName()].radiation = radiation;
+}
+
+void game_sv_freemp::LoadPlayerPortions(game_PlayerState* ps, bool first)
+{
+
+	if (!first)
+	{
+		NET_Packet P;
+		u_EventGen(P, GE_GET_SAVE_PORTIONS, ps->GameID);
+		save_data(Player_portions[ps->getName()], P);
+		P.w_u8(false);
+		u_EventSend(P);
+	}
+	else
+	{
+		string_path path;
+		string32 file_name;
+		xr_strcpy(file_name, ps->getName());
+		xr_strcat(file_name, ".binsave");
+		FS.update_path(path, "$mp_saves_info$", file_name);
+
+		if (FS.exist(path))
+		{
+			IReader* reader = FS.r_open(path);
+
+			if (reader->open_chunk(INFO_PORTIONS_CHUNK))
+			{
+				u32 count = reader->r_u32();
+
+
+				for (int i = 0; i < count; i++)
+				{
+					shared_str item;
+					reader->r_stringZ(item);
+					Player_portions[ps->getName()].push_back(item);
+				}
+
+				NET_Packet P;
+				u_EventGen(P, GE_GET_SAVE_PORTIONS, ps->GameID);
+				save_data(Player_portions[ps->getName()], P);
+				P.w_u8(true);
+				u_EventSend(P);
+
+			}
+
+			FS.r_close(reader);
+		}
+	}
+}
+
+
+void game_sv_freemp::SavePlayerPortions(ClientID sender, shared_str info_id, bool add)
+{
+	game_PlayerState* ps = get_id(sender);
+
+	if (ps)
+	{
+		auto it = std::find_if(Player_portions[ps->getName()].begin(), Player_portions[ps->getName()].end(), [&](shared_str& data)
+			{
+				return data.equal(info_id);
+			});
+
+		if (add)
+		{
+			if (it == Player_portions[ps->getName()].end())
+				Player_portions[ps->getName()].push_back(info_id);
+			else
+				return;
+		}
+		else
+		{
+			if (it != Player_portions[ps->getName()].end())
+				Player_portions[ps->getName()].erase(it);
+			else
+				return;
+		}
+
+
+		string_path path;
+		string32 file_name;
+		xr_strcpy(file_name, ps->getName());
+		xr_strcat(file_name, ".binsave");
+		FS.update_path(path, "$mp_saves_info$", file_name);
+		IWriter* writer = FS.w_open(path);
+		writer->open_chunk(INFO_PORTIONS_CHUNK);
+		writer->w_u32(Player_portions[ps->getName()].size());
+		for (const auto& info : Player_portions[ps->getName()])
+		{
+			writer->w_stringZ(info);
+		}
+		writer->close_chunk();
+		FS.w_close(writer);
+		Msg("Sender: %s, portion: %s", ps->getName(), info_id.c_str());
+	}
+
+
 }
