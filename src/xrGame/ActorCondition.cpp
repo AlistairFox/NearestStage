@@ -447,10 +447,6 @@ void CActorCondition::UpdateSatiety()
 			clamp(m_fSatiety, 0.0f, 1.0f);
 		}
 
-		if(OnClient())
-		if (Device.dwFrame % 100 == 0)
-			Msg("Satiety: %f Name: %s", m_fSatiety, Actor()->Name());
-
 		float satiety_health_koef = (m_fSatiety - m_fSatietyCritical) / (m_fSatiety >= m_fSatietyCritical ? 1 - m_fSatietyCritical : m_fSatietyCritical);
 		if (Actor()->g_Alive() && !object().MpGodMode())
 		{
@@ -477,10 +473,6 @@ void CActorCondition::UpdateThirst()
 			m_fThirst -= m_fV_Thirst * m_fDeltaTime;
 			clamp(m_fThirst, 0.0f, 1.0f);
 		}
-
-		if (OnClient())
-		if (Device.dwFrame % 100 == 0)
-			Msg("Thirst: %f Name: %s", m_fThirst, Actor()->Name());
 
 		float thirst_health_koef = (m_fThirst - m_fThirstCritical) / (m_fThirst >= m_fThirstCritical ? 1 - m_fThirstCritical : m_fThirstCritical);
 		if (Actor()->g_Alive() && !object().MpGodMode())

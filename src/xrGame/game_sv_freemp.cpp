@@ -449,7 +449,6 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 
  	game_PlayerState* ps = get_id(id_who);
 
-
 	if (ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
 	{
 		LoadPlayerPortions(ps, false);

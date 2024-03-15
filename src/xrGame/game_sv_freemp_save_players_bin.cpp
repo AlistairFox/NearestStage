@@ -80,7 +80,6 @@ void game_sv_freemp::BinnarSavePlayer(game_PlayerState* ps, string_path& filepat
 		writer->w_u32(ps->money_for_round); // Player Money
 		writer->w_float(Players_condition[ps->getName()].satiety);
 		writer->w_float(Players_condition[ps->getName()].thirst);
-		writer->w_float(Players_condition[ps->getName()].health);
 		writer->w_float(Players_condition[ps->getName()].radiation);
 		writer->close_chunk();
 
@@ -213,10 +212,13 @@ bool game_sv_freemp::BinnarLoadPlayer(game_PlayerState* ps, string_path& filepat
 			ps->money_for_round = reader->r_u32();// money
 			NET_Packet P;
 			u_EventGen(P, GE_PLAYER_LOAD_CONDITIONS, ps->GameID);
-			P.w_float(reader->r_float());
-			P.w_float(reader->r_float());
-			P.w_float(reader->r_float());
-			P.w_float(reader->r_float());
+			float satiety, thirst, radiation;
+			satiety = reader->r_float();
+			thirst = reader->r_float();
+			radiation = reader->r_float();
+			P.w_float(satiety);
+			P.w_float(thirst);
+			P.w_float(radiation);
 			u_EventSend(P);
 		}
 
@@ -424,16 +426,13 @@ bool game_sv_freemp::load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos,
 	return false;
 }
 
-
-/////////////// необходимо продумать как очистить параметры при смерти игрока в будущем
-void game_sv_freemp::SavePlayersConditions(float satiety, float thirst, float health, float radiation, game_PlayerState* ps)
+void game_sv_freemp::SavePlayersConditions(float satiety, float thirst, float radiation, game_PlayerState* ps)
 {
 	if (!ps)
 		return;
 
 	Players_condition[ps->getName()].satiety = satiety;
 	Players_condition[ps->getName()].thirst = thirst;
-	Players_condition[ps->getName()].health = health;
 	Players_condition[ps->getName()].radiation = radiation;
 }
 

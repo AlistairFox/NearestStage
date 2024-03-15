@@ -1193,48 +1193,45 @@ void CActor::UpdateCL	()
 	{
 		if (OnClient())
 		{
+			if(Device.dwFrame % 1000 == 0)
 			if (need_set_cond && g_Alive())
 			{
+				Msg("-- Set condition: S: %f, T: %f, R: %f", satiety, thirst, radiation);
+				need_set_cond = false;
 				SetActorSatiety(satiety);
 				SetActorThirst(thirst);
-				SetfHealth(health);
 				SetfRadiation(radiation);
 				satiety = 1.f;
 				thirst = 1.f;
-				health = 1.f;
 				radiation = 0.f;
-				need_set_cond = false;
-				Msg("Actor SET Cond: Satiety: %f, Thirst: %f", conditions().GetSatietyActor(), conditions().GetThirstActor());
 			}
+
 
 			if (g_Alive() && Device.dwFrame % 1000 == 0)
 			{
-				Msg("-- Process save stats");
+				Msg("-- Process import stats start");
 				NET_Packet P;
 				u_EventGen(P, GE_PLAYER_IMPORT_CONDITIONS, Actor()->ID());
 				P.w_float(conditions().GetThirstActor());
 				P.w_float(conditions().GetSatietyActor());
-				P.w_float(GetfHealth());
 				P.w_float(conditions().GetRadiation());
 				u_EventSend(P);
+				Msg("-- Process import stats end");
 			}
 		}
 
-		if (Actor()->MpLootMODE() && !ANIMSET)
+		if (MpLootMODE() && !ANIMSET)
 		{
 			SetAnim(30);
 			ANIMSET = true;
 		}
 
-		if (!Actor()->MpLootMODE() && ANIMSET && !OutAnim)
+		if (!MpLootMODE() && ANIMSET && !OutAnim)
 		{
 			FastExit();
 		}
 
-
-		CActor* pActor = smart_cast<CActor*>(Level().CurrentControlEntity());
-
-		if (pActor->GetfHealth() <= 0.2 && g_Alive())
+		if (GetfHealth() <= 0.2 && g_Alive())
 		{
 			ANIM_WOUND = 1;
 			need_ex_wound = true;

@@ -2914,17 +2914,64 @@ public:
 	}
 };
 
+class CCC_TeleportToPoss : public IConsole_Command {
+public:
+	CCC_TeleportToPoss(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = false; };
+
+	virtual void	Execute(LPCSTR args)
+	{
+		if (!g_pGameLevel || !Level().Server) return;
+
+		game_sv_mp* sv_game = smart_cast<game_sv_mp*>(Level().Server->game);
+		if (!sv_game) return;
+
+		string1024 buff;
+		exclude_raid_from_args(args, buff, sizeof(buff));
+
+		ClientID ID(0);
+		string128 name;
+		float x = 0.f, y = 0.f, z = 0.f;
+		if (sscanf(buff, "%s %f %f %f", &name, &x, &y, &z) != 4)
+		{
+			Msg("! ERROR: bad command parameters.");
+			return;
+		}
+
+		for (auto& player : Game().players)
+		{
+			game_PlayerState* ps = player.second;
+			if (ps->GameID == Game().local_player->GameID)
+			{
+				continue;
+			}
+
+			string128 player_name;
+			xr_strcpy(player_name, ps->getName());
+
+			if (xr_strcmp(player_name, name) == 0)
+			{
+				ID = player.first;
+				break;
+			}
+		}
+
+		xrClientData* CL = static_cast<xrClientData*>(Level().Server->GetClientByID(ID));
+		if (!CL || !CL->net_Ready || !CL->owner || !CL->ps || CL->ps->testFlag(GAME_PLAYER_FLAG_VERY_VERY_DEAD))
+		{
+			Msg("! Can't move player %s", name);
+			return;
+		}
+
+		sv_game->TeleportPlayerTo(ID, Fvector().set(x,y,z), Fvector().set(0, 0, 0));
+	}
+};
+
 class CCC_MovePlayerToRPoint : public IConsole_Command {
 public:
 	CCC_MovePlayerToRPoint(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = false; };
 
 	virtual void	Execute(LPCSTR args)
 	{
-		if (!Game().local_player->testFlag(GAME_PLAYER_SUPER_ADMIN))
-		{
-			Msg("! ERROR: u don't super admin");
-			return;
-		}
 		if (!g_pGameLevel || !Level().Server) return;
 
 		game_sv_mp* sv_game = smart_cast<game_sv_mp*>(Level().Server->game);
@@ -3675,6 +3722,7 @@ void register_mp_console_commands()
 	CMD1(CCC_GSpawnToInventory,		"g_spawn_to_target"		);
 
 	CMD1(CCC_WeatherSync, "weather_invalidate");
+	CMD1(CCC_TeleportToPoss, "teleport_player");
 
 	CMD1(CCC_SetNoClipForPlayer,	"sv_set_no_clip"		);
 	CMD1(CCC_SetInvisForPlayer,		"sv_set_invis"			);

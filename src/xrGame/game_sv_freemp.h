@@ -165,12 +165,11 @@ public:
 	{
 		float satiety = 1.f;
 		float thirst = 1.f;
-		float health = 1.f;
 		float radiation = 0.f;
 	};
 	xr_map<LPCSTR, Players_stats> Players_condition;
 
-	 void SavePlayersConditions(float satiety, float thirst, float health, float radiation, game_PlayerState* ps);
+	 void SavePlayersConditions(float satiety, float thirst, float radiation, game_PlayerState* ps);
 
 			void				BinnarSavePlayer(game_PlayerState* ps, string_path& filepath);
 			bool				BinnarLoadPlayer(game_PlayerState* ps, string_path& filepath);

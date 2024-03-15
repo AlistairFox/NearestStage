@@ -569,12 +569,12 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 	case GE_PLAYER_IMPORT_CONDITIONS:
 	{
 		xrClientData* CL = ID_to_client(sender);
-		float satiety, thirst, health, radiation;
+		float satiety, thirst, radiation;
 		P.r_float(thirst);
 		P.r_float(satiety);
-		P.r_float(health);
 		P.r_float(radiation);
-		fmp->SavePlayersConditions(satiety, thirst, health, radiation, CL->ps);
+		Msg("Import T: %f S: %f R: %f", thirst, satiety, radiation);
+		fmp->SavePlayersConditions(satiety, thirst, radiation, CL->ps);
 	}break;
 
 	default:
