@@ -28,6 +28,9 @@ game_sv_freemp::game_sv_freemp()
 	FS.update_path(curr_invbox_name, "$mp_check_saves_invbox$", "save_box_list.ltx");
 	curr_box_file = xr_new<CInifile>(curr_invbox_name, true);
 
+	FS.update_path(spawn_config, "$game_config$", "alife\\start_stuf.ltx");
+	spawn_file = xr_new<CInifile>(spawn_config, true, true);
+
 	DynamicBoxFileCreate();
 	DynamicMusicFileCreate();
 
@@ -62,6 +65,7 @@ game_sv_freemp::~game_sv_freemp()
 	xr_delete(spawn_weapons);
 	xr_delete(Music);
 	xr_delete(curr_box_file);
+	xr_delete(spawn_file);
 }
 
 void game_sv_freemp::MtSavePlayer()
@@ -449,6 +453,8 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 
  	game_PlayerState* ps = get_id(id_who);
 
+	Msg("Player connected: name: %s, static id: %d", ps->getName(), ps->GetStaticID());
+
 	if (ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
 	{
 		LoadPlayerPortions(ps, false);
@@ -477,9 +483,6 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 		{
 			u8 kit_numb = login_file->r_u8(loginname, "kit_number");
 
-			string_path spawn_config;
-			FS.update_path(spawn_config, "$game_config$", "alife\\start_stuf.ltx");
-			CInifile* spawn_file = xr_new<CInifile>(spawn_config, true, true);
 			LPCSTR N, V;
 			s32 money;
 
@@ -496,11 +499,15 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 			money = spawn_file->r_s32("start_money", "money");
 			xrCData->ps->money_for_round = money;
 
-			for (u32 k = 0; spawn_file->r_line(spawn_section, k, &N, &V); k++)
+			if (spawn_file->section_exist(spawn_section))
 			{
-				SpawnItemToActor(ps->GameID, N);
+				for (u32 k = 0; spawn_file->r_line(spawn_section, k, &N, &V); k++)
+				{
+					SpawnItemToActor(ps->GameID, N);
+				}
 			}
-			xr_delete(spawn_file);
+			else
+				Msg("!! Can't Find spawn_kit section: [%s]", spawn_section);
 
 			checkstuf_file->w_bool(loginname, "staf_load", true);
 			checkstuf_file->save_as(filepath);

@@ -198,7 +198,7 @@ public:
 	float			m_fLR_InertiaFactor = 0; // Фактор горизонтальной инерции худа при движении камеры [-1; +1]
 	float			m_fUD_InertiaFactor = 0; // Фактор вертикальной инерции худа при движении камеры [-1; +1]
 	Fvector			m_strafe_offset[4][2]; //pos,rot,data1,data2/ normal,aim-GL --#SM+#--
-
+	float m_fFactor;
 	//для отоброажения иконок апгрейдов в интерфейсе
 	int GetScopeX();
 	int GetScopeY();

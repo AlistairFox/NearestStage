@@ -109,6 +109,8 @@ public:
 	CInifile* spawn_ammo;
 	CInifile* spawn_explosive;
 	CInifile* spawn_weapons;
+	CInifile* spawn_file;
+	string_path spawn_config;
 	 void				   SpawnInvBoxesItems(CSE_ALifeInventoryBox* box);
 	 void				   OnStartSpawnInvBoxesItems(CSE_ALifeInventoryBox* box);
 								   

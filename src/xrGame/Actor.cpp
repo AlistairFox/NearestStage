@@ -1211,7 +1211,7 @@ void CActor::UpdateCL	()
 			{
 				Msg("-- Process import stats start");
 				NET_Packet P;
-				u_EventGen(P, GE_PLAYER_IMPORT_CONDITIONS, Actor()->ID());
+				u_EventGen(P, GE_PLAYER_IMPORT_CONDITIONS, this->ID());
 				P.w_float(conditions().GetThirstActor());
 				P.w_float(conditions().GetSatietyActor());
 				P.w_float(conditions().GetRadiation());

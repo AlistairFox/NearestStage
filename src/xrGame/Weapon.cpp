@@ -33,10 +33,7 @@
 #define ROTATION_TIME			0.25f
 
 BOOL	b_toggle_weapon_aim		= FALSE;
-BOOL	b_hud_collision = TRUE;
-BOOL	b_hud_rotate = TRUE;
 extern CUIXml* pWpnScopeXml = NULL;
-float m_fFactor;
 extern float m_fZoomPower = 1.0f;
 
 CWeapon::CWeapon()
@@ -2206,7 +2203,7 @@ void CWeapon::UpdateHudAdditional(Fmatrix& trans)
 		clamp(m_zoom_params.m_fZoomRotationFactor, 0.f, 1.f);
 	}
 
-	if (b_hud_collision && !pActor->MpSafeMODE())
+	if (!pActor->MpSafeMODE())
 	{
 		float dist = GetRayQueryDist();
 
@@ -2263,9 +2260,6 @@ void CWeapon::UpdateHudAdditional(Fmatrix& trans)
 		clamp(m_fFactor, 0.f, 1.f);
 	}
 
-	CActor* pA = smart_cast<CActor*>(H_Parent());
-
-	if (b_hud_rotate)
 	{
 		R_ASSERT(hi);
 		Fvector						curr_offs, curr_rot;

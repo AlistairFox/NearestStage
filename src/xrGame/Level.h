@@ -205,6 +205,12 @@ private:
 	DEFINE_MAP					(shared_str,ref_sound,SoundRegistryMap,SoundRegistryMapIt);
 	SoundRegistryMap			sound_registry;
 
+	ref_sound snd1;
+	ref_sound snd2;
+	ref_sound snd3;
+	ref_sound snd4;
+	bool IsMusicActive = false;
+
 public:
 	void						PrefetchSound (LPCSTR name);
 
