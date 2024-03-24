@@ -190,6 +190,12 @@ void	game_PlayerState::SetGameID				(u16 NewID)
 	mOldIDs.push_back(GameID);
 	GameID = NewID;
 }
+
+void	game_PlayerState::SetStaticID			(u16 NewID)
+{
+	StaticID = NewID;
+}
+
 bool	game_PlayerState::HasOldID				(u16 ID)
 {
 	OLD_GAME_ID_it ID_i = std::find(mOldIDs.begin(), mOldIDs.end(), ID);

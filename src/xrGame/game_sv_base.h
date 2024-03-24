@@ -125,6 +125,7 @@ public:
 	virtual		bool				IsPointFreezed			(RPoint* rp);
 	virtual		void				SetPointFreezed			(RPoint* rp);
 
+	xr_map<LPCSTR, u16>PlayersStaticIdMap;
 #ifdef DEBUG
 	virtual		void				OnRender				();
 #endif

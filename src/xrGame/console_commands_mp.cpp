@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "../xrEngine/xr_ioconsole.h"
 #include "../xrEngine/xr_ioc_cmd.h"
 #include "level.h"
@@ -2597,7 +2597,7 @@ public:
 						P_answ.w_begin(M_REMOTE_CONTROL_AUTH);
 						P_answ.w_stringZ("acces rights");
 						Level().Server->SendTo(CL->ID, P_answ, net_flags(TRUE, TRUE));
-						Msg("-- %s ÿâëÿåòñÿ àäìèíèñòðàòîðîì", name);
+						Msg("-- %s ÑÐ²Ð»ÑÐµÑ‚ÑÑ Ð°Ð´Ð¼Ð¸Ð½Ð¸ÑÑ‚Ñ€Ð°Ñ‚Ð¾Ñ€Ð¾Ð¼", name);
 					}
 					else if (level == 2)
 					{
@@ -2615,7 +2615,7 @@ public:
 						P_answ.w_begin(M_REMOTE_CONTROL_AUTH);
 						P_answ.w_stringZ("acces rights");
 						Level().Server->SendTo(CL->ID, P_answ, net_flags(TRUE, TRUE));
-						Msg("-- %s ÿâëÿåòñÿ ñóïåð àäìèíèñòðàòîðîì", name);
+						Msg("-- %s ÑÐ²Ð»ÑÐµÑ‚ÑÑ ÑÑƒÐ¿ÐµÑ€ Ð°Ð´Ð¼Ð¸Ð½Ð¸ÑÑ‚Ñ€Ð°Ñ‚Ð¾Ñ€Ð¾Ð¼", name);
 					}
 
 				}
@@ -2717,7 +2717,7 @@ public:
 					P_answ.w_begin(M_REMOTE_CONTROL_AUTH);
 					P_answ.w_stringZ("remove admin");
 					Level().Server->SendTo(CL->ID, P_answ, net_flags(TRUE, TRUE));
-					Msg("-- %s - ëèøèëñÿ ñåññèîííûõ àäìèí ïðàâ", CL->ps->getName());
+					Msg("-- %s - Ð»Ð¸ÑˆÐ¸Ð»ÑÑ ÑÐµÑÑÐ¸Ð¾Ð½Ð½Ñ‹Ñ… Ð°Ð´Ð¼Ð¸Ð½ Ð¿Ñ€Ð°Ð²", CL->ps->getName());
 
 				}
 				else
@@ -3226,6 +3226,27 @@ public:
 			Msg("--Complete! User: %s has been registered.", login);
 			reg_data_file->save_as(reg_data);
 			file->save_as(filepath);
+
+
+			string_path idpath;
+			FS.update_path(idpath, "$players_static_id$", "players_id_list.ltx");
+			CInifile* StaticIdFile = xr_new<CInifile>(idpath, false, true);
+			u16 LastId = 1;
+
+			if (StaticIdFile->line_exist("last_players_id", "last_id"))
+			{
+				LastId = StaticIdFile->r_u16("last_players_id", "last_id");
+				++LastId;
+				StaticIdFile->remove_line("last_players_id", "last_id");
+				StaticIdFile->w_u16("last_players_id", "last_id", LastId);
+			}
+			else
+				StaticIdFile->w_u16("last_players_id", "last_id", LastId);
+
+			StaticIdFile->w_u16(login,"static_id", LastId);
+			StaticIdFile->save_as(idpath); 
+			xr_delete(StaticIdFile);
+
 		}
 		else
 		{

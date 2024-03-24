@@ -1,4 +1,4 @@
-#include "stdafx.h"
+п»ї#include "stdafx.h"
 #include "xrserver.h"
 #include "xrmessages.h"
 #include "xrserver_objects.h"
@@ -226,7 +226,7 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 	P.r_u8(kit);
 
 	string256 game_version;
-	sprintf(game_version, "Различные версии движка! Ваша: %d | Сервер: %d", _him, _our);
+	sprintf(game_version, "Р Р°Р·Р»РёС‡РЅС‹Рµ РІРµСЂСЃРёРё РґРІРёР¶РєР°! Р’Р°С€Р°: %d | РЎРµСЂРІРµСЂ: %d", _him, _our);
 
 	string_path denied_reg;// filtering names
 	string_path path_xray; // logins
@@ -252,7 +252,7 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 		if (_our != _him)
 		{
 			SendConnectResult(CL, 0, ecr_data_verification_failed, game_version);
-			Msg("!!ERROR Попытка входа с другой версии! Севрер: %d | Клиент: %d", _our, _him);
+			Msg("!!ERROR РџРѕРїС‹С‚РєР° РІС…РѕРґР° СЃ РґСЂСѓРіРѕР№ РІРµСЂСЃРёРё! РЎРµРІСЂРµСЂ: %d | РљР»РёРµРЅС‚: %d", _our, _him);
 			xr_delete(file);
 			xr_delete(banlist);
 			xr_delete(bad_register_file);
@@ -267,32 +267,32 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 			xr_delete(bad_register_file);
 			if (ban_descr == 0)
 			{
-				Msg("!! ERROR: пользователь был заблокирован по причине 0.");
-				SendConnectResult(CL, 0, ecr_data_verification_failed, "Вы были заблокированны, по причине: Оскорбление Администрации!");
+				Msg("!! ERROR: РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ Р±С‹Р» Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅ РїРѕ РїСЂРёС‡РёРЅРµ 0.");
+				SendConnectResult(CL, 0, ecr_data_verification_failed, "Р’С‹ Р±С‹Р»Рё Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅРЅС‹, РїРѕ РїСЂРёС‡РёРЅРµ: РћСЃРєРѕСЂР±Р»РµРЅРёРµ РђРґРјРёРЅРёСЃС‚СЂР°С†РёРё!");
 				return;
 			}
 			else if (ban_descr == 1)
 			{
-				Msg("!! ERROR: пользователь был заблокирован по причине 1.");
-				SendConnectResult(CL, 0, ecr_data_verification_failed, "Вы были заблокированны, по причине: Использование стороннего ПО, дающего преимущество в игре!");
+				Msg("!! ERROR: РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ Р±С‹Р» Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅ РїРѕ РїСЂРёС‡РёРЅРµ 1.");
+				SendConnectResult(CL, 0, ecr_data_verification_failed, "Р’С‹ Р±С‹Р»Рё Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅРЅС‹, РїРѕ РїСЂРёС‡РёРЅРµ: РСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ СЃС‚РѕСЂРѕРЅРЅРµРіРѕ РџРћ, РґР°СЋС‰РµРіРѕ РїСЂРµРёРјСѓС‰РµСЃС‚РІРѕ РІ РёРіСЂРµ!");
 				return;
 			}
 			else if (ban_descr == 2)
 			{
-				Msg("!! ERROR: пользователь был заблокирован по причине 2.");
-				SendConnectResult(CL, 0, ecr_data_verification_failed, "Вы были заблокированны, по причине: Неадекватное поведение или оскорбления на сервере!");
+				Msg("!! ERROR: РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ Р±С‹Р» Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅ РїРѕ РїСЂРёС‡РёРЅРµ 2.");
+				SendConnectResult(CL, 0, ecr_data_verification_failed, "Р’С‹ Р±С‹Р»Рё Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅРЅС‹, РїРѕ РїСЂРёС‡РёРЅРµ: РќРµР°РґРµРєРІР°С‚РЅРѕРµ РїРѕРІРµРґРµРЅРёРµ РёР»Рё РѕСЃРєРѕСЂР±Р»РµРЅРёСЏ РЅР° СЃРµСЂРІРµСЂРµ!");
 				return;
 			}
 			else if (ban_descr == 3)
 			{
-				Msg("!! ERROR: пользователь был заблокирован по причине пидорас.");
-				SendConnectResult(CL, 0, ecr_data_verification_failed, "Вы были заблокированны, по причине: Пидорас!");
+				Msg("!! ERROR: РїРѕР»СЊР·РѕРІР°С‚РµР»СЊ Р±С‹Р» Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅ РїРѕ РїСЂРёС‡РёРЅРµ РїРёРґРѕСЂР°СЃ.");
+				SendConnectResult(CL, 0, ecr_data_verification_failed, "Р’С‹ Р±С‹Р»Рё Р·Р°Р±Р»РѕРєРёСЂРѕРІР°РЅРЅС‹, РїРѕ РїСЂРёС‡РёРЅРµ: РџРёРґРѕСЂР°СЃ!");
 				return;
 			}
 		}
 		else
 		{
-			if (!bad_register_file->line_exist("bad_registration", comp_name.c_str()))
+			if (!bad_register_file->line_exist("bad_registration", comp_name.c_str())) 
 			{
 				if (reg == 0)
 				{
@@ -309,14 +309,14 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 
 						if (xr_strcmp(pass_check, password) != 0)
 						{
-							Msg("!! ERROR: Пользователь ввел неверный пароль");
-							SendConnectResult(CL, 0, ecr_data_verification_failed, "Проверьте пароль.");
+							Msg("!! ERROR: РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РІРІРµР» РЅРµРІРµСЂРЅС‹Р№ РїР°СЂРѕР»СЊ");
+							SendConnectResult(CL, 0, ecr_data_verification_failed, "РџСЂРѕРІРµСЂСЊС‚Рµ РїР°СЂРѕР»СЊ.");
 							return;
 						}
 
 						if (file->line_exist(login, "banned"))
 						{
-							SendConnectResult(CL, 0, ecr_data_verification_failed, "Вы забанены.");
+							SendConnectResult(CL, 0, ecr_data_verification_failed, "Р’С‹ Р·Р°Р±Р°РЅРµРЅС‹.");
 							return;
 						}
 
@@ -325,16 +325,16 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 							{
 								if (!xr_strcmp(pl.second->getName(), login))
 								{
-									Msg("!! ERROR: Повторный вход с одного аккаунта");
-									SendConnectResult(CL, 0, ecr_data_verification_failed, "Повторный вход с одного аккаунта.");
+									Msg("!! ERROR: РџРѕРІС‚РѕСЂРЅС‹Р№ РІС…РѕРґ СЃ РѕРґРЅРѕРіРѕ Р°РєРєР°СѓРЅС‚Р°");
+									SendConnectResult(CL, 0, ecr_data_verification_failed, "РџРѕРІС‚РѕСЂРЅС‹Р№ РІС…РѕРґ СЃ РѕРґРЅРѕРіРѕ Р°РєРєР°СѓРЅС‚Р°.");
 									return;
 								}
 							}
 					}
 					else
 					{
-						Msg("!! ERROR: Пользователь ввел неверный логин");
-						SendConnectResult(CL, 0, ecr_data_verification_failed, "Неверный Логин.");
+						Msg("!! ERROR: РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ РІРІРµР» РЅРµРІРµСЂРЅС‹Р№ Р»РѕРіРёРЅ");
+						SendConnectResult(CL, 0, ecr_data_verification_failed, "РќРµРІРµСЂРЅС‹Р№ Р›РѕРіРёРЅ.");
 						return;
 					}
 
@@ -348,15 +348,15 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 
 					if (reg_data_file->line_exist("hwbuffer", hwid))
 					{
-						Msg("!! ERROR: Попытка повторного запроса на регистрацию от пользователя с HWid: %s", hwid);
-						SendConnectResult(CL, 0, ecr_data_verification_failed, "У вас уже имеется зарегистрированный аккаунт!");
+						Msg("!! ERROR: РџРѕРїС‹С‚РєР° РїРѕРІС‚РѕСЂРЅРѕРіРѕ Р·Р°РїСЂРѕСЃР° РЅР° СЂРµРіРёСЃС‚СЂР°С†РёСЋ РѕС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ СЃ HWid: %s", hwid);
+						SendConnectResult(CL, 0, ecr_data_verification_failed, "РЈ РІР°СЃ СѓР¶Рµ РёРјРµРµС‚СЃСЏ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅРЅС‹Р№ Р°РєРєР°СѓРЅС‚!");
 						xr_delete(reg_data_file);
 						return;
 					}
 					else if (FS.exist(denied_reg))
 					{
-						Msg("!! ERROR: попытка регистрации некорректного никнейма!");
-						SendConnectResult(CL, 0, ecr_data_verification_failed, "Заявка на регистрацию отклоненна: некорректный никнейм");
+						Msg("!! ERROR: РїРѕРїС‹С‚РєР° СЂРµРіРёСЃС‚СЂР°С†РёРё РЅРµРєРѕСЂСЂРµРєС‚РЅРѕРіРѕ РЅРёРєРЅРµР№РјР°!");
+						SendConnectResult(CL, 0, ecr_data_verification_failed, "Р—Р°СЏРІРєР° РЅР° СЂРµРіРёСЃС‚СЂР°С†РёСЋ РѕС‚РєР»РѕРЅРµРЅРЅР°: РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РЅРёРєРЅРµР№Рј");
 						xr_delete(reg_data_file);
 						return;
 					}
@@ -370,8 +370,8 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 						FS.update_path(path_registered, "$mp_acces_reg$", transl);
 						if (FS.exist(path_registered))
 						{
-							Msg("!! ERROR: Попытка повторной регистрации аккаунта %s", username);
-							SendConnectResult(CL, 0, ecr_data_verification_failed, "Данный никнейм уже ожидает регистрации.");
+							Msg("!! ERROR: РџРѕРїС‹С‚РєР° РїРѕРІС‚РѕСЂРЅРѕР№ СЂРµРіРёСЃС‚СЂР°С†РёРё Р°РєРєР°СѓРЅС‚Р° %s", username);
+							SendConnectResult(CL, 0, ecr_data_verification_failed, "Р”Р°РЅРЅС‹Р№ РЅРёРєРЅРµР№Рј СѓР¶Рµ РѕР¶РёРґР°РµС‚ СЂРµРіРёСЃС‚СЂР°С†РёРё.");
 							return;
 						}
 						else
@@ -385,18 +385,18 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 								regacc->w_u8("user_data", "kit_numb", kit);
 								regacc->w_string("user_data", "description", descript.c_str());
 								regacc->save_as(path_registered);
-								Msg("~ Пользователь %s подал запрос на регистрацию!", username);
+								Msg("~ РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ %s РїРѕРґР°Р» Р·Р°РїСЂРѕСЃ РЅР° СЂРµРіРёСЃС‚СЂР°С†РёСЋ!", username);
 							}
 							xr_delete(regacc);
-							SendConnectResult(CL, 0, ecr_data_verification_failed, "Вас Зарегистрируют в Ближайшее время!");
+							SendConnectResult(CL, 0, ecr_data_verification_failed, "Р’Р°СЃ Р—Р°СЂРµРіРёСЃС‚СЂРёСЂСѓСЋС‚ РІ Р‘Р»РёР¶Р°Р№С€РµРµ РІСЂРµРјСЏ!");
 							return;
 						}
 					}
 					else
 					{
 						xr_delete(reg_data_file);
-						Msg("!! ERROR: Попытка регистрации занятого никнейма!");
-						SendConnectResult(CL, 0, ecr_data_verification_failed, "Данный никнейм уже зарегистрирован!");
+						Msg("!! ERROR: РџРѕРїС‹С‚РєР° СЂРµРіРёСЃС‚СЂР°С†РёРё Р·Р°РЅСЏС‚РѕРіРѕ РЅРёРєРЅРµР№РјР°!");
+						SendConnectResult(CL, 0, ecr_data_verification_failed, "Р”Р°РЅРЅС‹Р№ РЅРёРєРЅРµР№Рј СѓР¶Рµ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅ!");
 						return;
 					}
 					xr_delete(reg_data_file);
@@ -409,20 +409,20 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 				bad_register_file->save_as(bad_register);
 				if (bad_register_descr == 0)
 				{
-					Msg("!! ERROR: пользователю была отказана регистрация по причине некорректный никнейм");
-					SendConnectResult(CL, 0, ecr_data_verification_failed, "Отказ регистрации: смените никнейм!");
+					Msg("!! ERROR: РїРѕР»СЊР·РѕРІР°С‚РµР»СЋ Р±С‹Р»Р° РѕС‚РєР°Р·Р°РЅР° СЂРµРіРёСЃС‚СЂР°С†РёСЏ РїРѕ РїСЂРёС‡РёРЅРµ РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РЅРёРєРЅРµР№Рј");
+					SendConnectResult(CL, 0, ecr_data_verification_failed, "РћС‚РєР°Р· СЂРµРіРёСЃС‚СЂР°С†РёРё: СЃРјРµРЅРёС‚Рµ РЅРёРєРЅРµР№Рј!");
 					return;
 				}
 				else if (bad_register_descr == 1)
 				{
-					Msg("!! ERROR: пользователю была отказана регистрация по причине некорректный пароль");
-					SendConnectResult(CL, 0, ecr_data_verification_failed, "Отказ регистрации: смените пароль!");
+					Msg("!! ERROR: РїРѕР»СЊР·РѕРІР°С‚РµР»СЋ Р±С‹Р»Р° РѕС‚РєР°Р·Р°РЅР° СЂРµРіРёСЃС‚СЂР°С†РёСЏ РїРѕ РїСЂРёС‡РёРЅРµ РЅРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РїР°СЂРѕР»СЊ");
+					SendConnectResult(CL, 0, ecr_data_verification_failed, "РћС‚РєР°Р· СЂРµРіРёСЃС‚СЂР°С†РёРё: СЃРјРµРЅРёС‚Рµ РїР°СЂРѕР»СЊ!");
 					return;
 				}
 				else
 				{
-					Msg("!! ERROR: пользователю была отказана регистрация по причине %s", bad_register_descr);
-					SendConnectResult(CL, 0, ecr_data_verification_failed, "Отказ регистрации: повторите попытку!");
+					Msg("!! ERROR: РїРѕР»СЊР·РѕРІР°С‚РµР»СЋ Р±С‹Р»Р° РѕС‚РєР°Р·Р°РЅР° СЂРµРіРёСЃС‚СЂР°С†РёСЏ РїРѕ РїСЂРёС‡РёРЅРµ %s", bad_register_descr);
+					SendConnectResult(CL, 0, ecr_data_verification_failed, "РћС‚РєР°Р· СЂРµРіРёСЃС‚СЂР°С†РёРё: РїРѕРІС‚РѕСЂРёС‚Рµ РїРѕРїС‹С‚РєСѓ!");
 					return;
 				}
 			}

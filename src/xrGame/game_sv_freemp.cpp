@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "game_sv_freemp.h"
 #include "Level.h"
 #include "alife_simulator.h"
@@ -240,6 +240,8 @@ void game_sv_freemp::OnPlayerConnect(ClientID id_who)
 	xrClientData* xrCData = m_server->ID_to_client(id_who);
 	game_PlayerState*	ps_who = get_id(id_who);
 
+	Msg("Player: Name: %s, StaticID: %d", ps_who->getName(), ps_who->GetStaticID());
+
 	if (!xrCData->flags.bReconnect)
 	{
 		ps_who->clear();
@@ -265,7 +267,7 @@ void game_sv_freemp::OnPlayerConnect(ClientID id_who)
 
 				if (level == 1)
 				{
-					Msg("-- %s ÿâëÿåòñÿ àäìèíèñòðàòîðîì", ps_who->getName());
+					Msg("-- %s ÑÐ²Ð»ÑÐµÑ‚ÑÑ Ð°Ð´Ð¼Ð¸Ð½Ð¸ÑÑ‚Ñ€Ð°Ñ‚Ð¾Ñ€Ð¾Ð¼", ps_who->getName());
 					xrCData->m_admin_rights.m_has_admin_rights = TRUE;
 					xrCData->m_admin_rights.m_has_super_admin_rights = FALSE;
 					xrCData->m_admin_rights.m_dwLoginTime = Device.dwTimeGlobal;
@@ -282,7 +284,7 @@ void game_sv_freemp::OnPlayerConnect(ClientID id_who)
 				}
 				else if (level == 2)
 				{
-					Msg("-- %s ÿâëÿåòñÿ ñóïåð àäìèíèñòðàòîðîì", ps_who->getName());
+					Msg("-- %s ÑÐ²Ð»ÑÐµÑ‚ÑÑ ÑÑƒÐ¿ÐµÑ€ Ð°Ð´Ð¼Ð¸Ð½Ð¸ÑÑ‚Ñ€Ð°Ñ‚Ð¾Ñ€Ð¾Ð¼", ps_who->getName());
 					xrCData->m_admin_rights.m_has_admin_rights = TRUE;
 					xrCData->m_admin_rights.m_has_super_admin_rights = TRUE;
 					xrCData->m_admin_rights.m_dwLoginTime = Device.dwTimeGlobal;

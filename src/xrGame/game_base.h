@@ -57,6 +57,7 @@ struct game_PlayerState
 	u16			ping;
 
 	u16			GameID;
+	u16			StaticID;
 
 	u16			lasthitter;
 	u16			lasthitweapon;
@@ -89,6 +90,8 @@ struct game_PlayerState
 			LPCSTR	getName					() const {return m_account.name().c_str();}
 			//void	setName					(LPCSTR s){xr_strcpy(name,s);}
 			void	SetGameID				(u16 NewID);
+			void	SetStaticID(u16 NewStaticID);
+			u16		GetStaticID() const { return StaticID; }
 			bool	HasOldID				(u16 ID);
 			bool	IsSkip					() const {return testFlag(GAME_PLAYER_FLAG_SKIP);}
 

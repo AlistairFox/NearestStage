@@ -361,8 +361,31 @@ void game_sv_GameState::net_Export_GameTime						(NET_Packet& P)
 };
 
 
-void game_sv_GameState::OnPlayerConnect			(ClientID /**id_who/**/)
+void game_sv_GameState::OnPlayerConnect			(ClientID id_who)
 {
+	xrClientData* CL = m_server->ID_to_client(id_who);
+	game_PlayerState* ps_who = CL->ps;
+
+	if (PlayersStaticIdMap.find(ps_who->getName()) == PlayersStaticIdMap.end())
+	{
+		u16 LastId = 1;
+		string_path idpath;
+		FS.update_path(idpath, "$players_static_id$", "players_id_list.ltx");
+		CInifile* StaticIdFile = xr_new<CInifile>(idpath, true, true);
+		if (StaticIdFile->section_exist(ps_who->getName()))
+		{
+			LastId = StaticIdFile->r_u16(ps_who->getName(), "static_id");
+			Msg("Last Id: %d", LastId);
+			ps_who->SetStaticID(LastId);
+		}
+		else
+			ps_who->SetStaticID(0);
+
+		xr_delete(StaticIdFile);
+	}
+	else
+		ps_who->SetStaticID(PlayersStaticIdMap[ps_who->getName()]);
+
 	signal_Syncronize	();
 }
 
