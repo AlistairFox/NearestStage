@@ -86,6 +86,7 @@ struct game_PlayerState
 	virtual void	clear					();
 			bool	testFlag				(u32 f) const;
 			void	setFlag					(u32 f);
+			shared_str	GetPlayerTeamText();
 			void	resetFlag				(u32 f);
 			LPCSTR	getName					() const {return m_account.name().c_str();}
 			//void	setName					(LPCSTR s){xr_strcpy(name,s);}

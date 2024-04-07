@@ -136,7 +136,7 @@ void game_cl_freemp::OnRender()
 						if (ps == local_player) continue;
 						CActor* pActor = smart_cast<CActor*>(pObject);
 						string128 text;
-						sprintf(text, "%s | %d", ps->getName(), ps->team);
+						sprintf(text, "%s | %s", ps->getName(), ps->GetPlayerTeamText().c_str());
 						float pDub = 0.0f;
 						Fvector Pos = pActor->Position();
 						Pos.y -= pActor->Position().y;

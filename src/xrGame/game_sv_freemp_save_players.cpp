@@ -292,7 +292,7 @@ void game_sv_freemp::assign_RP(CSE_Abstract* E, game_PlayerState* ps_who)
 			//E->o_Angle.set(angle);
 			E->position().set(pos);
 			E->angle().set(angle);
-			E->cast_actor_mp()->set_health(health);
+			//E->cast_actor_mp()->set_health(health);
 		}
 		else
 			inherited::assign_RP(E, ps_who);

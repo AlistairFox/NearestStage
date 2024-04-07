@@ -5,6 +5,7 @@
 #include "level.h"
 #include "xrMessages.h"
 #include "inventory_upgrade_manager.h"
+#include <string_table.h>
 
 u64		g_qwStartGameTime		= 12*60*60*1000;
 float	g_fTimeFactor			= 10;
@@ -208,6 +209,56 @@ game_TeamState::game_TeamState()
 {
 	score				=	0;
 	num_targets			=	0;
+}
+
+shared_str game_PlayerState::GetPlayerTeamText()
+{
+	LPCSTR tmp;
+	switch (team)
+	{
+	case 0:
+	{
+		tmp = "mp_community_selection";
+	}break;
+	case 1:
+	{
+		tmp = "rp_team_1_name";
+	}break;
+	case 2:
+	{
+		tmp = "rp_team_2_name";
+	}break;
+	case 3:
+	{
+		tmp = "rp_team_3_name";
+	}break;
+	case 4:
+	{
+		tmp = "rp_team_4_name";
+	}break;
+	case 5:
+	{
+		tmp = "rp_team_5_name";
+	}break;
+	case 6:
+	{
+		tmp = "rp_team_6_name";
+	}break;
+	case 7:
+	{
+		tmp = "rp_team_7_name";
+	}break;
+	case 8:
+	{
+		tmp = "rp_team_8_name";
+	}break;
+	default:
+		tmp = "unknown";
+		break;
+	}
+
+	CStringTable st;
+	return *st.translate(tmp);
 }
 
 game_GameState::game_GameState()
