@@ -674,6 +674,7 @@ protected:
 	float							m_fHitFracMonster;
 
 	float							m_near_players_distance = 0;
+	mutable u32 OldTimer = 0;
 	mutable u32				m_last_player_detection_time = 0;
 	u32								m_near_players_delay_time = 0;
 

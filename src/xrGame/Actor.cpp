@@ -2099,22 +2099,57 @@ bool		CActor::use_bolts				() const
 
 int		g_iCorpseRemove = 1;
 
+bool CActor::HavePlayersNearby(float distance) const
+{
+	bool have = false;
+	float distance_sqr = distance * distance;
+
+	for (const auto& Player : Game().players)
+	{
+		if (Player.first == Level().Server->GetServerClient()->ID)
+			continue;
+
+		game_PlayerState* ps = Player.second;
+		if (!ps) continue;
+
+		CObject* pObject = Level().Objects.net_Find(ps->GameID);
+		if (!pObject) continue;
+
+		if (this->Position().distance_to_sqr(pObject->Position()) < distance_sqr)
+		{
+			have = true;
+			break;
+		}
+	}
+
+	return have;
+}
+
 bool  CActor::NeedToDestroyObject() const
 {
-	if(IsGameTypeSingle())
+
+	if (g_Alive()) return false;
+	if (g_iCorpseRemove == -1) return false;
+	if (g_iCorpseRemove == 0 && m_bAllowDeathRemove) return true;
+
+
+	if (OldDestroyTimer <= Device.dwTimeGlobal)
 	{
+		OldDestroyTimer = Device.dwTimeGlobal + Random.randI(10000, 20000);
+		TIItemContainer items;
+		inventory().AddAvailableItems(items, false);
+
+		if (items.empty())
+			if (!HavePlayersNearby(50.f))
+				return true;
+			else
+				OldDestroyTimer = Device.dwTimeGlobal + Random.randI(60000, 100000);
+	}
+
+	if (TimePassedAfterDeath() > m_dwBodyRemoveTime && m_bAllowDeathRemove)
+		return true;
+	else
 		return false;
-	}
-	else 
-	{
-		if (g_Alive()) return false;
-		if (g_iCorpseRemove == -1) return false;
-		if (g_iCorpseRemove == 0 && m_bAllowDeathRemove) return true;
-		if(TimePassedAfterDeath()>m_dwBodyRemoveTime && m_bAllowDeathRemove)
-			return true;
-		else
-			return false;
-	}
 }
 
 ALife::_TIME_ID	 CActor::TimePassedAfterDeath()	const

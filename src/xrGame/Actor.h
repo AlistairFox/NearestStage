@@ -138,6 +138,8 @@ protected:
 
 //Script Animation
 
+	mutable u32 OldDestroyTimer = 0;
+
 
 public:
 	bool						MpGodMode() const;
@@ -312,7 +314,7 @@ public:
 
 	virtual bool						NeedToDestroyObject()  const;
 	virtual ALife::_TIME_ID				TimePassedAfterDeath() const;
-
+			bool						HavePlayersNearby(float distance) const;
 
 public:
 

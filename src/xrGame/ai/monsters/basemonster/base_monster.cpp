@@ -336,7 +336,27 @@ bool CBaseMonster::NeedToDestroyObject() const
 	}
 	else
 	{
-		if (g_Alive() || g_iCorpseRemove == -1 || TimePassedAfterDeath() < m_dwBodyRemoveTime)
+		if (g_Alive())
+			return false;
+
+
+		if (OldTimer <= Device.dwTimeGlobal)
+		{
+			OldTimer = Device.dwTimeGlobal + Random.randI(10000, 20000);
+			TIItemContainer items;
+			inventory().AddAvailableItems(items, false);
+
+			if (items.empty())
+				if (TimePassedAfterDeath() > 30000)
+					if (!HavePlayersNearby(50.f))
+						return true;
+					else
+					{
+						OldTimer = Device.dwTimeGlobal + Random.randI(60000, 100000);
+					}
+		}
+
+		if (g_iCorpseRemove == -1 || TimePassedAfterDeath() < m_dwBodyRemoveTime)
 		{
 			return false;
 		}
@@ -352,7 +372,7 @@ bool CBaseMonster::NeedToDestroyObject() const
 			m_last_player_detection_time = Level().timeServer();
 			return false;
 		}
-			 	 
+
 		return true;
 	}
 }
@@ -370,16 +390,15 @@ bool CBaseMonster::HavePlayersNearby(float distance) const
 	bool have = false;
 	float distance_sqr = distance * distance;
 
-	auto i = Game().players.begin();
-	auto ie = Game().players.end();
-
-	for (; i != ie; ++i)
+	for (const auto& player : Game().players)
 	{
-		game_PlayerState* ps = i->second;
+		if (player.first == Level().Server->GetServerClient()->ID)
+			continue;
+
+		game_PlayerState* ps = player.second;
 		if (!ps) continue;
 
-		u16 id = ps->GameID;
-		CObject* pObject = Level().Objects.net_Find(id);
+		CObject* pObject = Level().Objects.net_Find(ps->GameID);
 		if (!pObject) continue;
 
 		if (this->Position().distance_to_sqr(pObject->Position()) < distance_sqr)
