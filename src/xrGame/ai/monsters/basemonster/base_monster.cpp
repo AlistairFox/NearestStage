@@ -392,8 +392,6 @@ bool CBaseMonster::HavePlayersNearby(float distance) const
 
 	for (const auto& player : Game().players)
 	{
-		if (player.first == Level().Server->GetServerClient()->ID)
-			continue;
 
 		game_PlayerState* ps = player.second;
 		if (!ps) continue;

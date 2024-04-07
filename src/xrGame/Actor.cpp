@@ -2106,8 +2106,6 @@ bool CActor::HavePlayersNearby(float distance) const
 
 	for (const auto& Player : Game().players)
 	{
-		if (Player.first == Level().Server->GetServerClient()->ID)
-			continue;
 
 		game_PlayerState* ps = Player.second;
 		if (!ps) continue;
