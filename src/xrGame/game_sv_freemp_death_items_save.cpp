@@ -280,6 +280,8 @@ void game_sv_freemp::ClearPlayersOnDeathBuffer(LPSTR name)
 void game_sv_freemp::SavePlayerOnDisconnect(LPCSTR Name, string_path path)
 {
 	Msg("-- Create save file by player: %s ", Name);
+	if (MPlayersOnDeath.find(Name) == MPlayersOnDeath.end())
+		return;
 
 	IWriter* writer = FS.w_open(path);
 

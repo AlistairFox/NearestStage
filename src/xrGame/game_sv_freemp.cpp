@@ -601,6 +601,14 @@ void game_sv_freemp::OnPlayerDisconnect(ClientID id_who, LPSTR Name, u16 GameID)
 	u_EventSend(P);
 	//---------------------------------------------------
 
+	string_path file_name_path;
+	string32 file_name;
+	xr_strcpy(file_name, Name);
+	xr_strcat(file_name, ".binsave");
+	FS.update_path(file_name_path, "$mp_saves_players_bin$", file_name);
+	if (!FS.exist(file_name_path))
+		SavePlayerOnDisconnect(Name, file_name_path);
+
 	ClearPlayersOnDeathBuffer(Name);
 
 	Player_portions[Name].clear();
@@ -687,7 +695,7 @@ void game_sv_freemp::Update()
 					CObject* obj = Level().Objects.net_Find(player.second->GameID);
 					CActor* actor = smart_cast<CActor*>(obj);
 					if (!actor)
-						return;
+						continue;
 
 					if (!actor->g_Alive())
 					{
@@ -699,12 +707,8 @@ void game_sv_freemp::Update()
 						if (FS.exist(file_name_path))
 							FS.file_delete(file_name_path);
 
-						SavePlayerOnDisconnect(player.second->getName(), file_name_path);
+						continue;
 					}
-
-					if (!actor->g_Alive())
-						return;
-
 
 					if (Binnar_save_connect)
 					{

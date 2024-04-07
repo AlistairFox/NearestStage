@@ -98,6 +98,7 @@ void game_sv_freemp::BinnarSavePlayer(game_PlayerState* ps, string_path& filepat
 			writer->w_u8(1); // checking save position
 			writer->w_fvector3(actor_cse->o_Position); // Player Position
 			writer->w_fvector3(actor_cse->o_Angle); // Player Direction
+			writer->w_float(actor_cse->get_health());
 		}
 		else
 			writer->w_u8(0); // cheking save position
@@ -237,6 +238,7 @@ bool game_sv_freemp::BinnarLoadPlayer(game_PlayerState* ps, string_path& filepat
 			Fvector3 pos, dir;
 			reader->r_fvector3(pos);
 			reader->r_fvector3(dir);
+			reader->r_float();
 		}
 
 		if (reader->open_chunk(ACTOR_DEVICES_CHUNK))
