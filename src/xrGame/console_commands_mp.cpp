@@ -3184,6 +3184,22 @@ public:
 		}
 	}
 };
+
+class CCC_TestComm : public IConsole_Command {
+public:
+	CCC_TestComm(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = true; };
+
+	virtual void Execute(LPCSTR args)
+	{
+		game_sv_freemp* fmp = smart_cast<game_sv_freemp*>(Level().Server->game);
+
+
+		std::string name = fmp->GetPlayerNameByStaticID(1);
+		LPCSTR sas = name.c_str();
+		u16 id = fmp->GetPlayerStaticIDByName("АлистарФокс");
+		Msg("name: %s, id: %d", sas, id);
+	}
+};
  
 class CCC_AdmRegisterAccount : public IConsole_Command {
 public:
@@ -3244,8 +3260,16 @@ public:
 				StaticIdFile->w_u16("last_players_id", "last_id", LastId);
 
 			StaticIdFile->w_u16(login,"static_id", LastId);
+
+			string256 player_name;
+			string128 temp_id;
+			xr_sprintf(player_name, "\"%s\"", login);
+			xr_sprintf(temp_id, "id_%d", LastId);
+			StaticIdFile->w_string(temp_id, "name", player_name);
+
 			StaticIdFile->save_as(idpath); 
 			xr_delete(StaticIdFile);
+
 
 		}
 		else
@@ -3744,6 +3768,7 @@ void register_mp_console_commands()
 
 	CMD1(CCC_WeatherSync, "weather_invalidate");
 	CMD1(CCC_TeleportToPoss, "teleport_player");
+	CMD1(CCC_TestComm, "test_comm");
 
 	CMD1(CCC_SetNoClipForPlayer,	"sv_set_no_clip"		);
 	CMD1(CCC_SetInvisForPlayer,		"sv_set_invis"			);

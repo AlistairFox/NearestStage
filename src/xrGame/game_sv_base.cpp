@@ -376,6 +376,7 @@ void game_sv_GameState::OnPlayerConnect			(ClientID id_who)
 		{
 			LastId = StaticIdFile->r_u16(ps_who->getName(), "static_id");
 			Msg("Last Id: %d", LastId);
+			PlayersStaticIdMap[ps_who->getName()] = LastId;
 			ps_who->SetStaticID(LastId);
 		}
 		else
@@ -385,8 +386,29 @@ void game_sv_GameState::OnPlayerConnect			(ClientID id_who)
 	}
 	else
 		ps_who->SetStaticID(PlayersStaticIdMap[ps_who->getName()]);
-
 	signal_Syncronize	();
+}
+
+std::string game_sv_GameState::GetPlayerNameByStaticID(u16 id)
+{
+	for (const auto& player : PlayersStaticIdMap)
+	{
+		if (id == player.second)
+			return player.first;
+	}
+
+	return "unknown";
+}
+
+u16 game_sv_GameState::GetPlayerStaticIDByName(LPCSTR name)
+{
+	for (const auto& player : PlayersStaticIdMap)
+	{
+		if (name == player.first)
+			return player.second;
+	}
+
+	return 0;
 }
 
 void game_sv_GameState::OnPlayerDisconnect		(ClientID id_who, LPSTR, u16 )
@@ -705,7 +727,26 @@ game_sv_GameState::game_sv_GameState()
 	m_bFastRestart = false;
 	m_pMapRotation_List.clear();
 
-	for (int i=0; i<TEAM_COUNT; i++) rpoints_MinDist[i] = 1000.0f;	
+	for (int i=0; i<TEAM_COUNT; i++) rpoints_MinDist[i] = 1000.0f;
+
+
+	string_path idpath;
+	FS.update_path(idpath, "$players_static_id$", "players_id_list.ltx");
+	CInifile* StaticIdFile = xr_new<CInifile>(idpath, true, true);
+	u16 items_count = 1;
+	if (StaticIdFile->line_exist("last_players_id", "last_id"))
+		items_count = StaticIdFile->r_u16("last_players_id", "last_id");
+	
+	for (u16 i = 1; i != items_count; i++)
+	{
+		string128 temp;
+		xr_sprintf(temp, "id_%d", i);
+		std::string tmp = StaticIdFile->r_string(temp, "name");
+		PlayersStaticIdMap[tmp] = i;
+
+	}
+	PlayersStaticIdMap["HelloWorld"] = 5;
+	xr_delete(StaticIdFile);
 }
 
 game_sv_GameState::~game_sv_GameState()

@@ -124,8 +124,9 @@ public:
 	virtual		void				assign_RP				(CSE_Abstract* E, game_PlayerState* ps_who);
 	virtual		bool				IsPointFreezed			(RPoint* rp);
 	virtual		void				SetPointFreezed			(RPoint* rp);
-
-	xr_map<LPCSTR, u16>PlayersStaticIdMap;
+	std::string		GetPlayerNameByStaticID(u16 id);
+	u16			GetPlayerStaticIDByName(LPCSTR name);
+	std::map<std::string, u16>PlayersStaticIdMap;
 #ifdef DEBUG
 	virtual		void				OnRender				();
 #endif

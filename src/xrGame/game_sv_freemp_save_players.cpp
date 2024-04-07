@@ -287,8 +287,11 @@ void game_sv_freemp::assign_RP(CSE_Abstract* E, game_PlayerState* ps_who)
 		Fvector pos, angle;
 		if (!ps_who->testFlag(GAME_PLAYER_MP_SAVE_LOADED) && load_position_RP_Binnar(ps_who, pos, angle))
 		{
-			E->o_Position.set(pos);
-			E->o_Angle.set(angle);
+			//E->o_Position.set(pos);
+			//E->o_Angle.set(angle);
+			E->position().set(pos);
+			E->angle().set(angle);
+			//E->cast_actor_mp()->set_health()
 		}
 		else
 			inherited::assign_RP(E, ps_who);

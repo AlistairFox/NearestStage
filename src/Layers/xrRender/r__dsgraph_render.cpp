@@ -607,14 +607,10 @@ void	R_dsgraph_structure::r_dsgraph_render_distort	()
 	mapDistort.clear		();
 }
 
-extern BOOL off_global_shadowing;
-
 //////////////////////////////////////////////////////////////////////////
 // sub-space rendering - shortcut to render with frustum extracted from matrix
 void	R_dsgraph_structure::r_dsgraph_render_subspace	(IRender_Sector* _sector, Fmatrix& mCombined, Fvector& _cop, BOOL _dynamic, BOOL _precise_portals)
 {
-	if (off_global_shadowing)
-		return;
 	CFrustum	temp;
 	temp.CreateFromMatrix			(mCombined,	FRUSTUM_P_ALL &(~FRUSTUM_P_NEAR));
 	r_dsgraph_render_subspace		(_sector,&temp,mCombined,_cop,_dynamic,_precise_portals);
@@ -623,8 +619,6 @@ void	R_dsgraph_structure::r_dsgraph_render_subspace	(IRender_Sector* _sector, Fm
 // sub-space rendering - main procedure
 void	R_dsgraph_structure::r_dsgraph_render_subspace	(IRender_Sector* _sector, CFrustum* _frustum, Fmatrix& mCombined, Fvector& _cop, BOOL _dynamic, BOOL _precise_portals)
 {
-	if (off_global_shadowing)
-		return;
 
 	VERIFY							(_sector);
 	RImplementation.marker			++;			// !!! critical here

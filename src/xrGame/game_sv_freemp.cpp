@@ -423,7 +423,7 @@ void game_sv_freemp::OnTransferMoney(NET_Packet & P, ClientID const & clientID)
 
 	P.r_clientID(to);
 	P.r_s32(money);
-
+	
 	Msg("* Try to transfer money from %u to %u. Amount: %d", clientID.value(), to.value(), money);
 
 	game_PlayerState* ps_from = get_id(clientID);
