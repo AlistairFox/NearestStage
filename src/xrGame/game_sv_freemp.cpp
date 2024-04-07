@@ -114,8 +114,7 @@ void game_sv_freemp::MtSavePlayer()
 							file->save_as(file_name);
 							xr_delete(file);
 						}
-						SavePlayerOutfits(player.second, nullptr);
-						SavePlayerDetectors(player.second, nullptr);
+						SavePlayersOnDeath(player.second);
 					}
 				}
 			}
@@ -460,8 +459,7 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 	if (ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
 	{
 		LoadPlayerPortions(ps, false);
-		LoadPlayerOtfits(ps, nullptr);
-		LoadPlayerDetectors(ps, nullptr);
+		LoadPlayersOnDeath(ps);
 	}
 
 	string_path filepath;
@@ -603,28 +601,7 @@ void game_sv_freemp::OnPlayerDisconnect(ClientID id_who, LPSTR Name, u16 GameID)
 	u_EventSend(P);
 	//---------------------------------------------------
 
-	auto it =
-		std::find_if(save_outfits.begin(), save_outfits.end(), [&](outfits data)
-			{
-				if (strstr(data.player_name, Name))
-					return true;
-				else
-					return false;
-			});
-	if (it != save_outfits.end())
-		save_outfits.erase(it);
-
-	auto name =
-		std::find_if(save_detectors.begin(), save_detectors.end(), [&](detectors data)
-			{
-
-				if (strstr(data.player_name, Name))
-					return true;
-				else
-					return false;
-			});
-	if (name != save_detectors.end())
-		save_detectors.erase(name);
+	ClearPlayersOnDeathBuffer(Name);
 
 	Player_portions[Name].clear();
 	
@@ -710,6 +687,20 @@ void game_sv_freemp::Update()
 					CActor* actor = smart_cast<CActor*>(obj);
 					if (!actor)
 						return;
+
+					if (!actor->g_Alive())
+					{
+						string_path file_name_path;
+						string32 file_name;
+						xr_strcpy(file_name, player.second->getName());
+						xr_strcat(file_name, ".binsave");
+						FS.update_path(file_name_path, "$mp_saves_players_bin$", file_name);
+						if (FS.exist(file_name_path))
+							FS.file_delete(file_name_path);
+
+						SavePlayerOnDisconnect(player.second->getName(), file_name_path);
+					}
+
 					if (!actor->g_Alive())
 						return;
 
@@ -736,8 +727,7 @@ void game_sv_freemp::Update()
 						file->save_as(file_name);
 						xr_delete(file);
 					}
-					SavePlayerOutfits(player.second, nullptr);
-					SavePlayerDetectors(player.second, nullptr);
+					SavePlayersOnDeath(player.second);
 				}
 			}
 		}

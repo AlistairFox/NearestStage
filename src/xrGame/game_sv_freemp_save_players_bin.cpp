@@ -76,8 +76,11 @@ void game_sv_freemp::BinnarSavePlayer(game_PlayerState* ps, string_path& filepat
 
 	if (actor && actor->g_Alive())
 	{
-		writer->open_chunk(ACTOR_STATS_CHUNK);
+		writer->open_chunk(ACTOR_MONEY);
 		writer->w_u32(ps->money_for_round); // Player Money
+		writer->close_chunk();
+
+		writer->open_chunk(ACTOR_STATS_CHUNK);
 		writer->w_float(Players_condition[ps->getName()].satiety);
 		writer->w_float(Players_condition[ps->getName()].thirst);
 		writer->w_float(Players_condition[ps->getName()].radiation);
@@ -207,9 +210,11 @@ bool game_sv_freemp::BinnarLoadPlayer(game_PlayerState* ps, string_path& filepat
 	{
 		IReader* reader = FS.r_open(filepath);
 
+		if(reader->open_chunk(ACTOR_MONEY))
+			ps->money_for_round = reader->r_u32();// money
+
 		if (reader->open_chunk(ACTOR_STATS_CHUNK))
 		{
-			ps->money_for_round = reader->r_u32();// money
 			NET_Packet P;
 			u_EventGen(P, GE_PLAYER_LOAD_CONDITIONS, ps->GameID);
 			float satiety, thirst, radiation;
@@ -394,7 +399,7 @@ bool game_sv_freemp::HasBinnarSaveFile(game_PlayerState* ps)
 	return exist;
 }
 
-bool game_sv_freemp::load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos, Fvector& angle)
+bool game_sv_freemp::load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos, Fvector& angle, float& health)
 {
 	string_path p;
 	string32 filename;
@@ -414,6 +419,7 @@ bool game_sv_freemp::load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos,
 				Msg("Read player pos");
 				reader->r_fvector3(pos);
 				reader->r_fvector3(angle);
+				health = reader->r_float();
 				FS.r_close(reader);
 				return true;
 			}

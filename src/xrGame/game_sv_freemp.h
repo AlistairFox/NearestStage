@@ -160,7 +160,8 @@ public:
 		ACTOR_DEVICES_CHUNK = 1,
 		ACTOR_INV_ITEMS_CHUNK = 2,
 		ACTOR_POS = 3,
-		ACTOR_TEAM = 4
+		ACTOR_TEAM = 4,
+		ACTOR_MONEY = 5
 	};
 
 	struct Players_stats
@@ -176,7 +177,7 @@ public:
 			void				BinnarSavePlayer(game_PlayerState* ps, string_path& filepath);
 			bool				BinnarLoadPlayer(game_PlayerState* ps, string_path& filepath);
 			bool				HasBinnarSaveFile(game_PlayerState* ps);
-			bool				load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos, Fvector& angle);
+			bool				load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos, Fvector& angle, float& health);
 			void				MtSavePlayer();
 	std::thread* playersave_thread;
 	///////Binnar Player Save ////////
@@ -192,25 +193,58 @@ public:
 
 
 	//////////Death items save ///////
-	struct outfits
-	{
-		LPCSTR player_name;
-		LPCSTR outfit_name;
-		float outfit_cond;
-	};
-	xr_vector<outfits> save_outfits;
+		 struct SPlayersOnDeathBuff
+		 {
+			 s32 PlayerMoney = 0;
+			 u8 Team = 8;
+			 //Outfit
+			 bool Outfit = false;
+			 LPCSTR OutfitName;
+			 float OutfitCond;
+			 bool OutfUpg = false;
+			 string2048 OutfitUpgrades;
+			 u16 OutfitSlot;
 
-	struct detectors
-	{
-		LPCSTR player_name;
-		LPCSTR detector_name;
-		float detector_cond;
-	};
-	xr_vector<detectors> save_detectors;
-	     void				SavePlayerOutfits(game_PlayerState* ps, CInifile* outfsFile);
-	     void				SavePlayerDetectors(game_PlayerState* ps, CInifile* detsFile);
-	     void				LoadPlayerOtfits(game_PlayerState* ps, CInifile* outfsFile);
-	     void				LoadPlayerDetectors(game_PlayerState* ps, CInifile* detsFile);
+			 //Helm
+			 bool helm = false;
+			 LPCSTR HelmetName;
+			 float HelmetCond;
+			 bool HelmUpg = false;
+			 string2048 HelmetUpgrades;
+			 u16 HelmSlot;
+
+			 //Detector
+			 bool detector = false;
+			 LPCSTR DetectorName;
+			 float DetectorCond;
+
+			 //Weapon1
+			 bool weapon1 = false;
+			 LPCSTR Weapon1Sect;
+			 float Weapon1Cond;
+			 bool weapon1Upgr = false;
+			 string2048 Weapon1Upgrades;
+			 u8 Weapon1AddonState;
+			 u8 Weapon1CurScope;
+			 u16 Weapon1Slot;
+
+			 //Weapon2
+			 bool weapon2 = false;
+			 LPCSTR Weapon2Sect;
+			 float Weapon2Cond;
+			 bool weapon2Upgr = false;
+			 string2048 Weapon2Upgrades;
+			 u8 Weapon2AddonState;
+			 u8 Weapon2CurScope;
+			 u16 Weapon2Slot;
+
+		 };	std::map<LPCSTR, SPlayersOnDeathBuff> MPlayersOnDeath;
+
+
+		 void SavePlayersOnDeath(game_PlayerState* ps);
+		 void LoadPlayersOnDeath(game_PlayerState* ps);
+		 void SavePlayerOnDisconnect(LPCSTR Name, string_path path);
+		 void ClearPlayersOnDeathBuffer(LPSTR name);
 	////////Death items save ////////
 };
 
