@@ -674,8 +674,9 @@ void game_sv_freemp::Update()
 
 	if (!use_mt_save)
 	{
-		if (Level().game && Device.dwFrame % save_time == 0)
+		if (Level().game && PlayerSaveTimer <= Device.dwTimeGlobal)
 		{
+			PlayerSaveTimer = Device.dwTimeGlobal + (save_time * 1000);
 			for (const auto &player : Level().game->players)
 			{
 				if (player.second->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
@@ -737,8 +738,9 @@ void game_sv_freemp::Update()
 		else
 			ServerEnvSaveUpdateFile();
 
-		if (Level().game && Device.dwFrame % save_time2 == 0)
+		if (Level().game && InvBoxSaveTimer <= Device.dwTimeGlobal)
 		{
+			InvBoxSaveTimer = Device.dwTimeGlobal + (save_time2 * 1000);
 			//for (int i = 0; i != server().GetEntitiesNum(); i++)
 			for (const auto &entity : inventory_boxes_cse)
 			{

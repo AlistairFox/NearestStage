@@ -7,8 +7,9 @@
 void game_sv_freemp::ServerEnvSaveUpdateFile()
 {
 	///////////////Server environment saving//////////////////////
-	if (Level().game && Device.dwFrame % save_time3 == 0)
+	if (Level().game && SaveWeatherTimer <= Device.dwTimeGlobal)
 	{
+		SaveWeatherTimer = Device.dwTimeGlobal + (save_time3 * 1000);
 		string_path save_game_time;
 		FS.update_path(save_game_time, "$global_server_data$", "server_data.ltx");
 		CInifile* global_server_data = xr_new<CInifile>(save_game_time, false, false);
@@ -26,8 +27,9 @@ void game_sv_freemp::ServerEnvSaveUpdateFile()
 void game_sv_freemp::ServerEnvSaveUpdateBin()
 {
 	///////////////Server environment saving//////////////////////
-	if (Level().game && Device.dwFrame % save_time3 == 0)
+	if (Level().game && SaveWeatherTimer <= Device.dwTimeGlobal)
 	{
+		SaveWeatherTimer = Device.dwTimeGlobal + (save_time3 * 1000);
 		string_path save_game_time;
 		FS.update_path(save_game_time, "$global_server_data_bin$", "server_data.binsave");
 		IWriter* env_writer = FS.w_open(save_game_time);

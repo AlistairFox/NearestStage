@@ -107,10 +107,10 @@ extern float lamp_bright = 1.f;
 extern	BOOL	g_ai_use_old_vision;
 float			g_aim_predict_time = 0.44f;
 int				g_keypress_on_start	= 1;
-extern int save_time = 60;
-extern int save_time2 = 60;
-extern int save_time3 = 600;
-extern int box_respawn_time = 100000;
+extern int save_time = 10;
+extern int save_time2 = 10;
+extern int save_time3 = 60;
+extern int box_respawn_time = 300;
 extern BOOL binar_save = FALSE;
 
 ENGINE_API extern float	g_console_sensitive;

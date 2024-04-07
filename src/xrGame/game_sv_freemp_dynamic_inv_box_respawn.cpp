@@ -5,8 +5,9 @@
 
 void game_sv_freemp::DynamicBoxUpdate()
 {
-	if (Level().game && Device.dwFrame % box_respawn_time == 0)
+	if (Level().game && BoxResawnTimer <= Device.dwTimeGlobal)
 	{
+		BoxResawnTimer = Device.dwTimeGlobal + (box_respawn_time * 1000);
 		for (const auto &entity : inventory_boxes_cse)
 		{
 			CSE_Abstract* abs = entity.second.entity;

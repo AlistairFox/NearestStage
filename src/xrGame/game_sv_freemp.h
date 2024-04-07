@@ -86,6 +86,7 @@ public:
 	///////////Info portions saving\ ////////////////
 
 	///////////Dynamic Weather ////////////////
+	u32 SaveWeatherTimer = 0;
 	 void DynamicWeatherUpdate();
 	 void ServerEnvSaveUpdateFile();
 	 void ServerEnvSaveUpdateBin();
@@ -114,6 +115,7 @@ public:
 	 void				   SpawnInvBoxesItems(CSE_ALifeInventoryBox* box);
 	 void				   OnStartSpawnInvBoxesItems(CSE_ALifeInventoryBox* box);
 								   
+	 u32 BoxResawnTimer = 0;
 	 void				   DynamicBoxFileCreate();
 	 void				   DynamicBoxUpdate();
 	///////////Dynamic Box Respawn //////////////
@@ -142,6 +144,7 @@ public:
 	{
 		INVBOX_ITEMS_CHUNK = 0
 	};
+	u32 InvBoxSaveTimer = 0;
 			void				BinnarSaveInvBox(CSE_ALifeInventoryBox* box, string_path& filepath);
 			void				BinnarLoadInvBox(CSE_ALifeInventoryBox* box, string_path& filepath);
 	///////Binnar InvBox Save ////////
@@ -174,6 +177,7 @@ public:
 
 	 void SavePlayersConditions(float satiety, float thirst, float radiation, game_PlayerState* ps);
 
+	 u32 PlayerSaveTimer = 0;
 			void				BinnarSavePlayer(game_PlayerState* ps, string_path& filepath);
 			bool				BinnarLoadPlayer(game_PlayerState* ps, string_path& filepath);
 			bool				HasBinnarSaveFile(game_PlayerState* ps);
