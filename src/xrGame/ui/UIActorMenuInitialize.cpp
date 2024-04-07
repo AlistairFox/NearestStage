@@ -94,7 +94,7 @@ void CUIActorMenu::Construct()
 	m_PartnerBottomInfo->AdjustWidthToText();
 	m_PartnerWeight_end_x		= m_PartnerWeight->GetWndPos().x;
 	InvBoxCountText = UIHelper::CreateTextWnd(uiXml, "inv_box_items_text", this);
-	InvBoxItemsMaxSize = uiXml.ReadAttribInt("inv_box_items_text",0, "inv_box_items_count", 65);
+	InvBoxItemsMaxSize = pSettings->r_u32("inv_box_capacity", "capacity");
 
 	m_ActorInvCapacityInfo = UIHelper::CreateStatic(uiXml, "actor_inv_capacity_caption", this);
 	m_ActorInvFullness = UIHelper::CreateTextWnd(uiXml, "actor_inv_fullness", this);
