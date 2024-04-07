@@ -142,6 +142,7 @@ protected:
 	CUITextWnd*					m_QuickSlot2;
 	CUITextWnd*					m_QuickSlot3;
 	CUITextWnd*					m_QuickSlot4;
+	CUITextWnd*					InvBoxCountText;
 	
 	CUIProgressBar*				m_WeaponSlot1_progress;
 	CUIProgressBar*				m_WeaponSlot2_progress;
@@ -199,6 +200,7 @@ public:
 	void						SetInvBox					(CInventoryBox* box);
 	CInventoryBox*				GetInvBox					() {return m_pInvBox;};
 private:
+	u32 InvBoxItemsMaxSize;
 	void						PropertiesBoxForSlots		(PIItem item, bool& b_show);
 	void						PropertiesBoxForWeapon		(CUICellItem* cell_item, PIItem item, bool& b_show);
 	void						PropertiesBoxForAddon		(PIItem item, bool& b_show);

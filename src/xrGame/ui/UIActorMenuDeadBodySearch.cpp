@@ -59,10 +59,12 @@ void CUIActorMenu::InitDeadBodySearchMode()
 
 	if ( m_pPartnerInvOwner )
 	{
+		InvBoxCountText->Show(false);
 		m_PartnerCharacterInfo->Show(true);
 	}
 	else
 	{
+		InvBoxCountText->Show(true);
 		m_PartnerCharacterInfo->Show(false);
 	}
 
@@ -126,6 +128,7 @@ void CUIActorMenu::DeInitDeadBodySearchMode()
 
 	if ( m_pInvBox )
 	{
+		InvBoxCountText->Show(false);
 		m_pInvBox->set_in_use( false );
 	}
 }
@@ -201,6 +204,17 @@ void CUIActorMenu::UpdateDeadBodyBag()
 	m_PartnerWeight->SetWndPos( pos );
 	pos.x = pos.x - m_PartnerBottomInfo->GetWndSize().x - 5.0f;
 	m_PartnerBottomInfo->SetWndPos( pos );
+
+
+	if (m_pInvBox)
+	{
+		LPCSTR capacity = CStringTable().translate("ui_inv_inventory_capacity").c_str();
+		string64 buf2;
+		xr_sprintf(buf2, "%s %d / %d", capacity,m_pInvBox->m_items.size(), InvBoxItemsMaxSize);
+		InvBoxCountText->SetText(buf2);
+		InvBoxCountText->AdjustWidthToText();
+	}
+
 }
 
 void CUIActorMenu::TakeAllFromPartner(CUIWindow* w, void* d)

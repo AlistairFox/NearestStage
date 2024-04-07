@@ -136,6 +136,9 @@ bool CUIActorMenu::OnItemDrop(CUICellItem* itm)
 		}break;
 	case iDeadBodyBag:
 		{
+		if (m_pInvBox && m_pInvBox->m_items.size() >= InvBoxItemsMaxSize)
+			break;
+
 			ToDeadBodyBag(itm, true);
 		}break;
 	case iQuickSlot:
@@ -168,8 +171,11 @@ bool CUIActorMenu::OnItemDbClick(CUICellItem* itm)
 	{
 	case iActorSlot:
 		{
-			if ( m_currMenuMode == mmDeadBodySearch )
-				ToDeadBodyBag	( itm, false );
+			if (m_currMenuMode == mmDeadBodySearch)
+				if (m_pInvBox && m_pInvBox->m_items.size() >= InvBoxItemsMaxSize)
+					ToBag(itm, false);
+				else
+					ToDeadBodyBag	( itm, false );
 			else
 				ToBag			( itm, false );
 			break;
@@ -183,6 +189,9 @@ bool CUIActorMenu::OnItemDbClick(CUICellItem* itm)
 			}else
 				if ( m_currMenuMode == mmDeadBodySearch )
 				{
+					if (m_pInvBox && m_pInvBox->m_items.size() >= InvBoxItemsMaxSize)
+						break;
+
 					ToDeadBodyBag( itm, false );
 					break;
 				}
