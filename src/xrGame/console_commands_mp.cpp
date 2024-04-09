@@ -2504,6 +2504,14 @@ public:
 
 
 	}
+
+	virtual void	fill_tips(vecTips& tips, u32 mode)
+	{
+		for (const auto& player : Game().players)
+		{
+			tips.push_back(player.second->getName());
+		}
+	}
 };
 
 class CCC_OnlineAdminGive : public IConsole_Command {
@@ -2832,6 +2840,14 @@ public:
 			return;
 		}
 	}
+
+	virtual void	fill_tips(vecTips& tips, u32 mode)
+	{
+		for (const auto& players : Game().players)
+		{
+			tips.push_back(players.second->getName());
+		}
+	}
 };
 
 class CCC_SetNoClipForPlayer : public IConsole_Command {
@@ -2914,6 +2930,46 @@ public:
 	}
 };
 
+class CCC_TeleportPlayerOnView : public IConsole_Command {
+public:
+	CCC_TeleportPlayerOnView(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = true; };
+
+	virtual void		Execute(LPCSTR arguments)
+	{
+		Fvector3 pos, dir, madPos;
+		float range;
+		pos.set(Device.vCameraPosition);
+		dir.set(Device.vCameraDirection);
+		collide::rq_result& RQ = HUD().GetCurrentRayQuery();
+
+		if (RQ.O)
+		{
+			Msg("! ERROR: Can spawn only on ground");
+			return;
+		}
+
+		range = RQ.range;
+		dir.normalize();
+		madPos.mad(pos, dir, range);
+
+		NET_Packet		P;
+		P.w_begin(M_REMOTE_CONTROL_CMD);
+		string128 str;
+		xr_sprintf(str, "teleport_player %s %f %f %f", arguments, madPos.x, madPos.y, madPos.z);
+		P.w_stringZ(str);
+		Level().Send(P, net_flags(TRUE, TRUE));
+	}
+	virtual void		Save(IWriter* F) {};
+
+	virtual void	fill_tips(vecTips& tips, u32 mode)
+	{
+		for (const auto& players : Game().players)
+		{
+			tips.push_back(players.second->getName());
+		}
+	}
+};
+
 class CCC_TeleportToPoss : public IConsole_Command {
 public:
 	CCC_TeleportToPoss(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = false; };
@@ -2963,6 +3019,14 @@ public:
 		}
 
 		sv_game->TeleportPlayerTo(ID, Fvector().set(x,y,z), Fvector().set(0, 0, 0));
+	}
+
+	virtual void	fill_tips(vecTips& tips, u32 mode)
+	{
+		for (const auto& player : Game().players)
+		{
+			tips.push_back(player.second->getName());
+		}
 	}
 };
 
@@ -3671,67 +3735,6 @@ public:
 	}
 };
 
-class CCC_GSpawnToInventorySelfx100 : public IConsole_Command {
-public:
-	CCC_GSpawnToInventorySelfx100(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = true; };
-
-	virtual void		Execute(LPCSTR arguments)
-	{
-		string256 tmp, del;
-		int numb;
-		exclude_raid_from_args(arguments, tmp, sizeof(tmp));
-
-		sscanf(tmp, "%s %d", &del, &numb);
-		numb += 1;
-
-		if (numb > 100)
-		{
-			Msg("! ERROR: too many items!! max number <100");
-			return;
-		}
-
-		if (pSettings->section_exist(del))
-		{
-				for (int i = 1; i < numb; i++)
-				{
-					NET_Packet		P;
-					P.w_begin(M_REMOTE_CONTROL_CMD);
-					string128 str;
-					xr_sprintf(str, "sv_spawn_to_player_inv %u %s", Game().local_svdpnid.value(), del);
-					P.w_stringZ(str);
-					Level().Send(P, net_flags(TRUE, TRUE));
-				}
-		}
-		else
-		{
-			Msg("! ERROR: bad command parameters.");
-			Msg("uncorrect format: g_spawn_to_self_some <section> <number>");
-			return;
-		}
-	}
-	virtual void		Save(IWriter* F) {};
-
-	virtual void	fill_tips(vecTips& tips, u32 mode)
-	{
-		if (!Game().local_player->testFlag(GAME_PLAYER_SUPER_ADMIN))
-		{
-			for (auto sect : pSettings->sections())
-			{
-				if (sect->line_exist("description") && !sect->line_exist("value") && !sect->line_exist("scheme_index") && sect->line_exist("allow_spawn") && !sect->line_exist("ignor_spawn"))
-					tips.push_back(sect->Name);
-			}
-		}
-		else
-		{
-			for (auto sect : pSettings->sections())
-			{
-				if (sect->line_exist("description") && !sect->line_exist("value") && !sect->line_exist("scheme_index"))
-					tips.push_back(sect->Name);
-			}
-		}
-	}
-};
-
 class CCC_WeatherSync : public IConsole_Command {
 public:
 	CCC_WeatherSync(LPCSTR N) : IConsole_Command(N) {
@@ -3769,6 +3772,7 @@ void register_mp_console_commands()
 	CMD1(CCC_WeatherSync, "weather_invalidate");
 	CMD1(CCC_TeleportToPoss, "teleport_player");
 	CMD1(CCC_TestComm, "test_comm");
+	CMD1(CCC_TeleportPlayerOnView, "teleport_player_on_view");
 
 	CMD1(CCC_SetNoClipForPlayer,	"sv_set_no_clip"		);
 	CMD1(CCC_SetInvisForPlayer,		"sv_set_invis"			);
