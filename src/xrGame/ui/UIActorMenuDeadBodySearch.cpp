@@ -81,6 +81,7 @@ void CUIActorMenu::InitDeadBodySearchMode()
 		VERIFY( m_pInvBox );
 		m_pInvBox->set_in_use( true );
 		m_pInvBox->AddAvailableItems( items_list );
+		InvBoxItemsMaxSize = m_pInvBox->InvBoxCapacity;
 	}
 
 	std::sort( items_list.begin(), items_list.end(),InventoryUtilities::GreaterRoomInRuck );

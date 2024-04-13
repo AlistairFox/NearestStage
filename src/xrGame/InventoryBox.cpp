@@ -106,6 +106,7 @@ BOOL CInventoryBox::net_Spawn(CSE_Abstract* DC)
 		m_can_take = pSE_box->m_can_take;
 		m_closed   = pSE_box->m_closed;
 		set_tip_text( pSE_box->m_tip_text.c_str() );
+		InvBoxCapacity = pSE_box->capacity;
 	}
 
 	return					TRUE;

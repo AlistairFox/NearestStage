@@ -34,6 +34,7 @@ public:
 
 				void	set_closed						(bool status, LPCSTR reason);
 	IC			bool	closed							() const { return m_closed; }
+	u32			InvBoxCapacity = 0;
 
 protected:
 				void	SE_update_status				();

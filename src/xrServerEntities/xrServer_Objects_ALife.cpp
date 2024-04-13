@@ -2290,6 +2290,7 @@ CSE_ALifeInventoryBox::CSE_ALifeInventoryBox( LPCSTR caSection ) : CSE_ALifeDyna
 	m_can_take = true;
 	m_closed   = false;
 	m_tip_text._set( "inventory_box_use" );
+	capacity = READ_IF_EXISTS(pSettings, r_u32, caSection, "box_capacity", 65);
 }
 
 CSE_ALifeInventoryBox::~CSE_ALifeInventoryBox()
@@ -2317,6 +2318,8 @@ void CSE_ALifeInventoryBox::STATE_Read( NET_Packet &tNetPacket, u16 size )
 		tNetPacket.r_u8	( temp );		m_can_take = (temp == 1);
 		tNetPacket.r_u8	( temp );		m_closed   = (temp == 1);
 		tNetPacket.r_stringZ( m_tip_text );
+		tNetPacket.r_u32();
+
 	}
 }
 
@@ -2326,6 +2329,8 @@ void CSE_ALifeInventoryBox::STATE_Write( NET_Packet &tNetPacket )
 	tNetPacket.w_u8		( (m_can_take)? 1 : 0 );
 	tNetPacket.w_u8		( (m_closed)? 1 : 0 );
 	tNetPacket.w_stringZ( m_tip_text );
+
+	tNetPacket.w_u32(capacity);
 }
 
 void CSE_ALifeInventoryBox::UPDATE_Read( NET_Packet &tNetPacket )
