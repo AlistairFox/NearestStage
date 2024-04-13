@@ -48,17 +48,22 @@ class UIPdaChat : public CUIWindow, public CUIWndCallback
 
 	//GLOBAL CHAT
 	CUITextWnd* CaptionMode;
+	CUITextWnd* cap_text_active;
 	CUI3tButton* switch_anonimous;
 	CUI3tButton* switch_mode_button;
+	CUI3tButton* update_list_btn;
 
 
 
 	virtual bool	OnMouseAction(float x, float y, EUIMessages mouse_action);
+	virtual bool			OnKeyboardAction(int dik, EUIMessages keyboard_action);
 
 	void xr_stdcall     button_click_send_msg(CUIWindow* w, void* d);
+	void				Send_msg();
 	void xr_stdcall     button_click_send_money(CUIWindow* w, void* d);
 	void xr_stdcall	    button_click_mode_switch(CUIWindow* w, void* d);
 	void xr_stdcall button_click_anonimous_mode_switch(CUIWindow* w, void* d);
+	void xr_stdcall button_update_click(CUIWindow* w, void* d);
 
 	virtual void		SendMessage(CUIWindow* pWnd, s16 msg, void* pData);
 	void AddNewsData(GAME_NEWS_DATA data, ClientID PlayerID);
@@ -71,7 +76,7 @@ class UIPdaChat : public CUIWindow, public CUIWndCallback
 	bool ModeGlobalChat = true;
 
 public:
-
+	bool change_focus = false;
 	xr_map<ClientID, xr_vector<GAME_NEWS_DATA>> news_data;
 
 	xr_vector<GAME_NEWS_DATA> global_chat;
@@ -84,6 +89,7 @@ public:
 	void			InitCallBacks();
 	virtual void 	Show(bool status);
 	virtual void	Update();
+	std::map<LPCSTR, u16> players_map;
 	virtual void	ResetAll();
 	void RecivePacket(NET_Packet& P);
 

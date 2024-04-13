@@ -42,7 +42,7 @@ public:
 	virtual void	Enable			(bool status);
 			
 			void	SetPasswordMode	(bool mode = true);
-
+			bool	m_bInputFocus;
 protected:
 			void				Register_callbacks();
 
@@ -63,7 +63,6 @@ protected:
 	char	m_out_str[EDIT_BUF_SIZE];
 	float	m_dx_cur;
 
-	bool	m_bInputFocus;
 	bool	m_force_update;
 	bool	m_read_mode;
 

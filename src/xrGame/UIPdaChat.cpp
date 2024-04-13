@@ -30,6 +30,8 @@ UIPdaChat::~UIPdaChat()
 {
 	chat_text->Clear();
 	chat_users->Clear();
+	players_map.clear();
+	chat_users->Clear();
 }
 
 void UIPdaChat::Init()
@@ -51,7 +53,7 @@ void UIPdaChat::Init()
 
 	CaptionOnline = UIHelper::CreateTextWnd(xml, "online_players", m_background_players);
 	CaptionMode = UIHelper::CreateTextWnd(xml, "switch_mode_cap", m_background_players);
-
+	cap_text_active = UIHelper::CreateTextWnd(xml, "active_text_cap", m_background_chat);
 
 	infoActor = xr_new<CUICharacterInfo>();
 	infoPartner = xr_new<CUICharacterInfo>();
@@ -59,6 +61,7 @@ void UIPdaChat::Init()
 	infoPartner->InitCharacterInfo(&xml, "character_info_partner");
 	m_background_chat->AttachChild(infoActor);
 	m_background_chat->AttachChild(infoPartner);
+	update_list_btn = UIHelper::Create3tButton(xml, "update_list", m_background_players);
 
 	switch_anonimous = UIHelper::Create3tButton(xml, "switch_anonimous", m_background_chat);
 
@@ -70,7 +73,7 @@ void UIPdaChat::Init()
 	chat_editbox = UIHelper::CreateEditBox(xml, "msg_editbox", m_background_chat);
 	money_editbox = UIHelper::CreateEditBox(xml, "money_editbox", m_background_chat);
 
-	chat_editbox->Init(72);
+	chat_editbox->Init(144);
 	money_editbox->Init(16, true);
 	// Scrool Bar Text 
 
@@ -94,7 +97,9 @@ void UIPdaChat::InitCallBacks()
 	Register(send_money_button);
 	Register(switch_mode_button);
 	Register(switch_anonimous);
+	Register(update_list_btn);
 
+	AddCallback(update_list_btn, BUTTON_CLICKED, CUIWndCallback::void_function(this, &UIPdaChat::button_update_click));
 	AddCallback(send_msg_to_user, BUTTON_CLICKED, CUIWndCallback::void_function(this, &UIPdaChat::button_click_send_msg));
 	AddCallback(send_money_button, BUTTON_CLICKED, CUIWndCallback::void_function(this, &UIPdaChat::button_click_send_money));
 	AddCallback(switch_mode_button, BUTTON_CLICKED, CUIWndCallback::void_function(this, &UIPdaChat::button_click_mode_switch));
@@ -108,6 +113,44 @@ void UIPdaChat::Show(bool status)
 
 	money_editbox->ClearText();
 	chat_editbox->ClearText();
+
+
+	if (status)
+	{
+		for (auto player : Game().players)
+		{
+			if (player.first == Game().local_svdpnid)
+				continue;
+
+			CActor* actor = smart_cast<CActor*>(Level().Objects.net_Find(player.second->GameID));
+			if (actor)
+			{
+				CUICharacterInfo* info = xr_new<CUICharacterInfo>();
+				info->InitCharacterInfo(&xml, "character_info");
+				info->InitCharacterMP(actor->cast_inventory_owner());
+				chat_users->AddWindow(info, true);
+				players_map[player.second->getName()] = player.second->GameID;
+			}
+		}
+	}
+	else
+	{
+		players_map.clear();
+		chat_users->Clear();
+	}
+}
+
+bool UIPdaChat::OnKeyboardAction(int dik, EUIMessages keyboard_action)
+{
+	if (WINDOW_KEY_PRESSED == keyboard_action)
+	{
+		if (dik == DIK_RETURN)
+		{
+			Send_msg();
+			return true;
+		}
+	}
+	return inherited::OnKeyboardAction(dik, keyboard_action);
 }
 
 u32 old_second_id = 0;
@@ -116,7 +159,6 @@ u8 old_chat = 0;
 void UIPdaChat::Update()
 {
 	inherited::Update();
-
 	if (Device.dwFrame % 20 == 0)
 	{
 		string32 tmp;
@@ -127,12 +169,10 @@ void UIPdaChat::Update()
 		CaptionOnline->SetText(online);
 		CaptionMode->SetText(ModeGlobalChat ? "Общий чат" : "Приватный чат");
 
-		chat_users->Clear();
-
 		bool f_Second = false;
 		bool f_Local = false;
 
-		for (auto player : Level().game->players)
+		for (const auto& player : Game().players)
 		{
 			if (SecondActor)
 			{
@@ -152,18 +192,8 @@ void UIPdaChat::Update()
 				}
 			}
 
-			if (player.first == Game().local_svdpnid)
-				continue;
-
-			CActor* actor = smart_cast<CActor*>(Level().Objects.net_Find(player.second->GameID));
-			if (actor)
-			{
-				CUICharacterInfo* info = xr_new<CUICharacterInfo>();
-				info->InitCharacterInfo(&xml, "character_info");
-				info->InitCharacterMP(actor->cast_inventory_owner());
-
-				chat_users->AddWindow(info, true);
-			}
+			//if (player.first == Game().local_svdpnid)
+			//	continue;
 		}
 
 		if (!f_Second)
@@ -177,6 +207,26 @@ void UIPdaChat::Update()
 			LocalActor = 0;
 			LocalActorCL = 0;
 		}
+
+		if (chat_editbox->m_bInputFocus)
+		{
+			if (!change_focus)
+			{
+				change_focus = true;
+				cap_text_active->SetText("Ввод:");
+				cap_text_active->SetColorAnimation("ui_slow_blinking_alpha", LA_ONLYALPHA | LA_TEXTCOLOR | LA_CYCLIC);
+			}
+		}
+		else
+		{
+			if (change_focus)
+			{
+				change_focus = false;
+				cap_text_active->SetText("");
+				cap_text_active->ResetColorAnimation();
+			}
+		}
+
 
 		CObject* obj = Level().Objects.net_Find(Game().local_player->GameID);
 		CActor* act = smart_cast<CActor*>(obj);
@@ -192,8 +242,12 @@ void UIPdaChat::Update()
 			xr_strcat(money1, itoa(LocalActor->get_money(), tmp, 10));
 			xr_strcat(money1, " RU");
 			if (Anonymous)
+			{
+				player_1_money->SetColorAnimation("ui_slow_blinking_alpha", LA_ONLYALPHA | LA_TEXTCOLOR | LA_CYCLIC);
 				xr_strcat(money1, " (Аноним)");
-
+			}
+			else
+				player_1_money->ResetColorAnimation();
 			player_1_money->SetText(money1);
 		}
 
@@ -295,11 +349,11 @@ bool UIPdaChat::OnMouseAction(float x, float y, EUIMessages mouse_action)
 {
 	if (mouse_action == WINDOW_LBUTTON_DOWN)
 	{
-		auto child = chat_users->Items();
+		//auto child = chat_users->Items();
 
-		for (auto iter = child.rbegin(); iter != child.rend(); iter++)
+		for (const auto& iter : chat_users->Items())
 		{
-			CUIWindow* wind = (*iter);
+			CUIWindow* wind = iter;
 			CUICharacterInfo* info = smart_cast<CUICharacterInfo*>(wind);
 
 			Frect wndRect;
@@ -308,15 +362,14 @@ bool UIPdaChat::OnMouseAction(float x, float y, EUIMessages mouse_action)
 
 			if (info && wndRect.in(pos))
 			{
-				u16 owner = info->OwnerID();
+				LPCSTR name = info->UIName().TextItemControl()->GetText();;
 
-				//Msg("Set OwnerID %d", owner);
-
-				CActor* actor = smart_cast<CActor*>(Level().Objects.net_Find(owner));
+				CActor* actor = smart_cast<CActor*>(Level().Objects.net_Find(players_map[name]));
 
 				if (actor)
 				{
 					SecondActor = actor;
+
 
 					infoPartner->InitCharacterMP(actor);
 					return true;
@@ -330,6 +383,11 @@ bool UIPdaChat::OnMouseAction(float x, float y, EUIMessages mouse_action)
 }
 
 void xr_stdcall UIPdaChat::button_click_send_msg(CUIWindow* w, void* d)
+{
+	Send_msg();
+}
+
+void UIPdaChat::Send_msg()
 {
 	if (!LocalActor)
 		return;
@@ -354,7 +412,7 @@ void xr_stdcall UIPdaChat::button_click_send_msg(CUIWindow* w, void* d)
 		{
 			data.news_caption = "Анонимно";
 			data.news_text = text.c_str();
-			data.texture_name = "ui_inGame2_V_poiskah_Soroki";
+			data.texture_name = "ui_inGame2_Istoriya_dolga";
 		}
 		else
 		{
@@ -364,9 +422,8 @@ void xr_stdcall UIPdaChat::button_click_send_msg(CUIWindow* w, void* d)
 		}
 
 		SendPacket(data);
+		chat_editbox->ClearText();
 	}
-	chat_editbox->ClearText();
-
 }
 
 void xr_stdcall UIPdaChat::button_click_send_money(CUIWindow* w, void* d)
@@ -404,10 +461,33 @@ void xr_stdcall UIPdaChat::button_click_send_money(CUIWindow* w, void* d)
 		packet.w_u16(SecondActor->ID());
 		packet.w_u32(money);
 		Game().u_EventSend(packet);
+
+		money_editbox->ClearText();
 	}
 
-	money_editbox->ClearText();
 
+}
+
+void xr_stdcall UIPdaChat::button_update_click(CUIWindow* w, void* d)
+{
+	chat_users->Clear();
+	players_map.clear();
+
+	for (auto player : Game().players)
+	{
+		if (player.first == Game().local_svdpnid)
+			continue;
+
+		CActor* actor = smart_cast<CActor*>(Level().Objects.net_Find(player.second->GameID));
+		if (actor)
+		{
+			CUICharacterInfo* info = xr_new<CUICharacterInfo>();
+			info->InitCharacterInfo(&xml, "character_info");
+			info->InitCharacterMP(actor->cast_inventory_owner());
+			chat_users->AddWindow(info, true);
+			players_map[player.second->getName()] = player.second->GameID;
+		}
+	}
 }
 
 void xr_stdcall UIPdaChat::button_click_mode_switch(CUIWindow* w, void* d)
