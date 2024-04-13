@@ -577,6 +577,25 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 		fmp->SavePlayersConditions(satiety, thirst, radiation, CL->ps);
 	}break;
 
+	case M_DEMO_REQUEST:
+	{
+		xrClientData* data = ID_to_client(sender);
+		game_PlayerState* ps = data->ps;
+
+		if (ps)
+		{
+			if (ps->testFlag(GAME_PLAYER_SUPER_ADMIN) && data->m_admin_rights.m_has_super_admin_rights)
+			{
+				P.w_begin(M_SET_DEMO);
+				Level().Server->SendTo(sender, P, net_flags(true, true));
+			}
+			else
+			{
+				Msg("!! Player use Admin-Hack!! PlayerName: [%s]", ps->getName());
+			}
+		}
+	}break;
+
 	default:
 		R_ASSERT2	(0,"Game Event not implemented!!!");
 		break;

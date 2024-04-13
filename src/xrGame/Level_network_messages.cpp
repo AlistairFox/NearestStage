@@ -16,6 +16,8 @@
 #include "file_transfer.h"
 #include "message_filter.h"
 #include "../xrphysics/iphworld.h"
+#include "../xrEngine/FDemoRecord.h"
+#include "../xrEngine/CameraManager.h"
 //#include "../xrEngine/XR_IOConsole.h"
 
 extern LPCSTR map_ver_string;
@@ -548,6 +550,18 @@ void CLevel::ClientReceive()
 
 			IsMusicActive = false;
 
+		}break;
+
+		case M_SET_DEMO:
+		{
+			if (OnClient())
+			{
+				LPSTR			fn_;
+				STRCONCAT(fn_, "args", ".xrdemo");
+				string_path		fn;
+				FS.update_path(fn, "$game_saves$", fn_);
+				g_pGameLevel->Cameras().AddCamEffector(xr_new<CDemoRecord>(fn_));
+			}
 		}break;
 
 		

@@ -450,12 +450,9 @@ public:
 
 		Console->Hide	();
 
-		LPSTR			fn_; 
-		STRCONCAT		(fn_, args, ".xrdemo");
-		string_path		fn;
-		FS.update_path	(fn, "$game_saves$", fn_);
-
-		g_pGameLevel->Cameras().AddCamEffector(xr_new<CDemoRecord> (fn));
+		NET_Packet P;
+		Game().u_EventGen(P, M_DEMO_REQUEST, Game().local_player->GameID);
+		Game().u_EventSend(P);
 	}
 };
 
