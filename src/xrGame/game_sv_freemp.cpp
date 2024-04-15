@@ -302,15 +302,13 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 
 	CInifile* checkstuf_file = xr_new<CInifile>(filepath, false, true); // inifile for check on first connect player
 
-	LPCSTR loginname = ps->getName();
-
-	if (checkstuf_file && !checkstuf_file->line_exist(loginname, "staf_load"))
+	if (checkstuf_file && !checkstuf_file->line_exist(ps->getName(), "staf_load"))
 	{
 		CInifile* login_file = xr_new<CInifile>(login_path, true, true);
 
-		if (login_file->section_exist(loginname))
+		if (login_file->section_exist(ps->getName()))
 		{
-			u8 kit_numb = login_file->r_u8(loginname, "kit_number");
+			u8 kit_numb = login_file->r_u8(ps->getName(), "kit_number");
 
 			LPCSTR N, V;
 			s32 money;
@@ -338,7 +336,7 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 			else
 				Msg("!! Can't Find spawn_kit section: [%s]", spawn_section);
 
-			checkstuf_file->w_bool(loginname, "staf_load", true);
+			checkstuf_file->w_bool(ps->getName(), "staf_load", true);
 			checkstuf_file->save_as(filepath);
 		}
 		xr_delete(login_file);

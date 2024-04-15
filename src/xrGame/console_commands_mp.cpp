@@ -2278,6 +2278,15 @@ public:
 			Msg("! Can't give money to client %d", name);
 		}
 	}
+
+	virtual void	fill_tips(vecTips& tips, u32 mode)
+	{
+		for (const auto& player : Game().players)
+		{
+			tips.push_back(player.second->getName());
+		}
+	}
+
 };
 
 class CCC_ChangeTeam : public IConsole_Command {
