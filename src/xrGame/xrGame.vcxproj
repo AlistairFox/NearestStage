@@ -829,9 +829,6 @@
     <ClInclude Include="command_switch_counter.h" />
     <ClInclude Include="condition_state.h" />
     <ClInclude Include="condition_state_inline.h" />
-    <ClInclude Include="configs_common.h" />
-    <ClInclude Include="configs_dumper.h" />
-    <ClInclude Include="configs_dump_verifyer.h" />
     <ClInclude Include="console_registrator.h" />
     <ClInclude Include="controller_state_panic_inline.h" />
     <ClInclude Include="control_action.h" />
@@ -949,10 +946,6 @@
     <ClInclude Include="F1.h" />
     <ClInclude Include="FadedBall.h" />
     <ClInclude Include="faster_than_bullets_time.h" />
-    <ClInclude Include="filereceiver_node.h" />
-    <ClInclude Include="filetransfer_common.h" />
-    <ClInclude Include="filetransfer_node.h" />
-    <ClInclude Include="file_transfer.h" />
     <ClInclude Include="fire_disp_controller.h" />
     <ClInclude Include="first_bullet_controller.h" />
     <ClInclude Include="flare.h" />
@@ -1185,7 +1178,6 @@
     <ClInclude Include="moving_objects_inline.h" />
     <ClInclude Include="moving_object_inline.h" />
     <ClInclude Include="MPPlayersBag.h" />
-    <ClInclude Include="mp_config_sections.h" />
     <ClInclude Include="mt_config.h" />
     <ClInclude Include="Needles.h" />
     <ClInclude Include="NET_Queue.h" />
@@ -1360,10 +1352,6 @@
     <ClInclude Include="saved_game_wrapper_inline.h" />
     <ClInclude Include="ScientificOutfit.h" />
     <ClInclude Include="Scope.h" />
-    <ClInclude Include="screenshots_common.h" />
-    <ClInclude Include="screenshots_writer.h" />
-    <ClInclude Include="screenshot_manager.h" />
-    <ClInclude Include="screenshot_server.h" />
     <ClInclude Include="ScriptXMLInit.h" />
     <ClInclude Include="script_abstract_action.h" />
     <ClInclude Include="script_abstract_action_inline.h" />
@@ -1844,7 +1832,6 @@
     <ClInclude Include="xrGameSpyServer_callbacks.h" />
     <ClInclude Include="xrServer.h" />
     <ClInclude Include="xrServerMapSync.h" />
-    <ClInclude Include="xrServer_info.h" />
     <ClInclude Include="xrServer_svclient_validation.h" />
     <ClInclude Include="xrServer_updates_compressor.h" />
     <ClInclude Include="xr_dsa_signer.h" />
@@ -2762,9 +2749,6 @@
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
     <ClCompile Include="ClimableObject.cpp" />
-    <ClCompile Include="configs_common.cpp" />
-    <ClCompile Include="configs_dumper.cpp" />
-    <ClCompile Include="configs_dump_verifyer.cpp" />
     <ClCompile Include="console_commands.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">pch_script.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch_script.h</PrecompiledHeaderFile>
@@ -2924,9 +2908,6 @@
     </ClCompile>
     <ClCompile Include="FadedBall.cpp" />
     <ClCompile Include="faster_than_bullets_time.cpp" />
-    <ClCompile Include="filereceiver_node.cpp" />
-    <ClCompile Include="filetransfer_node.cpp" />
-    <ClCompile Include="file_transfer.cpp" />
     <ClCompile Include="fire_disp_controller.cpp" />
     <ClCompile Include="first_bullet_controller.cpp" />
     <ClCompile Include="flare.cpp" />
@@ -3368,7 +3349,6 @@
     <ClCompile Include="moving_objects_static.cpp" />
     <ClCompile Include="mpactor_dump_impl.cpp" />
     <ClCompile Include="MPPlayersBag.cpp" />
-    <ClCompile Include="mp_config_sections.cpp" />
     <ClCompile Include="Needles.cpp" />
     <ClCompile Include="NoGravityZone.cpp" />
     <ClCompile Include="object_actions.cpp" />
@@ -3603,10 +3583,6 @@
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)$(ProjectName)_script.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
-    <ClCompile Include="screenshots_common.cpp" />
-    <ClCompile Include="screenshots_writer.cpp" />
-    <ClCompile Include="screenshot_manager.cpp" />
-    <ClCompile Include="screenshot_server.cpp" />
     <ClCompile Include="ScriptXMLInit.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">pch_script.h</PrecompiledHeaderFile>
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">pch_script.h</PrecompiledHeaderFile>
@@ -4846,7 +4822,6 @@
     <ClCompile Include="xrServer_CL_disconnect.cpp" />
     <ClCompile Include="xrServer_Connect.cpp" />
     <ClCompile Include="xrServer_Disconnect.cpp" />
-    <ClCompile Include="xrServer_info.cpp" />
     <ClCompile Include="xrServer_perform_GameExport.cpp" />
     <ClCompile Include="xrServer_perform_migration.cpp" />
     <ClCompile Include="xrServer_perform_RPgen.cpp" />

@@ -8,7 +8,6 @@
 #include "ai_space.h"
 #include "game_cl_base.h"
 #include "NET_Queue.h"
-#include "file_transfer.h"
 #include "hudmanager.h"
 
 #include "../xrphysics/iphworld.h"
@@ -171,23 +170,6 @@ bool	CLevel::net_start_client4				()
 			Msg		("* connection sync: %d ms", timer_sync.GetElapsed_ms());
 			while	(!net_isCompleted_Sync())	{ ClientReceive(); Sleep(5); }
 		}
-/*
-		if(psNET_direct_connect)
-		{
-			ClientReceive(); 
-			if(Server)
-					Server->Update()	;
-			Sleep(5);
-		}else
-
-			while(!game_configured)			
-			{ 
-				ClientReceive(); 
-				if(Server)
-					Server->Update()	;
-				Sleep(5); 
-			}
-*/
 		}
 	return true;
 }
@@ -254,10 +236,6 @@ bool	CLevel::net_start_client6				()
 			if (!g_dedicated_server)
 			{
 				game->OnConnected();
-			}
-			if (game->Type() != eGameIDSingle)
-			{
-				m_file_transfer = xr_new<file_transfer::client_site>();
 			}
 		}
 

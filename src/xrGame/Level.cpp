@@ -44,7 +44,6 @@
 #include "actor.h"
 #include "player_hud.h"
 #include "UI/UIGameTutorial.h"
-#include "file_transfer.h"
 #include "message_filter.h"
 #include "demoplay_control.h"
 #include "demoinfo.h"
@@ -206,7 +205,6 @@ CLevel::CLevel():NET_CLIENT_CLASS (Device.GetTimerGlobal())
 	}
 	*/
 	//---------------------------------------------------------	
-	m_file_transfer					= NULL;
 	m_trained_stream				= NULL;
 	m_lzo_working_memory			= NULL;
 	m_lzo_working_buffer			= NULL;
@@ -562,10 +560,6 @@ void CLevel::ProcessGameEvents()
 				break;
 			}
 			case M_STATISTIC_UPDATE:
-			{
-				break;
-			}
-			case M_FILE_TRANSFER:
 			{
 				break;
 			}

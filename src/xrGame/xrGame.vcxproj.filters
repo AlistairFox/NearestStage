@@ -2101,12 +2101,6 @@
     <Filter Include="Core\Server\Games\client\mp">
       <UniqueIdentifier>{5411b18c-4bb0-45a1-a247-4c882be425e7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\Server\Games\client\mp\screenshots">
-      <UniqueIdentifier>{85716612-2641-475b-8692-a6d33fece6cd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\Server\Games\client\mp\anticheat">
-      <UniqueIdentifier>{dccae07c-5e17-459b-a835-97ed5c5a3d4e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Core\Server\Games\client\mp\award_system">
       <UniqueIdentifier>{47dbfa6b-5100-46b4-84ef-5a5be067990e}</UniqueIdentifier>
     </Filter>
@@ -2184,9 +2178,6 @@
     </Filter>
     <Filter Include="Core\Server\xrGameSpyServer">
       <UniqueIdentifier>{3e596e85-1472-46a5-8e27-3ca91a0b4dd3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\Server\filetransfer">
-      <UniqueIdentifier>{503daee5-da6b-4ac0-ae21-4665829a369b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Core\Server\ServerConnect">
       <UniqueIdentifier>{481f93a9-63cd-424d-a7ce-b37b26abb53c}</UniqueIdentifier>
@@ -6282,16 +6273,10 @@
     <ClInclude Include="static_cast_checked.hpp">
       <Filter>Core\Common\debug\static_cast_checked</Filter>
     </ClInclude>
-    <ClInclude Include="screenshot_server.h">
-      <Filter>Core\Server</Filter>
-    </ClInclude>
     <ClInclude Include="xrClientsPool.h">
       <Filter>Core\Server</Filter>
     </ClInclude>
     <ClInclude Include="xrServer.h">
-      <Filter>Core\Server</Filter>
-    </ClInclude>
-    <ClInclude Include="xrServer_info.h">
       <Filter>Core\Server</Filter>
     </ClInclude>
     <ClInclude Include="..\xrServerEntities\xrServer_Space.h">
@@ -6368,27 +6353,6 @@
     </ClInclude>
     <ClInclude Include="game_cl_mp_snd_messages.h">
       <Filter>Core\Server\Games\client\mp</Filter>
-    </ClInclude>
-    <ClInclude Include="screenshot_manager.h">
-      <Filter>Core\Server\Games\client\mp\screenshots</Filter>
-    </ClInclude>
-    <ClInclude Include="screenshots_common.h">
-      <Filter>Core\Server\Games\client\mp\screenshots</Filter>
-    </ClInclude>
-    <ClInclude Include="screenshots_writer.h">
-      <Filter>Core\Server\Games\client\mp\screenshots</Filter>
-    </ClInclude>
-    <ClInclude Include="configs_common.h">
-      <Filter>Core\Server\Games\client\mp\anticheat</Filter>
-    </ClInclude>
-    <ClInclude Include="configs_dump_verifyer.h">
-      <Filter>Core\Server\Games\client\mp\anticheat</Filter>
-    </ClInclude>
-    <ClInclude Include="configs_dumper.h">
-      <Filter>Core\Server\Games\client\mp\anticheat</Filter>
-    </ClInclude>
-    <ClInclude Include="mp_config_sections.h">
-      <Filter>Core\Server\Games\client\mp\anticheat</Filter>
     </ClInclude>
     <ClInclude Include="ammunition_groups.h">
       <Filter>Core\Server\Games\client\mp\award_system</Filter>
@@ -6737,18 +6701,6 @@
     </ClInclude>
     <ClInclude Include="xrGameSpyServer_callbacks.h">
       <Filter>Core\Server\xrGameSpyServer</Filter>
-    </ClInclude>
-    <ClInclude Include="file_transfer.h">
-      <Filter>Core\Server\filetransfer</Filter>
-    </ClInclude>
-    <ClInclude Include="filereceiver_node.h">
-      <Filter>Core\Server\filetransfer</Filter>
-    </ClInclude>
-    <ClInclude Include="filetransfer_common.h">
-      <Filter>Core\Server\filetransfer</Filter>
-    </ClInclude>
-    <ClInclude Include="filetransfer_node.h">
-      <Filter>Core\Server\filetransfer</Filter>
     </ClInclude>
     <ClInclude Include="ui_base.h">
       <Filter>UI</Filter>
@@ -9911,9 +9863,6 @@
     <ClCompile Include="static_cast_checked_test.cpp">
       <Filter>Core\Common\debug\static_cast_checked</Filter>
     </ClCompile>
-    <ClCompile Include="screenshot_server.cpp">
-      <Filter>Core\Server</Filter>
-    </ClCompile>
     <ClCompile Include="xrClientsPool.cpp">
       <Filter>Core\Server</Filter>
     </ClCompile>
@@ -9924,9 +9873,6 @@
       <Filter>Core\Server</Filter>
     </ClCompile>
     <ClCompile Include="xrServer_balance.cpp">
-      <Filter>Core\Server</Filter>
-    </ClCompile>
-    <ClCompile Include="xrServer_info.cpp">
       <Filter>Core\Server</Filter>
     </ClCompile>
     <ClCompile Include="xrServer_updates_compressor.cpp">
@@ -9970,27 +9916,6 @@
     </ClCompile>
     <ClCompile Include="game_cl_mp_snd_messages.cpp">
       <Filter>Core\Server\Games\client\mp</Filter>
-    </ClCompile>
-    <ClCompile Include="screenshot_manager.cpp">
-      <Filter>Core\Server\Games\client\mp\screenshots</Filter>
-    </ClCompile>
-    <ClCompile Include="screenshots_common.cpp">
-      <Filter>Core\Server\Games\client\mp\screenshots</Filter>
-    </ClCompile>
-    <ClCompile Include="screenshots_writer.cpp">
-      <Filter>Core\Server\Games\client\mp\screenshots</Filter>
-    </ClCompile>
-    <ClCompile Include="configs_common.cpp">
-      <Filter>Core\Server\Games\client\mp\anticheat</Filter>
-    </ClCompile>
-    <ClCompile Include="configs_dump_verifyer.cpp">
-      <Filter>Core\Server\Games\client\mp\anticheat</Filter>
-    </ClCompile>
-    <ClCompile Include="configs_dumper.cpp">
-      <Filter>Core\Server\Games\client\mp\anticheat</Filter>
-    </ClCompile>
-    <ClCompile Include="mp_config_sections.cpp">
-      <Filter>Core\Server\Games\client\mp\anticheat</Filter>
     </ClCompile>
     <ClCompile Include="ammunition_groups.cpp">
       <Filter>Core\Server\Games\client\mp\award_system</Filter>
@@ -10393,15 +10318,6 @@
     </ClCompile>
     <ClCompile Include="xrGameSpyServer_callbacks.cpp">
       <Filter>Core\Server\xrGameSpyServer</Filter>
-    </ClCompile>
-    <ClCompile Include="file_transfer.cpp">
-      <Filter>Core\Server\filetransfer</Filter>
-    </ClCompile>
-    <ClCompile Include="filereceiver_node.cpp">
-      <Filter>Core\Server\filetransfer</Filter>
-    </ClCompile>
-    <ClCompile Include="filetransfer_node.cpp">
-      <Filter>Core\Server\filetransfer</Filter>
     </ClCompile>
     <ClCompile Include="xrServer_CL_connect.cpp">
       <Filter>Core\Server\ServerConnect</Filter>

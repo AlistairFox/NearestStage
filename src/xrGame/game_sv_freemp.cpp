@@ -522,12 +522,12 @@ void game_sv_freemp::Update()
 						continue;
 					}
 
-						string_path file_name_path;
-						string32 file_name;
-						xr_strcpy(file_name, player.second->getName());
-						xr_strcat(file_name, ".binsave");
-						FS.update_path(file_name_path, "$mp_saves_players_bin$", file_name);
-						BinnarSavePlayer(player.second, file_name_path);
+					string_path file_name_path;
+					string32 file_name;
+					xr_strcpy(file_name, player.second->getName());
+					xr_strcat(file_name, ".binsave");
+					FS.update_path(file_name_path, "$mp_saves_players_bin$", file_name);
+					BinnarSavePlayer(player.second, file_name_path);
 
 					SavePlayersOnDeath(player.second);
 				}

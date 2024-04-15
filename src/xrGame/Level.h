@@ -58,10 +58,6 @@ class CFogOfWarMngr;
 class CBulletManager;
 class CMapManager;
 
-namespace file_transfer
-{
-	class client_site;
-}; //namespace file_transfer
 
 class CLevel					: public IGame_Level, public NET_CLIENT_CLASS
 {
@@ -397,8 +393,6 @@ public:
 public:
 			void			remove_objects				();
 			virtual void	OnSessionTerminate		(LPCSTR reason);
-			
-			file_transfer::client_site*					m_file_transfer;
 			
 	compression::ppmd_trained_stream*			m_trained_stream;
 	compression::lzo_dictionary_buffer			m_lzo_dictionary;

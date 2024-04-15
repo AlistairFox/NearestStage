@@ -192,7 +192,6 @@ void game_sv_roleplay::RespawnPlayer(ClientID id_who, bool NoSpectator)
 		FS.update_path(file_name, "$mp_saves_players$", filename);
 
 		CInifile* file = xr_new<CInifile>(file_name, true);
-		LoadPlayer(ps, file);
 		ps->setFlag(GAME_PLAYER_MP_SAVE_LOADED);
  	}
 

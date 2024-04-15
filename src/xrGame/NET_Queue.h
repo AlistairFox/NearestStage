@@ -34,7 +34,6 @@ public:
 			}break;
 		case M_MOVE_PLAYERS:
 		case M_STATISTIC_UPDATE:
-		case M_FILE_TRANSFER:
 		case M_GAMEMESSAGE:
 			{
 			}break;

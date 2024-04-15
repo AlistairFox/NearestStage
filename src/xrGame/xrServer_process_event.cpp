@@ -390,10 +390,7 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 		}break;
 	case GE_FREEZE_OBJECT:
 		break;
-	case GE_REQUEST_PLAYERS_INFO:
-		{
-			SendPlayersInfo(sender);
-		}break;
+
 	case GE_REPAIR_ITEM:
 	{
 		float condition;
