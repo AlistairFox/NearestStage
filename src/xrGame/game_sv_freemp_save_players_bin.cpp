@@ -11,6 +11,88 @@
 #include "AnomalyDetector.h"
 #include "PDA.h"
 
+void game_sv_freemp::FillPlayersBuffer(game_PlayerState* ps, string_path& filepath)
+{
+	CObject* obj = Level().Objects.net_Find(ps->GameID);
+	CActor* actor = smart_cast<CActor*>(obj);
+	CInventoryOwner* pInvOwner = smart_cast<CInventoryOwner*>(obj);
+	Players* pl = xr_new<Players>();
+
+	if (actor && actor->g_Alive())
+	{
+		PlayerStats stat;
+		xr_strcpy(pl->PlayerPath, filepath);
+		stat.money = ps->money_for_round;
+		stat.satiety = Players_condition[ps->GetStaticID()].satiety;
+		stat.thirst = Players_condition[ps->GetStaticID()].thirst;
+		stat.radiation = Players_condition[ps->GetStaticID()].radiation;
+		stat.team = ps->team;
+
+		CSE_ALifeCreatureActor* actor_cse = smart_cast<CSE_ALifeCreatureActor*>(server().ID_to_entity(ps->GameID));
+
+		if (actor_cse)
+		{
+			stat.SetPossition = true;
+			stat.pos = actor_cse->o_Position;
+			stat.angle = actor_cse->o_Angle;
+			stat.health = actor_cse->get_health();
+		}
+		else
+			stat.SetPossition = false;; // cheking save position
+		pl->Stats = stat;
+
+		TIItemContainer items;
+		actor->inventory().AddSaveAvailableItems(items);
+
+		for (const auto itm : items)
+		{
+			PlayerItem pItem;
+
+			xr_strcpy(pItem.ItemSect, itm->m_section_id.c_str());
+			pItem.ItemSlot = itm->CurrValue();
+			pItem.ItemCond = itm->GetCondition();
+			if (itm->cast_weapon_ammo())
+			{
+				pItem.IsWeaponAmmo = true;
+				CWeaponAmmo* ammo = smart_cast<CWeaponAmmo*>(itm);
+				pItem.AmmoBoxCurr = ammo->m_boxCurr;
+			}
+			else
+				pItem.IsWeaponAmmo = false;
+
+			if (itm->cast_weapon())
+			{
+				pItem.IsWeapon = true;
+				CWeapon* wpn = smart_cast<CWeapon*>(itm);
+				pItem.AmmoElapsed = wpn->GetAmmoElapsed();
+				pItem.AmmoType = wpn->m_ammoType;
+				pItem.AddonState = wpn->GetAddonsState();
+				pItem.CurrScope = wpn->m_cur_scope;
+			}
+			else
+				pItem.IsWeapon = false;
+
+			if (itm->has_any_upgrades())
+			{
+				pItem.HasUpgr = true;
+				itm->get_upgrades(pItem.Uphrades);
+			}
+			else
+				pItem.HasUpgr = false;
+
+			pl->Items.push_back(pItem);
+
+		}
+
+	}
+	
+	csSaving.Enter();
+	ThreadTasks.push_back({ nullptr, pl, nullptr });
+	csSaving.Leave();
+
+}
+
+#ifdef OLD_BOX_SAVING
 void game_sv_freemp::BinnarSavePlayer(game_PlayerState* ps, string_path& filepath)
 {
 	CObject* obj = Level().Objects.net_Find(ps->GameID);
@@ -149,6 +231,7 @@ void game_sv_freemp::BinnarSavePlayer(game_PlayerState* ps, string_path& filepat
 		FS.w_close(writer);
 	}
 }
+#endif
 
 bool game_sv_freemp::BinnarLoadPlayer(game_PlayerState* ps, string_path& filepath)
 {
@@ -184,82 +267,6 @@ bool game_sv_freemp::BinnarLoadPlayer(game_PlayerState* ps, string_path& filepat
 			reader->r_fvector3(pos);
 			reader->r_fvector3(dir);
 			reader->r_float();
-		}
-
-		if (reader->open_chunk(ACTOR_DEVICES_CHUNK))
-		{
-			bool CheckTorch = reader->r_u8();
-
-			if (CheckTorch)
-			{
-				shared_str sect;
-				reader->r_stringZ(sect);
-				float cond = reader->r_float();
-
-				if (sect.size() > 2)
-				{
-					CSE_Abstract* E = spawn_begin(sect.c_str());
-					E->ID_Parent = ps->GameID;
-					CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>(E);
-
-					item->m_fCondition = cond;
-					spawn_end(E, m_server->GetServerClient()->ID);
-				}
-			}
-
-			bool CheckDetector = reader->r_u8();
-
-			if (CheckDetector)
-			{
-				shared_str sect;
-				reader->r_stringZ(sect);
-				float cond = reader->r_float();
-
-				if (sect.size() > 2)
-				{
-					CSE_Abstract* E = spawn_begin(sect.c_str());
-					E->ID_Parent = ps->GameID;
-					CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>(E);
-
-					item->m_fCondition = cond;
-					spawn_end(E, m_server->GetServerClient()->ID);
-				}
-			}
-
-			bool CheckAnomDetector = reader->r_u8();
-
-			if (CheckAnomDetector)
-			{
-				shared_str sect;
-				reader->r_stringZ(sect);
-				float cond = reader->r_float();
-
-				if (sect.size() > 2)
-				{
-					CSE_Abstract* E = spawn_begin(sect.c_str());
-					E->ID_Parent = ps->GameID;
-					CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>(E);
-
-					item->m_fCondition = cond;
-					spawn_end(E, m_server->GetServerClient()->ID);
-				}
-			}
-
-			bool CheckPda = reader->r_u8();
-
-			if (CheckPda)
-			{
-				shared_str sect;
-				reader->r_stringZ(sect);
-
-				if (sect.size() > 2)
-				{
-					CSE_Abstract* E = spawn_begin(sect.c_str());
-					E->ID_Parent = ps->GameID;
-					CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>(E);
-					spawn_end(E, m_server->GetServerClient()->ID);
-				}
-			}
 		}
 
 		if (reader->open_chunk(ACTOR_INV_ITEMS_CHUNK))

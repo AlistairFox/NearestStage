@@ -24,22 +24,13 @@ game_sv_freemp::game_sv_freemp()
 	DynamicMusicFileCreate();
 
 
-	if (mt_box_saving)
-		use_mt_box_saving = true;
-	else
-		use_mt_box_saving = false;
-
-
-	if (use_mt_box_saving)
-	{
 		box_thread = new std::thread([&]()
 		{
-			thread_name("Box Saving Thread");
-			SaveInvBoxesBuffer();
+			thread_name("Progress Saving Thread");
+			SaveThreadWorker();
 		});
 
 		box_thread->detach();
-	}
 }
 
 game_sv_freemp::~game_sv_freemp()
@@ -435,7 +426,7 @@ void game_sv_freemp::OnPlayerDisconnect(ClientID id_who, LPSTR Name, u16 GameID,
 	xr_strcat(file_name, ".binsave");
 	FS.update_path(file_name_path, "$mp_saves_players_bin$", file_name);
 	if (!FS.exist(file_name_path))
-		SavePlayerOnDisconnect(StaticID, file_name_path);
+		FillPlayerOnDisconnect(StaticID, file_name_path);
 
 	ClearPlayersOnDeathBuffer(StaticID);
 
@@ -542,7 +533,8 @@ void game_sv_freemp::Update()
 					xr_strcpy(file_name, player.second->getName());
 					xr_strcat(file_name, ".binsave");
 					FS.update_path(file_name_path, "$mp_saves_players_bin$", file_name);
-					BinnarSavePlayer(player.second, file_name_path);
+					//BinnarSavePlayer(player.second, file_name_path);
+					FillPlayersBuffer(player.second, file_name_path);
 
 					SavePlayersOnDeath(player.second);
 				}
@@ -569,20 +561,13 @@ void game_sv_freemp::Update()
 							inventory_boxes_cse[entity.first].loaded = true;
 							BinnarLoadInvBox(box);
 						}
-						else //if (curr_box_file->line_exist("saving_boxes", box_name))
+						else if (curr_box_file->line_exist("saving_boxes", box_name))
 						{
 							FillInvBoxBuffer(box);
 						}
 				}
 			}
 		}
-
-		if(!use_mt_box_saving)
-			if (Level().game && InvBoxSaveTimer <= Device.dwTimeGlobal)
-			{
-				InvBoxSaveTimer = Device.dwTimeGlobal + (save_time4 * 1000);
-				SaveInvBoxesBuffer();
-			}
 
 }
 

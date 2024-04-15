@@ -111,7 +111,6 @@ extern int save_time2 = 10;
 extern int save_time3 = 60;
 extern int box_respawn_time = 300;
 extern int save_time4 = 60;
-extern BOOL mt_box_saving = TRUE;
 
 ENGINE_API extern float	g_console_sensitive;
 
@@ -2060,12 +2059,11 @@ CMD4(CCC_Integer,			"hit_anims_tune",						&tune_hit_anims,		0, 1);
 	if (g_dedicated_server)
 	{
 		CMD4(CCC_Integer, "alife_switch", &alife_on, 0, 1);
-		CMD4(CCC_Integer, "af_savetime_players", &save_time, 1, 1000000);
-		CMD4(CCC_Integer, "af_savetime_inventory_box", &save_time2, 1, 1000000);
+		CMD4(CCC_Integer, "af_filltime_player", &save_time, 1, 1000000);
+		CMD4(CCC_Integer, "af_filltime_inventory_box", &save_time2, 1, 1000000);
 		CMD4(CCC_Integer, "af_savetime_server_time", &save_time3, 1, 10000000);
 		CMD4(CCC_Integer, "af_box_respawn_time", &box_respawn_time, 1, 1000000000);
-		CMD4(CCC_Integer, "af_savetime_delaybox_saving", &save_time4, 1, 10000000);
-		CMD4(CCC_Integer, "af_use_mt_box_saving", &mt_box_saving, 0, 1);
+		CMD4(CCC_Integer, "af_thread_sleep_time", &save_time4, 1, 10000000);
 	}
 	CMD1(CCC_ReloadSystemLtx, "reload_system_ltx");
 	

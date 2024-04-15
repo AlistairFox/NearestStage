@@ -11180,6 +11180,9 @@
     <ClCompile Include="game_sv_freemp_dynamic_weather.cpp">
       <Filter>Core\Server\Games\server\freemp\Dynamic Systems</Filter>
     </ClCompile>
+    <ClCompile Include="game_sv_freemp_save_thread.cpp">
+      <Filter>Core\Server\Games\server\freemp\Save Bin</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="ai\monsters\chimera\chimera_attack_state.h">

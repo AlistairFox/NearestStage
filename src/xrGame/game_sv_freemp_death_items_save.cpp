@@ -70,6 +70,7 @@ void game_sv_freemp::SavePlayersOnDeath(game_PlayerState* ps)
 			buff.detector = true;
 			buff.DetectorName = pDet->m_section_id.c_str();
 			buff.DetectorCond = pDet->GetCondition();
+			buff.DetectorSlot = pDet->CurrValue();
 		}
 		else
 			buff.detector = false;
@@ -116,14 +117,12 @@ void game_sv_freemp::SavePlayersOnDeath(game_PlayerState* ps)
 		else
 			buff.weapon2 = false;
 
-		Msg("StaticID: %d", ps->GetStaticID());
 		MPlayersOnDeath[ps->GetStaticID()] = buff;
 	}
 }
 
 void game_sv_freemp::LoadPlayersOnDeath(game_PlayerState* ps)
 {
-	Msg("StaticID: %d", ps->GetStaticID());
 	if (MPlayersOnDeath.find(ps->GetStaticID()) != MPlayersOnDeath.end())
 	{
 		if (MPlayersOnDeath[ps->GetStaticID()].Outfit)
@@ -199,6 +198,7 @@ void game_sv_freemp::LoadPlayersOnDeath(game_PlayerState* ps)
 
 			CSE_Abstract* E = spawn_begin(sect);
 			CSE_ALifeItem* item = smart_cast<CSE_ALifeItem*>(E);
+			item->slot = MPlayersOnDeath[ps->GetStaticID()].DetectorSlot;
 			if (item)
 			{
 				item->ID_Parent = ps->GameID;
@@ -282,6 +282,22 @@ void game_sv_freemp::ClearPlayersOnDeathBuffer(u16 StaticID)
 		MPlayersOnDeath.erase(StaticID);
 }
 
+void game_sv_freemp::FillPlayerOnDisconnect(u16 StaticID, string_path path)
+{
+	if (MPlayersOnDeath.find(StaticID) == MPlayersOnDeath.end())
+		return;
+
+	OnDeathDisconnect* dis = xr_new<OnDeathDisconnect>();
+
+	xr_strcpy(dis->PlayerPath, path);
+	dis->Items = MPlayersOnDeath[StaticID];
+
+	csSaving.Enter();
+	ThreadTasks.push_back({ nullptr, nullptr, dis });
+	csSaving.Leave();
+}
+
+#ifdef OLD_BOX_SAVING
 void game_sv_freemp::SavePlayerOnDisconnect(u16 StaticID, string_path path)
 {
 	Msg("-- Create save file by player: %d ", StaticID);
@@ -336,6 +352,9 @@ void game_sv_freemp::SavePlayerOnDisconnect(u16 StaticID, string_path path)
 			i++;
 		if (MPlayersOnDeath[StaticID].weapon2)
 			i++;
+		if (MPlayersOnDeath[StaticID].detector)
+			i++;
+
 		writer->w_u32(i);
 		if (MPlayersOnDeath[StaticID].Outfit)
 		{
@@ -412,3 +431,4 @@ void game_sv_freemp::SavePlayerOnDisconnect(u16 StaticID, string_path path)
 		FS.w_close(writer);
 	}
 }
+#endif

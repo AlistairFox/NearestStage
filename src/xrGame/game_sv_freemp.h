@@ -136,12 +136,12 @@ public:
 	CInifile* Music;
 	///////Dynamic Music /////////////
 
-
-	///////Binnar InvBox Save ////////
+		//Save Thread Task
+	xrCriticalSection csSaving;
 
 	struct InvBoxItem
 	{
-		LPCSTR item_sect;
+		string128 item_sect;
 		float item_cond;
 		bool weapon_ammo = false;
 		u16 m_boxCurr = 0;
@@ -152,7 +152,117 @@ public:
 		u8 WeaponCurScope;
 		bool has_upg = false;
 		string2048 upgrades;
-	}; std::map<u16,std::vector<InvBoxItem> > MBox_saving;
+	};
+
+	struct InvBox
+	{
+		string512 box_path;
+		std::vector<InvBoxItem> Items;
+	};
+
+	struct PlayerStats
+	{
+		s32 money;
+		float satiety = 1.f;
+		float thirst = 1.f;
+		float radiation = 1.f;
+		u8 team = 8;
+		bool SetPossition = false;
+		Fvector3 pos;
+		Fvector3 angle;
+		float health = 1.f;
+	};
+
+	struct PlayerItem
+	{
+		string128 ItemSect;
+		u16 ItemSlot;
+
+		float ItemCond;
+		bool IsWeaponAmmo = false;
+		u16 AmmoBoxCurr = 0;
+		bool IsWeapon = false;
+		u16 AmmoElapsed = 0;
+		u8 AmmoType = 0;
+		u8 AddonState = 0;
+		u8 CurrScope = 0;
+		bool HasUpgr = false;
+		string2048 Uphrades;
+	};
+
+	struct SPlayersOnDeathBuff
+	{
+		s32 PlayerMoney = 0;
+		u8 Team = 8;
+		//Outfit
+		bool Outfit = false;
+		LPCSTR OutfitName;
+		float OutfitCond;
+		bool OutfUpg = false;
+		string2048 OutfitUpgrades;
+		u16 OutfitSlot;
+
+		//Helm
+		bool helm = false;
+		LPCSTR HelmetName;
+		float HelmetCond;
+		bool HelmUpg = false;
+		string2048 HelmetUpgrades;
+		u16 HelmSlot;
+
+		//Detector
+		bool detector = false;
+		LPCSTR DetectorName;
+		float DetectorCond;
+		u16 DetectorSlot;
+
+		//Weapon1
+		bool weapon1 = false;
+		LPCSTR Weapon1Sect;
+		float Weapon1Cond;
+		bool weapon1Upgr = false;
+		string2048 Weapon1Upgrades;
+		u8 Weapon1AddonState;
+		u8 Weapon1CurScope;
+		u16 Weapon1Slot;
+
+		//Weapon2
+		bool weapon2 = false;
+		LPCSTR Weapon2Sect;
+		float Weapon2Cond;
+		bool weapon2Upgr = false;
+		string2048 Weapon2Upgrades;
+		u8 Weapon2AddonState;
+		u8 Weapon2CurScope;
+		u16 Weapon2Slot;
+
+	};
+
+	struct Players
+	{
+		PlayerStats Stats;
+		std::vector<PlayerItem> Items;
+		string512 PlayerPath;
+	};
+
+	struct OnDeathDisconnect
+	{
+		SPlayersOnDeathBuff Items;
+		string512 PlayerPath;
+	};
+
+	struct SThreadTask
+	{
+		InvBox* box;
+		Players* players;
+		OnDeathDisconnect* DisconnectBuf;
+	};
+
+	std::vector<SThreadTask>  ThreadTasks;
+	void				SaveThreadWorker();
+	//Save Thread Task
+
+	///////Binnar InvBox Save ////////
 
 	enum InvBoxChunks
 	{
@@ -160,16 +270,15 @@ public:
 	};
 	u32 InvBoxFillTimer = 0;
 	u32 InvBoxSaveTimer = 0;
+	void				BinnarLoadInvBox(CSE_ALifeInventoryBox* box);
+	void				FillInvBoxBuffer(CSE_ALifeInventoryBox* box);
+
+	std::thread* box_thread;
+
 #ifdef OLD_BOX_SAVING
 			void				BinnarSaveInvBox(CSE_ALifeInventoryBox* box, string_path& filepath);
 #endif
 
-			void				SaveInvBoxesBuffer();
-			void				BinnarLoadInvBox(CSE_ALifeInventoryBox* box);
-			void				FillInvBoxBuffer(CSE_ALifeInventoryBox* box);
-
-			std::thread* box_thread;
-			bool use_mt_box_saving = false;
 	///////Binnar InvBox Save ////////
 	CInifile* curr_box_file;
 	string_path curr_invbox_name;
@@ -196,7 +305,13 @@ public:
 	 void SavePlayersConditions(float satiety, float thirst, float radiation, game_PlayerState* ps);
 
 	 u32 PlayerSaveTimer = 0;
+
+			void				FillPlayersBuffer(game_PlayerState* ps, string_path& filepath);
+
+#ifdef OLD_BOX_SAVING
 			void				BinnarSavePlayer(game_PlayerState* ps, string_path& filepath);
+#endif
+
 			bool				BinnarLoadPlayer(game_PlayerState* ps, string_path& filepath);
 			bool				HasBinnarSaveFile(game_PlayerState* ps);
 			bool				load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos, Fvector& angle, float& health);
@@ -205,57 +320,16 @@ virtual		void				assign_RP(CSE_Abstract* E, game_PlayerState* ps_who);
 
 
 	//////////Death items save ///////
-		 struct SPlayersOnDeathBuff
-		 {
-			 s32 PlayerMoney = 0;
-			 u8 Team = 8;
-			 //Outfit
-			 bool Outfit = false;
-			 LPCSTR OutfitName;
-			 float OutfitCond;
-			 bool OutfUpg = false;
-			 string2048 OutfitUpgrades;
-			 u16 OutfitSlot;
-
-			 //Helm
-			 bool helm = false;
-			 LPCSTR HelmetName;
-			 float HelmetCond;
-			 bool HelmUpg = false;
-			 string2048 HelmetUpgrades;
-			 u16 HelmSlot;
-
-			 //Detector
-			 bool detector = false;
-			 LPCSTR DetectorName;
-			 float DetectorCond;
-
-			 //Weapon1
-			 bool weapon1 = false;
-			 LPCSTR Weapon1Sect;
-			 float Weapon1Cond;
-			 bool weapon1Upgr = false;
-			 string2048 Weapon1Upgrades;
-			 u8 Weapon1AddonState;
-			 u8 Weapon1CurScope;
-			 u16 Weapon1Slot;
-
-			 //Weapon2
-			 bool weapon2 = false;
-			 LPCSTR Weapon2Sect;
-			 float Weapon2Cond;
-			 bool weapon2Upgr = false;
-			 string2048 Weapon2Upgrades;
-			 u8 Weapon2AddonState;
-			 u8 Weapon2CurScope;
-			 u16 Weapon2Slot;
-
-		 };	std::map<u16, SPlayersOnDeathBuff> MPlayersOnDeath;
-
-
+		 
+		 std::map<u16, SPlayersOnDeathBuff> MPlayersOnDeath;
 		 void SavePlayersOnDeath(game_PlayerState* ps);
 		 void LoadPlayersOnDeath(game_PlayerState* ps);
+
+#ifdef OLD_BOX_SAVING
 		 void SavePlayerOnDisconnect(u16 StaticID, string_path path);
+#endif
+
+		 void FillPlayerOnDisconnect(u16 StaticID, string_path path);
 		 void ClearPlayersOnDeathBuffer(u16 StaticID);
 	////////Death items save ////////
 };
@@ -266,4 +340,3 @@ extern int save_time3;
 extern int save_time4;
 extern int box_respawn_time;
 extern BOOL		set_next_music;
-extern BOOL mt_box_saving ;

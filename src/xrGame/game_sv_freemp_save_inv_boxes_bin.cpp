@@ -8,13 +8,22 @@
 
 void game_sv_freemp::FillInvBoxBuffer(CSE_ALifeInventoryBox* box)
 {
-	MBox_saving[box->ID].clear();
+	InvBox* OutBox = xr_new<InvBox>();
+
+	string_path path_name;
+	string64 invbox_name;
+	xr_strcpy(invbox_name, box->name_replace());
+	xr_strcat(invbox_name, ".binsave");
+	FS.update_path(path_name, "$mp_saves_invbox_bin$", invbox_name);
+	xr_strcpy(OutBox->box_path, path_name);
+
 	for (const auto id : box->children)
 	{
 		InvBoxItem Sitem;
+
 		CInventoryItem* item = smart_cast<CInventoryItem*>(Level().Objects.net_Find(id));
 
-		Sitem.item_sect = item->m_section_id.c_str();
+		xr_strcpy(Sitem.item_sect, item->m_section_id.c_str());
 		Sitem.item_cond = item->GetCondition();
 		if (item->cast_weapon_ammo())
 		{
@@ -45,69 +54,12 @@ void game_sv_freemp::FillInvBoxBuffer(CSE_ALifeInventoryBox* box)
 		else
 			Sitem.has_upg = false;
 
-		MBox_saving[box->ID].push_back(Sitem);
+		OutBox->Items.push_back(Sitem);
 	}
-}
 
-void game_sv_freemp::SaveInvBoxesBuffer()
-{
-	while (true)
-	{
-		for (const auto& box : MBox_saving)
-		{
-			CSE_Abstract* abs = get_entity_from_eid(box.first);
-			CSE_ALifeInventoryBox* aBox = smart_cast<CSE_ALifeInventoryBox*>(abs);
-
-			string_path path_name;
-			string64 invbox_name;
-			xr_strcpy(invbox_name, aBox->name_replace());
-			xr_strcat(invbox_name, ".binsave");
-			FS.update_path(path_name, "$mp_saves_invbox_bin$", invbox_name);
-
-			IWriter* writer = FS.w_open(path_name);
-
-			writer->open_chunk(INVBOX_ITEMS_CHUNK);
-
-			writer->w_u16(box.second.size());
-
-			for (const auto& id : box.second)
-			{
-				writer->w_stringZ(id.item_sect);
-				writer->w_float(id.item_cond);
-				if (id.weapon_ammo)
-				{
-					writer->w_u8(1);
-					writer->w_u16(id.m_boxCurr);
-				}
-				else
-					writer->w_u8(0);
-
-				if (id.weapon)
-				{
-					writer->w_u8(1);
-					writer->w_u16(id.ammoElapse);
-					writer->w_u8(id.ammoType);
-					writer->w_u8(id.WeaponAddonState);
-					writer->w_u8(id.WeaponCurScope);
-				}
-				else
-					writer->w_u8(0);
-
-				if (id.has_upg)
-				{
-					writer->w_u8(1);
-					writer->w_stringZ(id.upgrades);
-				}
-				else
-					writer->w_u8(0);
-
-			}
-			writer->close_chunk();
-			FS.w_close(writer);
-		}
-
-		Sleep(save_time4 * 1000);
-	}
+	csSaving.Enter();
+	ThreadTasks.push_back({ OutBox, nullptr, nullptr });
+	csSaving.Leave();
 }
 
 #ifdef OLD_BOX_SAVING
