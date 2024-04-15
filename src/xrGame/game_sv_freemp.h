@@ -173,7 +173,7 @@ public:
 		float thirst = 1.f;
 		float radiation = 0.f;
 	};
-	xr_map<LPCSTR, Players_stats> Players_condition;
+	xr_map<u16, Players_stats> Players_condition;
 
 	 void SavePlayersConditions(float satiety, float thirst, float radiation, game_PlayerState* ps);
 
