@@ -138,13 +138,38 @@ public:
 
 
 	///////Binnar InvBox Save ////////
+
+	struct InvBoxItem
+	{
+		LPCSTR item_sect;
+		float item_cond;
+		bool weapon_ammo = false;
+		u16 m_boxCurr = 0;
+		bool weapon = false;
+		u8 ammoType;
+		u16 ammoElapse;
+		u8 WeaponAddonState;
+		u8 WeaponCurScope;
+		bool has_upg = false;
+		string2048 upgrades;
+	}; std::map<u16,std::vector<InvBoxItem> > MBox_saving;
+
 	enum InvBoxChunks
 	{
 		INVBOX_ITEMS_CHUNK = 0
 	};
+	u32 InvBoxFillTimer = 0;
 	u32 InvBoxSaveTimer = 0;
+#ifdef OLD_BOX_SAVING
 			void				BinnarSaveInvBox(CSE_ALifeInventoryBox* box, string_path& filepath);
-			void				BinnarLoadInvBox(CSE_ALifeInventoryBox* box, string_path& filepath);
+#endif
+
+			void				SaveInvBoxesBuffer();
+			void				BinnarLoadInvBox(CSE_ALifeInventoryBox* box);
+			void				FillInvBoxBuffer(CSE_ALifeInventoryBox* box);
+
+			std::thread* box_thread;
+			bool use_mt_box_saving = false;
 	///////Binnar InvBox Save ////////
 	CInifile* curr_box_file;
 	string_path curr_invbox_name;
@@ -238,6 +263,7 @@ virtual		void				assign_RP(CSE_Abstract* E, game_PlayerState* ps_who);
 extern int save_time;
 extern int save_time2;
 extern int save_time3;
+extern int save_time4;
 extern int box_respawn_time;
 extern BOOL		set_next_music;
-extern	BOOL	save_thread;
+extern BOOL mt_box_saving ;

@@ -23,6 +23,23 @@ game_sv_freemp::game_sv_freemp()
 	DynamicBoxFileCreate();
 	DynamicMusicFileCreate();
 
+
+	if (mt_box_saving)
+		use_mt_box_saving = true;
+	else
+		use_mt_box_saving = false;
+
+
+	if (use_mt_box_saving)
+	{
+		box_thread = new std::thread([&]()
+		{
+			thread_name("Box Saving Thread");
+			SaveInvBoxesBuffer();
+		});
+
+		box_thread->detach();
+	}
 }
 
 game_sv_freemp::~game_sv_freemp()
@@ -534,36 +551,38 @@ void game_sv_freemp::Update()
 
 			ServerEnvSaveUpdateBin();
 
-		if (Level().game && InvBoxSaveTimer <= Device.dwTimeGlobal)
+		if (Level().game && InvBoxFillTimer <= Device.dwTimeGlobal)
 		{
-			InvBoxSaveTimer = Device.dwTimeGlobal + (save_time2 * 1000);
-			//for (int i = 0; i != server().GetEntitiesNum(); i++)
+			InvBoxFillTimer = Device.dwTimeGlobal + (save_time2 * 1000);
+
 			for (const auto &entity : inventory_boxes_cse)
 			{
 				CSE_Abstract* abs = entity.second.entity;
 				CSE_ALifeInventoryBox* box = smart_cast<CSE_ALifeInventoryBox*>(abs);
 				if (box)
 				{
-						string_path path_name;
-						string64 invbox_name;
-						xr_strcpy(invbox_name, box->name_replace());
-						xr_strcat(invbox_name, ".binsave");
-						FS.update_path(path_name, "$mp_saves_invbox_bin$", invbox_name);
-
 						//check saving box or not
 						LPCSTR box_name = box->name_replace();
 						//
 						if (!entity.second.loaded)
 						{
-							Msg("%s", path_name);
 							inventory_boxes_cse[entity.first].loaded = true;
-							BinnarLoadInvBox(box, path_name);
+							BinnarLoadInvBox(box);
 						}
-						else if (curr_box_file->line_exist("saving_boxes", box_name))
-							BinnarSaveInvBox(box, path_name);
+						else //if (curr_box_file->line_exist("saving_boxes", box_name))
+						{
+							FillInvBoxBuffer(box);
+						}
 				}
 			}
 		}
+
+		if(!use_mt_box_saving)
+			if (Level().game && InvBoxSaveTimer <= Device.dwTimeGlobal)
+			{
+				InvBoxSaveTimer = Device.dwTimeGlobal + (save_time4 * 1000);
+				SaveInvBoxesBuffer();
+			}
 
 }
 

@@ -110,6 +110,8 @@ extern int save_time = 10;
 extern int save_time2 = 10;
 extern int save_time3 = 60;
 extern int box_respawn_time = 300;
+extern int save_time4 = 60;
+extern BOOL mt_box_saving = TRUE;
 
 ENGINE_API extern float	g_console_sensitive;
 
@@ -340,28 +342,6 @@ public:
 		}
 		else
 			Log("!Not a single player game!");
-	}
-};
-
-
-class CCC_LoadPortions : public IConsole_Command
-{
-public:
-	CCC_LoadPortions(LPCSTR N) : IConsole_Command(N) {};
-	virtual void Execute(LPCSTR args)
-	{
-		game_sv_freemp* fmp = smart_cast<game_sv_freemp*>(Level().Server->game);
-
-		ClientID client_id(0);
-		u32 tmp_client_id;
-
-		sscanf_s(args, "%u", &tmp_client_id);
-
-		client_id.set(tmp_client_id);
-
-		game_PlayerState* ps = fmp->get_id(client_id);
-
-		fmp->LoadPlayerPortions(ps, false);
 	}
 };
 
@@ -2080,11 +2060,12 @@ CMD4(CCC_Integer,			"hit_anims_tune",						&tune_hit_anims,		0, 1);
 	if (g_dedicated_server)
 	{
 		CMD4(CCC_Integer, "alife_switch", &alife_on, 0, 1);
-		CMD4(CCC_Integer, "savetime_players", &save_time, 1, 1000000);
-		CMD4(CCC_Integer, "savetime_inventory_box", &save_time2, 1, 1000000);
-		CMD4(CCC_Integer, "savetime_server_time", &save_time3, 1, 10000000);
-		CMD4(CCC_Integer, "box_respawn_time", &box_respawn_time, 1, 1000000000);
-		CMD1(CCC_LoadPortions, "sv_load_player_portions");
+		CMD4(CCC_Integer, "af_savetime_players", &save_time, 1, 1000000);
+		CMD4(CCC_Integer, "af_savetime_inventory_box", &save_time2, 1, 1000000);
+		CMD4(CCC_Integer, "af_savetime_server_time", &save_time3, 1, 10000000);
+		CMD4(CCC_Integer, "af_box_respawn_time", &box_respawn_time, 1, 1000000000);
+		CMD4(CCC_Integer, "af_savetime_delaybox_saving", &save_time4, 1, 10000000);
+		CMD4(CCC_Integer, "af_use_mt_box_saving", &mt_box_saving, 0, 1);
 	}
 	CMD1(CCC_ReloadSystemLtx, "reload_system_ltx");
 	
