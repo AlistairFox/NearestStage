@@ -84,7 +84,6 @@ extern	int		x_m_x;
 extern	int		x_m_z;
 extern	BOOL	net_cl_inputguaranteed	;
 extern	BOOL	net_sv_control_hit		;
-extern	BOOL	save_thread = false;
 
 extern	int		g_dwInputUpdateDelta	;
 #ifdef DEBUG
@@ -111,7 +110,6 @@ extern int save_time = 10;
 extern int save_time2 = 10;
 extern int save_time3 = 60;
 extern int box_respawn_time = 300;
-extern BOOL binar_save = FALSE;
 
 ENGINE_API extern float	g_console_sensitive;
 
@@ -1906,7 +1904,6 @@ void CCC_RegisterCommands()
 	CMD3(CCC_Mask,				"hud_weapon",			&psHUD_Flags,	HUD_WEAPON);
 	CMD3(CCC_Mask,				"hud_info",				&psHUD_Flags,	HUD_INFO);
 	CMD3(CCC_Mask,				"hud_draw",				&psHUD_Flags,	HUD_DRAW);
-	CMD4(CCC_Integer, "use_mt_saving", &save_thread, 0, 1);
 
 	// hud
 	psHUD_Flags.set(HUD_CROSSHAIR,		false);
@@ -2087,7 +2084,6 @@ CMD4(CCC_Integer,			"hit_anims_tune",						&tune_hit_anims,		0, 1);
 		CMD4(CCC_Integer, "savetime_inventory_box", &save_time2, 1, 1000000);
 		CMD4(CCC_Integer, "savetime_server_time", &save_time3, 1, 10000000);
 		CMD4(CCC_Integer, "box_respawn_time", &box_respawn_time, 1, 1000000000);
-		CMD4(CCC_Integer, "sv_binnar_save", &binar_save, 0, 1);
 		CMD1(CCC_LoadPortions, "sv_load_player_portions");
 	}
 	CMD1(CCC_ReloadSystemLtx, "reload_system_ltx");

@@ -73,7 +73,6 @@ public:
 	virtual		void				OnTransferMoney(NET_Packet &P, ClientID const & clientID);
 
 	virtual		void				RespawnPlayer(ClientID id_who, bool NoSpectator);
-				bool				Binnar_save_connect = false;
 
 	///////////Info portions saving ////////////////
 	 void					SavePlayerPortions(ClientID sender, shared_str info_id, bool add);
@@ -88,7 +87,6 @@ public:
 	///////////Dynamic Weather ////////////////
 	u32 SaveWeatherTimer = 0;
 	 void DynamicWeatherUpdate();
-	 void ServerEnvSaveUpdateFile();
 	 void ServerEnvSaveUpdateBin();
 
 	u32 nowday;
@@ -150,12 +148,7 @@ public:
 	///////Binnar InvBox Save ////////
 	CInifile* curr_box_file;
 	string_path curr_invbox_name;
-	///////File InvBox Save ////////
-			void				SaveInvBox(CSE_ALifeInventoryBox* box, CInifile* file);
-			void				LoadInvBox(CSE_ALifeInventoryBox* box, CInifile* file);
-	///////File InvBox Save ////////
 
-	bool use_mt_save = false;
 	///////Binnar Player Save ////////
 	enum ActorChunks
 	{
@@ -182,18 +175,8 @@ public:
 			bool				BinnarLoadPlayer(game_PlayerState* ps, string_path& filepath);
 			bool				HasBinnarSaveFile(game_PlayerState* ps);
 			bool				load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos, Fvector& angle, float& health);
-			void				MtSavePlayer();
-	std::thread* playersave_thread;
+virtual		void				assign_RP(CSE_Abstract* E, game_PlayerState* ps_who);
 	///////Binnar Player Save ////////
-
-
-	///////File Player Save ////////
-	virtual		bool				HasSaveFile(game_PlayerState* ps);
-	virtual		void				assign_RP(CSE_Abstract* E, game_PlayerState* ps_who);
-	virtual		bool				load_position_RP(game_PlayerState* ps, Fvector& pos, Fvector& angle);
-	     void				SavePlayer(game_PlayerState* ps, CInifile* file);
-	     bool				LoadPlayer(game_PlayerState* ps, CInifile* file);
-	///////File Player Save ///////
 
 
 	//////////Death items save ///////
@@ -252,7 +235,6 @@ public:
 	////////Death items save ////////
 };
 
-extern BOOL binar_save;
 extern int save_time;
 extern int save_time2;
 extern int save_time3;

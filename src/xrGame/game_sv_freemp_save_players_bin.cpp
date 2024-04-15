@@ -501,3 +501,19 @@ void game_sv_freemp::SavePlayerPortions(ClientID sender, shared_str info_id, boo
 
 
 }
+
+void game_sv_freemp::assign_RP(CSE_Abstract* E, game_PlayerState* ps_who)
+{
+	Fvector pos, angle;
+	float health;
+	if (!ps_who->testFlag(GAME_PLAYER_MP_SAVE_LOADED) && load_position_RP_Binnar(ps_who, pos, angle, health))
+	{
+		//E->o_Position.set(pos);
+		//E->o_Angle.set(angle);
+		E->position().set(pos);
+		E->angle().set(angle);
+		//E->cast_actor_mp()->set_health(health);
+	}
+	else
+		inherited::assign_RP(E, ps_who);
+}

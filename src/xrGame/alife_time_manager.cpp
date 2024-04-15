@@ -20,13 +20,10 @@ CALifeTimeManager::~CALifeTimeManager	()
 {
 }
 
-extern BOOL binar_save;
 void CALifeTimeManager::init			(LPCSTR section)
 {
 	u32							years,months,days,hours,minutes,seconds;
 
-	if (binar_save)
-	{
 		string_path save_game_time;
 		FS.update_path(save_game_time, "$global_server_data_bin$", "server_data.binsave");
 		if (FS.exist(save_game_time))
@@ -52,37 +49,6 @@ void CALifeTimeManager::init			(LPCSTR section)
 			sscanf(pSettings->r_string(section, "start_time"), "%d:%d:%d", &hours, &minutes, &seconds);
 			sscanf(pSettings->r_string(section, "start_date"), "%d.%d.%d", &days, &months, &years);
 		}
-	}
-	else
-	{
-		string_path save_game_time;
-		FS.update_path(save_game_time, "$global_server_data$", "server_data.ltx");
-		CInifile* global_server_data = xr_new<CInifile>(save_game_time, true);
-
-		if (global_server_data->line_exist("server_env", "time"))
-		{
-			Msg("TIME SET");
-			sscanf(global_server_data->r_string("server_env", "time"), "%d:%d:%d", &hours, &minutes, &seconds);
-		}
-		else
-		{
-			sscanf(pSettings->r_string(section, "start_time"), "%d:%d:%d", &hours, &minutes, &seconds);
-		}
-
-		if (global_server_data->line_exist("server_env", "data"))
-		{
-			sscanf(global_server_data->r_string("server_env", "data"), "%d.%d.%d", &days, &months, &years);
-		}
-		else
-			sscanf(pSettings->r_string(section, "start_date"), "%d.%d.%d", &days, &months, &years);
-
-		if (global_server_data->line_exist("server_env", "weather"))
-		{
-			g_pGamePersistent->Environment().SetWeather(global_server_data->r_string("server_env", "weather"));
-		}
-
-		xr_delete(global_server_data);
-	}
 
 	m_start_game_time			= generate_time(years,months,days,hours,minutes,seconds);
 	m_time_factor				= pSettings->r_float(section,"time_factor");

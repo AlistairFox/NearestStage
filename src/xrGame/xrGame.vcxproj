@@ -2800,9 +2800,7 @@
     <ClCompile Include="game_sv_freemp_dynamic_inv_box_respawn.cpp" />
     <ClCompile Include="game_sv_freemp_dynamic_music.cpp" />
     <ClCompile Include="game_sv_freemp_dynamic_weather.cpp" />
-    <ClCompile Include="game_sv_freemp_save_inv_boxes.cpp" />
     <ClCompile Include="game_sv_freemp_save_inv_boxes_bin.cpp" />
-    <ClCompile Include="game_sv_freemp_save_players.cpp" />
     <ClCompile Include="game_sv_freemp_save_players_bin.cpp" />
     <ClCompile Include="game_sv_freemp_trade.cpp" />
     <ClCompile Include="game_sv_roleplay.cpp" />
