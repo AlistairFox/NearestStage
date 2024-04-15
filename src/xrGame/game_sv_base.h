@@ -76,7 +76,7 @@ public:
 				void				CheckPlayerName			(xrClientData* CL);
 public:
 	virtual		void				OnPlayerConnect			(ClientID id_who);
-	virtual		void				OnPlayerDisconnect		(ClientID id_who, LPSTR Name, u16 GameID);
+	virtual		void				OnPlayerDisconnect		(ClientID id_who, LPSTR Name, u16 GameID, u16 StaticId);
 	virtual		void				OnPlayerReady			(ClientID id_who)							   {};
 	virtual		void				OnPlayerEnteredGame		(ClientID id_who)	{};
 	virtual		void				OnPlayerConnectFinished	(ClientID id_who)	{};

@@ -411,7 +411,7 @@ u16 game_sv_GameState::GetPlayerStaticIDByName(LPCSTR name)
 	return 0;
 }
 
-void game_sv_GameState::OnPlayerDisconnect		(ClientID id_who, LPSTR, u16 )
+void game_sv_GameState::OnPlayerDisconnect		(ClientID id_who, LPSTR, u16 , u16)
 {
 	signal_Syncronize	();
 }
@@ -745,7 +745,6 @@ game_sv_GameState::game_sv_GameState()
 		PlayersStaticIdMap[tmp] = i;
 
 	}
-	PlayersStaticIdMap["HelloWorld"] = 5;
 	xr_delete(StaticIdFile);
 }
 
@@ -817,7 +816,8 @@ void game_sv_GameState::OnEvent (NET_Packet &tNetPacket, u16 type, u32 time, Cli
 			string1024 PlayerName;
 			tNetPacket.r_stringZ(PlayerName);
 			u16		GameID = tNetPacket.r_u16();
-			OnPlayerDisconnect(ID, PlayerName, GameID);
+			u16		StaticID = tNetPacket.r_u16();
+			OnPlayerDisconnect(ID, PlayerName, GameID, StaticID);
 		}break;
 
 	case GAME_EVENT_PLAYER_KILLED:

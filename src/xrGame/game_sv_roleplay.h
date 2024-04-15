@@ -45,7 +45,7 @@ public:
 				BOOL				OnTouchPlayersBag(CSE_ActorMP *actor, CSE_Abstract *item);
 				void				OnDetachPlayersBag(CSE_ActorMP *actor, CSE_Abstract *item);
 
-	virtual		void				OnPlayerDisconnect(ClientID id_who, LPSTR Name, u16 GameID);
+	virtual		void				OnPlayerDisconnect(ClientID id_who, LPSTR Name, u16 GameID, u16 StaticID);
 	virtual		void				Update();
 
 	

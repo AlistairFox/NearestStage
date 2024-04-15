@@ -120,6 +120,7 @@ void	game_PlayerState::net_Export(NET_Packet& P, BOOL Full)
 	P.w_u8			(	m_bCurrentVoteAgreed	);
 
 	P.w_u32			(Device.dwTimeGlobal - DeathTime);
+	P.w_u16(StaticID);
 	if (Full)
 	{
 		m_account.net_Export(P);
@@ -148,6 +149,7 @@ void	game_PlayerState::net_Import(NET_Packet& P)
 	P.r_u8			(	m_bCurrentVoteAgreed	);
 
 	DeathTime = P.r_u32();
+	StaticID = P.r_u16();
 	if (bFullUpdate)
 	{
 		m_account.net_Import(P);
@@ -176,6 +178,7 @@ void	game_PlayerState::skip_Import(NET_Packet& P)
 	P.r_u8			();//	m_bCurrentVoteAgreed	);
 
 	P.r_u32(); //DeathTime
+	P.r_u16();
 	if (bFullUpdate)
 	{
 		player_account::skip_Import(P);

@@ -21,6 +21,7 @@ void xrServer::OnCL_Disconnected	(IClient* CL)
 
 	P.w_stringZ(xrCData->ps->getName());
 	P.w_u16(xrCData->ps->GameID);
+	P.w_u16(xrCData->ps->GetStaticID());
 	P.r_pos = 0;
 	
 	ClientID clientID;

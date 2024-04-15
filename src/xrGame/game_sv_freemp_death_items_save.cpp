@@ -15,10 +15,13 @@ void game_sv_freemp::SavePlayersOnDeath(game_PlayerState* ps)
 	if (!actor)
 		return;
 
+	if (!actor->g_Alive())
+		return;
+
 	if (smart_cast<CInventoryOwner*>(obj))
 	{
-		if (MPlayersOnDeath.find(ps->getName()) != MPlayersOnDeath.end())
-			MPlayersOnDeath.erase(ps->getName());
+		if (MPlayersOnDeath.find(ps->GetStaticID()) != MPlayersOnDeath.end())
+			MPlayersOnDeath.erase(ps->GetStaticID());
 
 		SPlayersOnDeathBuff buff;
 
@@ -113,18 +116,20 @@ void game_sv_freemp::SavePlayersOnDeath(game_PlayerState* ps)
 		else
 			buff.weapon2 = false;
 
-		MPlayersOnDeath[ps->getName()] = buff;
+		Msg("StaticID: %d", ps->GetStaticID());
+		MPlayersOnDeath[ps->GetStaticID()] = buff;
 	}
 }
 
 void game_sv_freemp::LoadPlayersOnDeath(game_PlayerState* ps)
 {
-	if (MPlayersOnDeath.find(ps->getName()) != MPlayersOnDeath.end())
+	Msg("StaticID: %d", ps->GetStaticID());
+	if (MPlayersOnDeath.find(ps->GetStaticID()) != MPlayersOnDeath.end())
 	{
-		if (MPlayersOnDeath[ps->getName()].Outfit)
+		if (MPlayersOnDeath[ps->GetStaticID()].Outfit)
 		{
-			LPCSTR sect = MPlayersOnDeath[ps->getName()].OutfitName;
-			float cond = MPlayersOnDeath[ps->getName()].OutfitCond;
+			LPCSTR sect = MPlayersOnDeath[ps->GetStaticID()].OutfitName;
+			float cond = MPlayersOnDeath[ps->GetStaticID()].OutfitCond;
 
 			Msg("%s Load OnDeath Outfit: %s, cond: %f", ps->getName(), sect, cond);
 			cond /= Random.randF(1.1, 2);
@@ -135,17 +140,17 @@ void game_sv_freemp::LoadPlayersOnDeath(game_PlayerState* ps)
 			{
 				item->m_fCondition = cond;
 				item->ID_Parent = ps->GameID;
-				item->slot = MPlayersOnDeath[ps->getName()].OutfitSlot;
+				item->slot = MPlayersOnDeath[ps->GetStaticID()].OutfitSlot;
 
-				if (MPlayersOnDeath[ps->getName()].OutfUpg)
+				if (MPlayersOnDeath[ps->GetStaticID()].OutfUpg)
 				{
 
-					const u32 itemscount = _GetItemCount(MPlayersOnDeath[ps->getName()].OutfitUpgrades);
+					const u32 itemscount = _GetItemCount(MPlayersOnDeath[ps->GetStaticID()].OutfitUpgrades);
 
 					for (u32 id = 0; id != itemscount; id++)
 					{
 						string64 upgrade;
-						_GetItem(MPlayersOnDeath[ps->getName()].OutfitUpgrades, id, upgrade, ',');
+						_GetItem(MPlayersOnDeath[ps->GetStaticID()].OutfitUpgrades, id, upgrade, ',');
 						item->add_upgrade(upgrade);
 					}
 				}
@@ -153,10 +158,10 @@ void game_sv_freemp::LoadPlayersOnDeath(game_PlayerState* ps)
 			spawn_end(item, m_server->GetServerClient()->ID);
 		}
 
-		if (MPlayersOnDeath[ps->getName()].helm)
+		if (MPlayersOnDeath[ps->GetStaticID()].helm)
 		{
-			LPCSTR sect = MPlayersOnDeath[ps->getName()].HelmetName;
-			float cond = MPlayersOnDeath[ps->getName()].HelmetCond;
+			LPCSTR sect = MPlayersOnDeath[ps->GetStaticID()].HelmetName;
+			float cond = MPlayersOnDeath[ps->GetStaticID()].HelmetCond;
 
 			Msg("%s Load OnDeath Helmet: %s, cond: %f", ps->getName(), sect, cond);
 			cond /= Random.randF(1.1, 2);
@@ -167,16 +172,16 @@ void game_sv_freemp::LoadPlayersOnDeath(game_PlayerState* ps)
 			{
 				item->m_fCondition = cond;
 				item->ID_Parent = ps->GameID;
-				item->slot = MPlayersOnDeath[ps->getName()].HelmSlot;
+				item->slot = MPlayersOnDeath[ps->GetStaticID()].HelmSlot;
 
-				if (MPlayersOnDeath[ps->getName()].HelmUpg)
+				if (MPlayersOnDeath[ps->GetStaticID()].HelmUpg)
 				{
-					const u32 itemscount = _GetItemCount(MPlayersOnDeath[ps->getName()].HelmetUpgrades);
+					const u32 itemscount = _GetItemCount(MPlayersOnDeath[ps->GetStaticID()].HelmetUpgrades);
 
 					for (u32 id = 0; id != itemscount; id++)
 					{
 						string64 upgrade;
-						_GetItem(MPlayersOnDeath[ps->getName()].HelmetUpgrades, id, upgrade, ',');
+						_GetItem(MPlayersOnDeath[ps->GetStaticID()].HelmetUpgrades, id, upgrade, ',');
 						item->add_upgrade(upgrade);
 					}
 				}
@@ -184,10 +189,10 @@ void game_sv_freemp::LoadPlayersOnDeath(game_PlayerState* ps)
 			spawn_end(item, m_server->GetServerClient()->ID);
 		}
 
-		if (MPlayersOnDeath[ps->getName()].detector)
+		if (MPlayersOnDeath[ps->GetStaticID()].detector)
 		{
-			LPCSTR sect = MPlayersOnDeath[ps->getName()].DetectorName;
-			float cond = MPlayersOnDeath[ps->getName()].DetectorCond;
+			LPCSTR sect = MPlayersOnDeath[ps->GetStaticID()].DetectorName;
+			float cond = MPlayersOnDeath[ps->GetStaticID()].DetectorCond;
 			Msg("%s Load OnDeath Detector: %s", ps->getName(), sect);
 
 			cond /= Random.randF(1.1, 2);
@@ -202,12 +207,12 @@ void game_sv_freemp::LoadPlayersOnDeath(game_PlayerState* ps)
 			spawn_end(item, m_server->GetServerClient()->ID);
 		}
 
-		if (MPlayersOnDeath[ps->getName()].weapon1)
+		if (MPlayersOnDeath[ps->GetStaticID()].weapon1)
 		{
-			LPCSTR sect = MPlayersOnDeath[ps->getName()].Weapon1Sect;
-			float cond = MPlayersOnDeath[ps->getName()].Weapon1Cond;
-			u8 AddonState = MPlayersOnDeath[ps->getName()].Weapon1AddonState;
-			u8 CurrScope = MPlayersOnDeath[ps->getName()].Weapon1CurScope;
+			LPCSTR sect = MPlayersOnDeath[ps->GetStaticID()].Weapon1Sect;
+			float cond = MPlayersOnDeath[ps->GetStaticID()].Weapon1Cond;
+			u8 AddonState = MPlayersOnDeath[ps->GetStaticID()].Weapon1AddonState;
+			u8 CurrScope = MPlayersOnDeath[ps->GetStaticID()].Weapon1CurScope;
 			Msg("%s Load OnDeath Weapon: %s, cond: %f", ps->getName(), sect, cond);
 
 
@@ -216,32 +221,32 @@ void game_sv_freemp::LoadPlayersOnDeath(game_PlayerState* ps)
 			E->ID_Parent = ps->GameID;
 			CSE_ALifeItem* item = smart_cast<CSE_ALifeItem*>(E);
 			item->m_fCondition = cond;
-			item->slot = MPlayersOnDeath[ps->getName()].Weapon1Slot;
+			item->slot = MPlayersOnDeath[ps->GetStaticID()].Weapon1Slot;
 			CSE_ALifeItemWeapon* wpn = smart_cast<CSE_ALifeItemWeapon*>(item);
 			wpn->m_addon_flags.flags = AddonState;
 			wpn->m_cur_scope = CurrScope;
 
 
-			if (MPlayersOnDeath[ps->getName()].weapon1Upgr)
+			if (MPlayersOnDeath[ps->GetStaticID()].weapon1Upgr)
 			{
-				const u32 upgrCount = _GetItemCount(MPlayersOnDeath[ps->getName()].Weapon1Upgrades, ',');
+				const u32 upgrCount = _GetItemCount(MPlayersOnDeath[ps->GetStaticID()].Weapon1Upgrades, ',');
 
 				for (u32 id = 0; id != upgrCount; id++)
 				{
 					string64 upgrade;
-					_GetItem(MPlayersOnDeath[ps->getName()].Weapon1Upgrades, id, upgrade, ',');
+					_GetItem(MPlayersOnDeath[ps->GetStaticID()].Weapon1Upgrades, id, upgrade, ',');
 					item->add_upgrade(upgrade);
 				}
 			}
 			spawn_end(E, m_server->GetServerClient()->ID);
 		}
 
-		if (MPlayersOnDeath[ps->getName()].weapon2)
+		if (MPlayersOnDeath[ps->GetStaticID()].weapon2)
 		{
-			LPCSTR sect = MPlayersOnDeath[ps->getName()].Weapon2Sect;
-			float cond = MPlayersOnDeath[ps->getName()].Weapon2Cond;
-			u8 AddonState = MPlayersOnDeath[ps->getName()].Weapon2AddonState;
-			u8 CurrScope = MPlayersOnDeath[ps->getName()].Weapon2CurScope;
+			LPCSTR sect = MPlayersOnDeath[ps->GetStaticID()].Weapon2Sect;
+			float cond = MPlayersOnDeath[ps->GetStaticID()].Weapon2Cond;
+			u8 AddonState = MPlayersOnDeath[ps->GetStaticID()].Weapon2AddonState;
+			u8 CurrScope = MPlayersOnDeath[ps->GetStaticID()].Weapon2CurScope;
 			Msg("%s Load OnDeath Weapon: %s, cond: %f", ps->getName(), sect, cond);
 
 
@@ -250,19 +255,19 @@ void game_sv_freemp::LoadPlayersOnDeath(game_PlayerState* ps)
 			E->ID_Parent = ps->GameID;
 			CSE_ALifeItem* item = smart_cast<CSE_ALifeItem*>(E);
 			item->m_fCondition = cond;
-			item->slot = MPlayersOnDeath[ps->getName()].Weapon2Slot;
+			item->slot = MPlayersOnDeath[ps->GetStaticID()].Weapon2Slot;
 			CSE_ALifeItemWeapon* wpn = smart_cast<CSE_ALifeItemWeapon*>(item);
 			wpn->m_addon_flags.flags = AddonState;
 			wpn->m_cur_scope = CurrScope;
 
-			if (MPlayersOnDeath[ps->getName()].weapon2Upgr)
+			if (MPlayersOnDeath[ps->GetStaticID()].weapon2Upgr)
 			{
-				const u32 upgrCount = _GetItemCount(MPlayersOnDeath[ps->getName()].Weapon2Upgrades, ',');
+				const u32 upgrCount = _GetItemCount(MPlayersOnDeath[ps->GetStaticID()].Weapon2Upgrades, ',');
 
 				for (u32 id = 0; id != upgrCount; id++)
 				{
 					string64 upgrade;
-					_GetItem(MPlayersOnDeath[ps->getName()].Weapon2Upgrades, id, upgrade, ',');
+					_GetItem(MPlayersOnDeath[ps->GetStaticID()].Weapon2Upgrades, id, upgrade, ',');
 					item->add_upgrade(upgrade);
 				}
 			}
@@ -271,29 +276,29 @@ void game_sv_freemp::LoadPlayersOnDeath(game_PlayerState* ps)
 	}
 }
 
-void game_sv_freemp::ClearPlayersOnDeathBuffer(LPSTR name)
+void game_sv_freemp::ClearPlayersOnDeathBuffer(u16 StaticID)
 {
-	if (MPlayersOnDeath.find(name) != MPlayersOnDeath.end())
-		MPlayersOnDeath.erase(name);
+	if (MPlayersOnDeath.find(StaticID) != MPlayersOnDeath.end())
+		MPlayersOnDeath.erase(StaticID);
 }
 
-void game_sv_freemp::SavePlayerOnDisconnect(LPCSTR Name, string_path path)
+void game_sv_freemp::SavePlayerOnDisconnect(u16 StaticID, string_path path)
 {
-	Msg("-- Create save file by player: %s ", Name);
-	if (MPlayersOnDeath.find(Name) == MPlayersOnDeath.end())
+	Msg("-- Create save file by player: %d ", StaticID);
+	if (MPlayersOnDeath.find(StaticID) == MPlayersOnDeath.end())
 		return;
 
 	IWriter* writer = FS.w_open(path);
 
 	{
 		writer->open_chunk(ACTOR_MONEY);
-		writer->w_u32(MPlayersOnDeath[Name].PlayerMoney);
+		writer->w_u32(MPlayersOnDeath[StaticID].PlayerMoney);
 		writer->close_chunk();
 	}
 
 	{
 		writer->open_chunk(ACTOR_TEAM);
-		writer->w_u8(MPlayersOnDeath[Name].Team);
+		writer->w_u8(MPlayersOnDeath[StaticID].Team);
 		writer->close_chunk();
 	}
 
@@ -306,11 +311,11 @@ void game_sv_freemp::SavePlayerOnDisconnect(LPCSTR Name, string_path path)
 	{
 		writer->open_chunk(ACTOR_DEVICES_CHUNK);
 		writer->w_u8(0);
-		if (MPlayersOnDeath[Name].detector)
+		if (MPlayersOnDeath[StaticID].detector)
 		{
 			writer->w_u8(1);
-			writer->w_stringZ(MPlayersOnDeath[Name].DetectorName);
-			writer->w_float(MPlayersOnDeath[Name].DetectorCond);
+			writer->w_stringZ(MPlayersOnDeath[StaticID].DetectorName);
+			writer->w_float(MPlayersOnDeath[StaticID].DetectorCond);
 		}
 		else
 			writer->w_u8(0);
@@ -323,81 +328,81 @@ void game_sv_freemp::SavePlayerOnDisconnect(LPCSTR Name, string_path path)
 	{
 		writer->open_chunk(ACTOR_INV_ITEMS_CHUNK);
 		u32 i = 0;
-		if (MPlayersOnDeath[Name].Outfit)
+		if (MPlayersOnDeath[StaticID].Outfit)
 			i++;
-		if (MPlayersOnDeath[Name].helm)
+		if (MPlayersOnDeath[StaticID].helm)
 			i++;
-		if (MPlayersOnDeath[Name].weapon1)
+		if (MPlayersOnDeath[StaticID].weapon1)
 			i++;
-		if (MPlayersOnDeath[Name].weapon2)
+		if (MPlayersOnDeath[StaticID].weapon2)
 			i++;
 		writer->w_u32(i);
-		if (MPlayersOnDeath[Name].Outfit)
+		if (MPlayersOnDeath[StaticID].Outfit)
 		{
-			writer->w_stringZ(MPlayersOnDeath[Name].OutfitName);
-			writer->w_u16(MPlayersOnDeath[Name].OutfitSlot);
-			writer->w_float(MPlayersOnDeath[Name].OutfitCond);
+			writer->w_stringZ(MPlayersOnDeath[StaticID].OutfitName);
+			writer->w_u16(MPlayersOnDeath[StaticID].OutfitSlot);
+			writer->w_float(MPlayersOnDeath[StaticID].OutfitCond);
 			writer->w_u8(0);
 			writer->w_u8(0);
-			if (MPlayersOnDeath[Name].OutfUpg)
+			if (MPlayersOnDeath[StaticID].OutfUpg)
 			{
 				writer->w_u8(1);
-				writer->w_stringZ(MPlayersOnDeath[Name].OutfitUpgrades);
+				writer->w_stringZ(MPlayersOnDeath[StaticID].OutfitUpgrades);
 			}
 			else
 				writer->w_u8(0);
 		}
-		if (MPlayersOnDeath[Name].helm)
+		if (MPlayersOnDeath[StaticID].helm)
 		{
-			writer->w_stringZ(MPlayersOnDeath[Name].HelmetName);
-			writer->w_u16(MPlayersOnDeath[Name].HelmSlot);
-			writer->w_float(MPlayersOnDeath[Name].HelmetCond);
+			writer->w_stringZ(MPlayersOnDeath[StaticID].HelmetName);
+			writer->w_u16(MPlayersOnDeath[StaticID].HelmSlot);
+			writer->w_float(MPlayersOnDeath[StaticID].HelmetCond);
 			writer->w_u8(0);
 			writer->w_u8(0);
-			if (MPlayersOnDeath[Name].HelmUpg)
+			if (MPlayersOnDeath[StaticID].HelmUpg)
 			{
 				writer->w_u8(1);
-				writer->w_stringZ(MPlayersOnDeath[Name].HelmetUpgrades);
-			}
-			else
-				writer->w_u8(0);
-		}
-
-		if (MPlayersOnDeath[Name].weapon1)
-		{
-			writer->w_stringZ(MPlayersOnDeath[Name].Weapon1Sect);
-			writer->w_u16(MPlayersOnDeath[Name].Weapon1Slot);
-			writer->w_float(MPlayersOnDeath[Name].Weapon1Cond);
-			writer->w_u8(0);
-			writer->w_u8(1);
-			writer->w_u16(0);
-			writer->w_u8(0);
-			writer->w_u8(MPlayersOnDeath[Name].Weapon1AddonState);
-			writer->w_u8(MPlayersOnDeath[Name].Weapon1CurScope);
-			if (MPlayersOnDeath[Name].weapon1Upgr)
-			{
-				writer->w_u8(1);
-				writer->w_stringZ(MPlayersOnDeath[Name].Weapon1Upgrades);
+				writer->w_stringZ(MPlayersOnDeath[StaticID].HelmetUpgrades);
 			}
 			else
 				writer->w_u8(0);
 		}
 
-		if (MPlayersOnDeath[Name].weapon2)
+		if (MPlayersOnDeath[StaticID].weapon1)
 		{
-			writer->w_stringZ(MPlayersOnDeath[Name].Weapon2Sect);
-			writer->w_u16(MPlayersOnDeath[Name].Weapon2Slot);
-			writer->w_float(MPlayersOnDeath[Name].Weapon2Cond);
+			writer->w_stringZ(MPlayersOnDeath[StaticID].Weapon1Sect);
+			writer->w_u16(MPlayersOnDeath[StaticID].Weapon1Slot);
+			writer->w_float(MPlayersOnDeath[StaticID].Weapon1Cond);
 			writer->w_u8(0);
 			writer->w_u8(1);
 			writer->w_u16(0);
 			writer->w_u8(0);
-			writer->w_u8(MPlayersOnDeath[Name].Weapon2AddonState);
-			writer->w_u8(MPlayersOnDeath[Name].Weapon2CurScope);
-			if (MPlayersOnDeath[Name].weapon2Upgr)
+			writer->w_u8(MPlayersOnDeath[StaticID].Weapon1AddonState);
+			writer->w_u8(MPlayersOnDeath[StaticID].Weapon1CurScope);
+			if (MPlayersOnDeath[StaticID].weapon1Upgr)
 			{
 				writer->w_u8(1);
-				writer->w_stringZ(MPlayersOnDeath[Name].Weapon2Upgrades);
+				writer->w_stringZ(MPlayersOnDeath[StaticID].Weapon1Upgrades);
+			}
+			else
+				writer->w_u8(0);
+		}
+
+		if (MPlayersOnDeath[StaticID].weapon2)
+		{
+			writer->w_stringZ(MPlayersOnDeath[StaticID].Weapon2Sect);
+			writer->w_u16(MPlayersOnDeath[StaticID].Weapon2Slot);
+			writer->w_float(MPlayersOnDeath[StaticID].Weapon2Cond);
+			writer->w_u8(0);
+			writer->w_u8(1);
+			writer->w_u16(0);
+			writer->w_u8(0);
+			writer->w_u8(MPlayersOnDeath[StaticID].Weapon2AddonState);
+			writer->w_u8(MPlayersOnDeath[StaticID].Weapon2CurScope);
+			if (MPlayersOnDeath[StaticID].weapon2Upgr)
+			{
+				writer->w_u8(1);
+				writer->w_stringZ(MPlayersOnDeath[StaticID].Weapon2Upgrades);
 			}
 			else
 				writer->w_u8(0);

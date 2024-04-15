@@ -745,9 +745,9 @@ void game_sv_Deathmatch::OnPlayerReady(ClientID id)
 }
 
 
-void game_sv_Deathmatch::OnPlayerDisconnect(ClientID id_who, LPSTR Name, u16 GameID)
+void game_sv_Deathmatch::OnPlayerDisconnect(ClientID id_who, LPSTR Name, u16 GameID, u16 StaticID)
 {
-	inherited::OnPlayerDisconnect	(id_who, Name, GameID);
+	inherited::OnPlayerDisconnect	(id_who, Name, GameID, StaticID);
 };
 
 u32 game_sv_Deathmatch::RP_2_Use(CSE_Abstract* E)

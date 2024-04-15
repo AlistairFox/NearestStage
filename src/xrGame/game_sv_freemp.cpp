@@ -456,12 +456,6 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 
 	Msg("Player connected: name: %s, static id: %d", ps->getName(), ps->GetStaticID());
 
-	if (ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
-	{
-		LoadPlayerPortions(ps, false);
-		LoadPlayersOnDeath(ps);
-	}
-
 	string_path filepath;
 	string_path login_path;
 
@@ -527,6 +521,8 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 
 		if (ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
 		{
+			LoadPlayerPortions(ps, false);
+			LoadPlayersOnDeath(ps);
 			xrCData->ps->money_for_round /= Random.randF(1.f, 1.2f);
 		}
 
@@ -592,7 +588,7 @@ void game_sv_freemp::OnPlayerReady(ClientID id_who)
 }
 
 // player disconnect
-void game_sv_freemp::OnPlayerDisconnect(ClientID id_who, LPSTR Name, u16 GameID)
+void game_sv_freemp::OnPlayerDisconnect(ClientID id_who, LPSTR Name, u16 GameID, u16 StaticID)
 {
 	NET_Packet					P;
 	GenerateGameMessage(P);
@@ -607,17 +603,17 @@ void game_sv_freemp::OnPlayerDisconnect(ClientID id_who, LPSTR Name, u16 GameID)
 	xr_strcat(file_name, ".binsave");
 	FS.update_path(file_name_path, "$mp_saves_players_bin$", file_name);
 	if (!FS.exist(file_name_path))
-		SavePlayerOnDisconnect(Name, file_name_path);
+		SavePlayerOnDisconnect(StaticID, file_name_path);
 
-	ClearPlayersOnDeathBuffer(Name);
+	ClearPlayersOnDeathBuffer(StaticID);
 
-	Player_portions[Name].clear();
+	Player_portions[StaticID].clear();
 	
 
 //	AllowDeadBodyRemove			(id_who, GameID);
 	CObject* pObject = Level().Objects.net_Find(GameID);
 
-	inherited::OnPlayerDisconnect(id_who, Name, GameID);
+	inherited::OnPlayerDisconnect(id_who, Name, GameID, StaticID);
 
 	CActorMP* pActor = smart_cast <CActorMP*>(pObject);
 	if (pActor)

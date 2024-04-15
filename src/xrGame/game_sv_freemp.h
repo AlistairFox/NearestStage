@@ -53,7 +53,7 @@ public:
 	virtual		void				OnPlayerReady(ClientID id_who);
 	virtual		void				OnPlayerConnect(ClientID id_who);
 	virtual		void				OnPlayerConnectFinished(ClientID id_who);
-	virtual		void				OnPlayerDisconnect(ClientID id_who, LPSTR Name, u16 GameID);
+	virtual		void				OnPlayerDisconnect(ClientID id_who, LPSTR Name, u16 GameID, u16 StaticID) override;
 
 	virtual		void				OnPlayerKillPlayer(game_PlayerState* ps_killer, game_PlayerState* ps_killed, KILL_TYPE KillType, SPECIAL_KILL_TYPE SpecialKillType, CSE_Abstract* pWeaponA);
 
@@ -82,7 +82,7 @@ public:
 	{
 		INFO_PORTIONS_CHUNK = 0
 	};
-	xr_map<LPCSTR, xr_vector<shared_str>> Player_portions;
+	xr_map<u16, xr_vector<shared_str>> Player_portions;
 	///////////Info portions saving\ ////////////////
 
 	///////////Dynamic Weather ////////////////
@@ -242,13 +242,13 @@ public:
 			 u8 Weapon2CurScope;
 			 u16 Weapon2Slot;
 
-		 };	std::map<LPCSTR, SPlayersOnDeathBuff> MPlayersOnDeath;
+		 };	std::map<u16, SPlayersOnDeathBuff> MPlayersOnDeath;
 
 
 		 void SavePlayersOnDeath(game_PlayerState* ps);
 		 void LoadPlayersOnDeath(game_PlayerState* ps);
-		 void SavePlayerOnDisconnect(LPCSTR Name, string_path path);
-		 void ClearPlayersOnDeathBuffer(LPSTR name);
+		 void SavePlayerOnDisconnect(u16 StaticID, string_path path);
+		 void ClearPlayersOnDeathBuffer(u16 StaticID);
 	////////Death items save ////////
 };
 

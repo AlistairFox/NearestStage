@@ -13,61 +13,6 @@
 
 void game_sv_freemp::BinnarSavePlayer(game_PlayerState* ps, string_path& filepath)
 {
-	/*
-	Очередность чтения файла:
-	CHUNK: ACTOR_STATS_CHUNK
-	u32: money
-	u8: team
-
-	CHUNK: ACTOR_POS
-	u8: bool проверяем была ли засейвлена позиция
-	if(true)
-	fvector3: position
-	fvector3: direction
-	if(false)
-	skip
-
-	CHUNK: ACTOR_DEVICES_CHUNK
-
-	u8: bool проверяем есть ли фонарик
-	if true
-	stringZ: item
-	float: Condition
-	if false
-	skip
-
-	u8: bool проверяем есть ли детектор
-	if true
-	stringZ: item
-	float: Condition
-	if false
-	skip
-
-	CHUNK: ACTOR_INV_ITEMS_CHUNK
-	u32: items count
-	stringZ: item section
-	u16: slot
-	float: condition
-	u8: check ammo
-	if true
-	u16: ammo count in box
-	if false
-	skip
-	u8: check weapon
-	if true
-	u16: ammo count in wpn
-	u8: ammo type in wpn
-	u8: addons
-	u8: scope
-	if false
-	skip
-	u8: check upgrades
-	if true
-	stringZ: upgrades
-	if false
-	skip
-
-	*/
 	CObject* obj = Level().Objects.net_Find(ps->GameID);
 	CActor* actor = smart_cast<CActor*>(obj);
 	CInventoryOwner* pInvOwner = smart_cast<CInventoryOwner*>(obj);
@@ -81,9 +26,9 @@ void game_sv_freemp::BinnarSavePlayer(game_PlayerState* ps, string_path& filepat
 		writer->close_chunk();
 
 		writer->open_chunk(ACTOR_STATS_CHUNK);
-		writer->w_float(Players_condition[ps->getName()].satiety);
-		writer->w_float(Players_condition[ps->getName()].thirst);
-		writer->w_float(Players_condition[ps->getName()].radiation);
+		writer->w_float(Players_condition[ps->GetStaticID()].satiety);
+		writer->w_float(Players_condition[ps->GetStaticID()].thirst);
+		writer->w_float(Players_condition[ps->GetStaticID()].radiation);
 		writer->close_chunk();
 
 		writer->open_chunk(ACTOR_TEAM);
@@ -251,13 +196,15 @@ bool game_sv_freemp::BinnarLoadPlayer(game_PlayerState* ps, string_path& filepat
 				reader->r_stringZ(sect);
 				float cond = reader->r_float();
 
+				if (sect.size() > 2)
+				{
+					CSE_Abstract* E = spawn_begin(sect.c_str());
+					E->ID_Parent = ps->GameID;
+					CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>(E);
 
-				CSE_Abstract* E = spawn_begin(sect.c_str());
-				E->ID_Parent = ps->GameID;
-				CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>(E);
-
-				item->m_fCondition = cond;
-				spawn_end(E, m_server->GetServerClient()->ID);
+					item->m_fCondition = cond;
+					spawn_end(E, m_server->GetServerClient()->ID);
+				}
 			}
 
 			bool CheckDetector = reader->r_u8();
@@ -268,12 +215,15 @@ bool game_sv_freemp::BinnarLoadPlayer(game_PlayerState* ps, string_path& filepat
 				reader->r_stringZ(sect);
 				float cond = reader->r_float();
 
-				CSE_Abstract* E = spawn_begin(sect.c_str());
-				E->ID_Parent = ps->GameID;
-				CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>(E);
+				if (sect.size() > 2)
+				{
+					CSE_Abstract* E = spawn_begin(sect.c_str());
+					E->ID_Parent = ps->GameID;
+					CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>(E);
 
-				item->m_fCondition = cond;
-				spawn_end(E, m_server->GetServerClient()->ID);
+					item->m_fCondition = cond;
+					spawn_end(E, m_server->GetServerClient()->ID);
+				}
 			}
 
 			bool CheckAnomDetector = reader->r_u8();
@@ -284,12 +234,15 @@ bool game_sv_freemp::BinnarLoadPlayer(game_PlayerState* ps, string_path& filepat
 				reader->r_stringZ(sect);
 				float cond = reader->r_float();
 
-				CSE_Abstract* E = spawn_begin(sect.c_str());
-				E->ID_Parent = ps->GameID;
-				CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>(E);
+				if (sect.size() > 2)
+				{
+					CSE_Abstract* E = spawn_begin(sect.c_str());
+					E->ID_Parent = ps->GameID;
+					CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>(E);
 
-				item->m_fCondition = cond;
-				spawn_end(E, m_server->GetServerClient()->ID);
+					item->m_fCondition = cond;
+					spawn_end(E, m_server->GetServerClient()->ID);
+				}
 			}
 
 			bool CheckPda = reader->r_u8();
@@ -299,10 +252,13 @@ bool game_sv_freemp::BinnarLoadPlayer(game_PlayerState* ps, string_path& filepat
 				shared_str sect;
 				reader->r_stringZ(sect);
 
-				CSE_Abstract* E = spawn_begin(sect.c_str());
-				E->ID_Parent = ps->GameID;
-				CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>(E);
-				spawn_end(E, m_server->GetServerClient()->ID);
+				if (sect.size() > 2)
+				{
+					CSE_Abstract* E = spawn_begin(sect.c_str());
+					E->ID_Parent = ps->GameID;
+					CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>(E);
+					spawn_end(E, m_server->GetServerClient()->ID);
+				}
 			}
 		}
 
@@ -314,8 +270,13 @@ bool game_sv_freemp::BinnarLoadPlayer(game_PlayerState* ps, string_path& filepat
 			for (u32 i = 0; i != count; i++)
 			{
 				reader->r_stringZ(itm_sect);
+
+				if (itm_sect.size() < 2)
+					break;
+
 				u16 slot = reader->r_u16();
 				float cond = reader->r_float();
+
 				CSE_Abstract* E = spawn_begin(itm_sect.c_str());
 
 				E->ID_Parent = ps->GameID;
@@ -363,7 +324,8 @@ bool game_sv_freemp::BinnarLoadPlayer(game_PlayerState* ps, string_path& filepat
 						item->add_upgrade(upgrade);
 					}
 				}
-				spawn_end(E, m_server->GetServerClient()->ID);
+
+					spawn_end(E, m_server->GetServerClient()->ID);
 			}
 
 		}
@@ -439,9 +401,9 @@ void game_sv_freemp::SavePlayersConditions(float satiety, float thirst, float ra
 	if (!ps)
 		return;
 
-	Players_condition[ps->getName()].satiety = satiety;
-	Players_condition[ps->getName()].thirst = thirst;
-	Players_condition[ps->getName()].radiation = radiation;
+	Players_condition[ps->GetStaticID()].satiety = satiety;
+	Players_condition[ps->GetStaticID()].thirst = thirst;
+	Players_condition[ps->GetStaticID()].radiation = radiation;
 }
 
 void game_sv_freemp::LoadPlayerPortions(game_PlayerState* ps, bool first)
@@ -451,7 +413,7 @@ void game_sv_freemp::LoadPlayerPortions(game_PlayerState* ps, bool first)
 	{
 		NET_Packet P;
 		u_EventGen(P, GE_GET_SAVE_PORTIONS, ps->GameID);
-		save_data(Player_portions[ps->getName()], P);
+		save_data(Player_portions[ps->GetStaticID()], P);
 		P.w_u8(false);
 		u_EventSend(P);
 	}
@@ -476,12 +438,12 @@ void game_sv_freemp::LoadPlayerPortions(game_PlayerState* ps, bool first)
 				{
 					shared_str item;
 					reader->r_stringZ(item);
-					Player_portions[ps->getName()].push_back(item);
+					Player_portions[ps->GetStaticID()].push_back(item);
 				}
 
 				NET_Packet P;
 				u_EventGen(P, GE_GET_SAVE_PORTIONS, ps->GameID);
-				save_data(Player_portions[ps->getName()], P);
+				save_data(Player_portions[ps->GetStaticID()], P);
 				P.w_u8(true);
 				u_EventSend(P);
 
@@ -499,22 +461,22 @@ void game_sv_freemp::SavePlayerPortions(ClientID sender, shared_str info_id, boo
 
 	if (ps)
 	{
-		auto it = std::find_if(Player_portions[ps->getName()].begin(), Player_portions[ps->getName()].end(), [&](shared_str& data)
+		auto it = std::find_if(Player_portions[ps->GetStaticID()].begin(), Player_portions[ps->GetStaticID()].end(), [&](shared_str& data)
 			{
 				return data.equal(info_id);
 			});
 
 		if (add)
 		{
-			if (it == Player_portions[ps->getName()].end())
-				Player_portions[ps->getName()].push_back(info_id);
+			if (it == Player_portions[ps->GetStaticID()].end())
+				Player_portions[ps->GetStaticID()].push_back(info_id);
 			else
 				return;
 		}
 		else
 		{
-			if (it != Player_portions[ps->getName()].end())
-				Player_portions[ps->getName()].erase(it);
+			if (it != Player_portions[ps->GetStaticID()].end())
+				Player_portions[ps->GetStaticID()].erase(it);
 			else
 				return;
 		}
@@ -527,8 +489,8 @@ void game_sv_freemp::SavePlayerPortions(ClientID sender, shared_str info_id, boo
 		FS.update_path(path, "$mp_saves_info$", file_name);
 		IWriter* writer = FS.w_open(path);
 		writer->open_chunk(INFO_PORTIONS_CHUNK);
-		writer->w_u32(Player_portions[ps->getName()].size());
-		for (const auto& info : Player_portions[ps->getName()])
+		writer->w_u32(Player_portions[ps->GetStaticID()].size());
+		for (const auto& info : Player_portions[ps->GetStaticID()])
 		{
 			writer->w_stringZ(info);
 		}

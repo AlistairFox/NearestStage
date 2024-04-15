@@ -241,9 +241,9 @@ void game_sv_roleplay::OnDetach(u16 eid_who, u16 eid_what)
 	}
 }
 
-void game_sv_roleplay::OnPlayerDisconnect(ClientID id_who, LPSTR Name, u16 GameID)
+void game_sv_roleplay::OnPlayerDisconnect(ClientID id_who, LPSTR Name, u16 GameID, u16 StaticID)
 {
-	inherited::OnPlayerDisconnect(id_who, Name, GameID);
+	inherited::OnPlayerDisconnect(id_who, Name, GameID, StaticID);
 }
 
 void game_sv_roleplay::Update()

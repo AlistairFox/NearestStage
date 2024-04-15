@@ -57,7 +57,7 @@ struct game_PlayerState
 	u16			ping;
 
 	u16			GameID;
-	u16			StaticID;
+	u16			StaticID = 10;
 
 	u16			lasthitter;
 	u16			lasthitweapon;

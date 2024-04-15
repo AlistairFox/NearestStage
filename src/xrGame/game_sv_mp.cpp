@@ -783,7 +783,7 @@ void game_sv_mp::OnPlayerConnect			(ClientID id_who)
 	inherited::OnPlayerConnect (id_who);
 }
 
-void game_sv_mp::OnPlayerDisconnect		(ClientID id_who, LPSTR Name, u16 GameID)
+void game_sv_mp::OnPlayerDisconnect		(ClientID id_who, LPSTR Name, u16 GameID, u16 StaticID)
 {
 	//---------------------------------------------------
 	NET_Packet					P;
@@ -806,7 +806,7 @@ void game_sv_mp::OnPlayerDisconnect		(ClientID id_who, LPSTR Name, u16 GameID)
 	
 
 
-	inherited::OnPlayerDisconnect (id_who, Name, GameID);
+	inherited::OnPlayerDisconnect (id_who, Name, GameID, StaticID);
 }
 
 void	game_sv_mp::SetSkin					(CSE_Abstract* E, u16 Team, u16 ID)

@@ -437,13 +437,13 @@ void game_sv_CaptureTheArtefact::OnPlayerConnectFinished(ClientID id_who)
 	xrCData->net_Ready = TRUE;
 }
 
-void game_sv_CaptureTheArtefact::OnPlayerDisconnect(ClientID id_who, LPSTR Name, u16 GameID)
+void game_sv_CaptureTheArtefact::OnPlayerDisconnect(ClientID id_who, LPSTR Name, u16 GameID, u16 StaticID)
 {
 	CSE_Abstract* actor = m_server->ID_to_entity(GameID);
 	if (!actor)
 	{
 		Msg("! WARNING: actor [%d] not found, on player disconnect", GameID);
-		inherited::OnPlayerDisconnect(id_who, Name, GameID);
+		inherited::OnPlayerDisconnect(id_who, Name, GameID, StaticID);
 		return;
 	}
 
@@ -460,7 +460,7 @@ void game_sv_CaptureTheArtefact::OnPlayerDisconnect(ClientID id_who, LPSTR Name,
 	if (ti != m_invTimeouts.end())
 		m_invTimeouts.erase(ti);
 
-	inherited::OnPlayerDisconnect(id_who, Name, GameID);
+	inherited::OnPlayerDisconnect(id_who, Name, GameID, StaticID);
 }
 
 void game_sv_CaptureTheArtefact::OnPlayerReady(ClientID id_who)
