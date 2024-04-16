@@ -58,7 +58,7 @@ void game_sv_freemp::FillInvBoxBuffer(CSE_ALifeInventoryBox* box)
 	}
 
 	csSaving.Enter();
-	ThreadTasks.push_back({ OutBox, nullptr, nullptr });
+	ThreadTasks.push_back({ OutBox, nullptr, nullptr, nullptr });
 	csSaving.Leave();
 }
 

@@ -252,5 +252,18 @@ void game_sv_freemp::SaveThreadWorker()
 			xr_delete(dis);
 
 		}
+
+		if (GlobalServerData* GSData = task.ServerData)
+		{
+			IWriter* env_writer = FS.w_open(GSData->GSDPath);
+			env_writer->open_chunk(ENV_CHUNK);
+			env_writer->w_stringZ(GSData->Time);
+			env_writer->w_stringZ(GSData->Data);
+			env_writer->w_stringZ(GSData->Weather);
+			env_writer->close_chunk();
+			FS.w_close(env_writer);
+			xr_delete(GSData);
+		}
+
 	}
 }

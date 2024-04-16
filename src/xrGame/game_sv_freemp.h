@@ -87,7 +87,7 @@ public:
 	///////////Dynamic Weather ////////////////
 	u32 SaveWeatherTimer = 0;
 	 void DynamicWeatherUpdate();
-	 void ServerEnvSaveUpdateBin();
+	 void FillServerEnvBuffer();
 
 	u32 nowday;
 	bool		weather_will_change = false;
@@ -251,11 +251,20 @@ public:
 		string512 PlayerPath;
 	};
 
+	struct GlobalServerData
+	{
+		string128 Time;
+		string128 Data;
+		string128 Weather;
+		string512 GSDPath;
+	};
+
 	struct SThreadTask
 	{
 		InvBox* box;
 		Players* players;
 		OnDeathDisconnect* DisconnectBuf;
+		GlobalServerData* ServerData;
 	};
 
 	std::vector<SThreadTask>  ThreadTasks;
@@ -306,7 +315,7 @@ public:
 
 	 u32 PlayerSaveTimer = 0;
 
-			void				FillPlayersBuffer(game_PlayerState* ps, string_path& filepath);
+			void				FillPlayerBuffer(game_PlayerState* ps, string_path& filepath);
 
 #ifdef OLD_BOX_SAVING
 			void				BinnarSavePlayer(game_PlayerState* ps, string_path& filepath);
@@ -322,7 +331,11 @@ virtual		void				assign_RP(CSE_Abstract* E, game_PlayerState* ps_who);
 	//////////Death items save ///////
 		 
 		 std::map<u16, SPlayersOnDeathBuff> MPlayersOnDeath;
+
+#ifdef OLD_BOX_SAVING
 		 void SavePlayersOnDeath(game_PlayerState* ps);
+#endif // OLD_BOX_SAVING
+
 		 void LoadPlayersOnDeath(game_PlayerState* ps);
 
 #ifdef OLD_BOX_SAVING

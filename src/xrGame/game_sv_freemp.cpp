@@ -534,14 +534,12 @@ void game_sv_freemp::Update()
 					xr_strcat(file_name, ".binsave");
 					FS.update_path(file_name_path, "$mp_saves_players_bin$", file_name);
 					//BinnarSavePlayer(player.second, file_name_path);
-					FillPlayersBuffer(player.second, file_name_path);
-
-					SavePlayersOnDeath(player.second);
+					FillPlayerBuffer(player.second, file_name_path);
 				}
 			}
 		}
 
-			ServerEnvSaveUpdateBin();
+		FillServerEnvBuffer();
 
 		if (Level().game && InvBoxFillTimer <= Device.dwTimeGlobal)
 		{

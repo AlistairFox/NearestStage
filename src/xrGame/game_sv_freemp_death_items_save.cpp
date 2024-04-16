@@ -8,6 +8,8 @@
 #include "ActorHelmet.h"
 #include "Weapon.h"
 
+
+#ifdef OLD_BOX_SAVING
 void game_sv_freemp::SavePlayersOnDeath(game_PlayerState* ps)
 {
 	CObject* obj = Level().Objects.net_Find(ps->GameID);
@@ -120,6 +122,9 @@ void game_sv_freemp::SavePlayersOnDeath(game_PlayerState* ps)
 		MPlayersOnDeath[ps->GetStaticID()] = buff;
 	}
 }
+#endif // OLD_BOX_SAVING
+
+
 
 void game_sv_freemp::LoadPlayersOnDeath(game_PlayerState* ps)
 {
@@ -293,7 +298,7 @@ void game_sv_freemp::FillPlayerOnDisconnect(u16 StaticID, string_path path)
 	dis->Items = MPlayersOnDeath[StaticID];
 
 	csSaving.Enter();
-	ThreadTasks.push_back({ nullptr, nullptr, dis });
+	ThreadTasks.push_back({ nullptr, nullptr, dis, nullptr });
 	csSaving.Leave();
 }
 

@@ -3,24 +3,25 @@
 #include <ui/UIInventoryUtilities.h>
 #include <Level.h>
 
-void game_sv_freemp::ServerEnvSaveUpdateBin()
+void game_sv_freemp::FillServerEnvBuffer()
 {
 	///////////////Server environment saving//////////////////////
 	if (Level().game && SaveWeatherTimer <= Device.dwTimeGlobal)
 	{
 		SaveWeatherTimer = Device.dwTimeGlobal + (save_time3 * 1000);
+		GlobalServerData* GSdata = xr_new<GlobalServerData>();
+
 		string_path save_game_time;
 		FS.update_path(save_game_time, "$global_server_data_bin$", "server_data.binsave");
-		IWriter* env_writer = FS.w_open(save_game_time);
-		env_writer->open_chunk(ENV_CHUNK);
-		shared_str time = InventoryUtilities::GetGameTimeAsString(InventoryUtilities::etpTimeToSeconds);
-		shared_str data = InventoryUtilities::GetDateAsString(GetGameTime(), InventoryUtilities::edpDateToNormal);
-		shared_str weather = g_pGamePersistent->Environment().CurrentWeatherName;
-		env_writer->w_stringZ(time);
-		env_writer->w_stringZ(data);
-		env_writer->w_stringZ(weather);
-		env_writer->close_chunk();
-		FS.w_close(env_writer);
+		xr_strcpy(GSdata->GSDPath, save_game_time);
+
+		xr_strcpy(GSdata->Time, InventoryUtilities::GetGameTimeAsString(InventoryUtilities::etpTimeToSeconds).c_str());
+		xr_strcpy(GSdata->Data, InventoryUtilities::GetDateAsString(GetGameTime(), InventoryUtilities::edpDateToNormal).c_str());
+		xr_strcpy(GSdata->Weather, g_pGamePersistent->Environment().CurrentWeatherName.c_str());
+
+		csSaving.Enter();
+		ThreadTasks.push_back({ nullptr, nullptr, nullptr, GSdata });
+		csSaving.Leave();
 	}
 	///////////////Server environment saving//////////////////////
 }
