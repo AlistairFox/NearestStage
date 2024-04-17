@@ -1174,7 +1174,6 @@ void CActor::UpdateCL	()
 	{
 		if (OnClient())
 		{
-			if(Device.dwFrame % 1000 == 0)
 			if (need_set_cond && g_Alive())
 			{
 				Msg("-- Set condition: S: %f, T: %f, R: %f", satiety, thirst, radiation);
@@ -1188,8 +1187,9 @@ void CActor::UpdateCL	()
 			}
 
 
-			if (g_Alive() && Device.dwFrame % 1000 == 0)
+			if (g_Alive() && ExportTimer <= Device.dwTimeGlobal)
 			{
+				ExportTimer = Device.dwTimeGlobal + 20000;
 				Msg("-- Process import stats start");
 				NET_Packet P;
 				u_EventGen(P, GE_PLAYER_IMPORT_CONDITIONS, this->ID());
@@ -1225,6 +1225,36 @@ void CActor::UpdateCL	()
 				need_ex_wound = false;
 			}
 		}
+
+		if (g_Alive())
+		{
+			if (MpWoundMODE() && !StartWoundDeathTimer)
+			{
+				StartWoundDeathTimer = true;
+				DeathTimerRender = 60;
+			}
+			if (!MpWoundMODE() && StartWoundDeathTimer)
+			{
+				StartWoundDeathTimer = false;
+			}
+			if (StartWoundDeathTimer)
+			{
+				if (DeathTimer <= Device.dwTimeGlobal)
+				{
+					DeathTimer = Device.dwTimeGlobal + 1000;
+					DeathTimerRender--;
+
+					if (DeathTimerRender < 1)
+					{
+						StartWoundDeathTimer = false;
+						DeathTimerRender = 60;
+						Console->Execute("g_kill");
+					}
+				}
+			}
+		}
+		else
+			StartWoundDeathTimer = false;
 
 		if(CurrentGameUI() && NULL==CurrentGameUI()->TopInputReceiver())
 		{
@@ -1839,20 +1869,18 @@ void CActor::renderable_Render	()
 {
 	VERIFY(_valid(XFORM()));
 	inherited::renderable_Render();
-	//if(1/*!HUDview()*/)
-	//if ((cam_active == eacFirstEye && // first eye cam
-	//	::Render->get_generation() == ::Render->GENERATION_R2 && // R2
-	//	::Render->active_phase() == 1) // shadow map rendering on R2	
-	//	||
-	//	!(IsFocused() &&
-	//		(cam_active == eacFirstEye) &&
-	//		((!m_holder) || (m_holder && m_holder->allowWeapon() && m_holder->HUDView())))
-	//	)
-	
-		//{
 		CInventoryOwner::renderable_Render();
-	//}
-	//VERIFY(_valid(XFORM()));
+			
+		if (StartWoundDeathTimer && g_Alive())
+		{
+			UI().Font().pFontGraffiti32Russian->SetInterval(1.f, 0.5f);
+			UI().Font().pFontGraffiti32Russian->OutSetI(-0.01, -0.13);
+			UI().Font().pFontGraffiti32Russian->SetColor(D3DCOLOR_XRGB(255, 0, 0));
+			string128 str;
+			xr_sprintf(str, "Вы умрете через: %d секунд", DeathTimerRender);
+			UI().Font().pFontGraffiti32Russian->OutNext(str);
+		}
+
 }
 
 BOOL CActor::renderable_ShadowGenerate	() 

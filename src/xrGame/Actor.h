@@ -160,6 +160,9 @@ public:
 
 	int ANIM_WOUND = 0;
 	bool need_ex_wound = false;
+	bool StartWoundDeathTimer = false;
+	u32 DeathTimer = 0;
+	u32 DeathTimerRender = 60;
 
 	/* hud anims system*/
 	u32 maskTimer = 0;
@@ -183,6 +186,7 @@ public:
 	void EndTorchAnm();
 	u32 TorchTimer = 0;
 	bool neet_switch_torch = false;
+	u32 ExportTimer = 0;
 	/* hud anims system end*/
 
 
