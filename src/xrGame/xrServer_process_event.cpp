@@ -575,23 +575,36 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 	}break;
 
 	case M_DEMO_REQUEST:
-	{
-		xrClientData* data = ID_to_client(sender);
-		game_PlayerState* ps = data->ps;
-
-		if (ps)
 		{
-			if (ps->testFlag(GAME_PLAYER_SUPER_ADMIN) && data->m_admin_rights.m_has_super_admin_rights)
+			xrClientData* data = ID_to_client(sender);
+			game_PlayerState* ps = data->ps;
+
+			if (ps)
 			{
-				P.w_begin(M_SET_DEMO);
-				Level().Server->SendTo(sender, P, net_flags(true, true));
+				if (ps->testFlag(GAME_PLAYER_SUPER_ADMIN) && data->m_admin_rights.m_has_super_admin_rights)
+				{
+					P.w_begin(M_SET_DEMO);
+					Level().Server->SendTo(sender, P, net_flags(true, true));
+				}
+				else
+				{
+					Msg("!! Player use Admin-Hack!! PlayerName: [%s]", ps->getName());
+				}
+			}
+		}break;
+
+	case GE_REQUEST_ADMIN_ESP:
+		{
+			const auto actor = ID_to_client(sender);
+			if (actor->ps->testFlag(EGamePlayerFlags::GAME_PLAYER_HAS_ADMIN_RIGHTS) && actor->m_admin_rights.m_has_admin_rights)
+			{
+				P.w_begin(M_GAMEMESSAGE);
+				P.w_u32(GAME_EVENT_ADMIN_ESP);
+				SendTo(sender, P);
 			}
 			else
-			{
-				Msg("!! Player use Admin-Hack!! PlayerName: [%s]", ps->getName());
-			}
-		}
-	}break;
+				Msg("!!PIDORAS DETECTED %s. User was trying to use admin wallhack!", actor->ps->getName());
+		}break;
 
 	default:
 		R_ASSERT2	(0,"Game Event not implemented!!!");

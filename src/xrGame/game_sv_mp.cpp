@@ -46,8 +46,6 @@ int			g_sv_mp_iDumpStats_last			= 0;
 BOOL		g_sv_mp_bCountParticipants		= FALSE;
 float		g_sv_mp_fVoteQuota				= VOTE_QUOTA;
 float		g_sv_mp_fVoteTime				= VOTE_LENGTH_TIME;
-BOOL		g_sv_mp_save_proxy_screenshots	= FALSE;
-BOOL		g_sv_mp_save_proxy_configs		= FALSE;
 //-----------------------------------------------------------------
 u32			g_sv_adm_menu_ban_time			= 1;
 int			g_sv_adm_menu_ping_limit		= 25;
@@ -486,10 +484,6 @@ void game_sv_mp::Create (shared_str &options)
 	//------------------------------------------------------------------
 	Set_RankUp_Allowed(false);
 	m_cdkey_ban_list.load();
-	if (strstr(Core.Params, SAVE_SCREENSHOTS_KEY))
-	{
-		g_sv_mp_save_proxy_screenshots = TRUE;
-	}
 };
 
 u8	game_sv_mp::SpectatorModes_Pack		()

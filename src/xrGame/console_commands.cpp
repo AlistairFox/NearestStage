@@ -78,8 +78,6 @@ extern	float	psHUD_FOV;
 extern	float	psSqueezeVelocity;
 extern	int		psLUA_GCSTEP;
 
-extern BOOL off_global_shadowing = false;
-
 extern	int		x_m_x;
 extern	int		x_m_z;
 extern	BOOL	net_cl_inputguaranteed	;
@@ -101,16 +99,10 @@ extern	BOOL	b_toggle_weapon_aim;
 extern float	g_smart_cover_factor;
 extern int		g_upgrades_log;
 extern float	g_smart_cover_animation_speed_factor;
-extern float lamp_bright = 1.f;
 
 extern	BOOL	g_ai_use_old_vision;
 float			g_aim_predict_time = 0.44f;
 int				g_keypress_on_start	= 1;
-extern int save_time = 10;
-extern int save_time2 = 10;
-extern int save_time3 = 60;
-extern int box_respawn_time = 300;
-extern int save_time4 = 60;
 
 ENGINE_API extern float	g_console_sensitive;
 
@@ -1842,7 +1834,6 @@ struct CCC_ReloadSystemLtx : public IConsole_Command
 	}
 };
 
-int alife_on = 1;
 void CCC_RegisterCommands()
 {
 	// options
@@ -2051,20 +2042,7 @@ CMD4(CCC_Integer,			"hit_anims_tune",						&tune_hit_anims,		0, 1);
 	//Alundaio
 	CMD3(CCC_Mask, "g_spawn_antifreeze", &psActorFlags, AF_SPAWN_ANTIFREEZE);
 	//-Alundaio
-	CMD4(CCC_Float, "r__lamp_bright", &lamp_bright, 0.5f, 10.0f);
 
-
-	CMD4(CCC_Integer, "r__off_shadowing", &off_global_shadowing, 0, 1);
-
-	if (g_dedicated_server)
-	{
-		CMD4(CCC_Integer, "alife_switch", &alife_on, 0, 1);
-		CMD4(CCC_Integer, "af_filltime_player", &save_time, 1, 1000000);
-		CMD4(CCC_Integer, "af_filltime_inventory_box", &save_time2, 1, 1000000);
-		CMD4(CCC_Integer, "af_savetime_server_time", &save_time3, 1, 10000000);
-		CMD4(CCC_Integer, "af_box_respawn_time", &box_respawn_time, 1, 1000000000);
-		CMD4(CCC_Integer, "af_thread_sleep_time", &save_time4, 1, 10000000);
-	}
 	CMD1(CCC_ReloadSystemLtx, "reload_system_ltx");
 	
 #ifdef DEBUG

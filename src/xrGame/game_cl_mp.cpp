@@ -55,7 +55,6 @@
 
 BOOL chat_on = false;
 
-BOOL g_draw_downloads = FALSE;
 
 #pragma comment(lib, "crypto.lib")
 

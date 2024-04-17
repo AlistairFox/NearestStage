@@ -113,11 +113,6 @@ extern	u32		g_sv_cta_activatedArtefactRet;
 extern	u32		g_sv_cta_PlayerScoresDelayTime;
 extern	u32		g_sv_cta_rankUpToArtsCountDiv;
 
-extern	BOOL	g_draw_downloads;
-extern	BOOL	g_sv_mp_save_proxy_screenshots;
-extern	BOOL	g_sv_mp_save_proxy_configs;
-extern BOOL		g_player_names = FALSE;
-
 #ifdef DEBUG
 extern s32		lag_simmulator_min_ping;
 extern s32		lag_simmulator_max_ping;
@@ -127,15 +122,22 @@ extern BOOL		g_sv_write_updates_bin;
 extern u32		g_sv_traffic_optimization_level;
 
 extern BOOL		g_cl_draw_mp_statistic;
-extern BOOL		set_next_music = FALSE;
-
-extern int		g_sv_server_goodwill = 0;
-
-BOOL Alife_Sheduler = FALSE;
-
-void XRNETSERVER_API DumpNetCompressorStats	(bool brief);
+void XRNETSERVER_API DumpNetCompressorStats(bool brief);
 extern BOOL XRNETSERVER_API g_net_compressor_enabled;
 extern BOOL XRNETSERVER_API g_net_compressor_gather_stats;
+
+
+
+extern int save_time = 10;
+extern int save_time2 = 10;
+extern int save_time3 = 60;
+extern int box_respawn_time = 300;
+extern int save_time4 = 60;
+extern BOOL		set_next_music = FALSE;
+extern int		g_sv_server_goodwill = 0;
+BOOL Alife_Sheduler = FALSE;
+extern float lamp_bright = 1.f;
+extern BOOL off_global_shadowing = false;
 
 class CCC_Restart : public IConsole_Command {
 public:
@@ -2225,7 +2227,7 @@ public:
 		exclude_raid_from_args(args, buff, sizeof(buff));
 
 		ClientID client_id(0);
-		string256 name;
+		string128 name;
 		s32 money;
 
 		if (sscanf_s(buff, "%s %d", &name, sizeof(name), &money) != 2)
@@ -2234,20 +2236,18 @@ public:
 			Msg("Give money to player. Format: \"sv_give_money <player name> <money>\"");
 			return;
 		}
-
+		name[127] = '\0';
 
 		for (auto& player : Game().players)
 		{
-			game_PlayerState* ps = player.second;
-			if (ps->GameID == Game().local_player->GameID)
+			if (player.second->GameID == Game().local_player->GameID)
 			{
 				continue;
 			}
 
-			string128 player_name;
-			xr_strcpy(player_name, ps->getName());
+			std::string player_name = player.second->getName();
 
-			if (xr_strcmp(player_name, name) == 0)
+			if (player_name == name)
 			{
 				client_id = player.first;
 				break;
@@ -2304,7 +2304,7 @@ public:
 		exclude_raid_from_args(args, buff, sizeof(buff));
 
 		ClientID client_id(0);
-		string256 name;
+		string128 name;
 		u8 team;
 
 		if (sscanf_s(args, "%s %d", &name, sizeof(name), &team) != 2)
@@ -2312,20 +2312,18 @@ public:
 			Msg("! changeteam. Format: \"changeteam <player name> <team>\"");
 			return;
 		}
-
+		name[127] = '\0';
 
 		for (auto& player : Game().players)
 		{
-			game_PlayerState* ps = player.second;
-			if (ps->GameID == Game().local_player->GameID)
+			if (player.second->GameID == Game().local_player->GameID)
 			{
 				continue;
 			}
 
-			string128 player_name;
-			xr_strcpy(player_name, ps->getName());
+			std::string player_name = player.second->getName();
 
-			if (xr_strcmp(player_name, name) == 0)
+			if (player_name == name)
 			{
 				client_id = player.first;
 				break;
@@ -2380,12 +2378,13 @@ public:
 			string128 name;
 			u8		level;
 
+
 			if (sscanf_s(args, "%s %d", &name, sizeof(name), &level) != 2)
 			{
 				Msg("uncorrect args");
 				return;
 			}
-
+			name[127] = '\0';
 			if (level > 2)
 			{
 				Msg("uncorrect level");
@@ -2420,16 +2419,14 @@ public:
 			ClientID ID;
 			for (auto& player : Game().players)
 			{
-				game_PlayerState* ps = player.second;
-				if (ps->GameID == Game().local_player->GameID)
+				if (player.second->GameID == Game().local_player->GameID)
 				{
 					continue;
 				}
 
-				string128 player_name;
-				xr_strcpy(player_name, ps->getName());
+				std::string player_name = player.second->getName();
 
-				if (xr_strcmp(player_name, name) == 0)
+				if (player_name == name)
 				{
 					ID = player.first;
 					break;
@@ -2508,7 +2505,7 @@ public:
 			string128 name;
 
 			sscanf_s(args, "%s", &name);
-
+			name[127] = '\0';
 
 			//reg file
 			string_path filepath;
@@ -2543,16 +2540,14 @@ public:
 			ClientID ID;
 			for (auto& player : Game().players)
 			{
-				game_PlayerState* ps = player.second;
-				if (ps->GameID == Game().local_player->GameID)
+				if (player.second->GameID == Game().local_player->GameID)
 				{
 					continue;
 				}
 
-				string128 player_name;
-				xr_strcpy(player_name, ps->getName());
+				std::string player_name = player.second->getName();
 
-				if (xr_strcmp(player_name, name) == 0)
+				if (player_name == name)
 				{
 					ID = player.first;
 					break;
@@ -2649,21 +2644,19 @@ public:
 				Msg("! You don't have enough money!");
 				return;
 			}
-
 			_strlwr_l(_Trim(name), current_locale);
 
 			bool wasSent = false;
 
 			for (auto& player : Game().players)
 			{
-				game_PlayerState* ps = player.second;
-				if (ps->GameID == Game().local_player->GameID)
+				if (player.second->GameID == Game().local_player->GameID)
 				{
 					continue;
 				}
 
 				string128 player_name;
-				xr_strcpy(player_name, ps->getName());
+				xr_strcpy(player_name, player.second->getName());
 				_strlwr_l(player_name, current_locale);
 
 				if (xr_strcmp(player_name, name) == 0)
@@ -2810,7 +2803,7 @@ public:
 		NET_Packet		P;
 		P.w_begin(M_REMOTE_CONTROL_CMD);
 		string128 str;
-		xr_sprintf(str, "teleport_player %s %f %f %f", arguments, madPos.x, madPos.y, madPos.z);
+		xr_sprintf(str, "af_sv_teleport_player %s %f %f %f", arguments, madPos.x, madPos.y, madPos.z);
 		P.w_stringZ(str);
 		Level().Send(P, net_flags(TRUE, TRUE));
 	}
@@ -2822,6 +2815,130 @@ public:
 		{
 			tips.push_back(players.second->getName());
 		}
+	}
+};
+
+class CCC_TeleportMeToPlayer : public IConsole_Command
+{
+public:
+	CCC_TeleportMeToPlayer(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = false; };
+
+	virtual void    Execute(LPCSTR args)
+	{
+		if (OnServer())
+		{
+			Msg("!!This command is avalilable only for the clients");
+			return;
+		}
+
+		string128 ToPlayerName;
+		xr_strcpy(ToPlayerName, args);
+		u16 ID = 0;
+		ToPlayerName[127] = '\0';
+
+		for (const auto& player : Game().players)
+		{
+			if (player.second->GameID == Game().local_player->GameID)
+				continue;
+
+			std::string name = player.second->getName();
+			if (name == ToPlayerName)
+			{
+				ID = player.second->GameID;
+				break;
+			}
+		}
+
+		if (ID == 0)
+		{
+			Msg("!! Can't find player with name: [%s]", ToPlayerName);
+			return;
+		}
+
+		CActor* pA = smart_cast<CActor*>(Level().Objects.net_Find(ID));
+
+		if (!pA->g_Alive())
+		{
+			Msg("!! Can't move to dead player");
+			return;
+		}
+
+		NET_Packet        P;
+		P.w_begin(M_REMOTE_CONTROL_CMD);
+
+		string128 str;
+		xr_sprintf(str, "af_sv_teleport_player %s %f %f %f", Game().local_player->getName(), VPUSH(pA->Position()));
+		P.w_stringZ(str);
+		Level().Send(P, net_flags(TRUE, TRUE));
+	}
+
+	virtual void    fill_tips(vecTips& tips, u32 mode)
+	{
+		for (const auto& players : Game().players)
+		{
+			if (players.second->GameID == Game().local_player->GameID)
+				continue;
+
+			tips.push_back(players.second->getName());
+		}
+	}
+};
+
+class CCC_TeleportPlayerToMe : public IConsole_Command
+{
+public:
+	CCC_TeleportPlayerToMe(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = false; };
+
+	virtual void    Execute(LPCSTR args)
+	{
+		if (OnServer())
+		{
+			Msg("!!This command is avalilable only for the clients");
+			return;
+		}
+
+		NET_Packet        P;
+		P.w_begin(M_REMOTE_CONTROL_CMD);
+
+		string128 str;
+		xr_sprintf(str, "af_sv_teleport_player %s %f %f %f", args, VPUSH(Device.vCameraPosition));
+		P.w_stringZ(str);
+		Level().Send(P, net_flags(TRUE, TRUE));
+	}
+
+	virtual void    fill_tips(vecTips& tips, u32 mode)
+	{
+		for (const auto& players : Game().players)
+		{
+			if (players.second->GameID == Game().local_player->GameID)
+				continue;
+
+			tips.push_back(players.second->getName());
+		}
+	}
+};
+
+class CCC_AdminWallHack : public IConsole_Command
+{
+public:
+	CCC_AdminWallHack(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = true; };
+
+	virtual void Execute(LPCSTR args)
+	{
+		if (OnServer())
+		{
+			Msg("!!This command is avalilable only for the clients");
+			return;
+		}
+		if (!Game().local_player->testFlag(EGamePlayerFlags::GAME_PLAYER_HAS_ADMIN_RIGHTS))
+		{
+			Msg("!!This command is available only for the administrators");
+			return;
+		}
+
+		NET_Packet	P;
+		Game().u_EventGen(P, GE_REQUEST_ADMIN_ESP, Game().local_player->GameID);
+		Game().u_EventSend(P);
 	}
 };
 
@@ -2847,19 +2964,17 @@ public:
 			Msg("! ERROR: bad command parameters.");
 			return;
 		}
-
+		name[127] = '\0';
 		for (auto& player : Game().players)
 		{
-			game_PlayerState* ps = player.second;
-			if (ps->GameID == Game().local_player->GameID)
+			if (player.second->GameID == Game().local_player->GameID)
 			{
 				continue;
 			}
 
-			string128 player_name;
-			xr_strcpy(player_name, ps->getName());
+			std::string player_name = player.second->getName();
 
-			if (xr_strcmp(player_name, name) == 0)
+			if (name == player_name)
 			{
 				ID = player.first;
 				break;
@@ -3101,22 +3216,6 @@ public:
 			P.w_stringZ(str);
 			Level().Send(P, net_flags(TRUE, TRUE));
 		}
-	}
-};
-
-class CCC_TestComm : public IConsole_Command {
-public:
-	CCC_TestComm(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = true; };
-
-	virtual void Execute(LPCSTR args)
-	{
-		game_sv_freemp* fmp = smart_cast<game_sv_freemp*>(Level().Server->game);
-
-
-		std::string name = fmp->GetPlayerNameByStaticID(1);
-		LPCSTR sas = name.c_str();
-		u16 id = fmp->GetPlayerStaticIDByName("АлистарФокс");
-		Msg("name: %s, id: %d", sas, id);
 	}
 };
  
@@ -3612,7 +3711,7 @@ public:
 
 
 //extern float speed_ROCKET;
-
+int alife_on = 1;
 void register_mp_console_commands()
 {
 	//CMD4(CCC_Float, "rpg_speed", &speed_ROCKET, 0, 1000);
@@ -3625,9 +3724,6 @@ void register_mp_console_commands()
 	CMD1(CCC_GSpawnToInventory,		"g_spawn_to_target"		);
 
 	CMD1(CCC_WeatherSync, "weather_invalidate");
-	CMD1(CCC_TeleportToPoss, "teleport_player");
-	CMD1(CCC_TestComm, "test_comm");
-	CMD1(CCC_TeleportPlayerOnView, "teleport_player_on_view");
 
 	CMD1(CCC_SetNoClipForPlayer,	"sv_set_no_clip"		);
 	CMD1(CCC_SetInvisForPlayer,		"sv_set_invis"			);
@@ -3642,16 +3738,36 @@ void register_mp_console_commands()
 
 	if(g_dedicated_server)
 	{
-	CMD1(CCC_OnlineAdminGive, "give_admin_rights");
-	CMD1(CCC_OnlineAdminRemove, "remove_admin_rights");
-	CMD1(CCC_AdmRegisterAccount, "adm_register_account");
-	CMD1(CCC_AdmRegisterFileAcc, "adm_register_file");
-	CMD1(CCC_disRegisterFile, "adm_badregistername_file");
-	CMD1(CCC_disRegisterPassFile, "adm_badregisterpass_file");
-	CMD1(CCC_OffCompToPlayer, "off_player_pc");
+		CMD1(CCC_OnlineAdminGive,		"give_admin_rights");
+		CMD1(CCC_OnlineAdminRemove,		"remove_admin_rights");
+		CMD1(CCC_AdmRegisterAccount,	"adm_register_account");
+		CMD1(CCC_AdmRegisterFileAcc,	"adm_register_file");
+		CMD1(CCC_disRegisterFile,		"adm_badregistername_file");
+		CMD1(CCC_disRegisterPassFile,	"adm_badregisterpass_file");
+		CMD1(CCC_OffCompToPlayer,		"off_player_pc");
+		CMD4(CCC_Integer,				"alife_switch", &alife_on, 0, 1);
+		CMD4(CCC_Integer,				"af_filltime_player", &save_time, 1, 1000000);
+		CMD4(CCC_Integer,				"af_filltime_inventory_box", &save_time2, 1, 1000000);
+		CMD4(CCC_Integer,				"af_savetime_server_time", &save_time3, 1, 10000000);
+		CMD4(CCC_Integer,				"af_box_respawn_time", &box_respawn_time, 1, 1000000000);
+		CMD4(CCC_Integer,				"af_thread_sleep_time", &save_time4, 1, 10000000);
 	}
+		CMD1(CCC_TeleportToPoss,		"af_sv_teleport_player");
 
-	CMD1(CCC_ChangeTeam, "changeteam");
+		CMD1(CCC_ChangeTeam,			"af_sv_changeteam");
+		CMD4(CCC_Integer,				"af_g_alife_sheduler", &Alife_Sheduler, FALSE, TRUE);
+
+		if (!g_dedicated_server)
+		{
+			CMD1(CCC_TeleportMeToPlayer, "af_adm_teleport_me_to_player");
+			CMD1(CCC_TeleportPlayerToMe, "af_adm_teleport_player_to_me");
+			CMD1(CCC_TeleportPlayerOnView, "af_adm_teleport_player_on_view");
+			CMD1(CCC_AdminWallHack, "af_adm_wallhack");
+			CMD4(CCC_Float, "r__lamp_bright", &lamp_bright, 0.5f, 10.0f);
+			CMD4(CCC_Integer, "r__off_shadowing", &off_global_shadowing, 0, 1);
+		}
+
+
 
 	CMD1(CCC_MovePlayerToRPoint,	"sv_move_player_to_rpoint");
 
@@ -3694,8 +3810,6 @@ void register_mp_console_commands()
 	CMD4(CCC_Integer,	"g_corpsenum",			(int*)&g_dwMaxCorpses,		0,	100);
 
 
-	CMD4(CCC_Integer, "g_alife_sheduler", &Alife_Sheduler, FALSE, TRUE);
-
 	CMD1(CCC_KickPlayerByName,	"sv_kick"					);	//saved for backward compatibility
 	CMD1(CCC_KickPlayerByID,	"sv_kick_id"				);
 
@@ -3720,9 +3834,7 @@ void register_mp_console_commands()
 #ifdef DEBUG
 	CMD1(CCC_DbgMakeScreenshot,			"dbg_make_screenshot"		);
 #endif
-	CMD4(CCC_Integer,					"draw_downloads",		&g_draw_downloads, 0, 1);
-	CMD4(CCC_Integer,					"sv_savescreenshots",	&g_sv_mp_save_proxy_screenshots, 0, 1);
-	CMD4(CCC_Integer,					"sv_saveconfigs",		&g_sv_mp_save_proxy_configs, 0, 1);
+
 	
 
 	CMD1(CCC_UnBanPlayerByIP,	"sv_unbanplayer_ip"			);
@@ -3735,12 +3847,11 @@ void register_mp_console_commands()
 	CMD1(CCC_ChangeLevel,			"sv_changelevel"			);
 	CMD1(CCC_ChangeLevelGameType,	"sv_changelevelgametype"	);
 
-	CMD1(CCC_AddMap,		"sv_addmap"				);	
-	CMD1(CCC_ListMaps,		"sv_listmaps"				);	
-	CMD1(CCC_NextMap,		"sv_nextmap"				);	
-	CMD1(CCC_PrevMap,		"sv_prevmap"				);
-	CMD1(CCC_AnomalySet,	"sv_nextanomalyset"			);
-	CMD4(CCC_Integer, "view_player_names", &g_player_names, 0, 1);
+	CMD1(CCC_AddMap,		"sv_addmap"							);	
+	CMD1(CCC_ListMaps,		"sv_listmaps"						);	
+	CMD1(CCC_NextMap,		"sv_nextmap"						);	
+	CMD1(CCC_PrevMap,		"sv_prevmap"						);
+	CMD1(CCC_AnomalySet,	"sv_nextanomalyset"					);
 
 	CMD1(CCC_Vote_Start,	"cl_votestart"				);
 	CMD1(CCC_Vote_Stop,		"sv_votestop"				);

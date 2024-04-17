@@ -46,7 +46,7 @@ public:
 
 private:
 	void OnVoiceMessage(NET_Packet* P);
-
+	bool adm_wallhack = false;
 
 private:
 	CVoiceChat* m_pVoiceChat = nullptr;

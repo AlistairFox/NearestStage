@@ -111,39 +111,34 @@ void game_cl_freemp::shedule_Update(u32 dt)
 	}
 }
 
-extern BOOL	g_player_names;
-
 void game_cl_freemp::OnRender()
 {
 	inherited::OnRender();
 
-	if (g_player_names)
+	if (adm_wallhack && Game().local_player->testFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS) && Game().local_player->testFlag(GAME_PLAYER_SUPER_ADMIN))
 	{
-		if (local_player->testFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS))
-			if (local_player->testFlag(GAME_PLAYER_SUPER_ADMIN))
+		if (Level().game)
+		{
+			for (const auto& player : Game().players)
 			{
-				if (local_player)
-				{
-					PLAYERS_MAP_IT it = players.begin();
-					for (;it != players.end();++it)
-					{
-						game_PlayerState* ps = it->second;
-						u16 id = ps->GameID;
-						if (ps->testFlag(GAME_PLAYER_FLAG_VERY_VERY_DEAD)) continue;
-						CObject* pObject = Level().Objects.net_Find(id);
-						if (!pObject) continue;
-						if (!pObject || !smart_cast<CActor*>(pObject)) continue;
-						if (ps == local_player) continue;
-						CActor* pActor = smart_cast<CActor*>(pObject);
-						string128 text;
-						sprintf(text, "%s | %s", ps->getName(), ps->GetPlayerTeamText().c_str());
-						float pDub = 0.0f;
-						Fvector Pos = pActor->Position();
-						Pos.y -= pActor->Position().y;
-						pActor->RenderText(text, Pos, &pDub, 0xff40ff40);
-					}
-				};
+				if (Game().local_player->GameID == player.second->GameID)
+					continue;
+
+				CActor* pActor = static_cast<CActor*>(Level().Objects.net_Find(player.second->GameID));
+
+				if (!pActor || !pActor->g_Alive())
+					continue;
+
+				string128 text;
+				sprintf(text, "%s | %s", player.second->getName(), player.second->GetPlayerTeamText().c_str());
+
+				Fvector3 position{ pActor->Position() };
+				position.y -= pActor->Position().y;
+
+				float tmp{};
+				Actor()->RenderText(text, position, &tmp, D3DCOLOR_XRGB(0, 255, 0));
 			}
+		}
 	}
 
 	if (m_pVoiceChat)
@@ -491,6 +486,10 @@ void game_cl_freemp::TranslateGameMessage(u32 msg, NET_Packet& P)
 	{
 		if (!g_dedicated_server)
 			m_game_ui->PdaMenu().pUIChatWnd->RecivePacket(P);
+	}break;
+	case GAME_EVENT_ADMIN_ESP:
+	{
+		adm_wallhack ? adm_wallhack = false : adm_wallhack = true;
 	}break;
 
 	default:

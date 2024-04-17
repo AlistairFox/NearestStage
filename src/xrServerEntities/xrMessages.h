@@ -208,6 +208,7 @@ enum {
 	GE_ANIMATION_UPDATE,
 	GE_HEALTH_PLAYER,
 	GE_PDA_CHAT,
+	GE_REQUEST_ADMIN_ESP,
 
 	GE_FORCEDWORD				= u64(-1)
 };
@@ -280,6 +281,7 @@ enum EGameMessages {  //game_cl <----> game_sv messages
 	GAME_EVENT_NEWS_MESSAGE,
 	GAME_EVENT_WEATHER_UPDATE,
 	GAME_EVENT_NEWS_MONEY_MESSAGE,
+	GAME_EVENT_ADMIN_ESP,
 
 	//-----------------------------------------
 	GAME_EVENT_SCRIPT_BEGINS_FROM,		// don't add messages after this
