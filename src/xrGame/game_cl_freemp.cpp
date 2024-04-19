@@ -117,26 +117,25 @@ void game_cl_freemp::OnRender()
 
 	if (adm_wallhack && Game().local_player->testFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS) && Game().local_player->testFlag(GAME_PLAYER_SUPER_ADMIN))
 	{
-		if (Level().game)
+		if (local_player)
 		{
-			for (const auto& player : Game().players)
+			PLAYERS_MAP_IT it = players.begin();
+			for (; it != players.end(); ++it)
 			{
-				if (Game().local_player->GameID == player.second->GameID)
-					continue;
-
-				CActor* pActor = static_cast<CActor*>(Level().Objects.net_Find(player.second->GameID));
-
-				if (!pActor || !pActor->g_Alive())
-					continue;
-
+				game_PlayerState* ps = it->second;
+				u16 id = ps->GameID;
+				if (ps->testFlag(GAME_PLAYER_FLAG_VERY_VERY_DEAD)) continue;
+				CObject* pObject = Level().Objects.net_Find(id);
+				if (!pObject) continue;
+				if (!pObject || !smart_cast<CActor*>(pObject)) continue;
+				if (ps == local_player) continue;
+				CActor* pActor = smart_cast<CActor*>(pObject);
 				string128 text;
-				sprintf(text, "%s | %s", player.second->getName(), player.second->GetPlayerTeamText().c_str());
-
-				Fvector3 position{ pActor->Position() };
-				position.y -= pActor->Position().y;
-
-				float tmp{};
-				Actor()->RenderText(text, position, &tmp, D3DCOLOR_XRGB(0, 255, 0));
+				sprintf(text, "%s | %s", ps->getName(), ps->GetPlayerTeamText().c_str());
+				float pDub = 0.0f;
+				Fvector Pos = pActor->Position();
+				Pos.y -= pActor->Position().y;
+				pActor->RenderText(text, Pos, &pDub, 0xff40ff40);
 			}
 		}
 	}
