@@ -248,6 +248,7 @@ public:
 	void Clear								();
 	void End								();
 	void FrameMove							();
+	float GetMonitorRefresh();
 	
 	void overdrawBegin						();
 	void overdrawEnd						();

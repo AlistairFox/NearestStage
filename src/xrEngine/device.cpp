@@ -253,7 +253,7 @@ extern bool IsMainMenuActive(); //ECO_RENDER add
 
 ENGINE_API xr_list<LOADING_EVENT>			g_loading_events;
 
-float GetMonitorRefresh()
+float CRenderDevice::GetMonitorRefresh()
 {
 	DEVMODE lpDevMode;
 	memset(&lpDevMode, 0, sizeof(DEVMODE));

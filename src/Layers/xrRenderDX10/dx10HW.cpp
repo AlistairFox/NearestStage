@@ -170,7 +170,7 @@ void CHW::CreateDevice(HWND m_hWnd, bool move_window)
 
 	if (bWindowed)
 	{
-		sd.BufferDesc.RefreshRate.Numerator = 60;
+		sd.BufferDesc.RefreshRate.Numerator = Device.GetMonitorRefresh();
 		sd.BufferDesc.RefreshRate.Denominator = 1;
 	}
 	else
@@ -330,7 +330,7 @@ void CHW::Reset(HWND hwnd)
 
 	if (bWindowed)
 	{
-		desc.RefreshRate.Numerator = 60;
+		desc.RefreshRate.Numerator = Device.GetMonitorRefresh();
 		desc.RefreshRate.Denominator = 1;
 	}
 	else
@@ -468,21 +468,14 @@ void CHW::OnAppDeactivate()
 	}
 }
 
-
 DXGI_RATIONAL CHW::selectRefresh(u32 dwWidth, u32 dwHeight, DXGI_FORMAT fmt)
 {
 	DXGI_RATIONAL res;
 
-	res.Numerator = 60;
+	res.Numerator = Device.GetMonitorRefresh();
 	res.Denominator = 1;
 
-	float CurrentFreq = 60.0f;
-
-	if (psDeviceFlags.is(rsRefresh60hz) || strstr(Core.Params, "-60hz"))
-	{
-		refresh_rate = 1.f / 60.f;
-		return res;
-	}
+	float CurrentFreq = Device.GetMonitorRefresh();
 
 	xr_vector<DXGI_MODE_DESC> modes;
 

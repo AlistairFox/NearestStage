@@ -3267,12 +3267,15 @@ public:
 			CInifile* StaticIdFile = xr_new<CInifile>(idpath, false, true);
 			u16 LastId = 1;
 
+
 			if (StaticIdFile->line_exist("last_players_id", "last_id"))
 			{
 				LastId = StaticIdFile->r_u16("last_players_id", "last_id");
+
 				++LastId;
+
 				StaticIdFile->remove_line("last_players_id", "last_id");
-				StaticIdFile->w_u16("last_players_id", "last_id", LastId);
+					StaticIdFile->w_u16("last_players_id", "last_id", LastId);
 			}
 			else
 				StaticIdFile->w_u16("last_players_id", "last_id", LastId);
