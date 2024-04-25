@@ -1,3 +1,4 @@
+#include <intrin.h>
 #ifndef _BITWISE_
 #define _BITWISE_
 #pragma once
@@ -80,42 +81,46 @@ IC	u64	btwCount1(u64 v)
 
 ICF int iFloor (float x)
 {
-    int a			= *(const int*)(&x);
-    int exponent	= (127 + 31) - ((a >> 23) & 0xFF);
-    int r			= (((u32)(a) << 8) | (1U << 31)) >> exponent;
-    exponent		+= 31-127;
-    {
-        int imask	=	(!(((( (1<<(exponent)))-1)>>8)&a));
-        exponent	-=	(31-127)+32;
-        exponent	>>=	31;
-        a			>>=	31;
-        r			-=	(imask&a);
-        r			&=	exponent;
-        r			^=	a;
-    }
-    return r;
+	//////////SSE 4.2
+	return 	static_cast<int>(_mm_cvtsd_si64(_mm_set_sd(x + x - 0.5)) >> 1);
+
+    //int a			= *(const int*)(&x);
+    //int exponent	= (127 + 31) - ((a >> 23) & 0xFF);
+    //int r			= (((u32)(a) << 8) | (1U << 31)) >> exponent;
+    //exponent		+= 31-127;
+    //{
+    //    int imask	=	(!(((( (1<<(exponent)))-1)>>8)&a));
+    //    exponent	-=	(31-127)+32;
+    //    exponent	>>=	31;
+    //    a			>>=	31;
+    //    r			-=	(imask&a);
+    //    r			&=	exponent;
+    //    r			^=	a;
+    //}
+    //return r;
 }
 
-/* intCeil() is a non-interesting variant, since effectively
-   ceil(x) == -floor(-x)
-*/
 ICF int iCeil (float x)
 {
-    int a			= (*(const int*)(&x));
-    int exponent	= (127 + 31) - ((a >> 23) & 0xFF);
-    int r			= (((u32)(a) << 8) | (1U << 31)) >> exponent;
-    exponent		+= 31-127;
-    {
-        int imask	=	(!(((( (1<<(exponent)))-1)>>8)&a));
-        exponent	-=	(31-127)+32;
-        exponent	>>=	31;
-        a			=	~((a-1)>>31);		/* change sign */
-        r			-=	(imask&a);
-        r			&=	exponent;
-        r			^=	a;
-        r			=	-r;                 /* change sign */
-    }
-    return r;								/* r = (int)(ceil(f)) */
+	//////////SSE 4.2
+	return 	static_cast<int>(-(_mm_cvtsd_si64(_mm_set_sd(-0.5f - (x + x))) >> 1));
+
+
+   // int a			= (*(const int*)(&x));
+   // int exponent	= (127 + 31) - ((a >> 23) & 0xFF);
+   // int r			= (((u32)(a) << 8) | (1U << 31)) >> exponent;
+   // exponent		+= 31-127;
+   // {
+   //     int imask	=	(!(((( (1<<(exponent)))-1)>>8)&a));
+   //     exponent	-=	(31-127)+32;
+   //     exponent	>>=	31;
+   //     a			=	~((a-1)>>31);		/* change sign */
+   //     r			-=	(imask&a);
+   //     r			&=	exponent;
+   //     r			^=	a;
+   //     r			=	-r;                 /* change sign */
+   // }
+   // return r;								/* r = (int)(ceil(f)) */
 }
 
 // Validity checks

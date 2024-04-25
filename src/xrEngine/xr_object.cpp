@@ -56,6 +56,11 @@ void CObject::MakeMeCrow			()
 	g_pGameLevel->Objects.o_crow	(this);
 }
 
+float CObject::shedule_Scale()
+{
+	return 1.f;
+}
+
 void CObject::cName_set			(shared_str N)
 { 
 	NameObject	=	N; 

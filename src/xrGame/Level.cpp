@@ -372,7 +372,6 @@ void CLevel::GetLevelInfo( CServerInfo* si )
 	}
 }
 
-
 void CLevel::PrefetchSound		(LPCSTR name)
 {
 	// preprocess sound name

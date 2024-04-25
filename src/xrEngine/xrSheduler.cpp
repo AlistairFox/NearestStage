@@ -337,8 +337,7 @@ void CSheduler::ProcessStep			()
 		u32		dwMax				= (1000+T.Object->shedule.t_max)/2;
 		float	scale				= T.Object->shedule_Scale	(); 
 		u32		dwUpdate			= dwMin+iFloor(float(dwMax-dwMin)*scale);
-		clamp	(dwUpdate,u32(_max(dwMin,u32(20))),dwMax);
-
+		clamp	(dwUpdate,u32(_max(dwMin,u32(20))),u32(10000));
 		
 
 		m_current_step_obj = T.Object;

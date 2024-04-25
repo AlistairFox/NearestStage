@@ -65,10 +65,14 @@ float CheckDistanceToActor(Fvector& o_Position, float distance)
 			continue;
 
 		CObject* o = Level().Objects.net_Find(player.second->GameID);
-		if (o && o->Position().distance_to(o_Position) <= distance)
+		if (o)
 		{
-			d = o->Position().distance_to(o_Position);
-			break;
+			float pos = o->Position().distance_to(o_Position);
+			if (pos <= distance)
+			{
+				d = pos;
+				break;
+			}
 		}
 	}
 

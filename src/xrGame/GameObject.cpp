@@ -1003,6 +1003,84 @@ bool CGameObject::shedule_Needed( )
 	return						(!getDestroy());
 }
 
+float CGameObject::shedule_Scale()
+{
+	if (Level().game)
+	{
+		float min_pos = 10000.f;
+		if (OnClient())
+		{
+			CObject* obj = Level().Objects.net_Find(Game().local_player->GameID);
+			if (obj)
+			{
+				CInventoryItem* itm = smart_cast<CInventoryItem*>(this);
+				if (itm && (itm->object().H_Parent() && itm->object().H_Parent() != Level().CurrentControlEntity()))
+				{
+					if (itm->object().H_Parent())
+					{
+						if (itm->object().H_Parent() == Level().CurrentControlEntity())
+							return 1.f;
+						else
+							return 10.f;
+					}
+					else
+						return 5.f;
+				}
+				else
+				{
+
+					float fpos = this->Position().distance_to(obj->Position());
+					if (fpos < min_pos)
+						min_pos = fpos;
+				}
+			}
+		}
+		else
+		{
+			for (const auto& player : Level().game->players)
+			{
+				if (player.first.value() == Level().Server->GetServerClient()->ID.value())
+					continue;
+
+				CObject* obj = Level().Objects.net_Find(player.second->GameID);
+				if (obj)
+				{
+					CInventoryItem* itm = smart_cast<CInventoryItem*>(this);
+					if (itm)
+					{
+						if (itm->object().H_Parent())
+						{
+							if (itm->object().H_Parent() == obj)
+							{
+								return 1.f;
+							}
+							else
+								return 5.f;
+						}
+						else
+							return 5.f;
+					}
+					else
+					{
+						float fpos = this->Position().distance_to(obj->Position());
+						if (fpos < min_pos)
+							min_pos = fpos;
+					}
+				}
+			}
+		}
+
+		if (min_pos < 120.f)
+			min_pos = 120.f;
+
+		return min_pos / 300.f;
+	}
+	else
+	{
+		return 5.f;
+	}
+}
+
 void CGameObject::create_anim_mov_ctrl	( CBlend *b, Fmatrix *start_pose, bool local_animation )
 {
 	if( animation_movement_controlled( ) )
