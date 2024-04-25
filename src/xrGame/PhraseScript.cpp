@@ -40,8 +40,8 @@ void  CDialogScriptHelper::LoadSequence (CUIXml* uiXml, XML_NODE* phrase_node,
 bool  CDialogScriptHelper::CheckInfo(const CInventoryOwner* pOwner) const
 {
 	THROW(pOwner);
-
-	for(u32 i=0; i<m_HasInfo.size(); ++i) 
+	u32 i = 0;
+	for(; i<m_HasInfo.size(); ++i) 
 	{
 		if (!Actor()->HasInfo(m_HasInfo[i])) {
 #ifdef DEBUG
@@ -68,8 +68,8 @@ bool  CDialogScriptHelper::CheckInfo(const CInventoryOwner* pOwner) const
 void  CDialogScriptHelper::TransferInfo	(const CInventoryOwner* pOwner) const
 {
 	THROW(pOwner);
-
-	for(u32 i=0; i<m_GiveInfo.size(); ++i)
+	u32 i = 0;
+	for(; i<m_GiveInfo.size(); ++i)
 		Actor()->TransferInfo(m_GiveInfo[i], true);
 
 	for(i=0; i<m_DisableInfo.size(); ++i)

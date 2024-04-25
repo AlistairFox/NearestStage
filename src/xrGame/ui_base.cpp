@@ -51,7 +51,8 @@ sPoly2D* C2DFrustum::ClipPoly	(sPoly2D& S, sPoly2D& D) const
 
 		// classify all points relative to plane #i
 		float cls[UI_FRUSTUM_SAFE]	;
-		for (u32 j=0; j<src->size(); j++) cls[j]=P.classify((*src)[j].pt);
+		u32 j = 0;
+		for (; j<src->size(); j++) cls[j]=P.classify((*src)[j].pt);
 
 		// clip everything to this plane
 		cls[src->size()] = cls[0]	;

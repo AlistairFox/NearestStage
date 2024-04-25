@@ -919,8 +919,9 @@ void CInventory::Update()
 
 void CInventory::UpdateDropTasks()
 {
+	u16 i = FirstSlot();
 	//проверить слоты
-	for(u16 i=FirstSlot(); i<=LastSlot(); ++i)	
+	for(; i<=LastSlot(); ++i)	
 	{
 		PIItem itm = ItemFromSlot(i);
 		if(itm)
