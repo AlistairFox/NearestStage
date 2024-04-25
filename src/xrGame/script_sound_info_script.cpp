@@ -1,4 +1,4 @@
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "script_sound_info.h"
 #include "script_game_object.h"
 

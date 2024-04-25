@@ -7,7 +7,7 @@
 // Copyright 2004 GSC Game World
 //
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "UIComboBox.h"
 #include "UIListBoxItem.h"
 

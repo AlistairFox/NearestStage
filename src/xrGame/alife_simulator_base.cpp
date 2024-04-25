@@ -6,7 +6,7 @@
 //	Description : ALife Simulator base class
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "alife_simulator_base.h"
 #include "alife_simulator_header.h"
 #include "alife_time_manager.h"

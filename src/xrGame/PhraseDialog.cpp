@@ -1,4 +1,4 @@
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "phrasedialog.h"
 #include "phrasedialogmanager.h"
 #include "gameobject.h"

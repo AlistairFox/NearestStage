@@ -32,7 +32,7 @@
 #include "alife_human_brain.h"
 #include "alife_smart_terrain_task.h"
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "patrol_path_manager.h"
 
 using namespace StalkerSpace;

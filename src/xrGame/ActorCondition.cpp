@@ -1,4 +1,4 @@
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "actorcondition.h"
 #include "actor.h"
 #include "actorEffector.h"

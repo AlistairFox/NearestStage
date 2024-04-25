@@ -6,7 +6,7 @@
 //	Description : smart cover script export
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "smart_cover.h"
 
 using namespace luabind;

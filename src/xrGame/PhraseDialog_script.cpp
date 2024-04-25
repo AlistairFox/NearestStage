@@ -1,4 +1,4 @@
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "PhraseDialog_script.h"
 #include "PhraseDialog.h"
 

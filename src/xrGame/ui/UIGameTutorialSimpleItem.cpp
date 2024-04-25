@@ -1,4 +1,4 @@
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "UIGameTutorial.h"
 #include "UIStatic.h"
 #include "uicursor.h"

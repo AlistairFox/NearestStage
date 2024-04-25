@@ -6,7 +6,7 @@
 //	Description : Script animation action class script export
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "script_animation_action.h"
 
 using namespace luabind;

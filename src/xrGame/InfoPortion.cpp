@@ -1,4 +1,4 @@
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "xml_str_id_loader.h"
 #include "object_broker.h"
 /*

@@ -2,7 +2,7 @@
 #define MIXED_DELEGATE_INCLUDED
 
 #include "../xrCore/fastdelegate.h"
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "script_export_space.h"
 #include "script_callback_ex.h"
 #include "mixed_delegate_unique_tags.h"

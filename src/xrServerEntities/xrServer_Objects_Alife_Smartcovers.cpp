@@ -6,7 +6,7 @@
 //	Description : Server objects smartcovers for ALife simulator
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "xrServer_Objects_ALife_Smartcovers.h"
 
 #ifndef AI_COMPILER

@@ -1,4 +1,4 @@
-﻿#include "pch_script.h"
+﻿#include "StdAfx.h"
 #include "stdafx.h"
 #include "pda.h"
 #include "../xrphysics/PhysicsShell.h"

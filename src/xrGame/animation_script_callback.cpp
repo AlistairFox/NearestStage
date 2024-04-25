@@ -1,4 +1,4 @@
-#include	"pch_script.h"
+#include	"StdAfx.h"
 
 #include	"animation_script_callback.h"
 #include	"script_callback_ex.h"

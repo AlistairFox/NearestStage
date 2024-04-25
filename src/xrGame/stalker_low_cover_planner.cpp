@@ -6,7 +6,7 @@
 //	Description : Stalker low cover planner
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "stalker_low_cover_planner.h"
 #include "script_game_object.h"
 #include "ai/stalker/ai_stalker.h"

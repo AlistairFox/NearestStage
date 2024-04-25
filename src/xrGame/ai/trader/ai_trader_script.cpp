@@ -1,4 +1,4 @@
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "ai_trader.h"
 
 using namespace luabind;

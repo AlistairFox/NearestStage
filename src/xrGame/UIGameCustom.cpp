@@ -1,4 +1,4 @@
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "UIGameCustom.h"
 #include "level.h"
 #include "ui/UIXmlInit.h"

@@ -1,4 +1,4 @@
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "uigamesp.h"
 #include "actor.h"
 #include "level.h"

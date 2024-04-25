@@ -1,4 +1,4 @@
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "game_base.h"
 #include "ai_space.h"
 #include "script_engine.h"

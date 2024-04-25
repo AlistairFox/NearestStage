@@ -5,7 +5,7 @@
 //	Description : Smart cover planner class
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "smart_cover_animation_planner.h"
 #include "script_game_object.h"
 #include "ai/stalker/ai_stalker.h"

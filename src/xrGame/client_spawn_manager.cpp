@@ -6,7 +6,7 @@
 //	Description : Seniority hierarchy holder
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "client_spawn_manager.h" 
 #include "ai_space.h" 
 #include "script_engine.h" 

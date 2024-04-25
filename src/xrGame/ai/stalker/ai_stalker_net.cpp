@@ -1,5 +1,4 @@
-#include "stdafx.h"
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "ai_stalker.h"
 
 #include "../../ai_object_location.h"

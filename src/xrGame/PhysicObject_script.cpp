@@ -1,4 +1,4 @@
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "PhysicObject.h"
 #include "PHCollisionDamageReceiver.h"
 #include "PHDestroyable.h"

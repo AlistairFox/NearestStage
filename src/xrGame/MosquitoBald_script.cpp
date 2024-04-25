@@ -1,4 +1,4 @@
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "MosquitoBald.h"
 #include "ZoneCampfire.h"
 #include "TorridZone.h"

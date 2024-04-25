@@ -6,7 +6,7 @@
 //	Description : Stalker get distance action classes
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "stalker_get_distance_actions.h"
 #include "ai/stalker/ai_stalker.h"
 #include "stalker_movement_manager_smart_cover.h"

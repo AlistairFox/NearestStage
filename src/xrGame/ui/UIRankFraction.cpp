@@ -6,7 +6,7 @@
 //	Description : UI Rank Fraction info window class implementation
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "UIRankFraction.h"
 
 #include "UIXmlInit.h"

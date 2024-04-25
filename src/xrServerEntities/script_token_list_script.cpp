@@ -6,7 +6,7 @@
 //	Description : Script token list class export
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "script_token_list.h"
 
 using namespace luabind;

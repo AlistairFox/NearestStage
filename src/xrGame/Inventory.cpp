@@ -1,4 +1,4 @@
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "inventory.h"
 #include "actor.h"
 #include "CustomOutfit.h"

@@ -6,7 +6,7 @@
 //	Description : inventory upgrade UI window (additional) class implementation
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "object_broker.h"
 #include "UIInventoryUpgradeWnd.h"
 #include "xrUIXmlParser.h"

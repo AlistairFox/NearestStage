@@ -1,4 +1,4 @@
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "Scope.h"
 #include "Silencer.h"
 #include "GrenadeLauncher.h"

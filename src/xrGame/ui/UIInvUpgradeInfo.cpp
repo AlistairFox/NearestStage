@@ -6,7 +6,7 @@
 //	Description : inventory upgrade UI info window class implementation
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "UIInvUpgradeInfo.h"
 #include "../string_table.h"
 #include "../Actor.h"

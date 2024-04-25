@@ -1,4 +1,4 @@
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "ScriptXmlInit.h"
 #include "ui\UIXmlInit.h"
 #include "ui\UITextureMaster.h"

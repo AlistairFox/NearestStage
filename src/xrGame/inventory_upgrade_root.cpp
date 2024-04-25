@@ -6,7 +6,7 @@
 //	Description : inventory upgrade root class implementation
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "inventory_upgrade.h"
 #include "inventory_upgrade_root.h"
 #include "inventory_upgrade_group.h"

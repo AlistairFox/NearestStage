@@ -1,4 +1,4 @@
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "f1.h"
 #include "WeaponAmmo.h"
 #include "Medkit.h"

@@ -1,4 +1,4 @@
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "StalkerOutfit.h"
 #include "ActorHelmet.h"
 #include "Backpack.h"

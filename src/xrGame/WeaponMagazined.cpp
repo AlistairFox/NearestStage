@@ -1,4 +1,4 @@
-﻿#include "pch_script.h"
+﻿#include "StdAfx.h"
 
 #include "WeaponMagazined.h"
 #include "actor.h"

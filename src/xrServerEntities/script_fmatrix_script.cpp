@@ -6,7 +6,7 @@
 //	Description : Script float matrix script export
 ////////////////////////////////////////////////////////////////////////////																																				 return_reference_to
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "script_fmatrix.h"
 
 using namespace luabind;

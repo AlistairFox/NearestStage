@@ -1,4 +1,4 @@
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "GameTask.h"
 
 using namespace luabind;

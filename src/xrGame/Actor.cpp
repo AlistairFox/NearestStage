@@ -1,4 +1,4 @@
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "Actor_Flags.h"
 #include "hudmanager.h"
 #ifdef DEBUG

@@ -6,7 +6,7 @@
 //	Description : Property storage class script export
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "property_storage.h"
 
 using namespace luabind;

@@ -1,4 +1,4 @@
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "UIScriptWnd.h"
 #include "object_broker.h"
 #include "../callback_info.h"

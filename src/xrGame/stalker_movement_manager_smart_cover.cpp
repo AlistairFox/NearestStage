@@ -6,7 +6,7 @@
 //	Description : stalker movement manager class with smart covers
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "stalker_movement_manager_smart_cover.h"
 #include "movement_manager_space.h"
 #include "smart_cover_animation_selector.h"

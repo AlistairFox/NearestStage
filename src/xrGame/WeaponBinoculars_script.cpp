@@ -1,4 +1,4 @@
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "weaponbinoculars.h"
 
 using namespace luabind;

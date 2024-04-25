@@ -6,7 +6,7 @@
 //	Description : Script flags script export
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "script_flags.h"
 
 using namespace luabind;

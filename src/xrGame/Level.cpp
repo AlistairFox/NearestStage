@@ -1,4 +1,4 @@
-﻿#include "pch_script.h"
+﻿#include "StdAfx.h"
 #include "../xrEngine/fdemorecord.h"
 #include "../xrEngine/fdemoplay.h"
 #include "../xrEngine/environment.h"

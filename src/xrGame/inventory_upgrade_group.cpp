@@ -6,7 +6,7 @@
 //	Description : inventory upgrade group class implementation
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "inventory_upgrade_group.h"
 #include "inventory_upgrade.h"
 

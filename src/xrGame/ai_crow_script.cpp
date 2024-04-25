@@ -6,7 +6,7 @@
 //	Description : Crow script export
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "ai/crow/ai_crow.h"
 
 using namespace luabind;

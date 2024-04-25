@@ -5,7 +5,7 @@
 //	Description : Animation selector for smart covers
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "smart_cover_animation_selector.h"
 #include "ai/stalker/ai_stalker.h"
 #include "smart_cover_animation_planner.h"

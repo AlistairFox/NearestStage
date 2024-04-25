@@ -1,5 +1,5 @@
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "UIInventoryUtilities.h"
 #include "../WeaponAmmo.h"
 #include "../UIStaticItem.h"

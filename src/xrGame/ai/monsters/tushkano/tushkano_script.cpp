@@ -1,4 +1,4 @@
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "tushkano.h"
 
 using namespace luabind;

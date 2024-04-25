@@ -1,4 +1,4 @@
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "UIButton.h"
 #include "UI3tButton.h"
 #include "UICheckButton.h"

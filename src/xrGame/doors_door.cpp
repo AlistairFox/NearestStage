@@ -4,7 +4,7 @@
 //	Copyright (C) GSC Game World - 2009
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "doors_door.h"
 #include "physicobject.h"
 #include "script_callback_ex.h"

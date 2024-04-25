@@ -6,7 +6,7 @@
 //	Description : Object item script class
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "object_item_script.h"
 #include "object_factory.h"
 

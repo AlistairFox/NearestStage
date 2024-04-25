@@ -1,4 +1,4 @@
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "helicopter.h"
 #include "script_game_object.h"
 

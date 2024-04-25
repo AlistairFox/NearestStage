@@ -6,7 +6,7 @@
 //	Description : 
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "ai_stalker.h"
 #include "../../cover_point.h"
 #include "../../cover_evaluators.h"

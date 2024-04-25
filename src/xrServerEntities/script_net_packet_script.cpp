@@ -6,7 +6,7 @@
 //	Description : XRay Script net packet class script export
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "script_net_packet.h"
 
 using namespace luabind;

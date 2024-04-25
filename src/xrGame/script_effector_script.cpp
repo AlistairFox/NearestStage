@@ -6,7 +6,7 @@
 //	Description : XRay Script effector class script export
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "script_effector.h"
 #include "script_effector_wrapper.h"
 

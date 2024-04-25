@@ -1,4 +1,4 @@
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "mincer.h"
 #include "RadioactiveZone.h"
 

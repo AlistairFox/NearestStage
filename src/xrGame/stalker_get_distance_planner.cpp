@@ -6,7 +6,7 @@
 //	Description : Stalker get distance planner
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "stalker_get_distance_planner.h"
 #include "ai/stalker/ai_stalker_space.h"
 #include "stalker_decision_space.h"

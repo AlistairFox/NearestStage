@@ -6,7 +6,7 @@
 //	Description : smart cover object class
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "smart_cover_object.h"
 #include "../xrServerEntities/xrServer_Objects_ALife_Smartcovers.h"
 #include "level.h"

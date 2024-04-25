@@ -5,7 +5,7 @@
 //	Description : detail namespace functions
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "smart_cover_detail.h"
 
 float smart_cover::detail::parse_float	(

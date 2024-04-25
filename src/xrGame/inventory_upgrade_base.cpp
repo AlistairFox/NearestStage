@@ -6,7 +6,7 @@
 //	Description : inventory upgrade base class implementation
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 
 #include "inventory_upgrade_base.h"
 #include "inventory_upgrade_manager.h"

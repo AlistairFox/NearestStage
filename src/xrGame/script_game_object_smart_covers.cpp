@@ -6,7 +6,7 @@
 //	Description : script game object class smart covers stuff
 ////////////////////////////////////////////////////////////////////////////
 
-#include "pch_script.h"
+#include "StdAfx.h"
 #include "script_game_object.h"
 #include "script_game_object_impl.h"
 #include "ai/stalker/ai_stalker.h"
