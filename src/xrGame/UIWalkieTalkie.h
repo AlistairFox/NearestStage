@@ -5,7 +5,7 @@
 #include "ui/UIWndCallback.h"
 #include "../xrEngine/xr_input.h"
 #include "Actor.h"
-#include "RadioItem.h"
+#include "WalkieTalkie.h"
 #include "ui/UIStatic.h"
 
 class CUIXmlInit;
@@ -13,10 +13,10 @@ class CUIFrameWindow;
 class CUITextWnd;
 class CUI3tButton;
 class CUIEditBox;
-class CRadioItem;
+class CWalkieTalkie;
 class CUIStatic;
 
-class UIRadioItem : public CUIDialogWnd, public CUIWndCallback
+class UIWalkieTalkie : public CUIDialogWnd, public CUIWndCallback
 {
 	typedef CUIDialogWnd inherited;
 
@@ -35,8 +35,8 @@ class UIRadioItem : public CUIDialogWnd, public CUIWndCallback
 	CUIStatic* Back_Static;
 
 public:
-	UIRadioItem(CRadioItem* R);
-	virtual					~UIRadioItem();
+	UIWalkieTalkie(CWalkieTalkie* R);
+	virtual					~UIWalkieTalkie();
 	void			Init();
 	void			InitCallBacks();
 	virtual void			Show(bool status);
@@ -52,5 +52,5 @@ public:
 	virtual bool			OnKeyboardAction(int dik, EUIMessages keyboard_action);
 
 private:
-	CRadioItem* Radio;
+	CWalkieTalkie* Radio;
 };

@@ -7464,10 +7464,10 @@
     <ClInclude Include="UIPdaChat.h">
       <Filter>Chat</Filter>
     </ClInclude>
-    <ClInclude Include="RadioItem.h">
+    <ClInclude Include="WalkieTalkie.h">
       <Filter>Walkie-Talke</Filter>
     </ClInclude>
-    <ClInclude Include="UIRadioItem.h">
+    <ClInclude Include="UIWalkieTalkie.h">
       <Filter>Walkie-Talke</Filter>
     </ClInclude>
   </ItemGroup>
@@ -11186,10 +11186,10 @@
     <ClCompile Include="game_sv_freemp_save_thread.cpp">
       <Filter>Core\Server\Games\server\freemp\Save Bin</Filter>
     </ClCompile>
-    <ClCompile Include="RadioItem.cpp">
+    <ClCompile Include="WalkieTalkie.cpp">
       <Filter>Walkie-Talke</Filter>
     </ClCompile>
-    <ClCompile Include="UIRadioItem.cpp">
+    <ClCompile Include="UIWalkieTalkie.cpp">
       <Filter>Walkie-Talke</Filter>
     </ClCompile>
   </ItemGroup>

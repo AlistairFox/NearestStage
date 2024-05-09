@@ -41,7 +41,7 @@
 #include "CameraEffector.h"
 #include "ActorEffector.h"
 #include "PDA.h"
-#include "RadioItem.h"
+#include "WalkieTalkie.h"
 
 extern u32 hud_adj_mode;
 extern float m_fFactor;
@@ -70,7 +70,7 @@ void CActor::IR_OnKeyboardPress(int cmd)
 	{
 	case kWPN_FIRE:
 		{
-			CRadioItem* radio = smart_cast<CRadioItem*>(inventory().ItemFromSlot(RADIO_SLOT));
+			CWalkieTalkie* radio = smart_cast<CWalkieTalkie*>(inventory().ItemFromSlot(RADIO_SLOT));
 			if (radio && radio->IsInHand())
 			{
 				radio->ActivateVoice(true);
@@ -93,7 +93,7 @@ void CActor::IR_OnKeyboardPress(int cmd)
 
 	case kWPN_ZOOM:
 	{
-		CRadioItem* radio = smart_cast<CRadioItem*>(inventory().ItemFromSlot(RADIO_SLOT));
+		CWalkieTalkie* radio = smart_cast<CWalkieTalkie*>(inventory().ItemFromSlot(RADIO_SLOT));
 		if (radio && radio->IsInHand())
 		{
 			radio->ShowUI(true);
@@ -239,7 +239,7 @@ void CActor::IR_OnKeyboardPress(int cmd)
 	break;
 	case kDETECTOR:
 		{
-			CRadioItem* pRadio = smart_cast<CRadioItem*>(inventory().ItemFromSlot(RADIO_SLOT));
+			CWalkieTalkie* pRadio = smart_cast<CWalkieTalkie*>(inventory().ItemFromSlot(RADIO_SLOT));
 			if (pRadio && !pRadio->IsHidden())
 				return;
 
@@ -261,7 +261,7 @@ void CActor::IR_OnKeyboardPress(int cmd)
 		PIItem itm = inventory().ItemFromSlot(RADIO_SLOT);
 		if (itm)
 		{
-			CRadioItem* Radio = smart_cast<CRadioItem*>(itm);
+			CWalkieTalkie* Radio = smart_cast<CWalkieTalkie*>(itm);
 			if (Radio)
 			{
 				Radio->IsInHand() ? Radio->TakeOff() : Radio->TakeOn();
@@ -382,7 +382,7 @@ void CActor::IR_OnKeyboardRelease(int cmd)
 		case kDROP:		if(GAME_PHASE_INPROGRESS == Game().Phase()) g_PerformDrop();				break;
 		case kWPN_FIRE:
 		{
-			CRadioItem* radio = smart_cast<CRadioItem*>(inventory().ItemFromSlot(RADIO_SLOT));
+			CWalkieTalkie* radio = smart_cast<CWalkieTalkie*>(inventory().ItemFromSlot(RADIO_SLOT));
 			if (radio && radio->IsInHand() && radio->SayNow)
 			{
 				radio->ActivateVoice(false);
@@ -912,7 +912,7 @@ void CActor::NoClipFly(int cmd)
 	}break;
 	case kDETECTOR:
 		{
-			CRadioItem* pRadio = smart_cast<CRadioItem*>(inventory().ItemFromSlot(RADIO_SLOT));
+			CWalkieTalkie* pRadio = smart_cast<CWalkieTalkie*>(inventory().ItemFromSlot(RADIO_SLOT));
 			if (pRadio && !pRadio->IsHidden())
 				return;
 

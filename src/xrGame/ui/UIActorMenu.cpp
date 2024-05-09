@@ -40,7 +40,7 @@
 #include "Backpack.h"
 #include "AnomalyDetector.h"
 #include "player_hud.h"
-#include "RadioItem.h"
+#include "WalkieTalkie.h"
 #include "PDA.h"
 
 void CUIActorMenu::SetActor(CInventoryOwner* io)
@@ -569,7 +569,7 @@ void CUIActorMenu::highlight_item_slot(CUICellItem* cell_item)
 	CBackpack* backpack = smart_cast<CBackpack*>(item);
 	CDetectorAnomaly* anomaly_detector = smart_cast<CDetectorAnomaly*>(item);
 	CPda* pda = smart_cast<CPda*>(item);
-	CRadioItem* Radio = smart_cast<CRadioItem*>(item);
+	CWalkieTalkie* Radio = smart_cast<CWalkieTalkie*>(item);
 
 	if(weapon)
 	{

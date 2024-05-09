@@ -1,8 +1,8 @@
 #include "StdAfx.h"
-#include "RadioItem.h"
+#include "WalkieTalkie.h"
 #include "Inventory.h"
 #include "Actor.h"
-#include "UIRadioItem.h"
+#include "UIWalkieTalkie.h"
 #include "HUDManager.h"
 #include "UIGameCustom.h"
 #include "player_hud.h"
@@ -10,32 +10,32 @@
 #include <game_cl_freemp.h>
 #include "VoiceChat.h"
 
-CRadioItem::CRadioItem(void)
+CWalkieTalkie::CWalkieTalkie(void)
 {
 	m_bRadioEnabled = false;
 	m_bRadioInHand = false;
 	CurrentHZ = 0;
 	MinHZ = 0;
 	MaxHZ = 100;
-	pUIRadioItem = nullptr;
+	pUIWalkieTalkie = nullptr;
 	m_bNeedActivation = false;
 	m_sFactor = 0.f;
 }
 
-CRadioItem::~CRadioItem(void)
+CWalkieTalkie::~CWalkieTalkie(void)
 {
 	if (OnClient())
-		xr_delete(pUIRadioItem);
+		xr_delete(pUIWalkieTalkie);
 }
 
-BOOL CRadioItem::net_Spawn(CSE_Abstract* DC)
+BOOL CWalkieTalkie::net_Spawn(CSE_Abstract* DC)
 {
 	CurrentActor = 0;
 	CurrentInvOwner = 0;
 	return (inherited::net_Spawn(DC));
 }
 
-void CRadioItem::Load(LPCSTR section)
+void CWalkieTalkie::Load(LPCSTR section)
 {
 	inherited::Load(section);
 
@@ -65,13 +65,13 @@ void CRadioItem::Load(LPCSTR section)
 
 	if (OnClient())
 	{
-		pUIRadioItem = xr_new<UIRadioItem>(this);
-		pUIRadioItem->Init();
-		pUIRadioItem->Show(false);
+		pUIWalkieTalkie = xr_new<UIWalkieTalkie>(this);
+		pUIWalkieTalkie->Init();
+		pUIWalkieTalkie->Show(false);
 	}
 }
 
-void CRadioItem::OnEvent(NET_Packet& P, u16 type)
+void CWalkieTalkie::OnEvent(NET_Packet& P, u16 type)
 {
 	switch (type)
 	{
@@ -80,24 +80,24 @@ void CRadioItem::OnEvent(NET_Packet& P, u16 type)
 	}
 }
 
-void CRadioItem::net_Export(NET_Packet& P)
+void CWalkieTalkie::net_Export(NET_Packet& P)
 {
 	inherited::net_Export(P);
 }
 
-void CRadioItem::net_Import(NET_Packet& P)
+void CWalkieTalkie::net_Import(NET_Packet& P)
 {
 	inherited::net_Import(P);
 }
 
-void CRadioItem::OnH_A_Chield()
+void CWalkieTalkie::OnH_A_Chield()
 {
 	CurrentActor = smart_cast<CActor*>(H_Parent());
 	CurrentInvOwner = smart_cast<CInventoryOwner*>(H_Parent());
 	inherited::OnH_A_Chield();
 }
 
-void CRadioItem::SetRadioHZ(u16 hz)
+void CWalkieTalkie::SetRadioHZ(u16 hz)
 {
 	clamp(hz, MinHZ, MaxHZ);
 
@@ -110,7 +110,7 @@ void CRadioItem::SetRadioHZ(u16 hz)
 	Game().u_EventSend(P);
 }
 
-void CRadioItem::UpdateHudAdditional(Fmatrix& trans)
+void CWalkieTalkie::UpdateHudAdditional(Fmatrix& trans)
 {
 
 	Fvector						curr_offs, curr_rot;
@@ -143,7 +143,7 @@ void CRadioItem::UpdateHudAdditional(Fmatrix& trans)
 	clamp(m_sFactor, 0.f, 1.f);
 }
 
-void CRadioItem::OnH_B_Independet(bool just_before_destroy)
+void CWalkieTalkie::OnH_B_Independet(bool just_before_destroy)
 {
 	inherited::OnH_B_Independent(just_before_destroy);
 
@@ -151,41 +151,41 @@ void CRadioItem::OnH_B_Independet(bool just_before_destroy)
 	CurrentInvOwner = 0;
 }
 
-void CRadioItem::OnHiddenItem()
+void CWalkieTalkie::OnHiddenItem()
 {
 }
 
-void CRadioItem::OnActiveItem()
+void CWalkieTalkie::OnActiveItem()
 {
 	return;
 }
 
-void CRadioItem::UpdateXForm()
+void CWalkieTalkie::UpdateXForm()
 {
 	CInventoryItem::UpdateXForm();
 }
 
-void CRadioItem::ShowUI(bool show)
+void CWalkieTalkie::ShowUI(bool show)
 {
 	if (show)
 	{
 		if (OnClient())
 		{
 			CurrentGameUI()->HideActorMenu();
-			pUIRadioItem->ShowDialog(true);
+			pUIWalkieTalkie->ShowDialog(true);
 		}
 	}
 	else
 	{
 		if (OnClient())
-			if (pUIRadioItem->IsShown())
-				pUIRadioItem->HideDialog();
+			if (pUIWalkieTalkie->IsShown())
+				pUIWalkieTalkie->HideDialog();
 	}
 }
 
 
 
-void CRadioItem::OnStateSwitch(u32 S)
+void CWalkieTalkie::OnStateSwitch(u32 S)
 {
 	inherited::OnStateSwitch(S);
 	switch (S)
@@ -213,7 +213,7 @@ void CRadioItem::OnStateSwitch(u32 S)
 	}
 }
 
-void CRadioItem::OnAnimationEnd(u32 state)
+void CWalkieTalkie::OnAnimationEnd(u32 state)
 {
 	inherited::OnAnimationEnd(state);
 	switch (state)
@@ -233,7 +233,7 @@ void CRadioItem::OnAnimationEnd(u32 state)
 	}
 }
 
-void CRadioItem::SwitchState(u32 S)
+void CWalkieTalkie::SwitchState(u32 S)
 {
 	if (OnServer())
 	{
@@ -263,7 +263,7 @@ void CRadioItem::SwitchState(u32 S)
 	}
 }
 
-void CRadioItem::TakeOn()
+void CWalkieTalkie::TakeOn()
 {
 	m_bNeedActivation = false;
 
@@ -300,7 +300,7 @@ void CRadioItem::TakeOn()
 	SoundTimer = 0;
 }
 
-void CRadioItem::TakeOff()
+void CWalkieTalkie::TakeOff()
 {
 	if (m_bRadioInHand)
 		SwitchState(eHiding);
@@ -311,7 +311,7 @@ void CRadioItem::TakeOff()
 
 }
 
-void CRadioItem::ActivateVoice(bool status)
+void CWalkieTalkie::ActivateVoice(bool status)
 {
 	game_cl_freemp* fmp = smart_cast<game_cl_freemp*>(Level().game);
 	if (fmp)
@@ -335,7 +335,7 @@ void CRadioItem::ActivateVoice(bool status)
 	}
 }
 
-void CRadioItem::EnableRadio(bool status)
+void CWalkieTalkie::EnableRadio(bool status)
 {
 	if (status)
 	{
@@ -349,12 +349,12 @@ void CRadioItem::EnableRadio(bool status)
 	}
 }
 
-void CRadioItem::OnMoveToSlot(const SInvItemPlace& prev)
+void CWalkieTalkie::OnMoveToSlot(const SInvItemPlace& prev)
 {
 	inherited::OnMoveToSlot(prev);
 }
 
-void CRadioItem::OnMoveToRuck(const SInvItemPlace& prev)
+void CWalkieTalkie::OnMoveToRuck(const SInvItemPlace& prev)
 {
 	inherited::OnMoveToRuck(prev);
 
@@ -366,7 +366,7 @@ void CRadioItem::OnMoveToRuck(const SInvItemPlace& prev)
 	}
 }
 
-void CRadioItem::shedule_Update(u32 dt)
+void CWalkieTalkie::shedule_Update(u32 dt)
 {
 	inherited::shedule_Update(dt);
 	if (!IsInHand())
@@ -375,7 +375,7 @@ void CRadioItem::shedule_Update(u32 dt)
 		return;
 }
 
-void CRadioItem::UpdateCL()
+void CWalkieTalkie::UpdateCL()
 {
 	inherited::UpdateCL();
 	if (!H_Parent())

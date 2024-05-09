@@ -2,19 +2,19 @@
 #pragma once
 #include "inventory_item_object.h"
 #include "HudSound.h"
-#include "UIRadioItem.h"
+#include "UIWalkieTalkie.h"
 #include "hud_item_object.h"
 
 class CInventoryOwner;
-class UIRadioItem;
+class UIWalkieTalkie;
 
-class CRadioItem : public CHudItemObject
+class CWalkieTalkie : public CHudItemObject
 {
 	using inherited = CHudItemObject;
 public:
 
-	CRadioItem(void);
-	virtual			~CRadioItem(void);
+	CWalkieTalkie(void);
+	virtual			~CWalkieTalkie(void);
 
 	virtual BOOL	net_Spawn(CSE_Abstract* DC)override;
 	virtual void	Load(LPCSTR section)override;
@@ -64,5 +64,5 @@ private:
 	bool				m_bRadioEnabled;
 	CActor* CurrentActor;
 	CInventoryOwner* CurrentInvOwner;
-	UIRadioItem* pUIRadioItem;
+	UIWalkieTalkie* pUIWalkieTalkie;
 };

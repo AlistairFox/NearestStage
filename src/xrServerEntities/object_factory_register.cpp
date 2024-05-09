@@ -188,7 +188,7 @@
 #	include "actor_mp_server.h"
 #	include "actor_mp_client.h"
 #	include "smart_cover_object.h"
-#	include "RadioItem.h"
+#	include "WalkieTalkie.h"
 #endif // NO_XR_GAME
 
 #ifndef NO_XR_GAME
@@ -416,7 +416,7 @@ void CObjectFactory::register_classes	()
 	ADD(CTorch					,CSE_ALifeItemTorch				,CLSID_DEVICE_TORCH				,"device_torch");
 	ADD(CPda					,CSE_ALifeItemPDA				,CLSID_DEVICE_PDA				,"device_pda");
 	ADD(CFlare					,CSE_ALifeItem					,CLSID_DEVICE_FLARE				,"device_flare");
-	ADD(CRadioItem				,CSE_ALifeItemWalkieTalkie		,CLSID_RADIO_ITEM, "device_radio_itm");
+	ADD(CWalkieTalkie				,CSE_ALifeItemWalkieTalkie	,CLSID_WALKIE_ITEM, "device_walkie_itm");
 
 	// objects
 	ADD(CProjector				,CSE_ALifeObjectProjector		,CLSID_OBJECT_PROJECTOR			,"projector");

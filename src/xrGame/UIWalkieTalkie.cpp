@@ -1,5 +1,5 @@
 #include "StdAfx.h"
-#include "UIRadioItem.h"
+#include "UIWalkieTalkie.h"
 #include "ui/UIXmlInit.h"
 #include "ui/UIFrameWindow.h"
 #include "ui/UIHelper.h"
@@ -11,17 +11,17 @@
 
 #define RADIO_I_XML "radio_itm.xml"
 
-UIRadioItem::UIRadioItem(CRadioItem* rd)
+UIWalkieTalkie::UIWalkieTalkie(CWalkieTalkie* rd)
 {
 	Radio = rd;
 }
 
-UIRadioItem::~UIRadioItem()
+UIWalkieTalkie::~UIWalkieTalkie()
 {
 	Radio = nullptr;
 }
 
-void UIRadioItem::Init()
+void UIWalkieTalkie::Init()
 {
 	xmlf.Load(CONFIG_PATH, UI_PATH, RADIO_I_XML);
 	CUIXmlInit::InitWindow(xmlf, "main_wnd", 0, this);
@@ -41,20 +41,20 @@ void UIRadioItem::Init()
 	InitCallBacks();
 }
 
-void UIRadioItem::InitCallBacks()
+void UIWalkieTalkie::InitCallBacks()
 {
 	Register(DisableRadio);
 	Register(EnableRadio);
 	Register(AcceptHz);
 	Register(btn_exit);
 
-	AddCallback(EnableRadio, BUTTON_CLICKED, CUIWndCallback::void_function(this, &UIRadioItem::EnableRadioClick));
-	AddCallback(DisableRadio, BUTTON_CLICKED, CUIWndCallback::void_function(this, &UIRadioItem::DisableRadioClick));
-	AddCallback(AcceptHz, BUTTON_CLICKED, CUIWndCallback::void_function(this, &UIRadioItem::AcceptClick));
-	AddCallback(btn_exit, BUTTON_CLICKED, CUIWndCallback::void_function(this, &UIRadioItem::OnBtnExit));
+	AddCallback(EnableRadio, BUTTON_CLICKED, CUIWndCallback::void_function(this, &UIWalkieTalkie::EnableRadioClick));
+	AddCallback(DisableRadio, BUTTON_CLICKED, CUIWndCallback::void_function(this, &UIWalkieTalkie::DisableRadioClick));
+	AddCallback(AcceptHz, BUTTON_CLICKED, CUIWndCallback::void_function(this, &UIWalkieTalkie::AcceptClick));
+	AddCallback(btn_exit, BUTTON_CLICKED, CUIWndCallback::void_function(this, &UIWalkieTalkie::OnBtnExit));
 }
 
-void UIRadioItem::Show(bool status)
+void UIWalkieTalkie::Show(bool status)
 {
 	inherited::Show(status);
 	if (Actor())
@@ -84,18 +84,18 @@ void UIRadioItem::Show(bool status)
 	}
 }
 
-void UIRadioItem::SendMessage(CUIWindow* pWnd, s16 msg, void* pData)
+void UIWalkieTalkie::SendMessage(CUIWindow* pWnd, s16 msg, void* pData)
 {
 	inherited::SendMessage(pWnd, msg, pData);
 	CUIWndCallback::OnEvent(pWnd, msg, pData);
 }
 
-bool UIRadioItem::OnMouseAction(float x, float y, EUIMessages mouse_action)
+bool UIWalkieTalkie::OnMouseAction(float x, float y, EUIMessages mouse_action)
 {
 	return inherited::OnMouseAction(x, y, mouse_action);;
 }
 
-bool UIRadioItem::OnKeyboardAction(int dik, EUIMessages keyboard_action)
+bool UIWalkieTalkie::OnKeyboardAction(int dik, EUIMessages keyboard_action)
 {
 	if (WINDOW_KEY_PRESSED == keyboard_action)
 	{
@@ -109,12 +109,12 @@ bool UIRadioItem::OnKeyboardAction(int dik, EUIMessages keyboard_action)
 	return inherited::OnKeyboardAction(dik, keyboard_action);
 }
 
-void UIRadioItem::ResetAll()
+void UIWalkieTalkie::ResetAll()
 {
 	inherited::ResetAll();
 }
 
-void UIRadioItem::Update()
+void UIWalkieTalkie::Update()
 {
 	inherited::Update();
 	if (!Actor())
@@ -149,7 +149,7 @@ void UIRadioItem::Update()
 
 }
 
-void xr_stdcall UIRadioItem::DisableRadioClick(CUIWindow* w, void* d)
+void xr_stdcall UIWalkieTalkie::DisableRadioClick(CUIWindow* w, void* d)
 {
 	if (!Actor())
 		return;
@@ -160,7 +160,7 @@ void xr_stdcall UIRadioItem::DisableRadioClick(CUIWindow* w, void* d)
 	Radio->EnableRadio(false);
 }
 
-void xr_stdcall UIRadioItem::EnableRadioClick(CUIWindow* w, void* d)
+void xr_stdcall UIWalkieTalkie::EnableRadioClick(CUIWindow* w, void* d)
 {
 	if (!Actor())
 		return;
@@ -171,7 +171,7 @@ void xr_stdcall UIRadioItem::EnableRadioClick(CUIWindow* w, void* d)
 	Radio->EnableRadio(true);
 }
 
-void xr_stdcall UIRadioItem::AcceptClick(CUIWindow* w, void* d)
+void xr_stdcall UIWalkieTalkie::AcceptClick(CUIWindow* w, void* d)
 {
 	if (!Actor())
 		return;
@@ -194,7 +194,7 @@ void xr_stdcall UIRadioItem::AcceptClick(CUIWindow* w, void* d)
 	current_hz->SetText(str2);
 }
 
-void xr_stdcall UIRadioItem::OnBtnExit(CUIWindow* w, void* d)
+void xr_stdcall UIWalkieTalkie::OnBtnExit(CUIWindow* w, void* d)
 {
 	this->HideDialog();
 }

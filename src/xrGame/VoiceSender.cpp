@@ -5,7 +5,7 @@
 #include "../xrSound/SoundVoiceChat.h"
 #include "Actor.h"
 #include "Inventory.h"
-#include "RadioItem.h"
+#include "WalkieTalkie.h"
 
 void CVoiceSender::Send(VoicePacket** packets, u8 count)
 {
@@ -14,7 +14,7 @@ void CVoiceSender::Send(VoicePacket** packets, u8 count)
 	float radio_max_distance = 0;
 	if (Actor())
 	{
-		CRadioItem* itm = smart_cast<CRadioItem*>(Actor()->inventory().ItemFromSlot(RADIO_SLOT));
+		CWalkieTalkie* itm = smart_cast<CWalkieTalkie*>(Actor()->inventory().ItemFromSlot(RADIO_SLOT));
 		if (itm)
 		{
 			if (itm->IsInHand())

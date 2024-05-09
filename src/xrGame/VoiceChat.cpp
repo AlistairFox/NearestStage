@@ -5,7 +5,7 @@
 #include "game_cl_mp.h"
 #include "Actor.h"
 #include "Inventory.h"
-#include "RadioItem.h"
+#include "WalkieTalkie.h"
 
 CVoiceChat::CVoiceChat()
 {
@@ -152,7 +152,7 @@ void CVoiceChat::ReceiveMessage(NET_Packet* P)
 
 	if (Actor())
 	{
-		CRadioItem* itm = smart_cast<CRadioItem*>(Actor()->inventory().ItemFromSlot(RADIO_SLOT));
+		CWalkieTalkie* itm = smart_cast<CWalkieTalkie*>(Actor()->inventory().ItemFromSlot(RADIO_SLOT));
 		if (itm && itm->IsEnabled())
 		{
 			radio_on = true;
