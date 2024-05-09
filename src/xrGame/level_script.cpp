@@ -681,6 +681,38 @@ int g_get_community_relation( LPCSTR comm_from, LPCSTR comm_to )
 	return RELATION_REGISTRY().GetCommunityRelation( community_from.index(), community_to.index() );
 }
 
+bool HavePlayersNearby(Fvector pos, float near_pos)
+{
+	for (const auto& player : Level().game->players)
+	{
+		if (player.first.value() == 0)
+			continue;
+
+		if (!player.second)
+			continue;
+
+		CObject* obj = Level().Objects.net_Find(player.second->GameID);
+		if (!obj)
+			continue;
+
+		CActor* pA = smart_cast<CActor*>(obj);
+		if (!pA)
+			continue;
+
+		if (!pA->g_Alive())
+			continue;
+
+		if (pos.distance_to(pA->Position()) < near_pos)
+		{
+			return true;
+			break;
+		}
+
+	}
+
+	return false;
+}
+
 void g_set_community_relation( LPCSTR comm_from, LPCSTR comm_to, int value )
 {
 	CHARACTER_COMMUNITY	community_from;
@@ -1229,7 +1261,8 @@ def("game_id", &GameID),
 		def("send_news_item_drop", send_news_item_drop),
 		def("change_team", change_team),
 		def("get_actor_team", get_actor_team),
-		def("get_game_time_mp", get_time_hours_mp)
+		def("get_game_time_mp", get_time_hours_mp),
+		def("have_nearby_player", &HavePlayersNearby)
 	],
 	
 

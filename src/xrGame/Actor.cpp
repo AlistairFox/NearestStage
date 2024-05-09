@@ -2139,7 +2139,6 @@ bool  CActor::NeedToDestroyObject() const
 	if (g_iCorpseRemove == -1) return false;
 	if (g_iCorpseRemove == 0 && m_bAllowDeathRemove) return true;
 
-
 	if (OldDestroyTimer <= Device.dwTimeGlobal)
 	{
 		OldDestroyTimer = Device.dwTimeGlobal + Random.randI(10000, 20000);
@@ -2155,8 +2154,9 @@ bool  CActor::NeedToDestroyObject() const
 
 	if (TimePassedAfterDeath() > m_dwBodyRemoveTime && m_bAllowDeathRemove)
 		return true;
-	else
-		return false;
+
+
+	return false;
 }
 
 ALife::_TIME_ID	 CActor::TimePassedAfterDeath()	const

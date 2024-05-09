@@ -87,7 +87,7 @@ void game_sv_freemp::MusicPlay(CSE_ALifeObjectPhysic* obj, int pass, int obj_num
 			NET_Packet P;
 
 			Msg("- Server: MusicStart: %s", music_name.c_str());
-			Msg("- object pos: %f, %f, %f", pos.x, pos.y, pos.z);
+			Msg("- object pos: %f, %f, %f", VPUSH(pos));
 			P.w_begin(M_MUSIC_UPDATE);
 			P.w_stringZ(music_name);
 			P.w_vec3(pos);

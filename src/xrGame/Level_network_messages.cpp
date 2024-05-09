@@ -499,11 +499,7 @@ void CLevel::ClientReceive()
 		{
 			if (OnClient())
 			{
-				LPSTR			fn_;
-				STRCONCAT(fn_, "args", ".xrdemo");
-				string_path		fn;
-				FS.update_path(fn, "$game_saves$", fn_);
-				g_pGameLevel->Cameras().AddCamEffector(xr_new<CDemoRecord>(fn_));
+				g_pGameLevel->Cameras().AddCamEffector(xr_new<CDemoRecord>());
 			}
 		}break;
 

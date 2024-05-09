@@ -60,21 +60,13 @@ Fbox get_level_screenshot_bound()
 	return res;
 }
 void _InitializeFont(CGameFont*& F, LPCSTR section, u32 flags);
-CDemoRecord::CDemoRecord(const char *name,float life_time) : CEffectorCam(cefDemo,life_time/*,FALSE*/)
+CDemoRecord::CDemoRecord(float life_time) : CEffectorCam(cefDemo,life_time/*,FALSE*/)
 {
 	stored_red_text = g_bDisableRedText;
 	g_bDisableRedText = TRUE;
 	m_iLMScreenshotFragment = -1;
-/*
-	stored_weapon = psHUD_Flags.test(HUD_WEAPON);
-	stored_cross = psHUD_Flags.test(HUD_CROSSHAIR);
-	psHUD_Flags.set(HUD_WEAPON, FALSE);
-	psHUD_Flags.set(HUD_CROSSHAIR, FALSE);
-*/
+
 	m_b_redirect_input_to_level = false;
-	_unlink	(name);
-	file	= FS.w_open	(name);
-	if (file) 
 	{
 		g_position.set_position  = false;
 		IR_Capture		();	// capture input
@@ -111,18 +103,12 @@ CDemoRecord::CDemoRecord(const char *name,float life_time) : CEffectorCam(cefDem
 		m_fAngSpeed1	= pSettings->r_float("demo_record","ang_speed1");
 		m_fAngSpeed2	= pSettings->r_float("demo_record","ang_speed2");
 		m_fAngSpeed3	= pSettings->r_float("demo_record","ang_speed3");
-	} else {
-		fLifeTime = -1;
 	}
 }
 
 CDemoRecord::~CDemoRecord()
 {
-	if (file) 
-	{
-		IR_Release	();	// release input
-		FS.w_close	(file);
-	}
+	IR_Release	();	// release input
 	g_bDisableRedText	= stored_red_text;
 
 	Device.seqRender.Remove		( this		);
@@ -274,7 +260,6 @@ void CDemoRecord::MakeCubeMapFace(Fvector &D, Fvector &N)
 BOOL CDemoRecord::ProcessCam(SCamEffectorInfo& info)
 {
 	info.dont_apply					= false;
-	if (0==file)					return TRUE;
 
 	if (m_bMakeScreenshot)
 	{
@@ -505,7 +490,6 @@ void CDemoRecord::RecordKey			()
 	Fmatrix			g_matView;
  
 	g_matView.invert(m_Camera);
-	file->w			(&g_matView,sizeof(Fmatrix));
 	iCount++;
 }
 
