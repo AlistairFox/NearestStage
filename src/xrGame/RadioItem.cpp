@@ -73,21 +73,21 @@ void CRadioItem::Load(LPCSTR section)
 
 void CRadioItem::OnEvent(NET_Packet& P, u16 type)
 {
+	switch (type)
+	{
+	default:
+		break;
+	}
 }
 
 void CRadioItem::net_Export(NET_Packet& P)
 {
 	inherited::net_Export(P);
-	P.w_float(GetCondition());
-	P.w_float(1.f);
 }
 
 void CRadioItem::net_Import(NET_Packet& P)
 {
 	inherited::net_Import(P);
-
-	P.r_float();
-	P.r_float();
 }
 
 void CRadioItem::OnH_A_Chield()

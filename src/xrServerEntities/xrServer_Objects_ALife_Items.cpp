@@ -942,6 +942,47 @@ void CSE_ALifeItemDetector::FillProps		(LPCSTR pref, PropItemVec& items)
 #endif // #ifndef XRGAME_EXPORTS
 
 ////////////////////////////////////////////////////////////////////////////
+// CSE_ALifeItemWalkieTalkie
+////////////////////////////////////////////////////////////////////////////
+CSE_ALifeItemWalkieTalkie::CSE_ALifeItemWalkieTalkie(LPCSTR caSection) : CSE_ALifeItem(caSection)
+{
+
+}
+
+CSE_ALifeItemWalkieTalkie::~CSE_ALifeItemWalkieTalkie()
+{
+
+}
+
+void CSE_ALifeItemWalkieTalkie::STATE_Read		(NET_Packet	&tNetPacket, u16 size)
+{
+	if (m_wVersion > 20)
+		inherited::STATE_Read	(tNetPacket,size);
+}
+
+void CSE_ALifeItemWalkieTalkie::STATE_Write		(NET_Packet	&tNetPacket)
+{
+	inherited::STATE_Write		(tNetPacket);
+}
+
+void CSE_ALifeItemWalkieTalkie::UPDATE_Read		(NET_Packet	&tNetPacket)
+{
+	inherited::UPDATE_Read		(tNetPacket);
+}
+
+void CSE_ALifeItemWalkieTalkie::UPDATE_Write	(NET_Packet	&tNetPacket)
+{
+	inherited::UPDATE_Write		(tNetPacket);
+}
+
+#ifndef XRGAME_EXPORTS
+void CSE_ALifeItemWalkieTalkie::FillProps		(LPCSTR pref, PropItemVec& items)
+{
+  	inherited::FillProps			(pref,items);
+}
+#endif // #ifndef XRGAME_EXPORTS
+
+////////////////////////////////////////////////////////////////////////////
 // CSE_ALifeItemDetector
 ////////////////////////////////////////////////////////////////////////////
 CSE_ALifeItemArtefact::CSE_ALifeItemArtefact(LPCSTR caSection) : CSE_ALifeItem(caSection)

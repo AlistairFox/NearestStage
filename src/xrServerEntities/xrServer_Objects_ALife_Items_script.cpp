@@ -102,6 +102,17 @@ void CSE_ALifeItemDetector::script_register(lua_State *L)
 	];
 }
 
+void CSE_ALifeItemWalkieTalkie::script_register(lua_State* L)
+{
+	module(L)[
+		luabind_class_item1(
+			CSE_ALifeItemWalkieTalkie,
+			"cse_alife_item_walkietalkie",
+			CSE_ALifeItem
+		)
+	];
+}
+
 void CSE_ALifeItemArtefact::script_register(lua_State *L)
 {
 	module(L)[

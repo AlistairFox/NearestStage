@@ -25,6 +25,7 @@ class CSE_ALifeDynamicObject;
 class CSE_ALifeItemAmmo;
 class CSE_ALifeItemWeapon;
 class CSE_ALifeItemDetector;
+class CSE_ALifeItemWalkieTalkie;
 class CSE_ALifeMonsterAbstract;
 class CSE_ALifeHumanAbstract;
 class CSE_ALifeAnomalousZone;
@@ -159,6 +160,7 @@ public:
 	virtual CSE_ALifeItemAmmo			*cast_item_ammo				() {return 0;}
 	virtual CSE_ALifeItemWeapon			*cast_item_weapon			() {return 0;}
 	virtual CSE_ALifeItemDetector		*cast_item_detector			() {return 0;}
+	virtual CSE_ALifeItemWalkieTalkie	*cast_item_walkietalkie		() {return 0;}
 	virtual CSE_ALifeMonsterAbstract	*cast_monster_abstract		() {return 0;};
 	virtual CSE_ALifeHumanAbstract		*cast_human_abstract		() {return 0;};
 	virtual CSE_ALifeAnomalousZone		*cast_anomalous_zone		() {return 0;};

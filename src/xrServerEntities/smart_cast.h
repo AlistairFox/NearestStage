@@ -296,6 +296,10 @@
 #	undef cast_type_list
 #	define cast_type_list save_cast_list	(CSE_ALifeItemDetector, CSE_Abstract)
 
+	DECLARE_SPECIALIZATION(CSE_ALifeItemWalkieTalkie, CSE_Abstract, cast_item_walkietalkie);
+#	undef cast_type_list
+#	define cast_type_list save_cast_list	(CSE_ALifeItemWalkieTalkie, CSE_Abstract)
+
 	DECLARE_SPECIALIZATION	(CSE_ALifeMonsterAbstract,	CSE_Abstract,	cast_monster_abstract);
 #	undef cast_type_list
 #	define cast_type_list save_cast_list	(CSE_ALifeMonsterAbstract,	CSE_Abstract)

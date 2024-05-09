@@ -251,9 +251,17 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemDetector,CSE_ALifeItem)
 	virtual							~CSE_ALifeItemDetector();
 	virtual u32						ef_detector_type() const;
 	virtual CSE_ALifeItemDetector	*cast_item_detector		() {return this;}
-SERVER_ENTITY_DECLARE_END
-add_to_type_list(CSE_ALifeItemDetector)
+	SERVER_ENTITY_DECLARE_END
+		add_to_type_list(CSE_ALifeItemDetector)
 #define script_type_list save_type_list(CSE_ALifeItemDetector)
+
+SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWalkieTalkie, CSE_ALifeItem)
+		CSE_ALifeItemWalkieTalkie(LPCSTR caSection);
+	virtual ~CSE_ALifeItemWalkieTalkie();
+	virtual CSE_ALifeItemWalkieTalkie* cast_item_walkietalkie() { return this; }
+	SERVER_ENTITY_DECLARE_END
+		add_to_type_list(CSE_ALifeItemWalkieTalkie)
+#define script_type_list save_type_list(CSE_ALifeItemWalkieTalkie)
 
 SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemArtefact,CSE_ALifeItem)
 	float							m_fAnomalyValue;
