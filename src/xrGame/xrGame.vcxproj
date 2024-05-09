@@ -850,6 +850,7 @@
     <ClInclude Include="game_cl_roleplay.h" />
     <ClInclude Include="game_sv_roleplay.h" />
     <ClInclude Include="net_physics_state.h" />
+    <ClInclude Include="RadioItem.h" />
     <ClInclude Include="RepairKit.h" />
     <ClInclude Include="script_event.h" />
     <ClInclude Include="UIGameFMP.h" />
@@ -1616,6 +1617,7 @@
     <ClInclude Include="UIPanelsClassFactory.h" />
     <ClInclude Include="UIPdaChat.h" />
     <ClInclude Include="UIPlayerItem.h" />
+    <ClInclude Include="UIRadioItem.h" />
     <ClInclude Include="UIStaticItem.h" />
     <ClInclude Include="UITeamHeader.h" />
     <ClInclude Include="UITeamPanels.h" />
@@ -2782,6 +2784,7 @@
     <ClCompile Include="game_sv_roleplay.cpp" />
     <ClCompile Include="game_sv_roleplay_drop_items.cpp" />
     <ClCompile Include="net_physics_state.cpp" />
+    <ClCompile Include="RadioItem.cpp" />
     <ClCompile Include="RepairKit.cpp" />
     <ClCompile Include="script_event.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">StdAfx.h</PrecompiledHeaderFile>
@@ -4251,6 +4254,7 @@
     <ClCompile Include="UIPanelsClassFactory.cpp" />
     <ClCompile Include="UIPdaChat.cpp" />
     <ClCompile Include="UIPlayerItem.cpp" />
+    <ClCompile Include="UIRadioItem.cpp" />
     <ClCompile Include="UIStaticItem.cpp" />
     <ClCompile Include="UITeamHeader.cpp" />
     <ClCompile Include="UITeamPanels.cpp" />

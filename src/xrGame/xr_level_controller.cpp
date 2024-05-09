@@ -36,6 +36,7 @@ _action  actions[] = {
 	{ "torch",				kTORCH					,_both},
 	{ "night_vision",		kNIGHT_VISION			,_both},
 	{ "show_detector",		kDETECTOR				,_both},
+	{ "show_radio",			kRadioItem				,_both},
 
 	{ "animation_mode",		kAnimationMode			,_both},
 	{ "safe_mode",			kSafeMode				,_both},

@@ -106,6 +106,7 @@ protected:
 	CUIDragDropListEx*			m_pTrashList;
 	CUIDragDropListEx*			m_pInventoryBackpackList;
 	CUIDragDropListEx* m_pInventoryDosimeterList;
+	CUIDragDropListEx* m_pInventoryRadioList;
 
 	enum						{e_af_count = 10};
 	xr_vector<CUIStatic*>		m_belt_list_over;
@@ -122,7 +123,8 @@ protected:
 	CUIStatic*					m_QuickSlotsHighlight[4];
 	xr_vector<CUIStatic*>		m_ArtefactSlotsHighlight;
 	CUIStatic*					m_BackpackSlotHighlight;
-	CUIStatic* m_DosimeterSlotHighlight;
+	CUIStatic*					m_DosimeterSlotHighlight;
+	CUIStatic*					m_RadioSlotHightLight;
 
 	CUIInventoryUpgradeWnd*		m_pUpgradeWnd;
 	

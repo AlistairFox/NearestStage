@@ -2542,6 +2542,9 @@
     <Filter Include="Core\Server\Games\server\freemp\OnDeathSaveItems">
       <UniqueIdentifier>{0871eead-a5d0-47eb-a291-f09a5ba5db46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Walkie-Talke">
+      <UniqueIdentifier>{a751275d-04dd-43b3-b2d7-37c5af0ba0b3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mt_config.h">
@@ -7461,6 +7464,12 @@
     <ClInclude Include="UIPdaChat.h">
       <Filter>Chat</Filter>
     </ClInclude>
+    <ClInclude Include="RadioItem.h">
+      <Filter>Walkie-Talke</Filter>
+    </ClInclude>
+    <ClInclude Include="UIRadioItem.h">
+      <Filter>Walkie-Talke</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -11176,6 +11185,12 @@
     </ClCompile>
     <ClCompile Include="game_sv_freemp_save_thread.cpp">
       <Filter>Core\Server\Games\server\freemp\Save Bin</Filter>
+    </ClCompile>
+    <ClCompile Include="RadioItem.cpp">
+      <Filter>Walkie-Talke</Filter>
+    </ClCompile>
+    <ClCompile Include="UIRadioItem.cpp">
+      <Filter>Walkie-Talke</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

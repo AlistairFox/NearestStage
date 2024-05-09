@@ -606,6 +606,17 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 				Msg("!!PIDORAS DETECTED %s. User was trying to use admin wallhack!", actor->ps->getName());
 		}break;
 
+	case GE_PLAYER_SET_RADIO_HZ:
+		{
+			u16 hz = P.r_u16();
+			xrClientData* data = ID_to_client(sender);
+			if (data && data->ps)
+			{
+				Msg("## Player: [%s] set radio frequency: [%d]", data->ps->getName(), hz);
+			}
+
+		}break;
+
 	default:
 		R_ASSERT2	(0,"Game Event not implemented!!!");
 		break;

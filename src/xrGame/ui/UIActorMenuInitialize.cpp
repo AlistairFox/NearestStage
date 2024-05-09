@@ -123,6 +123,8 @@ void CUIActorMenu::Construct()
 	m_BackpackSlotHighlight		->Show(false);
 	m_DosimeterSlotHighlight = UIHelper::CreateStatic(uiXml, "dosimeter_slot_highlight", this);
 	m_DosimeterSlotHighlight->Show(false);
+	m_RadioSlotHightLight = UIHelper::CreateStatic(uiXml, "radio_slot_hightligt", this);
+	m_RadioSlotHightLight->Show(false);
 
 	m_pInventoryBagList = UIHelper::CreateDragDropListEx(uiXml, "dragdrop_bag", this);
 	m_pInventoryBeltList = UIHelper::CreateDragDropListEx(uiXml, "dragdrop_belt", this);
@@ -143,6 +145,7 @@ void CUIActorMenu::Construct()
 	m_pQuickSlot->Initialize();
 	m_pInventoryBackpackList = UIHelper::CreateDragDropListEx(uiXml, "dragdrop_backpack", this);
 	m_pInventoryDosimeterList = UIHelper::CreateDragDropListEx(uiXml, "dragdrop_dosimeter", this);
+	m_pInventoryRadioList = UIHelper::CreateDragDropListEx(uiXml, "dragdrop_radio", this);
 
 	Fvector2 pos;
 	pos								= m_QuickSlotsHighlight[0]->GetWndPos();
@@ -315,6 +318,7 @@ void CUIActorMenu::Construct()
 	BindDragDropListEvents				(m_pQuickSlot);
 	BindDragDropListEvents				(m_pInventoryBackpackList);
 	BindDragDropListEvents				(m_pInventoryDosimeterList);
+	BindDragDropListEvents(m_pInventoryRadioList);
 
 	m_allowed_drops[iTrashSlot].push_back(iActorBag);
 	m_allowed_drops[iTrashSlot].push_back(iActorSlot);

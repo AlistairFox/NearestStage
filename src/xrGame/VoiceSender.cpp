@@ -3,13 +3,37 @@
 #include "game_cl_mp.h"
 #include"game_sv_mp.h"
 #include "../xrSound/SoundVoiceChat.h"
+#include "Actor.h"
+#include "Inventory.h"
+#include "RadioItem.h"
 
 void CVoiceSender::Send(VoicePacket** packets, u8 count)
 {
+	bool radio_on = false;
+	u16 radio_hz = 0;
+	float radio_max_distance = 0;
+	if (Actor())
+	{
+		CRadioItem* itm = smart_cast<CRadioItem*>(Actor()->inventory().ItemFromSlot(RADIO_SLOT));
+		if (itm)
+		{
+			if (itm->IsWorking())
+			{
+				radio_on = itm->SayNow;
+				radio_hz = itm->CurrentHZ;
+				radio_max_distance = itm->MaxDistance;
+			}
+		}
+	}
+
+
 	NET_Packet P;
 	P.w_begin(M_VOICE_MESSAGE);
 	P.w_u8(m_distance);
 	P.w_u16(Level().game->local_player->GameID);
+	P.w_u8(radio_on);
+	P.w_u16(radio_hz);
+	P.w_u16(radio_max_distance);
 	P.w_u8(count);
 
 	for (int i = 0; i < count; ++i)

@@ -187,6 +187,7 @@
 #define CLSID_IITEM_DOCUMENT		MK_CLSID('I','I','_','D','O','C',' ',' ')
 
 #define CLSID_IITEM_ATTACH			MK_CLSID('I','I','_','A','T','T','C','H')
+#define CLSID_RADIO_ITEM			MK_CLSID('D','V','_','R','A','D','I','O')
 
 
 // Grenades

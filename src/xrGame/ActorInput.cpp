@@ -41,6 +41,7 @@
 #include "CameraEffector.h"
 #include "ActorEffector.h"
 #include "PDA.h"
+#include "RadioItem.h"
 
 extern u32 hud_adj_mode;
 extern float m_fFactor;
@@ -69,6 +70,13 @@ void CActor::IR_OnKeyboardPress(int cmd)
 	{
 	case kWPN_FIRE:
 		{
+			CRadioItem* radio = smart_cast<CRadioItem*>(inventory().ItemFromSlot(RADIO_SLOT));
+			if (radio && radio->IsWorking())
+			{
+				radio->ActivateVoice(true);
+				break;
+			}
+
 			if ((mstate_wishful & mcLookout) && CheckGameFlag(F_DISABLE_WEAPON_FIRE_WHEN_LOOKOUT)) return;
 			u16 slot = inventory().GetActiveSlot();
 			if (inventory().ActiveItem() && (slot == INV_SLOT_3 || slot == INV_SLOT_2))
@@ -82,6 +90,15 @@ void CActor::IR_OnKeyboardPress(int cmd)
 				u_EventSend(P);
 			}
 		}break;
+
+	case kWPN_ZOOM:
+	{
+		CRadioItem* radio = smart_cast<CRadioItem*>(inventory().ItemFromSlot(RADIO_SLOT));
+		if (radio && radio->IsWorking())
+		{
+			radio->ShowUI(true);
+		}
+	}break;
 
 	case kAnimExit:
 	{
@@ -222,6 +239,10 @@ void CActor::IR_OnKeyboardPress(int cmd)
 	break;
 	case kDETECTOR:
 		{
+			CRadioItem* pRadio = smart_cast<CRadioItem*>(inventory().ItemFromSlot(RADIO_SLOT));
+			if (pRadio && !pRadio->IsHidden())
+				return;
+
 			PIItem det_active					= inventory().ItemFromSlot(DETECTOR_SLOT);
 			if(det_active)
 			{
@@ -230,6 +251,23 @@ void CActor::IR_OnKeyboardPress(int cmd)
 				return;
 			}
 		}break;
+
+	case kRadioItem:
+	{
+		CCustomDetector* pDet = smart_cast<CCustomDetector*>(inventory().ItemFromSlot(DETECTOR_SLOT));
+		if (pDet && !pDet->IsHidden())
+			return;
+
+		PIItem itm = inventory().ItemFromSlot(RADIO_SLOT);
+		if (itm)
+		{
+			CRadioItem* Radio = smart_cast<CRadioItem*>(itm);
+			if (Radio)
+			{
+				Radio->IsWorking() ? Radio->TurnOff() : Radio->TurnOn();
+			}
+		}
+	}
 	case kACTIVE_JOBS:
 	{
 		auto pda = smart_cast<CPda*>(inventory().ItemFromSlot(PDA_SLOT));
@@ -342,6 +380,14 @@ void CActor::IR_OnKeyboardRelease(int cmd)
 		{
 		case kJUMP:		mstate_wishful &=~mcJump;		break;
 		case kDROP:		if(GAME_PHASE_INPROGRESS == Game().Phase()) g_PerformDrop();				break;
+		case kWPN_FIRE:
+		{
+			CRadioItem* radio = smart_cast<CRadioItem*>(inventory().ItemFromSlot(RADIO_SLOT));
+			if (radio && radio->IsWorking() && radio->SayNow)
+			{
+				radio->ActivateVoice(false);
+			}
+		}break;
 		}
 	}
 }
@@ -866,6 +912,10 @@ void CActor::NoClipFly(int cmd)
 	}break;
 	case kDETECTOR:
 		{
+			CRadioItem* pRadio = smart_cast<CRadioItem*>(inventory().ItemFromSlot(RADIO_SLOT));
+			if (pRadio && !pRadio->IsHidden())
+				return;
+
 			PIItem det_active = inventory().ItemFromSlot(DETECTOR_SLOT);
 			if(det_active)
 			{

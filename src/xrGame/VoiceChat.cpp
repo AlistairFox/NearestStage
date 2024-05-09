@@ -5,6 +5,7 @@
 #include "game_cl_mp.h"
 #include "Actor.h"
 #include "Inventory.h"
+#include "RadioItem.h"
 
 CVoiceChat::CVoiceChat()
 {
@@ -131,33 +132,101 @@ void CVoiceChat::ReceiveMessage(NET_Packet* P)
 	u8 voiceDistance = P->r_u8();
 
 	u16 clientId = P->r_u16();
+	BOOL rd = P->r_u8();
+	float hz = P->r_u16();
+	float rd_max_distance = P->r_u16();
 	CObject* obj = Level().Objects.net_Find(clientId);
 	if (!obj)
 	{
 		return;
 	}
-
-	const bool isValidDistance = (Actor()->Position().distance_to(obj->Position()) <= voiceDistance);
-
-	if (isValidDistance == false)
-		return;
-
 	IStreamPlayer* player = GetStreamPlayer(clientId);
-	player->SetPosition(obj->Position());
-	player->SetDistance(voiceDistance);
+	float Distance = Actor()->Position().distance_to(obj->Position());
 
-	u8 packetsCount = P->r_u8();
+	const bool isValidDistance = (Distance <= voiceDistance);
 
-	for (u32 i = 0; i < packetsCount; ++i)
+	bool radio_on = false;
+	u16 radio_hz = 0;
+	u16 radio_max_distance = 0;
+	bool CorrectDistance = false;
+
+	if (Actor())
 	{
-		u32 length = P->r_u32();
-		P->r(m_buffer, length);
-		player->PushToPlay(m_buffer, length);
+		CRadioItem* itm = smart_cast<CRadioItem*>(Actor()->inventory().ItemFromSlot(RADIO_SLOT));
+		if (itm && itm->IsWorking())
+		{
+			radio_on = true;
+			radio_hz = itm->CurrentHZ;
+			radio_max_distance = itm->MaxDistance;
+
+		}
 	}
 
-	if (isValidDistance)
+
+	if (rd && radio_on)
 	{
-		m_voiceTimeMap[clientId] = SVoiceIconInfo(GetTickCount());
+		if ((rd_max_distance <= Distance) && (radio_max_distance <= Distance))
+			CorrectDistance = true;
+
+		if (hz == radio_hz && CorrectDistance)
+		{
+			player->SetPosition(Device.vCameraPosition);
+			player->SetDistance(10.f);
+
+			u8 packetsCount = P->r_u8();
+
+			for (u32 i = 0; i < packetsCount; ++i)
+			{
+				u32 length = P->r_u32();
+				P->r(m_buffer, length);
+				player->PushToPlay(m_buffer, length);
+			}
+		}
+		else
+		{
+
+			if (isValidDistance == false)
+				return;
+
+			player->SetPosition(obj->Position());
+			player->SetDistance(voiceDistance);
+
+			u8 packetsCount = P->r_u8();
+
+			for (u32 i = 0; i < packetsCount; ++i)
+			{
+				u32 length = P->r_u32();
+				P->r(m_buffer, length);
+				player->PushToPlay(m_buffer, length);
+			}
+
+			if (isValidDistance)
+			{
+				m_voiceTimeMap[clientId] = SVoiceIconInfo(GetTickCount());
+			}
+		}
+	}
+	else
+	{
+		if (isValidDistance == false)
+			return;
+
+		player->SetPosition(obj->Position());
+		player->SetDistance(voiceDistance);
+
+		u8 packetsCount = P->r_u8();
+
+		for (u32 i = 0; i < packetsCount; ++i)
+		{
+			u32 length = P->r_u32();
+			P->r(m_buffer, length);
+			player->PushToPlay(m_buffer, length);
+		}
+
+		if (isValidDistance)
+		{
+			m_voiceTimeMap[clientId] = SVoiceIconInfo(GetTickCount());
+		}
 	}
 }
 

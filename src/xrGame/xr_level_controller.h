@@ -28,6 +28,7 @@ enum	EGameActions
 	kTORCH,
 	kNIGHT_VISION,
 	kDETECTOR,
+	kRadioItem,
 	kAnimationMode,
 	kSafeMode,
 	kAnimExit,

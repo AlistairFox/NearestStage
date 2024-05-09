@@ -11,6 +11,7 @@ private:
 
 
 public:
+	CVoiceChat* m_pVoiceChat = nullptr;
 	CUIGameFMP* m_game_ui;
 			game_cl_freemp();
 	virtual	~game_cl_freemp();
@@ -47,9 +48,5 @@ public:
 private:
 	void OnVoiceMessage(NET_Packet* P);
 	bool adm_wallhack = false;
-
-private:
-	CVoiceChat* m_pVoiceChat = nullptr;
-
 };
 

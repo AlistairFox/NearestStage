@@ -42,6 +42,7 @@
 #include "UIProgressBar.h"
 
 #include "../actor_defs.h"
+#include "../RadioItem.h"
 
 
 void move_item_from_to(u16 from_id, u16 to_id, u16 what_id);
@@ -63,7 +64,7 @@ void CUIActorMenu::InitInventoryMode()
 	m_RightDelimiter->Show				(false);
 	m_pInventoryBackpackList->Show		(true);
 	m_pInventoryDosimeterList->Show(true);
-
+	m_pInventoryRadioList->Show(true);
 
 	InitInventoryContents				(m_pInventoryBagList);
 
@@ -264,6 +265,7 @@ void CUIActorMenu::OnInventoryAction(PIItem pItem, u16 action_type)
 		m_pTradeActorList,
 		m_pInventoryBackpackList,
 		m_pInventoryDosimeterList,
+		m_pInventoryRadioList,
 		NULL
 	};
 
@@ -472,6 +474,7 @@ void CUIActorMenu::InitInventoryContents(CUIDragDropListEx* pBagList)
 	InitCellForSlot				(TORCH_SLOT);
 	InitCellForSlot(BACKPACK_SLOT);
 	InitCellForSlot(DOSIMETER_SLOT);
+	InitCellForSlot(RADIO_SLOT);
 
 	curr_list					= m_pInventoryBeltList;
 	TIItemContainer::iterator itb = m_pActorInvOwner->inventory().m_belt.begin();
@@ -796,6 +799,9 @@ CUIDragDropListEx* CUIActorMenu::GetSlotList(u16 slot_idx)
 			break;
 		case DOSIMETER_SLOT:
 			return m_pInventoryDosimeterList;
+			break;
+		case RADIO_SLOT:
+			return m_pInventoryRadioList;
 			break;
 	};
 	return NULL;

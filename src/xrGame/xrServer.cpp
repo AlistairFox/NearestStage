@@ -1131,6 +1131,7 @@ void xrServer::OnVoiceMessage(NET_Packet& P, ClientID sender)
 		NET_Packet* m_packet;
 		xrClientData* m_from;
 		float m_voiceDistanceSqr;
+		bool rd;
 
 		void operator()(IClient* client)
 		{
@@ -1148,22 +1149,32 @@ void xrServer::OnVoiceMessage(NET_Packet& P, ClientID sender)
 			if (!ps || ps->testFlag(GAME_PLAYER_FLAG_VERY_VERY_DEAD))
 				return;
 
-			float distanceSqr = CL->owner->Position().distance_to_sqr(m_from->owner->Position());
-
-			if (distanceSqr <= m_voiceDistanceSqr)
+			if (rd)
 			{
 				m_server->SendTo(CL->ID, *m_packet, net_flags(FALSE, TRUE, TRUE, TRUE));
+			}
+			else
+			{
+				float distanceSqr = CL->owner->Position().distance_to_sqr(m_from->owner->Position());
+
+				if (distanceSqr <= m_voiceDistanceSqr)
+				{
+					m_server->SendTo(CL->ID, *m_packet, net_flags(FALSE, TRUE, TRUE, TRUE));
+				}
 			}
 		}
 	};
 
 	u8 distance = P.r_u8(); // distance byte
+	P.r_u16();
+	bool radio_on = P.r_u8();
 	float voiceDistanceSqr = (float)distance * (float)distance;
 
 	send_voice_message tmp_functor;
 	tmp_functor.m_server = this;
 	tmp_functor.m_packet = &P;
 	tmp_functor.m_from = pClient;
+	tmp_functor.rd = radio_on;
 	tmp_functor.m_voiceDistanceSqr = voiceDistanceSqr;
 
 	ForEachClientDo(tmp_functor);

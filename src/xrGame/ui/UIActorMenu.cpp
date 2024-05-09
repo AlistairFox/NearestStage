@@ -40,6 +40,8 @@
 #include "Backpack.h"
 #include "AnomalyDetector.h"
 #include "player_hud.h"
+#include "RadioItem.h"
+#include "PDA.h"
 
 void CUIActorMenu::SetActor(CInventoryOwner* io)
 {
@@ -348,7 +350,7 @@ EDDListType CUIActorMenu::GetListType(CUIDragDropListEx* l)
 	if(l==m_pTrashList)					return iTrashSlot;
 	if (l == m_pInventoryBackpackList) return iActorSlot;
 	if (l == m_pInventoryDosimeterList) return iActorSlot;
-
+	if (l == m_pInventoryRadioList)		return iActorSlot;
 
 	R_ASSERT(0);
 	
@@ -519,6 +521,7 @@ void CUIActorMenu::clear_highlight_lists()
 	m_TorchSlotHighlight->Show(false);
 	m_BackpackSlotHighlight->Show(false);
 	m_DosimeterSlotHighlight->Show(false);
+	m_RadioSlotHightLight->Show(false);
 
 
 	for(u8 i=0; i<4; i++)
@@ -565,6 +568,8 @@ void CUIActorMenu::highlight_item_slot(CUICellItem* cell_item)
 	CArtefact* artefact = smart_cast<CArtefact*>(item);
 	CBackpack* backpack = smart_cast<CBackpack*>(item);
 	CDetectorAnomaly* anomaly_detector = smart_cast<CDetectorAnomaly*>(item);
+	CPda* pda = smart_cast<CPda*>(item);
+	CRadioItem* Radio = smart_cast<CRadioItem*>(item);
 
 	if(weapon)
 	{
@@ -621,6 +626,20 @@ void CUIActorMenu::highlight_item_slot(CUICellItem* cell_item)
 			m_DosimeterSlotHighlight->Show(true);
 		}
 		return;
+	}
+	if (pda)
+	{
+		if (m_PDASlotHighlight)
+		{
+			m_PDASlotHighlight->Show(true);
+		}
+	}
+	if (Radio)
+	{
+		if (m_RadioSlotHightLight)
+		{
+			m_RadioSlotHightLight->Show(true);
+		}
 	}
 }
 
@@ -887,6 +906,7 @@ void CUIActorMenu::ClearAllLists()
 	m_pDeadBodyBagList->ClearAll				(true);
 	m_pInventoryBackpackList->ClearAll(true);
 	m_pInventoryDosimeterList->ClearAll(true);
+	m_pInventoryRadioList->ClearAll(true);
 }
 
 void CUIActorMenu::CallMessageBoxYesNo( LPCSTR text )
