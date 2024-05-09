@@ -27,7 +27,8 @@ void UIRadioItem::Init()
 	CUIXmlInit::InitWindow(xmlf, "main_wnd", 0, this);
 	Back_Static = UIHelper::CreateStatic(xmlf, "background_static", this);
 	m_background = UIHelper::CreateFrameWindow(xmlf, "background", Back_Static);
-	OffRadioBtn = UIHelper::Create3tButton(xmlf, "off_radio_btn", m_background);
+	DisableRadio = UIHelper::Create3tButton(xmlf, "off_radio_btn", m_background);
+	EnableRadio = UIHelper::Create3tButton(xmlf, "en_radio_btn", m_background);
 	AcceptHz = UIHelper::Create3tButton(xmlf, "accept_hz", m_background);
 	current_hz = UIHelper::CreateTextWnd(xmlf, "current_hz", m_background);
 	btn_exit = UIHelper::Create3tButton(xmlf, "btn_exit", m_background);
@@ -42,11 +43,13 @@ void UIRadioItem::Init()
 
 void UIRadioItem::InitCallBacks()
 {
-	Register(OffRadioBtn);
+	Register(DisableRadio);
+	Register(EnableRadio);
 	Register(AcceptHz);
 	Register(btn_exit);
 
-	AddCallback(OffRadioBtn, BUTTON_CLICKED, CUIWndCallback::void_function(this, &UIRadioItem::OffRadioClick));
+	AddCallback(EnableRadio, BUTTON_CLICKED, CUIWndCallback::void_function(this, &UIRadioItem::EnableRadioClick));
+	AddCallback(DisableRadio, BUTTON_CLICKED, CUIWndCallback::void_function(this, &UIRadioItem::DisableRadioClick));
 	AddCallback(AcceptHz, BUTTON_CLICKED, CUIWndCallback::void_function(this, &UIRadioItem::AcceptClick));
 	AddCallback(btn_exit, BUTTON_CLICKED, CUIWndCallback::void_function(this, &UIRadioItem::OnBtnExit));
 }
@@ -111,7 +114,42 @@ void UIRadioItem::ResetAll()
 	inherited::ResetAll();
 }
 
-void xr_stdcall UIRadioItem::OffRadioClick(CUIWindow* w, void* d)
+void UIRadioItem::Update()
+{
+	inherited::Update();
+	if (!Actor())
+		return;
+	if (!Radio)
+		return;
+
+
+	if (Radio->IsEnabled())
+	{
+		AcceptHz->Show(true);
+		current_hz->Show(true);
+		min_hz->Show(true);
+		max_hz->Show(true);
+		max_distance->Show(true);
+		hz_editbox->Show(true);
+		DisableRadio->Show(true);
+		EnableRadio->Show(false);
+	}
+	else
+	{
+		AcceptHz->Show(false);
+		current_hz->Show(false);
+		min_hz->Show(false);
+		max_hz->Show(false);
+		max_distance->Show(false);
+		hz_editbox->Show(false);
+
+		DisableRadio->Show(false);
+		EnableRadio->Show(true);
+	}
+
+}
+
+void xr_stdcall UIRadioItem::DisableRadioClick(CUIWindow* w, void* d)
 {
 	if (!Actor())
 		return;
@@ -119,7 +157,18 @@ void xr_stdcall UIRadioItem::OffRadioClick(CUIWindow* w, void* d)
 	if (!Radio)
 		return;
 
-	Radio->TurnOff();
+	Radio->EnableRadio(false);
+}
+
+void xr_stdcall UIRadioItem::EnableRadioClick(CUIWindow* w, void* d)
+{
+	if (!Actor())
+		return;
+
+	if (!Radio)
+		return;
+
+	Radio->EnableRadio(true);
 }
 
 void xr_stdcall UIRadioItem::AcceptClick(CUIWindow* w, void* d)

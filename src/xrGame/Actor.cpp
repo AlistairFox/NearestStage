@@ -309,6 +309,9 @@ bool CActor::MpSafeMODE() const
 
 bool CActor::MpLootMODE() const
 {
+	if (!Actor())
+		return false;
+
 	if (!g_Alive())
 		return false;
 

@@ -31,14 +31,16 @@ public:
 	virtual void	OnAnimationEnd(u32 state) override;
 	virtual void	SwitchState(u32 S) override;
 	virtual void	UpdateXForm() override;
-	void	ShowUI(bool show);
-	void	TurnOn();
-	void	TurnOff();
-	void	ActivateVoice(bool status);
-	bool	IsWorking() { return m_bWorking && (GetState() == eIdle || GetState() == eHiding); }
+			void	ShowUI(bool show);
+			void	TakeOn();
+			void	TakeOff();
+			void	ActivateVoice(bool status);
+			bool	IsInHand() { return m_bRadioInHand && (GetState() == eIdle || GetState() == eHiding); }
+			bool	IsEnabled() { return m_bRadioEnabled; }
+			void	EnableRadio(bool status);
 	virtual void	OnMoveToSlot(const SInvItemPlace& prev) override;
 	virtual void	OnMoveToRuck(const SInvItemPlace& prev) override;
-	void	SetRadioHZ(u16 hz);
+			void	SetRadioHZ(u16 hz);
 	virtual void	UpdateHudAdditional(Fmatrix& trans) override;
 	virtual void	shedule_Update(u32 dt) override;
 	virtual void	UpdateCL() override;
@@ -47,7 +49,7 @@ public:
 	u16					CurrentHZ;
 	u16					MinHZ;
 	u16					MaxHZ;
-	float					MaxDistance;
+	float				MaxDistance;
 	bool				SayNow = false;
 
 private:
@@ -58,7 +60,8 @@ private:
 	ref_sound			IdleSound;
 	u32					SoundTimer = 0;
 	bool				m_bNeedActivation;
-	bool				m_bWorking;
+	bool				m_bRadioInHand;
+	bool				m_bRadioEnabled;
 	CActor* CurrentActor;
 	CInventoryOwner* CurrentInvOwner;
 	UIRadioItem* pUIRadioItem;

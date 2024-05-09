@@ -17,7 +17,7 @@ void CVoiceSender::Send(VoicePacket** packets, u8 count)
 		CRadioItem* itm = smart_cast<CRadioItem*>(Actor()->inventory().ItemFromSlot(RADIO_SLOT));
 		if (itm)
 		{
-			if (itm->IsWorking())
+			if (itm->IsInHand())
 			{
 				radio_on = itm->SayNow;
 				radio_hz = itm->CurrentHZ;

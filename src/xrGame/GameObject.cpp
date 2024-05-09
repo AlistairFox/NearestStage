@@ -340,6 +340,7 @@ BOOL CGameObject::net_Spawn		(CSE_Abstract*	DC)
 		Msg("* Spawning demo spectator ...");
 		demo_spectator = true;
 	} else {
+		Msg("! !ERROR: E->ID: %u, E->name: %s", E->ID, E->name());
 		R_ASSERT(Level().Objects.net_Find(E->ID) == NULL);
 	}
 

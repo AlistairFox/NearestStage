@@ -12,7 +12,8 @@
 
 CRadioItem::CRadioItem(void)
 {
-	m_bWorking = false;
+	m_bRadioEnabled = false;
+	m_bRadioInHand = false;
 	CurrentHZ = 0;
 	MinHZ = 0;
 	MaxHZ = 100;
@@ -48,6 +49,10 @@ void CRadioItem::Load(LPCSTR section)
 	m_sounds.LoadSound(section, "snd_activate", "sndAct");
 	m_sounds.LoadSound(section, "snd_deactivate", "sndDeAct");
 	m_sounds.LoadSound(section, "snd_freq_set", "sndFreq");
+	m_sounds.LoadSound(section, "snd_enable", "sndEn");
+	m_sounds.LoadSound(section, "snd_disable", "sndDis");
+
+
 	toggle_offsets[0] = READ_IF_EXISTS(pSettings, r_fvector3, section, "toggle_offset_pos", Fvector().set(0.f, 0.f, 0.f));
 	toggle_offsets[1] = READ_IF_EXISTS(pSettings, r_fvector3, section, "toggle_offset_rot", Fvector().set(0.f, 0.f, 0.f));
 	if (pSettings->line_exist(section, "idle_sound"))
@@ -258,7 +263,7 @@ void CRadioItem::SwitchState(u32 S)
 	}
 }
 
-void CRadioItem::TurnOn()
+void CRadioItem::TakeOn()
 {
 	m_bNeedActivation = false;
 
@@ -288,20 +293,20 @@ void CRadioItem::TurnOn()
 		else
 		{
 			SwitchState(eShowing);
-			m_bWorking = true;
+			m_bRadioInHand = true;
 		}
 	}
 
 	SoundTimer = 0;
 }
 
-void CRadioItem::TurnOff()
+void CRadioItem::TakeOff()
 {
-	if (m_bWorking)
+	if (m_bRadioInHand)
 		SwitchState(eHiding);
 
 	SayNow = false;
-	m_bWorking = false;
+	m_bRadioInHand = false;
 	ShowUI(false);
 
 }
@@ -313,6 +318,9 @@ void CRadioItem::ActivateVoice(bool status)
 	{
 		if (status)
 		{
+			if (!m_bRadioEnabled)
+				return;
+
 			SayNow = true;
 			m_sounds.PlaySound("sndAct", Fvector().set(0, 0, 0), this, true, false);
 			fmp->m_pVoiceChat->Start();
@@ -327,6 +335,20 @@ void CRadioItem::ActivateVoice(bool status)
 	}
 }
 
+void CRadioItem::EnableRadio(bool status)
+{
+	if (status)
+	{
+		m_sounds.PlaySound("sndEn", Fvector().set(0, 0, 0), this, true, false);
+		m_bRadioEnabled = true;
+	}
+	else
+	{
+		m_sounds.PlaySound("sndDis", Fvector().set(0, 0, 0), this, true, false);
+		m_bRadioEnabled = false;
+	}
+}
+
 void CRadioItem::OnMoveToSlot(const SInvItemPlace& prev)
 {
 	inherited::OnMoveToSlot(prev);
@@ -336,7 +358,8 @@ void CRadioItem::OnMoveToRuck(const SInvItemPlace& prev)
 {
 	inherited::OnMoveToRuck(prev);
 
-	TurnOff();
+	m_bRadioEnabled = false;
+	TakeOff();
 	if (OnClient())
 	{
 		ShowUI(false);
@@ -346,7 +369,7 @@ void CRadioItem::OnMoveToRuck(const SInvItemPlace& prev)
 void CRadioItem::shedule_Update(u32 dt)
 {
 	inherited::shedule_Update(dt);
-	if (!IsWorking())
+	if (!IsInHand())
 		return;
 	if (!H_Parent())
 		return;
@@ -357,33 +380,37 @@ void CRadioItem::UpdateCL()
 	inherited::UpdateCL();
 	if (!H_Parent())
 		return;
-	if (m_bNeedActivation && !m_pInventory->ActiveItem())
-	{
-		TurnOn();
-	}
-
-	if (!IsWorking())
-		return;
 
 	if (!Actor())
 		return;
 
+	if (!CurrentActor)
+		return;
 
-	if (OnClient())
+	if (CurrentActor != smart_cast<CActor*>(Level().CurrentControlEntity()))
+		return;
+
+	if (m_bNeedActivation && !m_pInventory->ActiveItem())
 	{
+		TakeOn();
+	}
 
-		u16 curSlot = m_pInventory->GetActiveSlot();
-		if (curSlot != NO_ACTIVE_SLOT)
+	if (IsInHand())
+	{
+		if (OnClient())
 		{
-			PIItem pItm = m_pInventory->ItemFromSlot(m_pInventory->GetNextActiveSlot());
-			if (pItm)
+			u16 curSlot = m_pInventory->GetActiveSlot();
+			if (curSlot != NO_ACTIVE_SLOT)
 			{
-
-				if (GetState() == eIdle || GetState() == eShowing)
+				PIItem pItm = m_pInventory->ItemFromSlot(m_pInventory->GetNextActiveSlot());
+				if (pItm)
 				{
-					m_bNeedActivation = false;
-					SwitchState(eHiding);
-					return;
+					if (GetState() == eIdle || GetState() == eShowing)
+					{
+						m_bNeedActivation = false;
+						SwitchState(eHiding);
+						return;
+					}
 				}
 			}
 		}
@@ -391,16 +418,19 @@ void CRadioItem::UpdateCL()
 
 	if (!CurrentActor->g_Alive())
 	{
-		TurnOff();
+		TakeOff();
+		m_bRadioEnabled = false;
 	}
 
-	if (ActiveSnd && SoundTimer <= Device.dwTimeGlobal)
+	if (m_bRadioEnabled)
 	{
-		SoundTimer = Device.dwTimeGlobal + (IdleSound.get_length_sec() * 1000);
+		if (ActiveSnd && SoundTimer <= Device.dwTimeGlobal)
+		{
+			SoundTimer = Device.dwTimeGlobal + (IdleSound.get_length_sec() * 1000);
 
-		Fvector pos = { 0,0,0 };
-		float volume = 0.1f;
-		IdleSound.play_no_feedback(this, sm_2D, 0.f, &pos, &volume);
+			Fvector pos = { 0,0,0 };
+			float volume = 0.1f;
+			IdleSound.play_no_feedback(this, sm_2D, 0.f, &pos, &volume);
+		}
 	}
-
 }

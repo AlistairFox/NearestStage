@@ -71,7 +71,7 @@ void CActor::IR_OnKeyboardPress(int cmd)
 	case kWPN_FIRE:
 		{
 			CRadioItem* radio = smart_cast<CRadioItem*>(inventory().ItemFromSlot(RADIO_SLOT));
-			if (radio && radio->IsWorking())
+			if (radio && radio->IsInHand())
 			{
 				radio->ActivateVoice(true);
 				break;
@@ -94,7 +94,7 @@ void CActor::IR_OnKeyboardPress(int cmd)
 	case kWPN_ZOOM:
 	{
 		CRadioItem* radio = smart_cast<CRadioItem*>(inventory().ItemFromSlot(RADIO_SLOT));
-		if (radio && radio->IsWorking())
+		if (radio && radio->IsInHand())
 		{
 			radio->ShowUI(true);
 		}
@@ -264,7 +264,7 @@ void CActor::IR_OnKeyboardPress(int cmd)
 			CRadioItem* Radio = smart_cast<CRadioItem*>(itm);
 			if (Radio)
 			{
-				Radio->IsWorking() ? Radio->TurnOff() : Radio->TurnOn();
+				Radio->IsInHand() ? Radio->TakeOff() : Radio->TakeOn();
 			}
 		}
 	}
@@ -383,7 +383,7 @@ void CActor::IR_OnKeyboardRelease(int cmd)
 		case kWPN_FIRE:
 		{
 			CRadioItem* radio = smart_cast<CRadioItem*>(inventory().ItemFromSlot(RADIO_SLOT));
-			if (radio && radio->IsWorking() && radio->SayNow)
+			if (radio && radio->IsInHand() && radio->SayNow)
 			{
 				radio->ActivateVoice(false);
 			}

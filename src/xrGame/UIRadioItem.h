@@ -22,7 +22,8 @@ class UIRadioItem : public CUIDialogWnd, public CUIWndCallback
 
 	CUIXml xmlf;
 	CUIFrameWindow* m_background;
-	CUI3tButton* OffRadioBtn;
+	CUI3tButton* DisableRadio;
+	CUI3tButton* EnableRadio;
 	CUI3tButton* AcceptHz;
 	CUI3tButton* btn_exit;
 
@@ -40,9 +41,12 @@ public:
 	void			InitCallBacks();
 	virtual void			Show(bool status);
 	virtual void			ResetAll();
-	void xr_stdcall OffRadioClick(CUIWindow* w, void* d);
-	void xr_stdcall AcceptClick(CUIWindow* w, void* d);
-	void xr_stdcall OnBtnExit(CUIWindow* w, void* d);
+
+	virtual void			Update() override;
+			void xr_stdcall DisableRadioClick(CUIWindow* w, void* d);
+			void xr_stdcall EnableRadioClick(CUIWindow* w, void* d);
+			void xr_stdcall AcceptClick(CUIWindow* w, void* d);
+			void xr_stdcall OnBtnExit(CUIWindow* w, void* d);
 	virtual void			SendMessage(CUIWindow* pWnd, s16 msg, void* pData);
 	virtual bool			OnMouseAction(float x, float y, EUIMessages mouse_action);
 	virtual bool			OnKeyboardAction(int dik, EUIMessages keyboard_action);

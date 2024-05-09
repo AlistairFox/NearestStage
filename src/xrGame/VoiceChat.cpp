@@ -153,7 +153,7 @@ void CVoiceChat::ReceiveMessage(NET_Packet* P)
 	if (Actor())
 	{
 		CRadioItem* itm = smart_cast<CRadioItem*>(Actor()->inventory().ItemFromSlot(RADIO_SLOT));
-		if (itm && itm->IsWorking())
+		if (itm && itm->IsEnabled())
 		{
 			radio_on = true;
 			radio_hz = itm->CurrentHZ;
@@ -165,7 +165,7 @@ void CVoiceChat::ReceiveMessage(NET_Packet* P)
 
 	if (rd && radio_on)
 	{
-		if ((rd_max_distance <= Distance) && (radio_max_distance <= Distance))
+		if ((rd_max_distance >= Distance) && (radio_max_distance >= Distance))
 			CorrectDistance = true;
 
 		if (hz == radio_hz && CorrectDistance)
