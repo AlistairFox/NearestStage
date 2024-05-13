@@ -51,6 +51,7 @@ public:
 	u16					MaxHZ;
 	float				MaxDistance;
 	bool				SayNow = false;
+	bool				UserSayInRadio = false;
 
 private:
 	bool				ActiveSnd = false;

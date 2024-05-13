@@ -150,16 +150,12 @@ void CVoiceChat::ReceiveMessage(NET_Packet* P)
 	u16 radio_max_distance = 0;
 	bool CorrectDistance = false;
 
-	if (Actor())
+	CWalkieTalkie* itm = smart_cast<CWalkieTalkie*>(Actor()->inventory().ItemFromSlot(RADIO_SLOT));
+	if (itm && itm->IsEnabled())
 	{
-		CWalkieTalkie* itm = smart_cast<CWalkieTalkie*>(Actor()->inventory().ItemFromSlot(RADIO_SLOT));
-		if (itm && itm->IsEnabled())
-		{
-			radio_on = true;
-			radio_hz = itm->CurrentHZ;
-			radio_max_distance = itm->MaxDistance;
-
-		}
+		radio_on = true;
+		radio_hz = itm->CurrentHZ;
+		radio_max_distance = itm->MaxDistance;
 	}
 
 
@@ -180,6 +176,7 @@ void CVoiceChat::ReceiveMessage(NET_Packet* P)
 				u32 length = P->r_u32();
 				P->r(m_buffer, length);
 				player->PushToPlay(m_buffer, length);
+				itm->UserSayInRadio = true;
 			}
 		}
 		else

@@ -426,11 +426,15 @@ void CWalkieTalkie::UpdateCL()
 	{
 		if (ActiveSnd && SoundTimer <= Device.dwTimeGlobal)
 		{
-			SoundTimer = Device.dwTimeGlobal + (IdleSound.get_length_sec() * 1000);
+			if (UserSayInRadio)
+			{
+				SoundTimer = Device.dwTimeGlobal + (IdleSound.get_length_sec() * 1000);
 
-			Fvector pos = { 0,0,0 };
-			float volume = 0.1f;
-			IdleSound.play_no_feedback(this, sm_2D, 0.f, &pos, &volume);
+				Fvector pos = { 0,0,0 };
+				float volume = 0.1f;
+				IdleSound.play_no_feedback(this, sm_2D, 0.f, &pos, &volume);
+				UserSayInRadio = false;
+			}
 		}
 	}
 }
