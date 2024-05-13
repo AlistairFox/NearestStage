@@ -2530,9 +2530,6 @@
     <Filter Include="Chat">
       <UniqueIdentifier>{14d8731e-4dd7-4f88-9ad8-5bf0729b93ae}</UniqueIdentifier>
     </Filter>
-    <Filter Include="HTTP">
-      <UniqueIdentifier>{1c36d6c4-d1cd-4781-96e6-b0f09b83ad78}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Core\Server\Games\server\freemp\Save Bin">
       <UniqueIdentifier>{34b3dc30-db1d-479d-99be-0c58f18081e0}</UniqueIdentifier>
     </Filter>
@@ -2542,7 +2539,7 @@
     <Filter Include="Core\Server\Games\server\freemp\OnDeathSaveItems">
       <UniqueIdentifier>{0871eead-a5d0-47eb-a291-f09a5ba5db46}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Walkie-Talke">
+    <Filter Include="Walkie-Talkie">
       <UniqueIdentifier>{a751275d-04dd-43b3-b2d7-37c5af0ba0b3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -7465,10 +7462,10 @@
       <Filter>Chat</Filter>
     </ClInclude>
     <ClInclude Include="WalkieTalkie.h">
-      <Filter>Walkie-Talke</Filter>
+      <Filter>Walkie-Talkie</Filter>
     </ClInclude>
     <ClInclude Include="UIWalkieTalkie.h">
-      <Filter>Walkie-Talke</Filter>
+      <Filter>Walkie-Talkie</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -11187,10 +11184,10 @@
       <Filter>Core\Server\Games\server\freemp\Save Bin</Filter>
     </ClCompile>
     <ClCompile Include="WalkieTalkie.cpp">
-      <Filter>Walkie-Talke</Filter>
+      <Filter>Walkie-Talkie</Filter>
     </ClCompile>
     <ClCompile Include="UIWalkieTalkie.cpp">
-      <Filter>Walkie-Talke</Filter>
+      <Filter>Walkie-Talkie</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -267,9 +267,10 @@ void CActor::IR_OnKeyboardPress(int cmd)
 				Radio->IsInHand() ? Radio->TakeOff() : Radio->TakeOn();
 			}
 		}
-	}
+	}break;
 	case kACTIVE_JOBS:
 	{
+
 		auto pda = smart_cast<CPda*>(inventory().ItemFromSlot(PDA_SLOT));
 		if (pda)
 			pda->TogglePda();
