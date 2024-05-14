@@ -946,7 +946,10 @@ void CSE_ALifeItemDetector::FillProps		(LPCSTR pref, PropItemVec& items)
 ////////////////////////////////////////////////////////////////////////////
 CSE_ALifeItemWalkieTalkie::CSE_ALifeItemWalkieTalkie(LPCSTR caSection) : CSE_ALifeItem(caSection)
 {
-
+	MinFreq = READ_IF_EXISTS(pSettings, r_u16, caSection, "minimal_hz", 0.f);
+	MaxFreq = READ_IF_EXISTS(pSettings, r_u16, caSection, "maximum_hz", 100.f);
+	MaxDistance = READ_IF_EXISTS(pSettings, r_float, caSection, "maximal_distance", 5000);
+	CurrentFreq = 0;
 }
 
 CSE_ALifeItemWalkieTalkie::~CSE_ALifeItemWalkieTalkie()
@@ -968,11 +971,30 @@ void CSE_ALifeItemWalkieTalkie::STATE_Write		(NET_Packet	&tNetPacket)
 void CSE_ALifeItemWalkieTalkie::UPDATE_Read		(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Read		(tNetPacket);
+	tNetPacket.r_u16(CurrentFreq);
 }
 
 void CSE_ALifeItemWalkieTalkie::UPDATE_Write	(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Write		(tNetPacket);
+	tNetPacket.w_u16(CurrentFreq);
+}
+
+void CSE_ALifeItemWalkieTalkie::OnEvent(NET_Packet& tNetPacket, u16 type, u32 time, ClientID sender)
+{
+	inherited::OnEvent(tNetPacket, type, time, sender);
+	switch (type)
+	{
+		case GE_PLAYER_SET_RADIO_HZ:
+		{
+			tNetPacket.r_u16(CurrentFreq);
+		}break;
+	}
+}
+
+BOOL CSE_ALifeItemWalkieTalkie::Net_Relevant()
+{
+	return TRUE;
 }
 
 #ifndef XRGAME_EXPORTS

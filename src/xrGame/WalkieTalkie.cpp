@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+ï»¿#include "StdAfx.h"
 #include "WalkieTalkie.h"
 #include "Inventory.h"
 #include "Actor.h"
@@ -9,6 +9,7 @@
 #include "Weapon.h"
 #include <game_cl_freemp.h>
 #include "VoiceChat.h"
+#include "GameObject.h"
 
 CWalkieTalkie::CWalkieTalkie(void)
 {
@@ -17,6 +18,7 @@ CWalkieTalkie::CWalkieTalkie(void)
 	CurrentHZ = 0;
 	MinHZ = 0;
 	MaxHZ = 100;
+	MaxDistance = 0.f;
 	pUIWalkieTalkie = nullptr;
 	m_bNeedActivation = false;
 	m_sFactor = 0.f;
@@ -30,19 +32,30 @@ CWalkieTalkie::~CWalkieTalkie(void)
 
 BOOL CWalkieTalkie::net_Spawn(CSE_Abstract* DC)
 {
+	inherited::net_Spawn(DC);
 	CurrentActor = 0;
 	CurrentInvOwner = 0;
-	return (inherited::net_Spawn(DC));
+
+	CSE_ALifeItemWalkieTalkie* pSE_WT = smart_cast<CSE_ALifeItemWalkieTalkie*>(DC);
+	if (pSE_WT)
+	{
+		MinHZ = pSE_WT->MinFreq;
+		MaxHZ = pSE_WT->MaxFreq;
+		MaxDistance = pSE_WT->MaxDistance;
+	}
+
+	return TRUE;
 }
 
 void CWalkieTalkie::Load(LPCSTR section)
 {
 	inherited::Load(section);
 
+	/* ÑÑ‚Ð¾ Ð¼Ñ‹ Ð±Ð¾Ð»ÐµÐµ Ð½Ðµ Ñ‡Ð¸Ñ‚Ð°ÐµÐ¼, Ð¿Ð¾Ð»ÑƒÑ‡Ð°ÐµÐ¼ Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð¿Ð°Ñ€Ð°Ð¼ÐµÑ‚Ñ€Ñ‹ Ñ ÑÐµÑ€Ð²ÐµÑ€Ð½Ð¾Ð³Ð¾ Ð¾Ð±ÑŠÐµÐºÑ‚Ð°
 	MinHZ = READ_IF_EXISTS(pSettings, r_u16, section, "minimal_hz", 0.f);
 	MaxHZ = READ_IF_EXISTS(pSettings, r_u16, section, "maximum_hz", 100.f);
 	MaxDistance = READ_IF_EXISTS(pSettings, r_float, section, "maximal_distance", 5000);
-
+	*/
 
 	m_sounds.LoadSound(section, "snd_draw", "sndShow");
 	m_sounds.LoadSound(section, "snd_holster", "sndHide");
@@ -75,6 +88,10 @@ void CWalkieTalkie::OnEvent(NET_Packet& P, u16 type)
 {
 	switch (type)
 	{
+	case GE_PLAYER_SET_RADIO_HZ:
+	{
+		P.r_u16(CurrentHZ);
+	}break;
 	default:
 		break;
 	}
@@ -83,11 +100,13 @@ void CWalkieTalkie::OnEvent(NET_Packet& P, u16 type)
 void CWalkieTalkie::net_Export(NET_Packet& P)
 {
 	inherited::net_Export(P);
+	P.w_u16(CurrentHZ);
 }
 
 void CWalkieTalkie::net_Import(NET_Packet& P)
 {
 	inherited::net_Import(P);
+	CurrentHZ = P.r_u16();
 }
 
 void CWalkieTalkie::OnH_A_Chield()
@@ -105,9 +124,9 @@ void CWalkieTalkie::SetRadioHZ(u16 hz)
 	CurrentHZ = hz;
 
 	NET_Packet P;
-	Game().u_EventGen(P, GE_PLAYER_SET_RADIO_HZ, 0);
+	u_EventGen(P, GE_PLAYER_SET_RADIO_HZ, ID());
 	P.w_u16(CurrentHZ);
-	Game().u_EventSend(P);
+	u_EventSend(P);
 }
 
 void CWalkieTalkie::UpdateHudAdditional(Fmatrix& trans)
@@ -163,6 +182,11 @@ void CWalkieTalkie::OnActiveItem()
 void CWalkieTalkie::UpdateXForm()
 {
 	CInventoryItem::UpdateXForm();
+}
+
+BOOL CWalkieTalkie::net_Relevant()
+{
+	return TRUE;
 }
 
 void CWalkieTalkie::ShowUI(bool show)
@@ -273,8 +297,8 @@ void CWalkieTalkie::TakeOn()
 		{
 			if (OnServer())
 			{
-				// Ïûòàåìñÿ äîñòàòü äîïóñòèìûé ïðåäìåò: íîæ, îðóæèå èëè òï
-				// ïðè ýòîì áóäåò ñïðÿòàíî òåêóùåå îðóæèå
+				// ÐŸÑ‹Ñ‚Ð°ÐµÐ¼ÑÑ Ð´Ð¾ÑÑ‚Ð°Ñ‚ÑŒ Ð´Ð¾Ð¿ÑƒÑÑ‚Ð¸Ð¼Ñ‹Ð¹ Ð¿Ñ€ÐµÐ´Ð¼ÐµÑ‚: Ð½Ð¾Ð¶, Ð¾Ñ€ÑƒÐ¶Ð¸Ðµ Ð¸Ð»Ð¸ Ñ‚Ð¿
+				// Ð¿Ñ€Ð¸ ÑÑ‚Ð¾Ð¼ Ð±ÑƒÐ´ÐµÑ‚ ÑÐ¿Ñ€ÑÑ‚Ð°Ð½Ð¾ Ñ‚ÐµÐºÑƒÑ‰ÐµÐµ Ð¾Ñ€ÑƒÐ¶Ð¸Ðµ
 				m_pInventory->Activate(NO_ACTIVE_SLOT);
 			}
 			else

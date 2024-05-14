@@ -256,8 +256,14 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemDetector,CSE_ALifeItem)
 #define script_type_list save_type_list(CSE_ALifeItemDetector)
 
 SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWalkieTalkie, CSE_ALifeItem)
+		u16 CurrentFreq;
+		u16 MaxFreq;
+		u16 MinFreq;
+		float MaxDistance;
 		CSE_ALifeItemWalkieTalkie(LPCSTR caSection);
 	virtual ~CSE_ALifeItemWalkieTalkie();
+	virtual void					OnEvent(NET_Packet& P, u16 type, u32 time, ClientID sender);
+	virtual BOOL			Net_Relevant();
 	virtual CSE_ALifeItemWalkieTalkie* cast_item_walkietalkie() { return this; }
 	SERVER_ENTITY_DECLARE_END
 		add_to_type_list(CSE_ALifeItemWalkieTalkie)
