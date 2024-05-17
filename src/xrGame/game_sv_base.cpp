@@ -499,6 +499,17 @@ void game_sv_GameState::Create					(shared_str &options)
 		FS.r_close	(F);
 	}
 
+	for (u32 i = 0; i < 32; i++)
+	{
+		if (rpoints[i].size() == 0)
+		{
+			RPoint data;
+			data.P.set(0, 0, 0);
+			rpoints[i].push_back(data);
+		}
+	}
+
+
 	// loading scripts
 	ai().script_engine().remove_script_process(ScriptEngine::eScriptProcessorGame);
 	string_path					S;

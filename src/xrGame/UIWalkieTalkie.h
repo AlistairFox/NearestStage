@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 
 #include "ui/UIDialogWnd.h"
 #include "ui/UIWndCallback.h"
