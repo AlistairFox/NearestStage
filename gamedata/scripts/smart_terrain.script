@@ -1,6 +1,6 @@
-local DEATH_IDLE_TIME = 10*60 -- ������
-local RESPAWN_IDLE = 72000 -- 72000   -- ������ �������� �������
-local RESPAWN_RADIUS = 150 -- ������ ��������(���� ����� �����, �� �� ��������)
+local DEATH_IDLE_TIME = 10*60 -- тиков игрового времени
+local RESPAWN_IDLE = 72000 -- 72000   -- тиков игрового времени
+local RESPAWN_RADIUS = 150 -- -- радиус респауна(если актер ближе, то не спаунить)
 SMART_TERRAIN_SECT = "smart_terrain"
 smart_terrains_by_name = {}
 local locations_ini			= ini_file("misc\\smart_terrain_masks.ltx")
@@ -1409,14 +1409,9 @@ function se_smart_terrain:try_respawn()
 		
 		local can_respawn = true
 		local pos = self.position
-		for _, player in pairs(db.players) do
-			local distance = pos:distance_to_sqr(player:position())
-			if distance < RESPAWN_RADIUS^2 then
-				can_respawn = false
-				print_msg("cant respawn")
-				print_msg(distance)
-				break
-			end
+		if mp.have_nearby_player(pos, RESPAWN_RADIUS) then
+			can_respawn = false
+			print_msg("cant respawn")
 		end
 
 		if can_respawn then

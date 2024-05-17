@@ -64,7 +64,7 @@ function register(object_factory)
 	cs_register	(object_factory, "CSilencer",	  				"se_item.se_item",						"WP_SILEN",			"wpn_silencer_s")
 	cs_register	(object_factory, "CGrenadeLauncher",			"se_item.se_item",						"WP_GLAUN",			"wpn_grenade_launcher_s")
 	cs_register	(object_factory, "CDetectorAnomaly",          	"se_item.se_detector",					"D_ANODET",			"device_detector_anomaly_s")
-
+	cs_register	(object_factory, "CWalkieTalkie",				"se_item.se_walkie",					"DV_WALKI", 		"device_walkie_itm_s")
 	-- OUTFITS ----------------------------------------------------------------------------------------------------------------------------
 
 	cs_register	(object_factory, "CStalkerOutfit",  			"se_item.se_outfit",					"E_STLK",			"equ_stalker_s")

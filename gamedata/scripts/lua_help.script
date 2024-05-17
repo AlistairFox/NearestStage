@@ -4609,6 +4609,75 @@ C++ class cse_alife_item_detector : cse_alife_item {
 
 };
 
+C++ class cse_alife_item_walkietalkie : cse_alife_item {
+    property angle;
+    property id;
+    property m_game_vertex_id;
+    property m_level_vertex_id;
+    property m_story_id;
+    property online;
+    property parent_id;
+    property position;
+    property script_version;
+    
+    cse_alife_item_walkietalkie (string);
+    
+    function on_before_register();
+
+    function use_ai_locations(boolean);
+
+    function can_save() const;
+
+    function can_switch_online() const;
+    function can_switch_online(boolean);
+
+    function visible_for_map() const;
+    function visible_for_map(boolean);
+
+    function switch_offline();
+
+    function clsid() const;
+
+    function UPDATE_Read(net_packet&);
+
+    function on_register();
+
+    function switch_online();
+
+    function STATE_Write(net_packet&);
+
+    function can_switch_offline() const;
+    function can_switch_offline(boolean);
+
+    function init();
+
+    function on_spawn();
+
+    function name(const cse_abstract*);
+
+    function spawn_ini(cse_abstract*);
+
+    function section_name(const cse_abstract*);
+
+    function bfUseful();
+
+    function STATE_Read(net_packet&, number);
+
+    function interactive() const;
+
+    function used_ai_locations() const;
+
+    function keep_saved_data_anyway() const;
+
+    function UPDATE_Write(net_packet&);
+
+    function on_unregister();
+
+    function move_offline() const;
+    function move_offline(boolean);
+
+};
+
 C++ class cse_alife_item_document : cse_alife_item {
     property angle;
     property id;
