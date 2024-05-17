@@ -1,0 +1,270 @@
+; 7,62-мм самозарядная винтовка системы Токарева
+;-(TrickSR, Ga2z)-----------------------------------------
+; калибр 						7.62x54 мм
+; длина ствола 					625
+; магазин						10
+; вес с пустым магазином		3.90 кг
+; вес с пустым магазином и опт. прицелом	4.43 кг
+; максимальная дальность стрельбы	3800 м
+; эффективная дальность стрельбы	600 м
+; прицельная дальность			1500 м
+; дульная скорость пули			822 м/с
+; темп стрельбы					20-25 в/м
+;---------------------------------------------------
+[wpn_svt40]:weapon_probability,default_weapon_params,wpn_svt_sounds
+GroupControlSection				= spawn_group
+$spawn							= "weapons\svt40"
+$npc					 		= on
+$prefetch 		 				= 8
+scheduled						= off
+cform							= skeleton
+class							= WP_PM
+description						= st_wpn_svt40_descr
+
+scopes 							= pu
+parent_section  				= wpn_svt40
+
+ef_main_weapon_type				= 3
+ef_weapon_type					= 11
+snd_shoot_dist		= true
+ 
+
+inv_name						= st_wpn_svt40
+inv_name_short					= st_wpn_svt40
+
+inv_grid_width					= 6
+inv_grid_height					= 2
+inv_grid_x						= 35
+inv_grid_y						= 12
+
+upgr_icon_x						= 1750
+upgr_icon_y						= 500
+upgr_icon_width					= 300
+upgr_icon_height 				= 100
+
+kill_msg_x						= 0
+kill_msg_y						= 0
+kill_msg_width					= 98
+kill_msg_height					= 23
+
+cost							= 12000
+weapon_class					= sniper_rifle
+inv_weight						= 4.43
+hud								= wpn_svt40_hud
+visual							= dynamics\weapons\wpn_svt40\wpn_svt40.ogf
+
+upgrades						= up_gr_firstab_svd, up_gr_seconab_svd, up_gr_thirdab_svd, up_gr_fourtab_svd, up_gr_fourtcd_svd, up_gr_fourtef_svd
+installed_upgrades				=
+upgrade_scheme					= upgrade_scheme_svd
+
+ph_mass			 				= 5
+
+ammo_class						= ammo_7.62x54_7h1, ammo_7.62x54_7h14, ammo_7.62x54_ap
+
+startup_ammo					= 10
+ammo_current					= 10
+ammo_elapsed					= 0
+ammo_limit						= 10
+ammo_mag_size					= 10
+
+fire_modes						= 1
+
+hand_dependence					= 1
+single_handed					= 0
+
+hit_power 						= 0.87
+;hit_impulse		 			= 10
+hit_type 						= fire_wound
+fire_distance					= 1000
+bullet_speed					= 822
+rpm								= 150
+rpm_empty_click					= 200
+
+use_aim_bullet					= true
+time_to_aim						= 1
+
+misfire_probability				= 0.005
+misfire_start_condition			= 0.6
+misfire_end_condition			= 0.1
+misfire_start_prob	 			= 0.0055
+misfire_end_prob	 			= 0.055
+condition_shot_dec				= 0.0055
+condition_queue_shot_dec		= 0.0055
+
+;zoom_dof						= 0.5,1,350
+reload_dof						= 0,0.5,5,2.2
+
+fire_dispersion_base			= 0.15
+fire_dispersion_condition_factor	= 2
+control_inertion_factor			= 2.05f
+crosshair_inertion				= 9
+
+cam_return						= 1
+cam_relax_speed					= 4.5
+cam_relax_speed_ai				= 360
+cam_dispersion					= 2.5
+cam_dispersion_inc				= 2.5
+cam_dispersion_frac				= 1.0
+cam_max_angle					= 15.0
+cam_max_angle_horz				= 3.0
+cam_step_angle_horz				= 0.25
+
+zoom_cam_relax_speed			= 0.75
+zoom_cam_relax_speed_ai			= 120.75
+zoom_cam_dispersion				= 0.8
+zoom_cam_dispersion_inc			= 0.8
+zoom_cam_dispersion_frac		= 1
+zoom_cam_max_angle				= 10
+zoom_cam_max_angle_horz			= 5
+zoom_cam_step_angle_horz		= 0.25
+
+PDM_disp_base 					= 1.3
+PDM_disp_vel_factor 			= 1.5
+PDM_disp_accel_factor 			= 1.5
+PDM_disp_crouch	 				= 1
+PDM_disp_crouch_no_acc 			= 1
+
+min_radius						= 50
+max_radius						= 90
+
+holder_range_modifier			= 2
+holder_fov_modifier				= 0.75
+
+hit_probability_gd_novice		= 0.55
+hit_probability_gd_stalker		= 0.65
+hit_probability_gd_veteran		= 0.75
+hit_probability_gd_master		= 0.85
+
+slot							= 2
+animation_slot					= 3
+
+position 						= -0.023,-0.085,0.038
+orientation 					= 0,30,0
+
+fire_point 						= 0,0.168,0.755
+fire_point2						= 0,0.168,0.755
+
+flame_particles					= weapons\generic_weapon06
+smoke_particles					= ghost_particles\weapons\flame_eft_00_test
+silencer_smoke_particles   		= ghost_particles\weapons\generic_smoke_eft_sil
+
+shell_point		 				= 0,0.129,0.192
+shell_dir		 				= 0,0,0.4
+shell_particles					= ghost_particles\weapons\shells\shells_762_54_right
+
+strap_position 					= -0.15,-0.15,0.45
+strap_orientation				= -25,-189,65
+strap_bone0						= bip01_spine2
+strap_bone1						= bip01_spine1
+
+light_disabled					= false
+light_color		 				= 0.6,0.5,0.3
+light_range		 				= 4.0
+light_var_color		 			= 0.05
+light_var_range					= 0.5
+light_time 		 				= 0.2
+
+scope_status					= 2
+silencer_status					= 0
+grenade_launcher_status			= 0
+
+zoom_enabled					= true
+zoom_rotate_time				= 0.25
+scope_zoom_factor				= 83.3
+
+scope_texture					= wpn_crosshair_4x34
+scope_name 						= pu
+scope_x   						= 68
+scope_y     					= 5
+
+silencer_hit_power				= 0.87
+silencer_hit_impulse			= 20
+silencer_fire_distance			= 1000
+silencer_bullet_speed			= 822
+
+silencer_light_color			= 0.6,0.5,0.3
+silencer_light_range			= 0.01
+silencer_light_var_color		= 0.05
+silencer_light_var_range		= 0.5
+silencer_light_time 			= 0.2
+
+[wpn_svt40_hud]:hud_base
+zoom_hide_crosshair					= true
+attach_place_idx					= 0
+item_visual							= dynamics\weapons\wpn_svt40\wpn_svt40_hud.ogf
+
+hands_position						= -0.003000,-0.010000,-0.080000
+hands_orientation					= 0,0,0
+
+hands_position_16x9					= -0.003000,-0.010000,-0.080000
+hands_orientation_16x9				= 0,0,0
+
+item_position      	 				= 0,0,0
+item_orientation    				= 0,0,0
+
+aim_hud_offset_pos					= -0.070700,0.048000,-0.190000
+aim_hud_offset_rot					= -0.000730,0.000030,0.004000
+
+aim_hud_offset_pos_16x9				= -0.070700,0.048000,-0.190000
+aim_hud_offset_rot_16x9				= -0.000730,0.000030,0.004000
+
+gl_hud_offset_pos   				= 0,0,0
+gl_hud_offset_rot   				= 0,0,0
+
+lean_hud_offset_pos 				= 0,0,0
+lean_hud_offset_rot 				= 0,0,0
+
+shell_bone  						= wpn_body
+shell_dir   						= 0, 1, 0
+shell_point 						= 0,0,0
+
+fire_bone   						= muzzle
+fire_point  						= 0,0,0
+
+anm_bore    = blnd_svt40_idle, idle
+anm_bore_empty      = blnd_svt40_idle, idle_empty
+anm_hide    = blnd_svt40_holster, idle ; 0.97
+anm_hide_empty      = blnd_svt40_holster, idle_empty ; 0.97
+anm_idle    = blnd_svt40_idle, idle
+anm_idle_empty      = blnd_svt40_idle, idle_empty
+anm_idle_aim= blnd_svt40_idle_ads, idle
+anm_idle_aim_empty  = blnd_svt40_idle_ads, idle_empty
+anm_idle_aim_moving = blnd_svt40_idle_ads, idle
+anm_idle_aim_moving_empty   = blnd_svt40_idle_ads, idle_empty
+anm_idle_aim_moving_crouch  = blnd_svt40_idle_ads, idle
+anm_idle_aim_moving_crouch_empty  = blnd_svt40_idle_ads, idle_empty
+anm_idle_moving     = blnd_svt40_walk, idle ; 0.92
+anm_idle_moving_empty       = blnd_svt40_walk, idle_empty ; 0.92
+anm_idle_sprint     = blnd_svt40_sprint, idle ; 1.1
+anm_idle_sprint_empty       = blnd_svt40_sprint, idle_empty ; 1.1
+anm_reload  = blnd_svt40_reload, reload ; 1.13
+anm_reload_empty    = blnd_svt40_reload_empty, reload_empty ;1.13
+anm_shots   = blnd_svt40_shoot
+anm_shot_l  = blnd_svt40_shoot, shoot_empty
+anm_show    = blnd_svt40_draw, draw ; 0.85
+anm_show_empty      = blnd_svt40_draw, draw_empty ; 0.85
+anm_reload_misfire  = blnd_svt40_unjam, unjam
+
+safemode_rot_enabled = true
+safemode_offset_pos				= 0.205,0.03,0
+safemode_offset_rot				= 0,-1,0.2
+safemode_offset_pos_16x9				= 0.205,0.03,0
+safemode_offset_rot_16x9				= 0,-1,0.2
+
+hud_collision_enabled = true
+hud_collision_offset_pos_16x9 = 0.0, -0.2, -0.1
+hud_collision_offset_rot_16x9  = -0.7, 0.0, 0.0
+
+[wpn_svt40_pu]:wpn_svt40
+$spawn     							= "weapons\wpn_svt40_pu"
+hud									= wpn_svt40_pu_hud
+
+scope_x   							= 68
+scope_y     						= 5
+
+[wpn_svt40_pu_hud]:wpn_svt40_hud
+aim_hud_offset_pos					= -0.070800,0.025300,-0.118800
+aim_hud_offset_rot					= -0.000830,-0.000120,0.004000
+
+aim_hud_offset_pos_16x9				= -0.070800,0.025300,-0.118800
+aim_hud_offset_rot_16x9				= -0.000830,-0.000120,0.004000

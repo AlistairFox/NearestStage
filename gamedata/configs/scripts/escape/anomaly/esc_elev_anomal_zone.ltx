@@ -1,0 +1,46 @@
+[anomal_zone]
+layers_count = 3
+respawn_tries = 8
+max_artefacts = 20
+;applying_force_xz = 200
+;applying_force_y = 400 
+artefacts = af_electra_moonlight, af_gold_fish, af_gravi, af_night_star, af_compass
+start_artefact = af_electra_moonlight
+coeff = 3, 3, 2, 2, 0.2
+artefact_ways = esc_elev_anom_way_1, esc_elev_anom_way_2
+field_name = esc_elev_radio
+
+[mines_core]
+
+[layer_1]
+mines_section = mines_layer_1
+
+[mines_layer_1]:mines_core
+esc_zone_mine_gravitational_weak_0000
+esc_zone_mine_electric_weak_0004
+esc_zone_mine_electric_weak_0005
+esc_zone_mine_gravitational_weak_0007
+esc_zone_mine_gravitational_weak_0010
+esc_zone_mine_gravitational_weak_0009
+esc_zone_mine_gravitational_weak_0008
+
+
+[layer_2]
+mines_section = mines_layer_2
+
+[mines_layer_2]:mines_core
+esc_zone_mine_gravitational_average_0002
+esc_zone_mine_electric_weak_0001
+esc_zone_mine_electric_weak_0002
+esc_zone_mine_electric_weak
+
+
+
+[layer_3]
+mines_section = mines_layer_3 
+
+[mines_layer_3]:mines_core
+esc_zone_mine_gravitational_average_0000
+esc_zone_mine_gravitational_average
+esc_zone_mine_gravitational_average_0001
+esc_zone_mine_gravitational_strong

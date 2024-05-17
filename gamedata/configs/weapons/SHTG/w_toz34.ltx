@@ -1,0 +1,316 @@
+; Охотничье ружье ТОЗ-34 "Вертикалка"
+;-(TrickSR, Ga2z)-----------------------------------------
+; калибр 						12/70
+; длина ствола 					711 мм
+; магазин						2
+; вес с пустым магазином		3.2 кг
+; максимальная дальность стрельбы	-- м
+; эффективная дальность стрельбы	35-70 м для дроби / 50-100 м для пули
+; прицельная дальность			---
+; дульная скорость пули			424 м/с
+; темп стрельбы					---
+;---------------------------------------------------
+[wpn_toz34]:weapon_probability,default_weapon_params,wpn_toz34_sounds
+GroupControlSection				= spawn_group
+$spawn							= "weapons\toz-34"
+$npc			 				= on
+$prefetch 		 				= 8
+scheduled						= off
+cform 							= skeleton
+class 							= WP_BM16
+description 					= st_wpn_toz34_descr
+
+scopes 							= none
+parent_section  				= wpn_toz34
+snd_shoot_dist		= true
+ 
+
+ef_main_weapon_type				= 1
+ef_weapon_type					= 9
+
+inv_name						= st_wpn_toz34
+inv_name_short 					= st_wpn_toz34
+
+inv_grid_width					= 5
+inv_grid_height					= 1
+inv_grid_x						= 10
+inv_grid_y						= 5
+
+upgr_icon_x						= 600
+upgr_icon_y						= 500
+upgr_icon_width					= 300
+upgr_icon_height 				= 100
+
+kill_msg_x 						= 127
+kill_msg_y 						= 82
+kill_msg_width 					= 97
+kill_msg_height					= 23
+
+cost 							= 1200
+weapon_class					= shotgun
+inv_weight 						= 3.2
+hud 							= wpn_toz34_hud
+visual							= dynamics\weapons\wpn_toz34\wpn_toz34.ogf
+
+upgrades                		= up_gr_firstab_toz34, up_gr_seconab_toz34, up_gr_thirdab_toz34
+installed_upgrades      		=
+upgrade_scheme          		= upgrade_scheme_toz34
+
+ph_mass			 				= 3
+
+ammo_class		 				= ammo_12x70_buck, ammo_12x76_zhekan
+
+startup_ammo 					= 10
+ammo_current					= 12
+ammo_elapsed		 			= 0
+ammo_limit						= 14
+ammo_mag_size 					= 2
+
+fire_modes						= 1
+
+tri_state_reload				= off
+
+hand_dependence					= 1
+single_handed					= 0
+
+hit_power 						= 1.2
+hit_impulse						= 35
+hit_type 						= fire_wound
+fire_distance					= 150
+bullet_speed 					= 424
+rpm								= 1000
+rpm_empty_click 				= 200
+
+misfire_probability 			= 0.005
+misfire_start_condition			= 0.6
+misfire_end_condition			= 0.1
+misfire_start_prob	 			= 0.002
+misfire_end_prob	 			= 0.03
+condition_shot_dec				= 0.003
+condition_queue_shot_dec		= 0.0035
+
+zoom_dof						= 0.5,1,180
+reload_dof						= 0,0.5,5,3.2
+
+fire_dispersion_base 			= 0.2
+fire_dispersion_condition_factor	= 2
+control_inertion_factor			= 1.4f
+crosshair_inertion				= 7.40
+
+cam_return						= 1
+cam_relax_speed 				= 5
+cam_relax_speed_ai				= 360
+cam_dispersion					= 5
+cam_dispersion_inc				= 5
+cam_dispersion_frac				= 0.7
+cam_max_angle					= 10
+cam_max_angle_horz				= 10
+cam_step_angle_horz				= 1
+
+zoom_cam_relax_speed 			= 5
+zoom_cam_relax_speed_ai			= 120.75
+zoom_cam_dispersion				= 3
+zoom_cam_dispersion_inc			= 3
+zoom_cam_dispersion_frac 		= 0.7
+zoom_cam_max_angle				= 10
+zoom_cam_max_angle_horz			= 10
+zoom_cam_step_angle_horz 		= 1
+
+PDM_disp_base 					= 0.5
+PDM_disp_vel_factor 			= 2
+PDM_disp_accel_factor 			= 2
+PDM_disp_crouch	 				= 1
+PDM_disp_crouch_no_acc 			= 1
+
+min_radius						= 30
+max_radius						= 50
+
+holder_range_modifier			= 1.0
+holder_fov_modifier				= 1.0
+
+slot 							= 2
+animation_slot					= 3
+
+position 						= -0.023,-0.128,0.082
+orientation 					= 0,36,0
+
+fire_point 						= 0,0.168,0.755
+fire_point2						= 0,0.168,0.755
+
+flame_particles					= amik\weapons\smoke_particles\smoke_particles_pump_00
+smoke_particles     			= ghost_particles\weapons\flame_eft_shotgun
+silencer_smoke_particles   		= ghost_particles\weapons\generic_smoke_eft_sil
+
+shell_point				= 0,0.183,0.07
+
+strap_position				= -0.26,-0.11,0.15
+strap_orientation 			= -15,-9,110
+strap_bone0				= bip01_spine2
+strap_bone1				= bip01_spine1
+
+light_color		 		= 0.6,0.5,0.3
+light_range		 		= 6.0
+light_var_color		 		= 0.05
+light_var_range		 		= 0.5
+light_time 		 		= 0.2
+
+scope_status				= 0
+silencer_status				= 0
+grenade_launcher_status			= 0
+
+zoom_enabled				= true
+zoom_rotate_time			= 0.2
+scope_zoom_factor			= 83.3
+
+[wpn_toz34_hud]:hud_base
+zoom_hide_crosshair			= true
+attach_place_idx			= 0
+item_visual               		= dynamics\weapons\wpn_toz34\wpn_toz34_hud.ogf
+
+hands_position				= 0.000000,0.011500,-0.145499
+hands_orientation			= 0.000000,0.000000,0.000000
+
+hands_position_16x9			= 0.000000,0.011500,-0.145499
+hands_orientation_16x9			= 0.000000,0.000000,0.000000
+
+item_position                            = 0, 0, 0
+item_orientation                         = 0, 0, 0
+
+aim_hud_offset_pos			= -0.060400,0.034600,-0.080000
+aim_hud_offset_rot			= 0.000000,0.000000,0.000000
+
+aim_hud_offset_pos_16x9			= -0.060400,0.034600,-0.080000
+aim_hud_offset_rot_16x9			= 0.000000,0.000000,0.000000
+
+safemode_rot_enabled = true
+safemode_offset_pos				= 0.205,0.03,0
+safemode_offset_rot				= 0,-1,0.2
+safemode_offset_pos_16x9				= 0.205,0.03,0
+safemode_offset_rot_16x9				= 0,-1,0.2
+
+hud_collision_enabled = true
+hud_collision_offset_pos_16x9 = 0.0, -0.2, -0.1
+hud_collision_offset_rot_16x9  = -0.7, 0.0, 0.0
+
+anm_hide                                 = blnd_toz34_holster_arms
+anm_hide_0                               = blnd_toz34_holster_arms
+anm_hide_1                               = blnd_toz34_holster_arms
+anm_hide_2                               = blnd_toz34_holster_arms
+anm_idle                                 = blnd_toz34_idle_arms, idle
+anm_idle_0                               = blnd_toz34_idle_arms, idle
+anm_idle_1                               = blnd_toz34_idle_arms, idle
+anm_idle_2                               = blnd_toz34_idle_arms, idle
+anm_idle_aim                             = blnd_toz34_idleads_arms
+anm_idle_aim_0                           = blnd_toz34_idleads_arms
+anm_idle_aim_1                           = blnd_toz34_idleads_arms
+anm_idle_aim_2                           = blnd_toz34_idleads_arms
+anm_idle_aim_moving                      = blnd_toz34_idleads_arms
+anm_idle_aim_moving_crouch               = blnd_toz34_idleads_arms
+anm_idle_moving                          = blnd_toz34_walk_arms
+anm_idle_moving_0                        = blnd_toz34_walk_arms
+anm_idle_moving_1                        = blnd_toz34_walk_arms
+anm_idle_moving_2                        = blnd_toz34_walk_arms
+anm_idle_moving_crouch                   = blnd_toz34_crouch_arms
+anm_idle_moving_crouch_0                 = blnd_toz34_crouch_arms
+anm_idle_moving_crouch_1                 = blnd_toz34_crouch_arms
+anm_idle_moving_crouch_2                 = blnd_toz34_crouch_arms
+anm_idle_sprint                          = blnd_toz34_sprint_arms
+anm_idle_sprint_0                        = blnd_toz34_sprint_arms
+anm_idle_sprint_1                        = blnd_toz34_sprint_arms
+anm_idle_sprint_2                        = blnd_toz34_sprint_arms
+anm_reload_1                             = blnd_toz34_reload_arms, reload
+anm_reload_2                             = blnd_toz34_reloadempty_arms, reloadempty
+anm_reload_misfire         		 = blnd_toz34_obrez_reload_arms, reload_obrez
+anm_shot_1                               = blnd_toz34_shoot_arms, idle
+anm_shot_2                               = blnd_toz34_shoot2_arms, idle
+anm_show                                 = blnd_toz34_draw_arms
+anm_show_0                               = blnd_toz34_draw_arms
+anm_show_1                               = blnd_toz34_draw_arms
+anm_show_2                               = blnd_toz34_draw_arms
+anm_bore                               	 = blnd_toz34_idle_arms, idle
+
+shell_bone                               = wpn_body
+shell_dir                                = 0, 1, 0
+shell_point                              = 0, 0, 0
+
+fire_bone                                = muzzle
+fire_point                               = 0, 0, 0
+;-----------------------------------------------------------------------------
+; Шкурки
+;-----------------------------------------------------------------------------
+;-----------------------------------------------------------------------------
+; Особые
+;-----------------------------------------------------------------------------
+[wpn_toz34_obrez]:wpn_toz34
+$spawn					 		= "weapons\toz-34_obrez"
+description 					= st_wpn_toz34_obrez_descr
+visual							= dynamics\weapons\wpn_toz34\wpn_toz34_obrez.ogf
+hud 							= wpn_toz34_obrez_hud
+
+scopes 							= none
+parent_section  				= wpn_toz34_obrez
+
+inv_name						= st_wpn_toz34_obrez
+inv_name_short 					= st_wpn_toz34_obrez
+
+inv_grid_width					= 3
+inv_grid_height					= 1
+inv_grid_x						= 5
+inv_grid_y						= 11
+
+upgr_icon_x						= 600
+upgr_icon_y						= 600
+upgr_icon_width					= 300
+upgr_icon_height 				= 100
+
+cost 							= 600
+inv_weight 						= 2.2
+
+hit_power 						= 1
+fire_distance					= 100
+
+fire_dispersion_base 			= 0.45
+fire_dispersion_condition_factor	= 3
+control_inertion_factor			= 1.1f
+crosshair_inertion				= 5
+
+zoom_rotate_time				= 0.15
+
+[wpn_toz34_obrez_hud]:wpn_toz34_hud
+item_visual               		= dynamics\weapons\wpn_toz34\wpn_toz34_obrez_hud.ogf
+
+anm_hide                                 = blnd_toz34_obrez_holster_arms
+anm_hide_0                               = blnd_toz34_obrez_holster_arms
+anm_hide_1                               = blnd_toz34_obrez_holster_arms
+anm_hide_2                               = blnd_toz34_obrez_holster_arms
+anm_idle                                 = blnd_toz34_idle_arms, idle
+anm_idle_0                               = blnd_toz34_idle_arms, idle
+anm_idle_1                               = blnd_toz34_idle_arms, idle
+anm_idle_2                               = blnd_toz34_idle_arms, idle
+anm_idle_aim                             = blnd_toz34_idleads_arms
+anm_idle_aim_0                           = blnd_toz34_idleads_arms
+anm_idle_aim_1                           = blnd_toz34_idleads_arms
+anm_idle_aim_2                           = blnd_toz34_idleads_arms
+anm_idle_aim_moving                      = blnd_toz34_idleads_arms
+anm_idle_aim_moving_crouch               = blnd_toz34_idleads_arms
+anm_idle_moving                          = blnd_toz34_walk_arms
+anm_idle_moving_0                        = blnd_toz34_walk_arms
+anm_idle_moving_1                        = blnd_toz34_walk_arms
+anm_idle_moving_2                        = blnd_toz34_walk_arms
+anm_idle_moving_crouch                   = blnd_toz34_crouch_arms
+anm_idle_moving_crouch_0                 = blnd_toz34_crouch_arms
+anm_idle_moving_crouch_1                 = blnd_toz34_crouch_arms
+anm_idle_moving_crouch_2                 = blnd_toz34_crouch_arms
+anm_idle_sprint                          = blnd_toz34_sprint_arms
+anm_idle_sprint_0                        = blnd_toz34_sprint_arms
+anm_idle_sprint_1                        = blnd_toz34_sprint_arms
+anm_idle_sprint_2                        = blnd_toz34_sprint_arms
+anm_reload_1                             = blnd_toz34_obrez_reload_arms, reload_obrez
+anm_reload_2                             = blnd_toz34_obrez_reloadempty_arms, reloadempty_obrez
+anm_reload_misfire         		 = blnd_toz34_obrez_reload_arms, reload_obrez
+anm_shot_1                               = blnd_toz34_shoot_arms, idle
+anm_shot_2                               = blnd_toz34_shoot2_arms, idle
+anm_show                                 = blnd_toz34_obrez_draw_arms
+anm_show_0                               = blnd_toz34_obrez_draw_arms
+anm_show_1                               = blnd_toz34_obrez_draw_arms
+anm_show_2                               = blnd_toz34_obrez_draw_arms

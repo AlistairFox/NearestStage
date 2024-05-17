@@ -1,0 +1,64 @@
+[kolbasa_hud_model]:gwr_base_usable
+script_binding      = gwr_eatable.init
+timing = 2100			;задержка на время проигрывания анимации перед назначением эффекта (мс)
+timing_trash = 0900
+gwr_changed_object = kolbasa
+gwr_eatable_object = kolbasa_eatable
+hud_fov_factor = 0.9 
+
+visual                  	= dynamics\weapons\wpn_eat\world_models\food\wpn_kolbasa.ogf
+hud                     	= anm_kolbasa_hud
+
+inv_name			= st_kolbasa
+inv_name_short		        = st_kolbasa
+description			= st_kolbasa_descr
+
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 21
+inv_grid_y         = 18
+inv_weight			= 0.05
+
+cost				= 80
+
+;звуки
+snd_draw   = $silent
+snd_using   = interface\item_usage\food_use
+
+[anm_kolbasa_hud]:gwr_base_usable_hud
+zoom_hide_crosshair			= true
+
+inertion_pitch_offset_r = 0
+inertion_pitch_offset_n = 0
+inertion_pitch_offset_d = 0
+inertion_speed = 20
+inertion_origin_offset = 0
+
+dof_time_offset_anm_show = -0.6
+dof_anm_show_far = 3
+dof_anm_show_focus = 0.3
+dof_speed_in_anm_show = 0.7
+
+
+hands_position 				= 0.0, -0.143296, 0.284578
+hands_orientation		    = 0.0, 16.4738, 0.0
+hands_position_16x9			= 0.003000,-0.165296,0.185578
+hands_orientation_16x9		= 0.000000,16.473801,0.000000
+item_position				= 0,0,0
+item_orientation			= 0,0,0
+
+aim_hud_offset_pos			= 0.0,0.022,0.0
+aim_hud_offset_rot			= 0.0,0.0,0.0
+
+aim_hud_offset_pos_16x9		= 0.0,0.022,0.0
+aim_hud_offset_rot_16x9		= 0.0,0.0,0.0
+
+item_visual             	= dynamics\weapons\wpn_eat\food\wpn_eat_kolbasa.ogf
+
+anm_show				= eat_hleb_d_use_h, eat_hleb_d_use_h
+anm_hide				= eat_apt_draw		;binoculars_holster
+anm_idle				= eat_apt_idle			;binoculars_idle
+anm_idle_aim			= eat_apt_idle			;binoculars_idle
+anm_idle_moving			= eat_apt_idle_moving	;binoculars_idle_moving
+anm_idle_sprint			= eat_apt_idle_sprint	;binoculars_idle_sprint
+anm_bore				= eat_apt_use		;binoculars_idle_bore

@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding="windows-1251"?>
+
+<xml>
+	<specific_character id="den_mechanic" team_default = "1">
+		<name>den_mechanic_name</name>
+		<icon>ui_inGame2_neutral_nauchniy</icon>
+		<map_icon x="1" y="0">
+		</map_icon>
+		<bio>Опытный сталкер. Детальная информация отсутствует.</bio>
+
+		<class>den_mechanic</class>
+		<community>stalker</community>
+		<mechanic_mode>1</mechanic_mode>
+		<terrain_sect>stalker_terrain</terrain_sect>
+		<snd_config>characters_voice\human_03\stalker\</snd_config>
+
+		<rank>100</rank>
+		<money min="480000" max="480000" infinitive="1"/>
+		<reputation>0</reputation>
+
+		<visual>actors\stalker_neutral\stalker_neutral_nauchniy</visual>
+		<supplies>
+		
+		[spawn] /n
+        wpn_spas12 \n
+        wpn_beretta \n
+        ammo_9x19_pbp = 1 \n
+        grenade_rgd5 = 1 \n
+		wpn_toz34 = 100 \n 
+		ammo_12x70_buck = 200 \n 
+		novice_outfit = 100 \n
+
+#include "gameplay\character_items_3.xml"
+#include "gameplay\character_food.xml"
+#include "gameplay\character_drugs_4.xml"
+    </supplies>
+		<start_dialog>esc_baikal_start</start_dialog>
+		<actor_dialog>esc_baikal_fquest</actor_dialog>
+		
+		<actor_dialog>actor_break_dialog</actor_dialog>
+
+#include "gameplay\character_criticals_4.xml"
+  </specific_character>
+</xml>
+
+<xml>
+	<specific_character id="den_trader" team_default = "1">
+		<name>den_trader_name</name>
+		<icon>ui_inGame2_neutral_nauchniy</icon>
+		<map_icon x="1" y="0">
+		</map_icon>
+		<bio>Опытный сталкер. Детальная информация отсутствует.</bio>
+
+		<class>den_trader</class>
+		<community>stalker</community>
+		<terrain_sect>stalker_terrain</terrain_sect>
+		<snd_config>characters_voice\human_03\stalker\</snd_config>
+
+		<rank>100</rank>
+		<money min="480000" max="480000" infinitive="1"/>
+		<reputation>0</reputation>
+
+		<visual>actors\stalker_neutral\stalker_neutral_nauchniy</visual>
+		<supplies>
+		
+		[spawn] /n
+        wpn_spas12 \n
+        wpn_beretta \n
+        ammo_9x19_pbp = 1 \n
+        grenade_rgd5 = 1 \n
+		wpn_toz34 = 100 \n 
+		ammo_12x70_buck = 200 \n 
+		novice_outfit = 100 \n
+
+#include "gameplay\character_items_3.xml"
+#include "gameplay\character_food.xml"
+#include "gameplay\character_drugs_4.xml"
+    </supplies>
+		<start_dialog>esc_baikal_start</start_dialog>
+		<actor_dialog>esc_baikal_fquest</actor_dialog>
+		
+		<actor_dialog>actor_break_dialog</actor_dialog>
+
+#include "gameplay\character_criticals_4.xml"
+  </specific_character>
+</xml>

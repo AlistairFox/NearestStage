@@ -1,0 +1,23 @@
+[logic]
+active = sr_idle@play1
+
+[sr_idle@play1]
+on_info = %=play_sound(esc_mil_radio_1)%
+on_signal = sound_end | sr_idle@1
+
+[sr_idle@1]
+on_game_timer = 300 | sr_idle@play2
+
+[sr_idle@play2]
+on_info = %=play_sound(esc_mil_radio_2)%
+on_signal = sound_end | sr_idle@2
+
+[sr_idle@2]
+on_game_timer = 120 | sr_idle@play3
+
+[sr_idle@play3]
+on_info = %=play_sound(esc_mil_radio_3)%
+on_signal = sound_end | sr_idle@3
+
+[sr_idle@3]
+on_game_timer = 180 | sr_idle@play1

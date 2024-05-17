@@ -1,0 +1,15 @@
+[smart_terrain]
+squad_id = 10
+max_population = 1
+respawn_params = respawn@smart_dog_respawn
+
+[respawn@smart_dog_respawn]
+spawn_dog
+
+[spawn_dog]
+spawn_squads = simulation_dog
+spawn_num = 5000
+
+
+[exclusive]
+sm_dogs_esc_ex = nearestmap\mobs_ex\sm_dogs_esc_ex.ltx

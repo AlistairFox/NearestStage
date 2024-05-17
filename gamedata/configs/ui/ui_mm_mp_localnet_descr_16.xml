@@ -1,0 +1,88 @@
+<w>
+    <background x="0" y="0" width="1024" height="768">
+	  <auto_static x="0" y="0" width="1024" height="768" stretch="1">
+        <texture width="1920" height="1080">ui\mm_vid_2</texture>
+      </auto_static>
+	  <auto_static x="50000" y="50000" width="1" height="1" stretch="1">
+			<texture>ui_inGame2_mp_background</texture>
+		</auto_static>
+      <auto_static x="50000" y="50000" width="1" height="1" stretch="1">
+        <texture width="302" height="512">ui\video_bochka</texture>
+      </auto_static>
+
+		<auto_static x="418" y="288" width="500" height="400" stretch="1">
+			<texture>ui_inGame2_main_window_small</texture>
+		</auto_static>
+		<auto_static x="50000" y="50000" width="104" height="30" stretch="1">
+			<texture>ui_inGame2_GameSpy_logo</texture>
+		</auto_static>
+    </background>
+
+
+	<localnet_desc_page x="418" y="288" width="500" height="400">
+		
+		<auto_static x="0" y="0" width="500" height="400" stretch="1">
+			<texture>ui_inGame2_main_window_small</texture>
+		</auto_static>
+		
+		<cap_header_descr x="170" y="40" width="160" height="30">
+	        <text font="graffiti32" align="c" r="220" g="220" b="220">ui_st_mp_descr_text</text>
+	    </cap_header_descr>
+		
+		<cap_descript x="50" y="80" width="60" height="30">
+	        <text font="letterica18" align="l" r="220" g="220" b="220">ui_st_mp_text_descr</text>
+	    </cap_descript>
+		
+		<cap_descript2 x="50" y="95" width="60" height="30">
+	        <text font="letterica18" align="l" r="220" g="220" b="220">ui_st_mp_text2_descr</text>
+	    </cap_descript2>
+		
+		<cap_descript3 x="50" y="110" width="60" height="30">
+	        <text font="letterica18" align="l" r="220" g="100" b="100">ui_st_mp_text3_descr</text>
+	    </cap_descript3>
+		<cap_descript4 x="50" y="125" width="60" height="30">
+	        <text font="letterica18" align="l" r="220" g="100" b="100">ui_st_mp_text4_descr</text>
+	    </cap_descript4>
+		<cap_descript5 x="50" y="140" width="60" height="30">
+	        <text font="letterica18" align="l" r="220" g="100" b="100">ui_st_mp_text5_descr</text>
+	    </cap_descript5>
+		<cap_descript6 x="50" y="155" width="60" height="30">
+	        <text font="letterica18" align="l" r="220" g="100" b="100">ui_st_mp_text6_descr</text>
+	    </cap_descript6>
+		<cap_descript7 x="50" y="170" width="60" height="30">
+	        <text font="letterica18" align="l" r="220" g="220" b="220">ui_st_mp_text7_descr</text>
+	    </cap_descript7>
+		<cap_descript8 x="50" y="185" width="60" height="30">
+	        <text font="letterica18" align="l" r="220" g="220" b="220">ui_st_mp_text8_descr</text>
+	    </cap_descript8>
+		<cap_descript9 x="50" y="200" width="60" height="30">
+	        <text font="letterica18" align="l" r="220" g="220" b="220">ui_st_mp_text9_descr</text>
+	    </cap_descript9>
+		<cap_descript10 x="50" y="215" width="60" height="30">
+	        <text font="letterica18" align="l" r="220" g="220" b="220">ui_st_mp_text10_descr</text>
+	    </cap_descript10>
+		<cap_descript11 x="50" y="230" width="60" height="30">
+	        <text font="letterica18" align="l" r="220" g="220" b="220">ui_st_mp_text11_descr</text>
+	    </cap_descript11>
+		<cap_descript12 x="50" y="245" width="60" height="30">
+	        <text font="letterica18" align="l" r="220" g="220" b="220">ui_st_mp_text12_descr</text>
+	    </cap_descript12>
+		<cap_descript13 x="50" y="260" width="60" height="30">
+	        <text font="letterica18" align="l" r="220" g="220" b="220">ui_st_mp_text13_descr</text>
+	    </cap_descript13>
+		<cap_descript14 x="50" y="275" width="60" height="30">
+	        <text font="letterica18" align="l" r="100" g="220" b="100">ui_st_mp_text14_descr</text>
+	    </cap_descript14>
+		<cap_descript15 x="50" y="290" width="60" height="30">
+	        <text font="letterica18" align="l" r="100" g="220" b="100">ui_st_mp_text15_descr</text>
+	    </cap_descript15>
+	
+		<button_cancel x="200" y="331" width="108" height="26">
+			<text font="letterica16" r="200" g="200" b="200" align="c">mm_go_back</text>
+			<texture>ui_inGame2_Mp_bigbuttone</texture>
+			<text_color>
+				<e r="200" g="200" b="200"/>
+			</text_color>
+		</button_cancel>
+	</localnet_desc_page>
+</w>

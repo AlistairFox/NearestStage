@@ -1,0 +1,13 @@
+[logic]
+active = sr_idle@wait
+
+[sr_idle@wait]
+on_actor_inside = sr_idle@play
+
+[sr_idle@play]
+on_info = %=play_sound(new_terrain_enter)%
+on_signal = sound_end | sr_idle@midle
+
+[sr_idle@midle]
+on_info = %=stop_sound(new_terrain_enter)%
+on_actor_outside = sr_idle@wait

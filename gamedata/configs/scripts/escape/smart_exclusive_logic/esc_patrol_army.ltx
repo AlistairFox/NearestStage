@@ -1,0 +1,25 @@
+[logic@esc_comander_army]
+suitable = {=check_npc_name(esc_comander_army)} true
+prior = 200
+active = animpoint@army
+can_select_weapon = false
+
+[animpoint@army]
+cover_name = esc_patrol_cover
+avail_animations = guard_chasovoy
+use_camp = false
+meet 		    = {!actor_community(army)} meet, default_meet
+combat_ignore_cond = true
+combat_ignore_keep_when_attacked = false
+invulnerable = true
+gather_items_enabled = false
+help_wounded_enabled = true
+corpse_detection_enabled = false
+
+[meet]
+meet_state = 50| {+info} threat_fire %=killactor%, walk@ {+info} talk_abuse, wait | 10 | walk %+info%; wait | 2 | threat;state  ;WTF???
+meet_state_wpn = 50| {+info} threat_fire %=killactor%, threat@ {+info} talk_abuse, wait
+victim = 50| actor
+victim_wpn = 50| actor
+use = {-info2} self, false
+use_wpn = false

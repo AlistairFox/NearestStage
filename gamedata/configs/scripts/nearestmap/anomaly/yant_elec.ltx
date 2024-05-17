@@ -1,0 +1,17 @@
+[anomal_zone]
+layers_count = 1
+respawn_tries = 8
+max_artefacts = 20
+;applying_force_xz = 200
+;applying_force_y = 400 
+artefacts = af_electra_sparkler, af_electra_flash, af_electra_moonlight, af_dummy_battery
+start_artefact = af_electra_sparkler
+coeff = 3, 2, 2, 1
+artefact_ways = yan_elec
+[mines_core]
+
+[layer_1]
+mines_section = mines_layer_1 
+
+[mines_layer_1]:mines_core
+level_prefix_zone_mine_electric_strong_05

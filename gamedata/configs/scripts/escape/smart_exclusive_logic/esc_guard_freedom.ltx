@@ -1,0 +1,30 @@
+[logic@esc_freedom_guard]
+suitable = {=check_npc_name(esc_freedomer)} true
+prior = 200
+active = animpoint@freedomer
+can_select_weapon = true
+
+[animpoint@freedomer]
+cover_name = esc_free_guard_cover
+avail_animations = ward
+use_camp = false
+meet = meet
+
+combat_ignore_keep_when_attacked = false
+invulnerable = false
+gather_items_enabled = false
+help_wounded_enabled = true
+corpse_detection_enabled = false
+
+[meet]
+close_snd_hello = wait
+close_anim 		= nil
+close_victim 	= nil
+far_anim 		= nil
+far_victim 		= nil
+close_distance  = 0
+far_distance 	= 0
+close_snd_distance = 3
+use = true					; {=actor_enemy} false, true
+allow_break = false
+meet_on_talking = false

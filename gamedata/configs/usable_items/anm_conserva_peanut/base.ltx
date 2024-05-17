@@ -1,0 +1,22 @@
+#include "eatable_objects.ltx"
+#include "hud_objects.ltx"
+
+
+[conserva_peanut]:booster
+$spawn 				= "food and drugs\conserva_peanut"
+visual				= dynamics\weapons\wpn_eat\world_models\conservi\wpn_conserva.ogf
+description			= st_conserva_peanut_descr
+
+inv_name			= st_conserva_peanut
+inv_name_short		        = st_conserva_peanut
+inv_weight			= 0.05	;0.2
+cost				= 80
+
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 23
+inv_grid_y         = 18
+
+use_sound			= $silent ;interface\inv_bandage
+
+hud = conserva_peanut_hud_model

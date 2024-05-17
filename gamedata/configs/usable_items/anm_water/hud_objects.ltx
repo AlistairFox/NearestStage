@@ -1,0 +1,100 @@
+[water_hud_model]:gwr_base_usable
+visual				= dynamics\weapons\wpn_eat\world_models\banki\banka_2_artezian_world.ogf
+hud = anm_water_hud
+hud_fov_factor = 0.9   
+
+description			= st_water_can_1_descr
+inv_name			= st_water_can_1
+inv_name_short			= st_water_can_1
+
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 27
+inv_grid_y         = 15
+cost				= 40
+inv_weight		 	= 0.55
+
+snd_draw   = $silent
+snd_using   = interface\item_usage\drink_soda_use
+timing = 2850					;задержка на время проигрывания анимации перед назначением эффекта (мс)
+gwr_changed_object = water			;Какой предмет заменили
+gwr_eatable_object = water_eatable		;Какой предмет есть после проигрывания анимы
+
+
+[water_hud_model2]:water_hud_model
+gwr_changed_object = water2
+;timing = 5230
+hud = water_hud2
+cost				= 30
+inv_weight		 	= 0.4
+inv_grid_x         = 28
+inv_grid_y         = 15
+
+[water_hud_model3]:water_hud_model
+gwr_changed_object = water3
+;timing = 5230
+hud = water_hud3
+cost				= 20
+inv_weight		 	= 0.25
+inv_grid_x         = 29
+inv_grid_y         = 15
+
+[water_hud_model4]:water_hud_model
+gwr_changed_object = water4
+snd_using   = interface\item_usage\drink_soda_use
+timing = 2850
+timing_trash = 6100
+hud = water_hud4
+cost				= 10
+inv_weight		 	= 0.1
+inv_grid_x         = 30
+inv_grid_y         = 15
+
+[anm_water_hud]:gwr_base_usable_hud
+zoom_hide_crosshair			= true
+
+inertion_pitch_offset_r = 0
+inertion_pitch_offset_n = 0
+inertion_pitch_offset_d = 0
+inertion_speed = 20
+inertion_origin_offset = 0
+
+hands_position				= 0.0000,-0.1000,0.4000
+hands_orientation			= -0.500000,1.000000,1.149999
+
+hands_position_16x9				= 0.0000,-0.1000,0.4000
+hands_orientation_16x9			= 2.349998,2.749999,2.849998
+
+item_position    = 0.000075,-0.004612,0.001283
+item_orientation   = 0.045015,1.047468,0.056850
+
+aim_hud_offset_pos			= 0.0,0.022,0.0
+aim_hud_offset_rot			= 0.0,0.0,0.0
+
+aim_hud_offset_pos_16x9		= 0.0,0.022,0.0
+aim_hud_offset_rot_16x9		= 0.0,0.0,0.0
+
+gl_hud_offset_pos				= 0,0,0
+gl_hud_offset_rot				= 0,0,0
+
+lean_hud_offset_pos			= 0,0,0
+lean_hud_offset_rot			= 0,0,0
+
+item_visual             	= dynamics\weapons\wpn_eat\banki\wpn_banka_2_artezian_hud.ogf
+
+anm_show				= banka_1_hands_eat_invtrans, banka_1_wpn_eat
+anm_hide				= eat_vodka_draw		;binoculars_holster
+anm_idle				= eat_vodka_idle			;binoculars_idle
+anm_idle_aim			= eat_vodka_idle			;binoculars_idle
+anm_idle_moving			= eat_vodka_idle_moving	;binoculars_idle_moving
+anm_idle_sprint			= eat_vodka_idle_sprint	;binoculars_idle_sprint
+anm_bore				= eat_vodka_use		;binoculars_idle_bore
+
+[water_hud2]:anm_water_hud
+anm_show = banka_1_hands_eat_invtrans, banka_1_wpn_eat
+
+[water_hud3]:anm_water_hud
+anm_show = banka_1_hands_eat_invtrans, banka_1_wpn_eat
+
+[water_hud4]:anm_water_hud
+anm_show = banka_1_hands_eat_invtrans, banka_1_wpn_eat

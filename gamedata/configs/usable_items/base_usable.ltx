@@ -1,0 +1,480 @@
+;Базовые предметы и их настройки для работы системы анимированных худовых предметов
+;НЕ МЕНЯТЬ! Иначе руки оторву. Sin!
+
+[gwr_base_usable]:identity_immunities,weapon_probability,default_weapon_params
+script_binding      = gwr_eatable.init
+disable_headlamp_anim = true
+disable_nv_anim = true
+
+GroupControlSection			= spawn_group
+discovery_dependency		=
+$npc						= on							; option for Level Editor
+$prefetch 					= 8
+scheduled					= off							; option for ALife Simulator
+cform						= skeleton
+class						= WP_BINOC
+hud							= gwr_base_item_hud
+
+ef_main_weapon_type			= 5
+ef_weapon_type				= 0
+
+;---DOF-------------------------------------------------------------------------
+;zoom_dof					= -1.0, 10.0, 350
+reload_dof				= 0.0, 0.5, 5, 1.7
+;-------------------------------------------------------------------------------
+
+flame_particles		   		= weapons\generic_weapon05
+smoke_particles		   		= weapons\generic_shoot_00
+
+fire_point               	= 0.0, 0.133, 0.161
+shell_point		 			= 0.0, 0.133, 0.047
+shell_dir		 			= 0.0, 0.0, 0.4
+shell_particles	 			= weapons\generic_shells
+
+position					= -0.08 , -0.05 , 0.05
+normal						= 0, 1, 0
+direction					= 0, 0, 1
+orientation					= 0 , -90, 70
+
+attach_angle_offset			= 3.080506,-1.493053,-1.202040   ;устанавливается в радианах Angle*PI/180
+attach_position_offset		= 0.080000,0.021273,0.100000
+attach_bone_name			= bip01_r_hand
+auto_attach					= false
+
+visual						= dynamics\devices\dev_binoculars\dev_binoculars.ogf
+description					= st_binocular_descr
+hand_dependence		 		= 1
+single_handed				= 0
+
+slot 			 		= 10		; // binocular
+animation_slot				= 13	; type of the animation that will be used
+default_to_ruck				= false
+sprint_allowed					= true
+control_inertion_factor		= 1
+
+
+ammo_limit		 			= 0
+ammo_current		 		= 0
+ammo_elapsed		 		= 0
+
+ammo_mag_size		 		= 0
+ammo_class		 			= ammo_9x19_fmj
+
+inv_name		 			= st_binocular_name
+inv_name_short				= st_binocular_name
+inv_weight		 			= 1.0
+
+show_ammo					= false
+
+inv_grid_width				= 2
+inv_grid_height				= 1
+inv_grid_x					= 16
+inv_grid_y					= 8
+
+min_radius					= 100
+max_radius					= 150
+
+cost						= 800
+
+cam_relax_speed				= 5.5
+cam_dispersion				= 2
+cam_max_angle				= 5
+cam_max_angle_horz			= 5.0
+cam_step_angle_horz			= 0.5
+
+disp_vel_factor				= 0.1
+disp_crouch_factor			= 0.75
+disp_jump_factor			= 3
+
+ph_mass						= 1
+
+scope_status				= 1
+silencer_status				= 0
+grenade_launcher_status		= 0
+
+zoom_enabled				= true
+scope_texture				= wpn_crosshair_bino
+scope_zoom_factor			= 1.0
+
+
+fire_dispersion_base		= 0.1
+
+cam_relax_speed         	= 1.5
+cam_dispersion          	= 1.5
+cam_max_angle				= 7
+cam_max_angle_horz			= 10.0
+cam_step_angle_horz			= 1.5
+
+fire_dispersion_condition_factor = 5
+misfire_probability        = 0.0001 ;вероятность осечки при максимальном износе  !!!old - now not working
+;изношенность, при которой появляется шанс осечки
+misfire_start_condition		= 0.6
+;изношеность при которой шанс осечки становится константным
+misfire_end_condition		= 0.1
+;шанс осечки при изношености больше чем misfireStartCondition
+misfire_start_prob	     	= 0.001
+;шанс осечки при изношености больше чем misfireEndCondition
+misfire_end_prob	     	= 0.02
+;увеличение изношености при одиночном выстреле
+condition_shot_dec      	= 0.00001
+;увеличение изношености при выстреле очередью
+condition_queue_shot_dec	= 0.00002
+
+PDM_disp_base           = 1.0
+PDM_disp_vel_factor     = 1.0
+PDM_disp_accel_factor   = 1.0
+PDM_disp_crouch         = 1.0
+PDM_disp_crouch_no_acc  = 1.0
+
+hit_power                	= 1
+hit_impulse		 		 	= 1
+hit_type					= fire_wound
+
+fire_distance            	= 1
+bullet_speed		 	 	= 1
+rpm                      	= 1
+rpm_empty_click 	 		= 1
+
+
+light_color		 			= 0.6,0.5,0.3
+light_range		 			= 3.0
+light_var_color		 		= 0.05
+light_var_range		 		= 0.5
+light_time 		 			= 0.2
+
+
+
+vision_present				= false
+vis_frame_speed				= 4				; скорость, с которой наводится рамка на цель
+vis_frame_color				= 0.7,0.7,0.7,1.0	; цвет рамки RGBA (A) Не учитывается
+found_snd					= detectors\DA-2_beep1
+catch_snd					= detectors\DA-2_beep1
+hud                     = vodka_hud
+visual                  = dynamics\devices\dev_vodka\dev_vodka.ogf
+
+position                = -0.021, -0.085, 0.024
+orientation             = 0, 90, 0
+
+fire_point              = 0.0, 0.133, 0.161
+
+flame_particles		   	=
+smoke_particles		   	=
+
+shell_point		 				= 0.0, 0.133, 0.047
+shell_dir		 				= 0.0, 0.0, 0.4
+shell_particles	 			= weapons\generic_shells
+
+;-------------------------------------------------------------------------------
+startup_ammo           		= 1000
+wm_size                  	= 0.10
+
+light_disabled					= true
+
+ph_mass			 				= 4
+;cost			 					= 350
+
+;addons
+scope_status					= 0
+silencer_status					= 0
+grenade_launcher_status				= 0
+zoom_enabled					= false
+
+;звуки
+snd_draw   = $silent
+snd_holster= $silent 
+snd_shoot  = $silent
+snd_empty  = $silent
+snd_reload = $silent
+snd_close  = $silent
+
+snd_gyro					= $silent
+snd_zoomin					= $silent
+snd_zoomout					= $silent
+
+
+[gwr_base_usable_hud]:hud_base
+zoom_hide_crosshair			= true
+
+;стрейф влево
+hud_move_left_offset_pos = -0.01,0,0
+hud_move_left_offset_rot = 0,0,-2
+
+hud_move_left_offset_pos_16x9 = -0.01,0,0
+hud_move_left_offset_rot_16x9 = 0,0,-2
+
+;стрейф вправо
+hud_move_right_offset_pos = 0.01,0,0
+hud_move_right_offset_rot = 0,0,2
+
+hud_move_right_offset_pos_16x9 = 0.01,0,0
+hud_move_right_offset_rot_16x9 = 0,0,2
+
+;движение вперед
+hud_move_forward_offset_pos = 0,0,0.0
+hud_move_forward_offset_pos_16x9 = 0,0,0.0
+
+;движение назад
+hud_move_back_offset_pos = 0,0,0.0
+hud_move_back_offset_pos_16x9 = 0,0,0.0
+
+;прыжок
+hud_move_jump_offset_pos = 0,0,0
+hud_move_jump_offset_rot = 0,0,0
+
+hud_move_jump_offset_pos_16x9 = 0,0,0
+hud_move_jump_offset_rot_16x9 = 0,0,0
+
+;падение
+hud_move_fall_offset_pos = 0,0,0
+hud_move_fall_offset_rot = 0,0,0
+
+hud_move_fall_offset_pos_16x9 = 0,0,0
+hud_move_fall_offset_rot_16x9 = 0,0,0
+
+;приземление - первая фаза
+hud_move_landing_offset_pos = 0,0,0
+hud_move_landing_offset_rot = 0,0,0
+
+hud_move_landing_offset_pos_16x9 = 0,0,0
+hud_move_landing_offset_rot_16x9 = 0,0,0
+
+;приземление - вторая фаза
+hud_move_landing_offset_pos = 0,0,0
+hud_move_landing_offset_rot = 0,0,0
+
+hud_move_landing_offset_pos_16x9 = 0,0,0
+hud_move_landing_offset_rot_16x9 = 0,0,0
+
+;переход из стойки в присяд
+to_crouch_time = 0.15
+hud_move_to_crouch_offset_pos = 0,0,0
+hud_move_to_crouch_offset_rot = 0,0,0
+
+hud_move_to_crouch_offset_pos_16x9 = 0,0,0
+hud_move_to_crouch_offset_rot_16x9 = 0,0,0
+
+;переход из присяда в стойку
+from_crouch_time = 0.15
+hud_move_from_crouch_offset_pos = 0,0,0
+hud_move_from_crouch_offset_rot = 0,0,0
+
+hud_move_from_crouch_offset_pos_16x9 = 0,0,0
+hud_move_from_crouch_offset_rot_16x9 = 0,0,0
+
+;переход из присяда в низкий присяд
+to_slow_crouch_time = 0.15
+hud_move_to_slow_crouch_offset_pos = 0,0,0
+hud_move_to_slow_crouch_offset_rot = 0,0,0
+
+hud_move_to_slow_crouch_offset_pos_16x9 = 0,0,0
+hud_move_to_slow_crouch_offset_rot_16x9 = 0,0,0
+
+;переход из низкого присяда в присяд
+from_slow_crouch_time = 0.15
+hud_move_from_slow_crouch_offset_pos = 0,0,0
+hud_move_from_slow_crouch_offset_rot = 0,0,0
+
+hud_move_from_slow_crouch_offset_pos_16x9 = 0,0,0
+hud_move_from_slow_crouch_offset_rot_16x9 = 0,0,0
+
+;переход из обычного в наклон влево
+to_llookout_time = 0.15
+hud_move_to_llookout_offset_pos 		= 0, 0, 0
+hud_move_to_llookout_offset_rot			= 0,0,0
+hud_move_to_llookout_offset_pos_16x9 	= 0, 0, 0
+hud_move_to_llookout_offset_rot_16x9	= 0,0,0
+
+;переход из наклона влево в обычный
+from_llookout_time = 0.15
+hud_move_from_llookout_offset_pos 		= 0, 0, 0
+hud_move_from_llookout_offset_rot			= 0,0,0
+hud_move_from_llookout_offset_pos_16x9 	= 0, 0, 0
+hud_move_from_llookout_offset_rot_16x9	= 0,0,0
+
+
+;переход из обычного в наклон вправо
+to_rlookout_time = 0.15
+hud_move_to_rlookout_offset_pos 		= 0, 0, 0
+hud_move_to_rlookout_offset_rot			= 0,0,0
+hud_move_to_rlookout_offset_pos_16x9 	= 0, 0, 0
+hud_move_to_rlookout_offset_rot_16x9	= 0,0,0
+
+;переход из наклона вправо в обычный
+from_rlookout_time = 0.15
+hud_move_from_rlookout_offset_pos 		= 0, 0, 0
+hud_move_from_rlookout_offset_rot			= 0,0,0
+hud_move_from_rlookout_offset_pos_16x9 	= 0, 0, 0
+hud_move_from_rlookout_offset_rot_16x9	= 0,0,0
+
+;наклон влево (постоянная компонента)
+hud_move_llookout_offset_pos 		= 0, 0, 0
+hud_move_llookout_offset_pos_16x9 	= 0, 0, 0
+hud_move_llookout_offset_rot 		= 0, 0, 0
+hud_move_llookout_offset_rot_16x9 	= 0, 0, 0
+
+;наклон вправо (постоянная компонента)
+hud_move_rlookout_offset_pos 		= 0, 0, 0
+hud_move_rlookout_offset_pos_16x9 	= 0, 0, 0
+hud_move_rlookout_offset_rot 		= 0, 0, 0
+hud_move_rlookout_offset_rot_16x9 	= 0, 0, 0
+
+
+
+use_dof_anm_show = true
+dof_time_offset_anm_show = -0.6
+dof_anm_show_far = 3
+dof_anm_show_focus = 0.3
+dof_speed_in_anm_show = 2 ;0.7
+
+hands_position				= -0.008000,-10.244998,0.371497
+hands_orientation			= 5.450003,2.649999,-1.200001
+hands_position_16x9				= -0.008500,-10.250998,0.319998
+hands_orientation_16x9			= 5.850004,5.450003,-0.950000
+
+item_position					= 0.000746,-0.000321,0.003479
+item_orientation				= 1.239378,-0.134046,-2.052052
+
+item_visual             	= dynamics\devices\dev_binoculars\dev_binoculars_hud
+attach_place_idx				= 0
+
+anm_show						= binocular_draw
+anm_hide						= binocular_hide
+anm_idle						= binocular_idle
+anm_idle_aim				= binocular_idle
+anm_idle_moving			= binocular_move
+anm_idle_sprint			= binocular_sprint
+anm_bore						= binocular_bore
+
+aim_hud_offset_pos			= 0.0,0.022,0.0
+aim_hud_offset_rot			= 0.0,0.0,0.0
+
+aim_hud_offset_pos_16x9		= 0.0,0.022,0.0
+aim_hud_offset_rot_16x9		= 0.0,0.0,0.0
+
+gl_hud_offset_pos				= 0,0,0
+gl_hud_offset_rot				= 0,0,0
+
+lean_hud_offset_pos			= 0,0,0
+lean_hud_offset_rot			= 0,0,0
+
+
+
+[gwr_base_trash]
+GroupControlSection = spawn_group
+$spawn        = "physics\object"
+$prefetch       = 8
+class       = O_PHYS_S
+script_binding      = gwr_eatable.init_trash
+remove_time     = 90; after this time  unbreaked removable bone will be removed
+startup_animation =
+fixed_bones =
+
+
+[booster]:identity_immunities
+GroupControlSection	= spawn_group
+discovery_dependency =
+;$spawn 				= "food and drugs\booster"
+$prefetch 			= 8
+class				= S_FOOD
+cform				= skeleton
+visual				= dynamics\devices\dev_aptechka\dev_aptechka_low.ogf
+description			= default
+inv_name			= default
+inv_name_short		= default
+inv_weight			= 0.01
+
+inv_grid_width		= 1
+inv_grid_height		= 1
+inv_grid_x			= 3
+inv_grid_y			= 18
+cost				= 1
+
+; eatable item
+eat_health			= 0
+eat_satiety			= 0
+eat_power			= 0
+eat_max_power		= 0
+eat_radiation		= 0
+eat_alcohol			= 0
+wounds_heal_perc	= 0
+eat_portions_num	= 1
+
+boost_time				= 0.0
+boost_max_weight		= 0.0
+boost_health_restore	= 0.0
+boost_power_restore		= 0.0
+boost_radiation_restore	= 0.0
+boost_bleeding_restore	= 0.0
+
+boost_radiation_protection	= 0.0
+boost_telepat_protection 	= 0.0
+boost_chemburn_protection 	= 0.0
+
+boost_burn_immunity			= 0.0
+boost_shock_immunity		= 0.0
+boost_radiation_immunity	= 0.0
+boost_telepat_immunity		= 0.0
+boost_chemburn_immunity 	= 0.0
+boost_strike_immunity		= 0.0
+boost_wound_immunity		= 0.0
+boost_explosion_immunity	= 0.0
+boost_fire_wound_immunity	= 0.0
+use_sound			= $silent
+
+inv_grid_width		        = 1
+inv_grid_height		        = 1
+inv_grid_x			= 2
+inv_grid_y			= 40
+
+
+[drug_anabiotic]:booster
+$spawn 				= "food and drugs\drug_anabiotic"
+visual				= dynamics\equipments\medical\drug_anabiotic.ogf
+inv_name			= st_drug_anabiotic
+inv_name_short		= st_drug_anabiotic
+description			= st_drug_anabiotic_descr
+
+inv_grid_width		= 1
+inv_grid_height		= 1
+inv_grid_x			= 4
+inv_grid_y			= 8
+cost				= 1000
+
+use_sound			= interface\inv_pills
+
+[drug_psy_blockade]:booster
+$spawn 				= "food and drugs\drug_psy_blockade"
+visual				= dynamics\equipments\medical\drug_psy_blockade.ogf
+inv_name			= st_drug_psy_blockade
+inv_name_short		= st_drug_psy_blockade
+description			= st_drug_psy_blockade_descr
+
+inv_grid_width		= 1
+inv_grid_height		= 1
+inv_grid_x			= 8
+inv_grid_y			= 11
+cost				= 550
+
+boost_time				= 60.0
+;boost_telepat_immunity	= 0.05
+boost_telepat_protection 	= 0.05
+
+use_sound			= interface\inv_pills
+
+[drug_booster]:booster
+$spawn 				= "food and drugs\drug_booster"
+visual				= dynamics\equipments\medical\drug_booster.ogf
+inv_name			= st_drug_booster
+inv_name_short		= st_drug_booster
+description			= st_drug_booster_descr
+
+inv_grid_width		= 1
+inv_grid_height		= 1
+inv_grid_x			= 18
+inv_grid_y			= 7
+cost				= 200
+
+boost_time			= 300.0
+boost_max_weight	= 20.0
+
+use_sound			= interface\inv_softdrink

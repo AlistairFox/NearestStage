@@ -1,0 +1,319 @@
+; Пистолет-пулемет ПП-19-01 Витязь-СН
+;-(TrickSR, Ga2z)-----------------------------------------
+; калибр				9x19 мм
+; длина ствола 				237.5 мм
+; магазин				30
+; вес с пустым магазином		2.9 кг
+; максимальная дальность стрельбы	-- м
+; эффективная дальность стрельбы	100-200 м
+; прицельная дальность			200 м
+; дульная скорость пули			370 м/с
+; темп стрельбы				700 в/м
+;---------------------------------------------------
+[wpn_vityaz]:weapon_probability,default_weapon_params,wpn_vityaz_sounds
+GroupControlSection			= spawn_group
+$spawn						= "weapons\vityaz"
+$npc						= on
+$prefetch					= 8
+scheduled					= off
+cform						= skeleton
+class						= WP_AK74
+description					= st_wpn_vityaz_descr
+
+scopes 						= ac10632,acog,eot,pn23
+parent_section  			= wpn_vityaz
+snd_shoot_dist		= true
+ 
+
+ef_main_weapon_type			= 2
+ef_weapon_type				= 8
+
+inv_name					= st_wpn_vityaz
+inv_name_short				= st_wpn_vityaz
+
+inv_grid_width				= 4
+inv_grid_height				= 2
+inv_grid_x					= 28
+inv_grid_y					= 32
+
+upgr_icon_x					= 900
+upgr_icon_y					= 1800
+upgr_icon_width				= 250
+upgr_icon_height 			= 100
+
+kill_msg_x					= 0
+kill_msg_y					= 28
+kill_msg_width				= 84
+kill_msg_height				= 28
+
+cost 						= 3800
+weapon_class				= assault_rifle
+inv_weight					= 2.9
+hud							= wpn_vityaz_hud
+visual						= dynamics\weapons\wpn_vityaz\wpn_vityaz.ogf
+
+upgrades                		= up_gr_firstab_abakan, up_gr_seconab_abakan, up_gr_thirdab_abakan, up_gr_fourtab_abakan, up_gr_fifthab_abakan
+installed_upgrades      		=
+upgrade_scheme          		= upgrade_scheme_abakan
+	
+ph_mass						= 3
+
+ammo_class					= ammo_9x19_fmj, ammo_9x19_pbp
+
+startup_ammo				= 90
+ammo_current				= 180
+ammo_elapsed				= 30
+ammo_limit					= 210
+ammo_mag_size				= 30
+
+fire_modes					= 1, -1
+
+grenade_class				= ammo_vog-25, ammo_vog-25p
+
+launch_speed				= 76
+hand_dependence				= 1
+single_handed				= 0
+
+hit_power					= 0.23
+;hit_impulse				= 10
+hit_type					= fire_wound
+fire_distance				= 1000
+bullet_speed				= 370
+rpm							= 700
+rpm_empty_click				= 200
+	
+use_aim_bullet				= false
+time_to_aim					= 3
+
+misfire_probability			= 0.005
+misfire_start_condition		= 0.6
+misfire_end_condition		= 0.1
+misfire_start_prob	 		= 0.003
+misfire_end_prob		 	= 0.043
+condition_shot_dec 			= 0.0001
+condition_queue_shot_dec	= 0.0002
+
+zoom_dof					= 0.5,1,180
+reload_dof					= 0,0.5,5,2
+
+fire_dispersion_base 		= 0.33
+fire_dispersion_condition_factor	= 2
+control_inertion_factor 		= 1.2f
+crosshair_inertion			= 5.75
+
+cam_return					= 0
+cam_relax_speed				= 5
+cam_relax_speed_ai			= 120.75
+cam_dispersion				= 0.5
+cam_dispersion_inc			= 0.25
+cam_dispersion_frac			= 1.0
+cam_max_angle				= 50.0
+cam_max_angle_horz			= 50.0
+cam_step_angle_horz			= 1.5
+
+zoom_cam_relax_speed		= 10
+zoom_cam_relax_speed_ai		= 120.75
+zoom_cam_dispersion			= 0.5
+zoom_cam_dispersion_inc		= 0.25
+zoom_cam_dispersion_frac	= 1
+zoom_cam_max_angle			= 50
+zoom_cam_max_angle_horz		= 50
+zoom_cam_step_angle_horz	= 1.5
+
+PDM_disp_base 				= 0.5
+PDM_disp_vel_factor 		= 1.5
+PDM_disp_accel_factor 		= 1.5
+PDM_disp_crouch	 			= 1
+PDM_disp_crouch_no_acc 		= 1
+
+min_radius					= 30
+max_radius					= 50
+holder_range_modifier		= 1
+holder_fov_modifier			= 1
+
+slot						= 2
+animation_slot				= 8
+
+position           			= -0.026,-0.215,0.005
+orientation         		= 0,0,0
+
+fire_point          		=  0,0.262,0.447
+fire_point2         		=  0,0.262,0.547
+
+flame_particles				= amik\weapons\ak_shoot_00
+smoke_particles				= ghost_particles\weapons\flame_eft_ak
+grenade_flame_particles 	= amik\weapons\grenade_flame_particles\grenade_flame_particles_00
+silencer_smoke_particles   	= ghost_particles\weapons\generic_smoke_eft_sil
+
+shell_point					= 0,0.216,0.174
+shell_dir					= 0,0,0.4
+shell_particles				= ghost_particles\weapons\shells\shells_9x19_right
+
+strap_position				= -0.26,-0.11,0.25
+strap_orientation			= -15,-9,110
+strap_bone0					= bip01_spine2
+strap_bone1					= bip01_spine1
+
+light_disabled				= false
+light_color					= 0.6,0.5,0.3
+light_range					= 5
+light_var_color				= 0.05
+light_var_range				= 0.5
+light_time					= 0.2
+
+scope_status				= 2
+silencer_status				= 2
+grenade_launcher_status		= 0
+
+zoom_enabled				= true
+zoom_rotate_time			= 0.2
+scope_zoom_factor			= 83.3
+
+scope_name 					= acog
+scope_x						= 74
+scope_y						= -5
+
+silencer_name				= sil_pbs1
+silencer_x                  = 181
+silencer_y                  = 15
+
+silencer_hit_power			= 0.22
+silencer_hit_impulse		= 20
+silencer_fire_distance		= 1000
+silencer_bullet_speed		= 850
+
+silencer_light_color		= 0.6,0.5,0.3
+silencer_light_range		= 0.01
+silencer_light_var_color	= 0.05
+silencer_light_var_range	= 0.5
+silencer_light_time			= 0.2
+
+[wpn_vityaz_hud]
+zoom_hide_crosshair 			= true
+attach_place_idx	    		= 0
+item_visual	         			= dynamics\weapons\wpn_vityaz\wpn_vityaz_hud.ogf
+
+hands_position					= 0.064000,-0.139000,0.183000
+hands_orientation				= 0,0.3,0
+
+hands_position_16x9				= 0.064000,-0.139000,0.183000
+hands_orientation_16x9			= 0,0.3,0
+
+item_position                   = 0,0,0
+item_orientation                = 0,0,0
+
+aim_hud_offset_pos				= -0.063174,0.028508,-0.144000
+aim_hud_offset_rot				= 0.001036,0,0
+
+aim_hud_offset_pos_16x9			= -0.063174,0.028508,-0.144000
+aim_hud_offset_rot_16x9			= 0.001036,0,0
+
+shell_bone                      = zatvor
+shell_dir						= 0,1,0
+shell_point                     = 0,0,0
+
+fire_bone                       = muzzle
+fire_point                      = 0, 0,0
+
+anm_bore						= vityazvirilized_inspect, idle
+anm_show						= vityazvirilized_draw, idle
+anm_hide						= vityazvirilized_holster, idle
+anm_idle						= vityazvirilized_idle, idle
+anm_idle_aim_moving				= vityazvirilized_walk, idle 
+anm_idle_aim_moving				= vityazvirilized_walk, idle ; 0.75 
+anm_idle_aim_moving_crouch		= vityazvirilized_walk, idle ; 0.8 
+anm_idle_moving					= vityazvirilized_walk, idle ; 0.95
+anm_idle_moving_crouch			= vityazvirilized_walk, idle
+anm_idle_sprint					= vityazvirilized_sprint, idle ; 1.2 
+anm_reload						= vityazvirilized_reload, reload
+anm_reload_empty				= vityazvirilized_reload_empty, reload_empty
+anm_reload_misfire				= vityazvirilized_unjam, unjam
+anm_switch_mode					= vityazvirilized_switch_mode, switch_mode
+anm_shots						= vityazvirilized_shoot, shoot
+anm_idle_aim					= vityazvirilized_aim, idle
+
+gl_hud_offset_pos               = 0,0,0
+gl_hud_offset_pos_16x9			= 0,0,0
+
+gl_hud_offset_rot               = 0,0,0
+gl_hud_offset_rot_16x9          = 0,0,0
+
+lean_hud_offset_pos             = 0,0,0
+lean_hud_offset_rot             = 0,0,0
+
+safemode_rot_enabled = true
+safemode_offset_pos				= 0.15,0.015,0
+safemode_offset_rot				= 0,-1,0.2
+safemode_offset_pos_16x9				= 0.15,0.015,0
+safemode_offset_rot_16x9				= 0,-1,0.2
+
+hud_collision_enabled = true
+hud_collision_offset_pos_16x9 = 0.0, -0.2, -0.1
+hud_collision_offset_rot_16x9  = -0.7, 0.0, 0.0
+;-----------------------------------------------------------------------------
+; Аддоны
+;-----------------------------------------------------------------------------
+[wpn_vityaz_ac10632]:wpn_vityaz
+$spawn             				= "weapons\vityaz_ac10632"
+visual							= dynamics\weapons\wpn_vityaz\wpn_vityaz_barska.ogf
+hud								= wpn_vityaz_ac10632_hud
+
+scope_x							= 74
+scope_y							= -10
+
+[wpn_vityaz_ac10632_hud]:wpn_vityaz_hud
+item_visual            	 		= dynamics\weapons\wpn_vityaz\wpn_vityaz_barska_hud.ogf
+
+aim_hud_offset_pos				= -0.063574,0.008508,-0.097000
+aim_hud_offset_rot				= 0.006786,0.000850,0
+
+aim_hud_offset_pos_16x9			= -0.063574,0.008508,-0.097000
+aim_hud_offset_rot_16x9			= 0.006786,0.000850,0
+
+[wpn_vityaz_acog]:wpn_vityaz
+$spawn							= "weapons\vityaz_acog"
+hud								= wpn_vityaz_acog_hud
+
+scope_x							= 74
+scope_y							= -8
+
+[wpn_vityaz_acog_hud]:wpn_vityaz_hud
+aim_hud_offset_pos				= -0.063174,0.007308,-0.139000
+aim_hud_offset_rot				= 0.002686,-0.000200,0
+
+aim_hud_offset_pos_16x9			= -0.063174,0.007308,-0.139000
+aim_hud_offset_rot_16x9			= 0.002686,-0.000200,0
+
+[wpn_vityaz_eot]:wpn_vityaz
+$spawn							= "weapons\vityaz_eot"
+visual							= dynamics\weapons\wpn_vityaz\wpn_vityaz_eot.ogf
+hud								= wpn_vityaz_eot_hud
+
+scope_x							= 75
+scope_y							= -7
+
+[wpn_vityaz_eot_hud]:wpn_vityaz_hud
+item_visual						= dynamics\weapons\wpn_vityaz\wpn_vityaz_eot_hud.ogf
+
+aim_hud_offset_pos				= -0.063174,0.010508,-0.095000
+aim_hud_offset_rot				= 0.045186,-0.000400,0
+
+aim_hud_offset_pos_16x9			= -0.063174,0.010508,-0.095000
+aim_hud_offset_rot_16x9			= 0.045186,-0.000400,0
+
+[wpn_vityaz_pn23]:wpn_vityaz
+$spawn							= "weapons\vityaz_pn23"
+visual							= dynamics\weapons\wpn_vityaz\wpn_vityaz_pn23.ogf
+hud								= wpn_vityaz_pn23_hud
+
+scope_x							= 51
+scope_y							= -11
+
+[wpn_vityaz_pn23_hud]:wpn_vityaz_hud
+item_visual						= dynamics\weapons\wpn_vityaz\wpn_vityaz_pn23_hud.ogf
+
+aim_hud_offset_pos				= -0.063174,-0.000492,-0.098
+aim_hud_offset_rot				= 0.001186,0.000000,0
+
+aim_hud_offset_pos_16x9			= -0.063174,-0.000492,-0.098
+aim_hud_offset_rot_16x9			= 0.001186,0.000000,0

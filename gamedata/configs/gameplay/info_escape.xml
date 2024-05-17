@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding="windows-1251"?>
+
+<game_information_portions>
+   <info_portion id="esc_psyman_info"></info_portion>
+   <info_portion id="esc_kabans_complited"></info_portion>
+   <info_portion id="esc_kabans_reversed"></info_portion>
+   <info_portion id="esc_kabans_death"></info_portion>
+   <info_portion id="esc_kabans_start"></info_portion>
+   <info_portion id="esc_kabans_stop"></info_portion>
+   <info_portion id="esc_scien"></info_portion>
+   <info_portion id="esc_stalk_labra_enter"></info_portion>
+   <info_portion id="esc_stalk_labra_out"></info_portion>
+   <info_portion id="esc_nn_work_exit"></info_portion>
+   <info_portion id="esc_door_block"></info_portion>
+   <info_portion id="esc_sidor_st"></info_portion>
+   <info_portion id="esc_sidor_st_stop"></info_portion>
+</game_information_portions>

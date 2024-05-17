@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="windows-1251" ?>
+<game_dialogs>
+    <dialog id="nmp_stalker_trader_start_dialog">
+        <phrase_list>
+            <phrase id="21">
+                <text>nmp_stalker_trader_start_dialog_21</text>
+            </phrase>
+            <phrase id="13">
+                <text>nmp_stalker_trader_start_dialog_13</text>
+            </phrase>
+            <phrase id="12">
+                <text>nmp_stalker_trader_start_dialog_12</text>
+            </phrase>
+            <phrase id="11">
+                <text>nmp_stalker_trader_start_dialog_11</text>
+            </phrase>
+            <phrase id="1">
+                <text />
+                <next>11</next>
+                <next>12</next>
+                <next>13</next>
+            </phrase>
+            <phrase id="0">
+                <text />
+                <next>1</next>
+            </phrase>
+        </phrase_list>
+    </dialog>
+    <dialog id="nmp_stalker_trader_work">
+        <phrase_list>
+            <phrase id="2">
+                <text>nmp_stalker_trader_work_2</text>
+            </phrase>
+            <phrase id="12">
+                <text>nmp_stalker_trader_work_12</text>
+            </phrase>
+            <phrase id="5">
+                <text>nmp_stalker_trader_work_5</text>
+                <precondition>dialogs_nearestmap.trader_countdown_novice_check</precondition>
+                <dont_has_info>nmap_trader_countdown_1</dont_has_info>
+                <next>51</next>
+                <next>52</next>
+            </phrase>
+            <phrase id="1">
+                <text>nmp_stalker_trader_work_1</text>
+                <dont_has_info>nmap_trader_rastyapa</dont_has_info>
+                <next>11</next>
+                <next>12</next>
+            </phrase>
+            <phrase id="11">
+                <text>nmp_stalker_trader_work_11</text>
+                <action>dialogs_nearestmap.give_rastyapa_quest</action>
+                <give_info>nmap_trader_rastyapa</give_info>
+                <give_info>nmp_stalker_trader_aboutwork</give_info>
+            </phrase>
+            <phrase id="52">
+                <text>nmp_stalker_trader_work_52</text>
+            </phrase>
+            <phrase id="51">
+                <text>nmp_stalker_trader_work_51</text>
+                <action>dialogs_nearestmap.give_countdown_1_quest</action>
+                <give_info>nmp_stalker_trader_aboutwork</give_info>
+                <give_info>nmap_trader_countdown_1</give_info>
+            </phrase>
+            <phrase id="0">
+                <text>nmp_stalker_trader_work_0</text>
+                <next>5</next>
+                <next>1</next>
+                <next>2</next>
+            </phrase>
+        </phrase_list>
+    </dialog>
+    <dialog id="nmp_stalker_trader_aboutwork">
+        <has_info>nmp_stalker_trader_aboutwork</has_info>
+        <phrase_list>
+            <phrase id="131">
+                <text>nmp_stalker_trader_aboutwork_131</text>
+                <action>dialogs_nearestmap.complete_kolbasa</action>
+            </phrase>
+            <phrase id="141">
+                <text>nmp_stalker_trader_aboutwork_141</text>
+            </phrase>
+            <phrase id="142">
+                <text>nmp_stalker_trader_aboutwork_142</text>
+            </phrase>
+            <phrase id="14">
+                <text>nmp_stalker_trader_aboutwork_14</text>
+                <precondition>dialogs_nearestmap.trader_rastyapa_check</precondition>
+                <action>dialogs_nearestmap.trader_rastyapa_transfer</action>
+                <give_info>quest_rastyapa_done</give_info>
+                <has_info>nmap_trader_rastyapa</has_info>
+                <next>142</next>
+            </phrase>
+            <phrase id="11">
+                <text>nmp_stalker_trader_aboutwork_11</text>
+                <disable_info>nmp_stalker_trader_aboutwork</disable_info>
+            </phrase>
+            <phrase id="12">
+                <text>nmp_stalker_trader_aboutwork_12</text>
+            </phrase>
+            <phrase id="13">
+                <text>nmp_stalker_trader_aboutwork_13</text>
+                <precondition>dialogs_nearestmap.trader_countdown_check</precondition>
+                <action>dialogs_nearestmap.trader_countdown1_transfer</action>
+                <give_info>quest_countdown_done</give_info>
+                <has_info>nmap_trader_countdown_1</has_info>
+                <next>141</next>
+            </phrase>
+            <phrase id="0">
+                <text>nmp_stalker_trader_aboutwork_0</text>
+                <next>1</next>
+            </phrase>
+            <phrase id="1">
+                <text>nmp_stalker_trader_aboutwork_1</text>
+                <next>11</next>
+                <next>12</next>
+                <next>13</next>
+                <next>14</next>
+            </phrase>
+        </phrase_list>
+    </dialog>
+    <dialog id="nmp_stalker_barmen_start">
+        <phrase_list>
+            <phrase id="13">
+                <text>nmp_stalker_barmen_start_13</text>
+            </phrase>
+            <phrase id="12">
+                <text>nmp_stalker_barmen_start_12</text>
+            </phrase>
+            <phrase id="11">
+                <text>nmp_stalker_barmen_start_11</text>
+            </phrase>
+            <phrase id="0">
+                <text />
+                <next>1</next>
+            </phrase>
+            <phrase id="1">
+                <text />
+                <next>11</next>
+                <next>12</next>
+                <next>13</next>
+            </phrase>
+        </phrase_list>
+    </dialog>
+    <dialog id="nmp_stalker_barmen_fraction_changer_start">
+        <dont_has_info>nmp_fraction_changer_open</dont_has_info>
+        <phrase_list>
+            <phrase id="1">
+                <text>nmp_stalker_barmen_fraction_changer_start_1</text>
+                <give_info>nmp_fraction_changer_open</give_info>
+            </phrase>
+            <phrase id="0">
+                <text>nmp_stalker_barmen_fraction_changer_start_0</text>
+                <next>1</next>
+            </phrase>
+        </phrase_list>
+    </dialog>
+    <dialog id="nmp_stalker_barmen_about_marsh">
+        <phrase_list>
+            <phrase id="1112">
+                <text>nmp_stalker_barmen_about_marsh_1112</text>
+                <next>11121</next>
+                <next>11122</next>
+            </phrase>
+            <phrase id="11121">
+                <text>nmp_stalker_barmen_about_marsh_11121</text>
+                <has_info>nmp_stalker_barmen_ponyatno</has_info>
+            </phrase>
+            <phrase id="11122">
+                <text>nmp_stalker_barmen_about_marsh_11122</text>
+                <dont_has_info>nmp_stalker_barmen_ponyatno</dont_has_info>
+            </phrase>
+            <phrase id="1">
+                <text>nmp_stalker_barmen_about_marsh_1</text>
+                <next>11</next>
+            </phrase>
+            <phrase id="1111111">
+                <text>nmp_stalker_barmen_about_marsh_1111111</text>
+                <next>11111111</next>
+            </phrase>
+            <phrase id="11111111">
+                <text>nmp_stalker_barmen_about_marsh_11111111</text>
+            </phrase>
+            <phrase id="0">
+                <text>nmp_stalker_barmen_about_marsh_0</text>
+                <next>1</next>
+            </phrase>
+            <phrase id="11">
+                <text>nmp_stalker_barmen_about_marsh_11</text>
+                <next>111</next>
+            </phrase>
+            <phrase id="111">
+                <text>nmp_stalker_barmen_about_marsh_111</text>
+                <next>1111</next>
+                <next>1112</next>
+            </phrase>
+            <phrase id="1111">
+                <text>nmp_stalker_barmen_about_marsh_1111</text>
+                <next>11111</next>
+            </phrase>
+            <phrase id="11111">
+                <text>nmp_stalker_barmen_about_marsh_11111</text>
+                <next>1111111</next>
+            </phrase>
+        </phrase_list>
+    </dialog>
+    <dialog id="nmp_stalker_barmen_fraction_changer">
+        <has_info>nmp_fraction_changer_open</has_info>
+        <phrase_list>
+            <phrase id="1112">
+                <text>nmp_stalker_barmen_fraction_changer_1112</text>
+                <next>11121</next>
+            </phrase>
+            <phrase id="12121">
+                <text>nmp_stalker_barmen_fraction_changer_12121</text>
+            </phrase>
+            <phrase id="13111">
+                <text>nmp_stalker_barmen_fraction_changer_13111</text>
+            </phrase>
+            <phrase id="1311">
+                <text>nmp_stalker_barmen_fraction_changer_1311</text>
+                <precondition>dialogs_nearestmap.check_player_money_100000</precondition>
+                <action>dialogs_nearestmap.send_info_changeteam_merc</action>
+                <next>13111</next>
+            </phrase>
+            <phrase id="13121">
+                <text>nmp_stalker_barmen_fraction_changer_13121</text>
+            </phrase>
+            <phrase id="21">
+                <text>nmp_stalker_barmen_fraction_changer_21</text>
+                <next>211</next>
+            </phrase>
+            <phrase id="211">
+                <text>nmp_stalker_barmen_fraction_changer_211</text>
+                <next>2111</next>
+                <next>2112</next>
+            </phrase>
+            <phrase id="21111">
+                <text>nmp_stalker_barmen_fraction_changer_21111</text>
+            </phrase>
+            <phrase id="2111">
+                <text>nmp_stalker_barmen_fraction_changer_2111</text>
+                <precondition>dialogs_nearestmap.check_player_money_50000</precondition>
+                <action>dialogs_nearestmap.send_info_changeteam_leave_all</action>
+                <next>21111</next>
+            </phrase>
+            <phrase id="21121">
+                <text>nmp_stalker_barmen_fraction_changer_21121</text>
+            </phrase>
+            <phrase id="2112">
+                <text>nmp_stalker_barmen_fraction_changer_2112</text>
+                <next>21121</next>
+            </phrase>
+            <phrase id="2">
+                <text>nmp_stalker_barmen_fraction_changer_2</text>
+                <precondition>dialogs_nearestmap.check_actor_in_team</precondition>
+                <next>21</next>
+            </phrase>
+            <phrase id="131">
+                <text>nmp_stalker_barmen_fraction_changer_131</text>
+                <next>1311</next>
+                <next>1312</next>
+            </phrase>
+            <phrase id="141112">
+                <text>nmp_stalker_barmen_fraction_changer_141112</text>
+                <next>1411121</next>
+            </phrase>
+            <phrase id="13">
+                <text>nmp_stalker_barmen_fraction_changer_13</text>
+                <next>131</next>
+            </phrase>
+            <phrase id="1411121">
+                <text>nmp_stalker_barmen_fraction_changer_1411121</text>
+            </phrase>
+            <phrase id="1411111">
+                <text>nmp_stalker_barmen_fraction_changer_1411111</text>
+            </phrase>
+            <phrase id="141111">
+                <text>nmp_stalker_barmen_fraction_changer_141111</text>
+                <precondition>dialogs_nearestmap.check_player_money_20000</precondition>
+                <give_info>nmp_yantar_start</give_info>
+                <next>1411111</next>
+            </phrase>
+            <phrase id="11121">
+                <text>nmp_stalker_barmen_fraction_changer_11121</text>
+            </phrase>
+            <phrase id="1312">
+                <text>nmp_stalker_barmen_fraction_changer_1312</text>
+                <next>13121</next>
+            </phrase>
+            <phrase id="14">
+                <text>nmp_stalker_barmen_fraction_changer_14</text>
+                <next>141</next>
+            </phrase>
+            <phrase id="141">
+                <text>nmp_stalker_barmen_fraction_changer_141</text>
+                <next>1411</next>
+            </phrase>
+            <phrase id="1411">
+                <text>nmp_stalker_barmen_fraction_changer_1411</text>
+                <next>14111</next>
+            </phrase>
+            <phrase id="14111">
+                <text>nmp_stalker_barmen_fraction_changer_14111</text>
+                <next>141111</next>
+                <next>141112</next>
+            </phrase>
+            <phrase id="1212">
+                <text>nmp_stalker_barmen_fraction_changer_1212</text>
+                <next>12121</next>
+            </phrase>
+            <phrase id="12111">
+                <text>nmp_stalker_barmen_fraction_changer_12111</text>
+            </phrase>
+            <phrase id="11111">
+                <text>nmp_stalker_barmen_fraction_changer_11111</text>
+            </phrase>
+            <phrase id="12">
+                <text>nmp_stalker_barmen_fraction_changer_12</text>
+                <next>121</next>
+            </phrase>
+            <phrase id="121">
+                <text>nmp_stalker_barmen_fraction_changer_121</text>
+                <next>1211</next>
+                <next>1212</next>
+            </phrase>
+            <phrase id="1211">
+                <text>nmp_stalker_barmen_fraction_changer_1211</text>
+                <precondition>dialogs_nearestmap.check_player_money_100000</precondition>
+                <action>dialogs_nearestmap.send_info_changeteam_freedom</action>
+                <next>12111</next>
+            </phrase>
+            <phrase id="0">
+                <text>nmp_stalker_barmen_fraction_changer_0</text>
+                <next>1</next>
+                <next>2</next>
+            </phrase>
+            <phrase id="111">
+                <text>nmp_stalker_barmen_fraction_changer_111</text>
+                <next>1111</next>
+                <next>1112</next>
+            </phrase>
+            <phrase id="1111">
+                <text>nmp_stalker_barmen_fraction_changer_1111</text>
+                <precondition>dialogs_nearestmap.check_player_money_100000</precondition>
+                <action>dialogs_nearestmap.send_info_changeteam_duty</action>
+                <next>11111</next>
+            </phrase>
+            <phrase id="11">
+                <text>nmp_stalker_barmen_fraction_changer_11</text>
+                <next>111</next>
+            </phrase>
+            <phrase id="1">
+                <text>nmp_stalker_barmen_fraction_changer_1</text>
+                <precondition>dialogs_nearestmap.check_actor_no_team</precondition>
+                <next>11</next>
+                <next>12</next>
+                <next>13</next>
+                <next>14</next>
+            </phrase>
+        </phrase_list>
+    </dialog>
+    <dialog id="nmp_stalker_barmen_sovets">
+        <phrase_list>
+            <phrase id="2">
+                <text>nmp_stalker_barmen_sovets_2</text>
+            </phrase>
+            <phrase id="3">
+                <text>nmp_stalker_barmen_sovets_3</text>
+            </phrase>
+            <phrase id="1">
+                <text>nmp_stalker_barmen_sovets_1</text>
+                <has_info>nmp_stalker_barmen_ponyatno</has_info>
+                <next>11</next>
+            </phrase>
+            <phrase id="111">
+                <text>nmp_stalker_barmen_sovets_111</text>
+            </phrase>
+            <phrase id="11">
+                <text>nmp_stalker_barmen_sovets_11</text>
+                <next>111</next>
+            </phrase>
+            <phrase id="0">
+                <text>nmp_stalker_barmen_sovets_0</text>
+                <next>1</next>
+                <next>2</next>
+                <next>3</next>
+            </phrase>
+        </phrase_list>
+    </dialog>
+    <dialog id="nmp_stalker_barmen_about_place">
+        <phrase_list>
+            <phrase id="121">
+                <text>nmp_stalker_barmen_about_place_121</text>
+            </phrase>
+            <phrase id="12">
+                <text>nmp_stalker_barmen_about_place_12</text>
+                <next>121</next>
+            </phrase>
+            <phrase id="1111">
+                <text>nmp_stalker_barmen_about_place_1111</text>
+                <give_info>nmp_stalker_barmen_ponyatno</give_info>
+            </phrase>
+            <phrase id="1">
+                <text>nmp_stalker_barmen_about_place_1</text>
+                <next>11</next>
+                <next>12</next>
+            </phrase>
+            <phrase id="111">
+                <text>nmp_stalker_barmen_about_place_111</text>
+                <next>1111</next>
+            </phrase>
+            <phrase id="11">
+                <text>nmp_stalker_barmen_about_place_11</text>
+                <next>111</next>
+            </phrase>
+            <phrase id="0">
+                <text>nmp_stalker_barmen_about_place_0</text>
+                <next>1</next>
+            </phrase>
+        </phrase_list>
+    </dialog>
+    <dialog id="nmp_stalker_barmen_about_character">
+        <phrase_list>
+            <phrase id="111">
+                <text>nmp_stalker_barmen_about_character_111</text>
+                <next>1111</next>
+            </phrase>
+            <phrase id="1111">
+                <text>nmp_stalker_barmen_about_character_1111</text>
+            </phrase>
+            <phrase id="11">
+                <text>nmp_stalker_barmen_about_character_11</text>
+                <next>111</next>
+            </phrase>
+            <phrase id="0">
+                <text>nmp_stalker_barmen_about_character_0</text>
+                <next>1</next>
+            </phrase>
+            <phrase id="1">
+                <text>nmp_stalker_barmen_about_character_1</text>
+                <next>11</next>
+            </phrase>
+        </phrase_list>
+    </dialog>
+    <dialog id="nmp_ecolog_main_start">
+        <phrase_list>
+            <phrase id="11411">
+                <text>nmp_ecolog_main_start_11411</text>
+                <next>114111</next>
+            </phrase>
+            <phrase id="114111">
+                <text>nmp_ecolog_main_start_114111</text>
+            </phrase>
+            <phrase id="1111">
+                <text>nmp_ecolog_main_start_1111</text>
+                <give_info>nmp_info_clock_hide</give_info>
+            </phrase>
+            <phrase id="1121">
+                <text>nmp_ecolog_main_start_1121</text>
+                <give_info>nmp_info_clock_hide</give_info>
+            </phrase>
+            <phrase id="1131">
+                <text>nmp_ecolog_main_start_1131</text>
+                <give_info>nmp_info_clock_hide</give_info>
+            </phrase>
+            <phrase id="1141">
+                <text>nmp_ecolog_main_start_1141</text>
+                <give_info>nmp_info_clock_hide</give_info>
+                <next>11411</next>
+            </phrase>
+            <phrase id="113">
+                <text>nmp_ecolog_main_start_113</text>
+                <precondition>dialogs_nearestmap.evening</precondition>
+                <next>1131</next>
+            </phrase>
+            <phrase id="1151">
+                <text>nmp_ecolog_main_start_1151</text>
+            </phrase>
+            <phrase id="114">
+                <text>nmp_ecolog_main_start_114</text>
+                <precondition>dialogs_nearestmap.night</precondition>
+                <next>1141</next>
+            </phrase>
+            <phrase id="115">
+                <text>nmp_ecolog_main_start_115</text>
+                <next>1151</next>
+            </phrase>
+            <phrase id="13">
+                <text>nmp_ecolog_main_start_13</text>
+            </phrase>
+            <phrase id="111">
+                <text>nmp_ecolog_main_start_111</text>
+                <precondition>dialogs_nearestmap.morning</precondition>
+                <next>1111</next>
+            </phrase>
+            <phrase id="112">
+                <text>nmp_ecolog_main_start_112</text>
+                <precondition>dialogs_nearestmap.day</precondition>
+                <next>1121</next>
+            </phrase>
+            <phrase id="11">
+                <text>nmp_ecolog_main_start_11</text>
+                <has_info>nmp_yantar_start</has_info>
+                <next>111</next>
+                <next>112</next>
+                <next>113</next>
+                <next>114</next>
+                <next>115</next>
+            </phrase>
+            <phrase id="1">
+                <text></text>
+                <next>11</next>
+                <next>12</next>
+                <next>13</next>
+            </phrase>
+            <phrase id="0">
+                <text></text>
+                <next>1</next>
+            </phrase>
+            <phrase id="12">
+                <text>nmp_ecolog_main_start_12</text>
+            </phrase>
+        </phrase_list>
+    </dialog>
+    <dialog id="nmp_ecolog_main">
+        <has_info>nmp_info_clock_hide</has_info>
+        <phrase_list>
+            <phrase id="1">
+                <text>nmp_ecolog_main_1</text>
+                <next>11</next>
+                <next>12</next>
+            </phrase>
+            <phrase id="0">
+                <text>nmp_ecolog_main_0</text>
+                <next>1</next>
+            </phrase>
+            <phrase id="12">
+                <text>nmp_ecolog_main_12</text>
+            </phrase>
+            <phrase id="11">
+                <text>nmp_ecolog_main_11</text>
+            </phrase>
+        </phrase_list>
+    </dialog>
+</game_dialogs>

@@ -1,0 +1,22 @@
+#include "eatable_objects.ltx"
+#include "hud_objects.ltx"
+
+
+[conserva_corn]:booster
+$spawn 				= "food and drugs\conserva_corn"
+visual				= dynamics\weapons\wpn_eat\world_models\conservi\wpn_conserva.ogf
+description			= st_conserva_corn_descr
+
+inv_name			= st_conserva_corn
+inv_name_short		        = st_conserva_corn
+inv_weight			= 0.05	;0.2
+cost				= 80
+
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 24
+inv_grid_y         = 17
+
+use_sound			= $silent ;interface\inv_bandage
+
+hud = conserva_corn_hud_model

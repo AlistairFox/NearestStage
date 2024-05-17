@@ -1,0 +1,76 @@
+#include "hud_objects.ltx"
+#include "eatable_objects.ltx"
+
+[vodka_script]:booster
+;***********************************************************
+hud = vodka_script_hud_model
+helm_prohibited 	= false
+full_outfit_prohibited 	= false
+
+base_object = vodka_script ;показывает, какая секция является базовой для "одинаковых" предметов разной степени целостности
+uses_count = 5	    ;Сколько раз предмет можно использовать
+
+;При первом использовании всегда съедается базовый предмет
+using_2 = vodka_script2	;Секция предмета, который будет заспавнен после первого использования, и который отвечает за второе использование
+using_3 = vodka_script3	;Аналогично для второго использования
+using_4 = vodka_script4	;И третьего
+using_5 = vodka_script5	;И четвёртого
+;************************************************************
+
+
+$spawn 				= "food and drugs\vodka_script"
+cform				= skeleton
+visual				= dynamics\weapons\wpn_eat\world_models\vodki\vodka_kazaki_world.ogf
+description			= vodka_script_descr
+
+inv_name			= st_vodka_script
+inv_name_short		        = st_vodka_script
+inv_weight			= 0.6	;0.2
+
+inv_grid_width		= 5
+inv_grid_height		= 5
+inv_grid_x			= 5
+inv_grid_y			= 2
+cost				= 0
+
+attach_angle_offset		= 0.000000, 0.000000, 0.000000
+attach_position_offset	        = 0.087266, -0.078540, 0.052360
+attach_bone_name		= bip01_r_hand
+auto_attach			= false
+
+bone_name			= bip01_r_hand
+position_offset			= 0.0,0.0,0.0
+angle_offset			= 1.570790,1.570790,3.92699
+
+break_particles		        = destroy_fx\destroy_bottle
+break_sound			= material\bottle\collide\bottle_break_1
+
+boost_time				= 5.0
+boost_radiation_restore	= 0.005
+eat_alcohol				= 0.1
+eat_satiety				= -0.2
+
+use_sound			= $silent ;interface\inv_vodka
+
+
+[vodka_script2]:vodka_script
+description			= vodka_script_descr2
+hud = vodka_script_hud_model2
+
+[vodka_script3]:vodka_script
+description			= vodka_script_descr3
+hud = vodka_script_hud_model3
+
+[vodka_script4]:vodka_script
+description			= vodka_script_descr4
+hud = vodka_script_hud_model4
+
+[vodka_script5]:vodka_script
+description			= vodka_script_descr5
+hud = vodka_script_hud_model5
+trash_object = vodka_script_trash
+
+[vodka_script_trash]:gwr_base_trash
+visual                           = dynamics\devices\dev_vodka\dev_vodka_trash.ogf
+throw_dir = left
+throw_impulse = 65

@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding="windows-1251"?>
+
+<xml>
+
+  	<!-- Торговец бандитов "Грибник"   -->
+
+	<specific_character id="gar_trader_bandit" team_default = "1">
+		<name>gar_trader_bandit_name</name>
+		<icon>ui_inGame2_bandit_2</icon>
+		<map_icon x="1" y="0">
+		</map_icon>
+		<bio>Опытный сталкер. Детальная информация отсутствует.</bio>
+
+		<class>gar_trader_bandit</class>
+		<community>bandit</community>
+		<terrain_sect>stalker_terrain</terrain_sect>
+		<snd_config>characters_voice\human_03\bandit\</snd_config>
+
+		<rank>100</rank>
+		<money min="480000" max="480000" infinitive="1"/>
+		<reputation>0</reputation>
+
+		<visual>actors\stalker_bandit\stalker_bandit_2a_unic</visual>
+		<supplies>
+		
+		[spawn] /n
+        wpn_spas12 \n
+        wpn_beretta \n
+        ammo_9x19_pbp = 1 \n
+        grenade_rgd5 = 1 \n
+
+#include "gameplay\character_items_3.xml"
+#include "gameplay\character_food.xml"
+#include "gameplay\character_drugs_4.xml"
+    </supplies>
+		<start_dialog>esc_baikal_start_dialog</start_dialog>
+		
+		<actor_dialog>actor_break_dialog</actor_dialog>
+
+#include "gameplay\character_criticals_4.xml"
+  </specific_character>
+  
+     	<!-- Торговец на базе долга  -->
+
+	<specific_character id="gar_trader_duty" team_default = "1">
+		<name>esc_trader_dolg_name</name>
+		<icon>ui_inGame2_Dolg_1_mask</icon>
+		<map_icon x="1" y="0">
+		</map_icon>
+		<bio>Опытный сталкер. Детальная информация отсутствует.</bio>
+
+		<class>gar_trader_duty</class>
+		<community>dolg</community>
+		<terrain_sect>stalker_terrain</terrain_sect>
+		<snd_config>characters_voice\human_02\dolg\</snd_config>
+
+		<rank>100</rank>
+		<money min="480000" max="480000" infinitive="1"/>
+		<reputation>0</reputation>
+
+		<visual>actors\stalker_dolg\stalker_dolg_2_mask</visual>
+		<supplies>
+		
+		[spawn] /n
+        wpn_spas12 \n
+        wpn_beretta \n
+        ammo_9x19_pbp = 1 \n
+        grenade_rgd5 = 1 \n
+
+#include "gameplay\character_items_3.xml"
+#include "gameplay\character_food.xml"
+#include "gameplay\character_drugs_4.xml"
+    </supplies>
+		<start_dialog>esc_duty_start</start_dialog>
+		
+		<actor_dialog>actor_break_dialog</actor_dialog>
+
+#include "gameplay\character_criticals_4.xml"
+  </specific_character>
+  
+     	<!-- Торговец Дикий  -->
+
+	<specific_character id="gar_trader_merc" team_default = "1">
+		<name>gar_trader_merc_name</name>
+		<icon>ui_inGame2_merc_2</icon>
+		<map_icon x="1" y="0">
+		</map_icon>
+		<bio>Опытный сталкер. Детальная информация отсутствует.</bio>
+
+		<class>gar_trader_merc</class>
+		<community>killer</community>
+		<terrain_sect>stalker_terrain</terrain_sect>
+		<snd_config>characters_voice\human_02\dolg\</snd_config>
+
+		<rank>100</rank>
+		<money min="480000" max="480000" infinitive="1"/>
+		<reputation>0</reputation>
+
+		<visual>actors\stalker_merc\stalker_merc_2_mask</visual>
+		<supplies>
+		
+		[spawn] /n
+        wpn_spas12 \n
+        wpn_beretta \n
+        ammo_9x19_pbp = 1 \n
+        grenade_rgd5 = 1 \n
+
+#include "gameplay\character_items_3.xml"
+#include "gameplay\character_food.xml"
+#include "gameplay\character_drugs_4.xml"
+    </supplies>
+		<start_dialog>esc_duty_start</start_dialog>
+		
+		<actor_dialog>actor_break_dialog</actor_dialog>
+
+#include "gameplay\character_criticals_4.xml"
+  </specific_character>
+
+</xml>

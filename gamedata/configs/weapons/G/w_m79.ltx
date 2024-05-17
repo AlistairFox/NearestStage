@@ -1,0 +1,195 @@
+; Однозарядный 40-мм гранатомёт M79
+;-(TrickSR, Ga2z)-----------------------------------------
+; калибр 						40 мм
+; длина ствола 					357 мм
+; количество камор				1
+; вес с пустым магазином		2.70 кг
+; максимальная дальность стрельбы	400 м
+; эффективная дальность стрельбы	375 м
+; прицельная дальность			375 м
+; начальная скорость гранаты		76 м/с
+; темп стрельбы					5-6 в/м
+; ресурс живучести				--
+;---------------------------------------------------
+[wpn_m79]:zero_immunities,weapon_probability,default_weapon_params,wpn_m79_sounds
+GroupControlSection				= spawn_group
+discovery_dependency 			=
+$spawn							= "weapons\m79"
+$npc			 				= on
+$prefetch 		 				= 2
+scheduled						= off
+cform							= skeleton
+class							= WP_RG6
+description						= st_wpn_m79_descr
+
+ef_main_weapon_type				= 4
+ef_weapon_type					= 12
+
+inv_name						= st_wpn_m79
+inv_name_short					= st_wpn_m79
+
+inv_grid_width					= 4
+inv_grid_height					= 2
+inv_grid_x						= 6
+inv_grid_y						= 35
+
+upgr_icon_x						= 900
+upgr_icon_y						= 1600
+upgr_icon_width					= 250
+upgr_icon_height 				= 100
+
+kill_msg_x						= 0
+kill_msg_y						= 172
+kill_msg_width					= 68
+kill_msg_height					= 30
+
+cost							= 8000
+weapon_class					= heavy_weapon
+inv_weight						= 2.70
+hud								= wpn_m79_hud
+visual							= dynamics\weapons\wpn_m79\wpn_m79.ogf
+
+ph_mass			 				= 6
+
+ammo_class		 				= ammo_m209
+
+ammo_current		 			= 60
+ammo_elapsed		 			= 0
+ammo_limit		 				= 70
+ammo_mag_size		 			= 1
+
+tri_state_reload				= on
+
+launch_speed					= 76
+
+hit_power						= 0.95
+hit_impulse						= 150
+hit_type 						= fire_wound
+fire_distance 					= 400
+bullet_speed					= 76
+rpm 							= 200
+rpm_empty_click 	 			= 200
+
+misfire_probability				= 0.005
+misfire_start_condition			= 0.6
+misfire_end_condition			= 0.1
+misfire_start_prob	 			= 0.001
+misfire_end_prob	 			= 0.02
+condition_shot_dec				= 0.000333
+condition_queue_shot_dec		= 0.0004
+
+zoom_dof						= 0.5,1,180
+reload_dof						= 0,0.5,5,1.3
+
+fire_dispersion_base			= 1
+fire_dispersion_condition_factor	= 2
+control_inertion_factor			= 1.35f
+crosshair_inertion 				= 8
+
+cam_relax_speed					= 7
+cam_relax_speed_ai				= 360
+cam_dispersion					= 5
+cam_dispersion_inc				= 5
+cam_dispersion_frac				= 0.1
+cam_max_angle					= 15
+cam_max_angle_horz				= 5
+cam_step_angle_horz				= 5
+
+PDM_disp_base 					= 1
+PDM_disp_vel_factor 			= 1.1
+PDM_disp_accel_factor 			= 1.1
+PDM_disp_crouch	 				= 1
+PDM_disp_crouch_no_acc 			= 1
+
+min_radius						= 15
+max_radius						= 90
+
+holder_range_modifier			= 1
+holder_fov_modifier				= 1	
+
+slot 							= 2
+animation_slot					= 3
+
+hand_dependence 				= 1
+single_handed					= 0
+
+position 						= -0.023,-0.11,0.07
+orientation 					= 0,36,0
+
+fire_point 						= 0,0.168,0.5
+fire_point2						= 0,0.168,0.5
+
+flame_particles					= weapons\generic_weapon05
+smoke_particles					= ghost_particles\weapons\flame_eft_00_test
+
+shell_point						= 0,0.12,0.2
+
+strap_position 					= -0.26,-0.11,0.15
+strap_orientation				= -15,-9,110
+
+strap_bone0						= bip01_spine2
+strap_bone1						= bip01_spine1
+
+light_color		 				= 0.6,0.5,0.3
+light_range		 				= 6.0
+light_var_color		 			= 0.05
+light_var_range		 			= 0.5
+light_time 		 				= 0.2
+
+scope_status					= 0
+silencer_status					= 0
+grenade_launcher_status			= 0
+
+zoom_enabled					= true
+scope_zoom_factor				= 83.3
+
+[wpn_m79_hud]:hud_base
+attach_place_idx				= 0
+item_visual						= dynamics\weapons\wpn_m79\wpn_m79_hud.ogf
+zoom_hide_crosshair				= true
+
+hands_position					= -0.084500,-0.154001,-0.125500
+hands_orientation				= 0.318150,-0.689604,0.150000
+
+hands_position_16x9				= -0.084500,-0.154001,-0.125500
+hands_orientation_16x9			= 0.318150,-0.689604,0.150000
+
+item_position					= 0,0,0
+item_orientation				= 0,0,0
+
+aim_hud_offset_pos				= -0.067450,-0.055600,-0.255349
+aim_hud_offset_rot				= -0.173750,0.005100,-0.015000
+
+aim_hud_offset_pos_16x9			= -0.067450,-0.055600,-0.255349
+aim_hud_offset_rot_16x9			= -0.173750,0.005100,-0.015000
+
+shell_point						= 0,0,0
+shell_dir              			= 0,1,0
+shell_bone						= wpn_body
+
+fire_point						= 0,0.07,0.513
+fire_bone						= wpn_body
+
+anm_show						= lancew_m79_draw
+anm_hide						= lancew_m79_holster
+anm_idle						= lancew_m79_idle
+anm_idle_aim					= lancew_m79_idle_aim
+anm_idle_moving					= lancew_m79_moving
+anm_idle_sprint					= lancew_m79_sprint
+anm_open						= lancew_m79_no_reload
+anm_add_cartridge				= lancew_m79_reload
+anm_close						= lancew_m79_no_reload
+anm_shots						= lancew_m79_shoot, shoot
+anm_bore						= lancew_m79_no_reload
+
+gl_hud_offset_pos				= 0,0,0
+gl_hud_offset_rot				= 0,0,0
+
+lean_hud_offset_pos				= 0,0,0
+lean_hud_offset_rot				= 0,0,0
+
+safemode_rot_enabled = true
+safemode_offset_pos				= 0.15,0.015,0
+safemode_offset_rot				= 0,-1,0.2
+safemode_offset_pos_16x9				= 0.15,0.015,0
+safemode_offset_rot_16x9				= 0,-1,0.2

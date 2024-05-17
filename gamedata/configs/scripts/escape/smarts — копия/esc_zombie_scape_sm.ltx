@@ -1,0 +1,15 @@
+[smart_terrain]
+squad_id = 1
+max_population = 4
+respawn_params = respawn@smart_zombie_respawn
+
+[respawn@smart_zombie_respawn]
+spawn_zombie
+[spawn_zombie]
+spawn_squads = simulation_zombie
+spawn_num = 5000
+
+
+
+[exclusive]
+esc_zombie_scape_sm_ex = escape\smart_exclusive_logic\esc_zombie_scape_sm_ex.ltx

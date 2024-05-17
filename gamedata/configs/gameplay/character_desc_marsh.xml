@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding="windows-1251"?>
+
+<xml>
+
+	<!-- Торговец Чистого Неба "Суслов"   -->
+
+	<specific_character id="mar_trader_cs" team_default = "1">
+		<name>mar_trader_cs_name</name>
+		<icon>ui_inGame2_neutral_nauchniy</icon>
+		<map_icon x="1" y="0">
+		</map_icon>
+		<bio>Опытный сталкер. Детальная информация отсутствует.</bio>
+
+		<class>mar_trader_cs</class>
+		<community>stalker</community>
+		<terrain_sect>stalker_terrain</terrain_sect>
+		<snd_config>characters_voice\human_03\stalker\</snd_config>
+
+		<rank>100</rank>
+		<money min="480000" max="480000" infinitive="1"/>
+		<reputation>0</reputation>
+
+		<visual>actors\stalker_nebo\stalker_nebo_2</visual>
+		<supplies>
+		
+		[spawn] /n
+        wpn_spas12 \n
+        wpn_beretta \n
+        ammo_9x19_pbp = 1 \n
+        grenade_rgd5 = 1 \n
+
+#include "gameplay\character_items_3.xml"
+#include "gameplay\character_food.xml"
+#include "gameplay\character_drugs_4.xml"
+    </supplies>
+		<start_dialog>esc_baikal_start_dialog</start_dialog>
+		
+		<actor_dialog>actor_break_dialog</actor_dialog>
+
+#include "gameplay\character_criticals_4.xml"
+  </specific_character>
+
+	<!-- Торговец Сталкеров "Химик"   -->
+
+	<specific_character id="mar_trader_lones" team_default = "1">
+		<name>mar_trader_stalker_name</name>
+		<icon>ui_inGame2_neutral_nauchniy</icon>
+		<map_icon x="1" y="0">
+		</map_icon>
+		<bio>Опытный сталкер. Детальная информация отсутствует.</bio>
+
+		<class>mar_trader_lones</class>
+		<community>stalker</community>
+		<terrain_sect>stalker_terrain</terrain_sect>
+		<snd_config>characters_voice\human_03\stalker\</snd_config>
+
+		<rank>100</rank>
+		<money min="480000" max="480000" infinitive="1"/>
+		<reputation>0</reputation>
+
+		<visual>actors\stalker_neutral\stalker_neutral_nauchniy</visual>
+		<supplies>
+		
+		[spawn] /n
+        wpn_spas12 \n
+        wpn_beretta \n
+        ammo_9x19_pbp = 1 \n
+        grenade_rgd5 = 1 \n
+
+#include "gameplay\character_items_3.xml"
+#include "gameplay\character_food.xml"
+#include "gameplay\character_drugs_4.xml"
+    </supplies>
+		<start_dialog>esc_baikal_start_dialog</start_dialog>
+		
+		<actor_dialog>actor_break_dialog</actor_dialog>
+
+#include "gameplay\character_criticals_4.xml"
+  </specific_character>
+
+	<!-- Торговец Долга "Прапорщик Сахарчук"   -->
+
+	<specific_character id="mar_trader_dolg" team_default = "1">
+		<name>mar_trader_dolg_name</name>
+		<icon>ui_inGame2_neutral_nauchniy</icon>
+		<map_icon x="1" y="0">
+		</map_icon>
+		<bio>Опытный сталкер. Детальная информация отсутствует.</bio>
+
+		<class>mar_trader_dolg</class>
+		<community>stalker</community>
+		<terrain_sect>stalker_terrain</terrain_sect>
+		<snd_config>characters_voice\human_03\stalker\</snd_config>
+
+		<rank>100</rank>
+		<money min="480000" max="480000" infinitive="1"/>
+		<reputation>0</reputation>
+
+		<visual>actors\stalker_dolg\stalker_dolg_3</visual>
+		<supplies>
+		
+		[spawn] /n
+        wpn_spas12 \n
+        wpn_beretta \n
+        ammo_9x19_pbp = 1 \n
+        grenade_rgd5 = 1 \n
+
+#include "gameplay\character_items_3.xml"
+#include "gameplay\character_food.xml"
+#include "gameplay\character_drugs_4.xml"
+    </supplies>
+		<start_dialog>esc_baikal_start_dialog</start_dialog>
+		
+		<actor_dialog>actor_break_dialog</actor_dialog>
+
+#include "gameplay\character_criticals_4.xml"
+  </specific_character>
+
+	<!-- Торговец Военных "Лейтенант Плотников"   -->
+
+	<specific_character id="mar_trader_military" team_default = "1">
+		<name>mar_trader_military_name</name>
+		<icon>ui_inGame2_neutral_nauchniy</icon>
+		<map_icon x="1" y="0">
+		</map_icon>
+		<bio>Опытный сталкер. Детальная информация отсутствует.</bio>
+
+		<class>mar_trader_military</class>
+		<community>stalker</community>
+		<terrain_sect>stalker_terrain</terrain_sect>
+		<snd_config>characters_voice\human_03\stalker\</snd_config>
+
+		<rank>100</rank>
+		<money min="480000" max="480000" infinitive="1"/>
+		<reputation>0</reputation>
+
+		<visual>actors\stalker_soldier\stalker_soldier_5</visual>
+		<supplies>
+		
+		[spawn] /n
+        wpn_spas12 \n
+        wpn_beretta \n
+        ammo_9x19_pbp = 1 \n
+        grenade_rgd5 = 1 \n
+
+#include "gameplay\character_items_3.xml"
+#include "gameplay\character_food.xml"
+#include "gameplay\character_drugs_4.xml"
+    </supplies>
+		<start_dialog>esc_baikal_start_dialog</start_dialog>
+		
+		<actor_dialog>actor_break_dialog</actor_dialog>
+
+#include "gameplay\character_criticals_4.xml"
+  </specific_character>
+
+</xml>

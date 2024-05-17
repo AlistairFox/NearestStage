@@ -1,0 +1,12 @@
+[logic@esc_elev_kabans]
+active = mob_walker@walk
+monster_job = true
+on_death = death
+on_hit = hit
+prior = 200
+
+[mob_walker@walk]
+aggressive = true
+
+[death]
+on_info = %+esc_kabans_complited%

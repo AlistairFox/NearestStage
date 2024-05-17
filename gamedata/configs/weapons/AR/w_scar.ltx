@@ -1,0 +1,388 @@
+; Боевая штурмовая винтовка для сил специальных операций FN SCAR
+;-(TrickSR, Ga2z)-----------------------------------------
+; калибр 						7.62x51 мм
+; длина ствола 					400 мм
+; магазин						20
+; вес с пустым магазином		3.77 кг
+; максимальная дальность стрельбы	3400 м
+; эффективная дальность стрельбы	400 м
+; прицельная дальность			600 м
+; дульная скорость пули			780 м/с
+; темп стрельбы					600 в/м
+;---------------------------------------------------
+[wpn_fn2000]:weapon_probability,default_weapon_params,wpn_scar_sounds
+GroupControlSection				= spawn_group
+$spawn							= "weapons\fn2000"
+$npc 							= on
+$prefetch						= 8
+scheduled						= off
+cform							= skeleton
+class							= WP_AK74
+description						= st_wpn_scar_descr
+
+scopes 							= ac10632,acog,eot,pn23
+parent_section  				= wpn_fn2000
+
+ef_main_weapon_type				= 2
+ef_weapon_type					= 8
+ 
+ 
+
+inv_name 						= st_wpn_scar_heavy
+inv_name_short					= st_wpn_scar_heavy
+
+inv_grid_width					= 5
+inv_grid_height					= 2
+inv_grid_x						= 30
+inv_grid_y						= 12
+
+upgr_icon_x						= 300
+upgr_icon_y						= 1000
+upgr_icon_width					= 300
+upgr_icon_height 				= 100
+
+kill_msg_x						= 175
+kill_msg_y						= 0
+kill_msg_width					= 82
+kill_msg_height					= 28
+
+cost 							= 15000
+weapon_class					= assault_rifle
+inv_weight						= 3.77
+hud								= wpn_scar_hud
+visual							= dynamics\weapons\wpn_scar\wpn_scar.ogf
+
+upgrades                		= up_gr_firstab_lr300, up_gr_seconab_lr300, up_gr_thirdab_lr300, up_gr_fourtab_lr300, up_gr_fifthab_lr300
+installed_upgrades      		=
+upgrade_scheme          		= upgrade_scheme_lr300
+
+ph_mass							= 4
+
+ammo_class		 				= ammo_7.62x51_fmj, ammo_7.62x51_ap	
+
+startup_ammo					= 90
+ammo_current					= 180
+ammo_elapsed					= 20
+ammo_limit						= 210
+ammo_mag_size					= 20
+
+fire_modes						= 1,-1
+
+grenade_class					= ammo_m209
+
+grenade_vel 					= 76
+launch_speed					= 76
+hand_dependence					= 1
+single_handed					= 0
+
+hit_power						= 0.35
+;hit_impulse					= 10
+hit_type						= fire_wound
+fire_distance					= 1000
+bullet_speed					= 780
+rpm								= 600
+rpm_empty_click					= 200
+
+use_aim_bullet					= false
+time_to_aim						= 2
+
+misfire_probability				= 0.005
+misfire_start_condition			= 0.6
+misfire_end_condition			= 0.1
+misfire_start_prob	 			= 0.006	
+misfire_end_prob	 			= 0.072	
+condition_shot_dec				= 0.000125
+condition_queue_shot_dec		= 0.0002
+
+zoom_dof						= 0.5,1,180
+reload_dof						= 0,0.5,5,2
+
+fire_dispersion_base			= 0.23
+fire_dispersion_condition_factor	= 2
+control_inertion_factor			= 1.3f
+crosshair_inertion				= 5.85
+
+cam_return						= 0
+cam_relax_speed					= 11
+cam_relax_speed_ai 				= 120.75
+cam_dispersion					= 1
+cam_dispersion_inc 				= 0.5
+cam_dispersion_frac 			= 1
+cam_max_angle					= 50
+cam_max_angle_horz 				= 5
+cam_step_angle_horz 			= 0.35
+
+zoom_cam_relax_speed			= 12
+zoom_cam_relax_speed_ai			= 120.75
+zoom_cam_dispersion				= 0.9
+zoom_cam_dispersion_inc			= 0.45
+zoom_cam_dispersion_frac		= 0.7
+zoom_cam_max_angle				= 50
+zoom_cam_max_angle_horz			= 5
+zoom_cam_step_angle_horz		= 0.3
+
+PDM_disp_base 					= 0.5
+PDM_disp_vel_factor 			= 2
+PDM_disp_accel_factor 			= 2
+PDM_disp_crouch	 				= 1
+PDM_disp_crouch_no_acc 			= 1
+
+min_radius						= 30
+max_radius						= 50
+
+holder_range_modifier			= 1
+holder_fov_modifier				= 1
+
+slot 			 				= 2
+animation_slot					= 8
+
+position						= -0.026,-0.099,0.015
+orientation						= 0,0,0
+
+fire_point						= 0,0.137,0.649
+fire_point2						= 0,0.097,0.722
+
+flame_particles					= amik\weapons\nato_shoot_00
+smoke_particles					= ghost_particles\weapons\flame_eft_00_test
+grenade_flame_particles			= weapons\generic_weapon01
+silencer_smoke_particles   		= ghost_particles\weapons\generic_smoke_eft_sil
+
+shell_point             		= 0.12,0,0.07
+shell_dir               		= 0,0,0.4
+shell_particles         		= ghost_particles\weapons\shells\shells_762_51_right
+
+strap_position         			= -0.15,-0.37,0.2
+strap_orientation      			= -10,-5,10
+strap_bone0             		= bip01_spine2
+strap_bone1             		= bip01_spine1
+
+light_disabled					= false
+light_color						= 0.6,0.5,0.3
+light_range						= 5
+light_var_color					= 0.05
+light_var_range					= 0.1
+light_time						= 0.2
+
+scope_status					= 2
+silencer_status					= 2
+grenade_launcher_status			= 2
+
+zoom_enabled					= true
+zoom_rotate_time				= 0.2
+scope_zoom_factor				= 83.3
+
+scope_name 						= acog
+scope_x							= 104
+scope_y							= 3
+
+grenade_launcher_name			= wpn_addon_grenade_launcher_fn40gl
+grenade_launcher_x          	= 88
+grenade_launcher_y          	= 39
+
+silencer_name					= sil_762_nato
+silencer_x						= 202
+silencer_y						= 14
+
+silencer_hit_power 				= 0.3
+silencer_hit_impulse	 		= 20
+silencer_fire_distance 			= 1000
+silencer_bullet_speed	 		= 780
+
+silencer_light_color			= 0.6,0.5,0.3
+silencer_light_range			= 0.01
+silencer_light_var_color		= 0.05
+silencer_light_var_range		= 0.5
+silencer_light_time				= 0.2
+
+[wpn_scar_hud]:hud_base
+zoom_hide_crosshair				= true
+attach_place_idx				= 0
+item_visual						= dynamics\weapons\wpn_scar\wpn_scar_hud.ogf
+
+hands_position					= 0.006000,-0.018000,0.073200
+hands_orientation				= 1.400999,0.370000,0
+
+hands_position_16x9				= 0.006000,-0.018000,0.073200
+hands_orientation_16x9			= 1.400999,0.370000,0
+
+item_position					= 0.002000,0.000030,-0.000018
+item_orientation				= 0,0,0
+
+aim_hud_offset_pos				= -0.048060,0.002190,-0.104445
+aim_hud_offset_rot				= 0.011700,0.010220,0
+
+aim_hud_offset_pos_16x9			= -0.048060,0.002190,-0.104445
+aim_hud_offset_rot_16x9			= 0.011700,0.010220,0
+
+shell_bone						= wpn_body
+shell_dir						= 0,1,0
+shell_point						= 0.004,0,0.141
+
+fire_bone						= wpn_body
+fire_bone2						= wpn_body
+fire_point						= 0.006,0.055546,0.4
+fire_point2						= 0,-0.017,0.692
+
+anm_hide                                 = scar_hand_out
+anm_hide_empty                           = scar_hand_out, scar_idle_empty
+anm_idle                                 = scar_hand_idle
+anm_idle_aim                             = scar_hand_idle_aim
+anm_idle_empty                           = scar_hand_idle, scar_idle_empty
+anm_idle_aim_empty                       = scar_hand_idle_aim, scar_idle_empty
+anm_idle_moving                          = scar_hand_walk
+anm_idle_moving_empty                    = scar_hand_walk, scar_idle_empty
+anm_idle_moving_crouch_empty             = scar_hand_walk, scar_idle_empty
+anm_idle_aim_moving                      = scar_hand_walk
+anm_idle_aim_moving_crouch               = scar_hand_walk, idle
+anm_idle_moving                          = scar_hand_walk
+anm_idle_sprint                          = scar_hand_run
+anm_idle_sprint_empty                    = scar_hand_run, scar_idle_empty
+anm_reload                               = scar_hand_reload, scar_reload
+anm_reload_empty                         = scar_hand_reload_empty, scar_reload_empty
+anm_shots                                = scar_hand_shoot, scar_shoot
+anm_shots_empty                          = scar_hand_shoot, scar_shoot_empty
+anm_show                                 = scar_hand_in
+anm_show_empty                           = scar_hand_in, scar_idle_empty
+anm_reload_misfire                       = scar_hand_misfire, scar_misfire
+anm_bore                                 = scar_hand_boring, idle
+
+;Grenade Laucher OFF
+;---------------------------------------
+
+anm_hide_w_gl                            = scar_hand_out_w_gl, idle
+anm_idle_moving_crouch_w_gl_aim          = scar_hand_crouch_w_gl, idle
+anm_idle_moving_crouch_w_gl              = scar_hand_crouch_w_gl, idle
+anm_idle_moving_w_gl                     = scar_hand_walk_w_gl, idle
+anm_idle_moving_w_gl_aim                 = scar_hand_walk_w_gl, idle
+anm_idle_sprint_w_gl                     = scar_hand_run_w_gl, idle
+anm_idle_w_gl                            = scar_hand_idle_w_gl, idle
+anm_idle_w_gl_aim                        = scar_hand_idle_w_gl_aim, idle
+anm_reload_w_gl                          = scar_hand_reload_w_gl, scar_reload_w_gl
+anm_reload_empty_w_gl                    = scar_hand_reload_w_gl_empty, scar_reload_empty_w_gl
+anm_shots_w_gl                           = scar_hand_shoot_w_gl, scar_shoot
+anm_show_w_gl                            = scar_hand_in_w_gl, idle
+anm_switch_g                             = scar_hand_gl_on, idle
+anm_reload_misfire_w_gl                  = scar_hand_misfire_w_gl, scar_misfire
+anm_bore_w_gl				             = scar_hand_boring_w_gl, idle
+
+
+;EMPTY
+
+anm_idle_empty_w_gl                      = scar_hand_idle_w_gl, scar_idle_empty
+anm_hide_empty_w_gl                      = scar_hand_out_w_gl, scar_idle_empty
+anm_idle_moving_crouch_empty_w_gl_aim    = scar_hand_crouch_w_gl, scar_idle_empty
+anm_idle_moving_crouch_empty_w_gl        = scar_hand_crouch_w_gl, scar_idle_empty
+anm_idle_moving_empty_w_gl               = scar_hand_walk_w_gl, scar_idle_empty
+anm_idle_moving_empty_w_gl_aim           = scar_hand_walk_w_gl, scar_idle_empty
+anm_idle_sprint_empty_w_gl               = scar_hand_run_w_gl, scar_idle_empty
+anm_idle_empty_w_gl_aim                  = scar_hand_idle_w_gl_aim, scar_idle_empty
+anm_shots_empty_w_gl                     = scar_hand_shoot_w_gl, scar_shoot_empty
+anm_show_empty_w_gl                      = scar_hand_in_w_gl, idle_empty
+anm_bore_empty_w_gl		                 = scar_hand_boring_w_gl, idle
+
+
+;Grenade Laucher ON
+;---------------------------------------
+
+anm_hide_g                               = scar_hand_out_gl, idle
+anm_idle_g                               = scar_hand_idle_gl, idle
+anm_idle_g_aim                           = scar_hand_idle_gl_aim, idle
+anm_idle_moving_g                        = scar_hand_walk_gl, idle
+anm_idle_moving_g_aim                    = scar_hand_walk_gl, idle
+anm_idle_sprint_g                        = scar_hand_run_gl, idle
+anm_reload_g                             = scar_hand_reload_gl, scar_reload_gl
+anm_shots_g                              = scar_hand_shoot_gl, idle
+anm_show_g                               = scar_hand_in_gl, idle
+anm_switch                               = scar_hand_gl_off, idle
+
+gl_hud_offset_pos                       = -0.0803, -0.0063, -0.25
+gl_hud_offset_rot                       = -0.02, 0.0085, -0.004
+
+gl_hud_offset_pos_16x9			= -0.012100,-0.001100,-0.030000
+gl_hud_offset_rot_16x9			= -0.115850,-0.009300,-0.010000
+
+lean_hud_offset_pos                     = 0, 0, 0
+lean_hud_offset_rot                     = 0, 0, 0
+
+safemode_rot_enabled = true
+safemode_offset_pos				= 0.205,0.03,0
+safemode_offset_rot				= 0,-1,0.2
+safemode_offset_pos_16x9				= 0.205,0.03,0
+safemode_offset_rot_16x9				= 0,-1,0.2
+
+hud_collision_enabled = true
+hud_collision_offset_pos_16x9 = 0.0, -0.2, -0.1
+hud_collision_offset_rot_16x9  = -0.7, 0.0, 0.0
+;-----------------------------------------------------------------------------
+; Аддоны
+;-----------------------------------------------------------------------------
+[wpn_fn2000_ac10632]:wpn_fn2000
+$spawn             				= "weapons\scar_ac10632"
+visual							= dynamics\weapons\wpn_scar\wpn_scar_barska.ogf
+hud								= wpn_scar_ac10632_hud
+
+scope_x							= 93
+scope_y							= -11
+
+[wpn_scar_ac10632_hud]:wpn_scar_hud
+item_visual            	 		= dynamics\weapons\wpn_scar\wpn_scar_barska_hud.ogf
+
+aim_hud_offset_pos				= -0.048560,0.005390,-0.185705
+aim_hud_offset_rot				= 0.011550,0.010450,0.012050
+
+aim_hud_offset_pos_16x9			= -0.048560,0.005390,-0.185705
+aim_hud_offset_rot_16x9			= 0.011550,0.010450,0.012050
+
+[wpn_fn2000_acog]:wpn_fn2000
+$spawn							= "weapons\scar_acog"
+visual							= dynamics\weapons\wpn_scar\wpn_scar_acog.ogf
+hud								= wpn_scar_acog_hud
+
+scope_x							= 79
+scope_y							= -9
+
+[wpn_scar_acog_hud]:wpn_scar_hud
+item_visual            	 		= dynamics\weapons\wpn_scar\wpn_scar_acog_hud.ogf
+
+aim_hud_offset_pos				= -0.048560,-0.002610,-0.114705
+aim_hud_offset_rot				= -0.033150,0.009900,0.012050
+
+aim_hud_offset_pos_16x9			= -0.048560,-0.002610,-0.114705
+aim_hud_offset_rot_16x9			= -0.033150,0.009900,0.012050
+
+[wpn_fn2000_eot]:wpn_fn2000
+$spawn							= "weapons\scar_eot"
+visual							= dynamics\weapons\wpn_scar\wpn_scar_eot.ogf
+hud								= wpn_scar_eot_hud
+
+scope_x							= 92
+scope_y							= -8
+
+[wpn_scar_eot_hud]:wpn_scar_hud
+item_visual						= dynamics\weapons\wpn_scar\wpn_scar_eot_hud.ogf
+
+aim_hud_offset_pos				= -0.048560,-0.003610,-0.118705
+aim_hud_offset_rot				= 0.011700,0.010600,0.012050
+
+aim_hud_offset_pos_16x9			= -0.048560,-0.003610,-0.118705
+aim_hud_offset_rot_16x9			= 0.011700,0.010600,0.012050
+
+[wpn_fn2000_pn23]:wpn_fn2000
+$spawn							= "weapons\scar_pn23"
+visual							= dynamics\weapons\wpn_scar\wpn_scar_pn23.ogf
+hud								= wpn_scar_pn23_hud
+
+scope_x							= 56
+scope_y							= -12
+
+[wpn_scar_pn23_hud]:wpn_scar_hud
+item_visual						= dynamics\weapons\wpn_scar\wpn_scar_pn23_hud.ogf
+
+aim_hud_offset_pos				= -0.048560,-0.007610,-0.089705
+aim_hud_offset_rot				= 0.013050,0.010700,0.012050
+
+aim_hud_offset_pos_16x9			= -0.048560,-0.007610,-0.089705
+aim_hud_offset_rot_16x9			= 0.013050,0.010700,0.012050
+
+[wpn_fn2000_c-more]:wpn_fn2000_eot
+$spawn							= "weapons\scar_c-more"

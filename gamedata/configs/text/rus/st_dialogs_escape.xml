@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="windows-1251" ?>
+<string_table>
+    <string id="esc_army_commander_poimal_0">
+        <text>Кто такой!? Чё тут шляешься?</text>
+    </string>
+    <string id="esc_army_commander_poimal_1">
+        <text>Стой-стой! Не стреляй! Сталкер я... Простой сталкер! Случайно сюда забрёл!</text>
+    </string>
+    <string id="esc_army_commander_poimal_11">
+        <text>А ну ка вали отсюда! Чтоб я тебя около блокпоста больше не видел!</text>
+    </string>
+    <string id="esc_army_commander_poimal_12">
+        <text>Видал я таких, огонь!</text>
+    </string>
+    <string id="esc_army_commander_poimal_2">
+        <text>Эй, братишка, не стреляй! Я чисто сталкер, бля буду, забрёл попандосом чисто! Не стреляй!</text>
+    </string>
+    <string id="esc_army_commander_poimal_3">
+        <text>Тише, тише! Я учёный из группы, которая пропала недавно!</text>
+    </string>
+    <string id="esc_army_commander_poimal_4">
+        <text>Э-эй, успокойся! Я свой. Из Долга я!</text>
+    </string>
+    <string id="esc_army_commander_poimal_5">
+        <text>Стоп-стоп! Я одиночка обычный! Какой тебе толк меня валить?!</text>
+    </string>
+    <string id="esc_army_commander_poimal_6">
+        <text>Давай, хуярь, герой нахуй!</text>
+    </string>
+    <string id="esc_army_commander_poimal_7">
+        <text>Монол... За Монолит!</text>
+    </string>
+    <string id="esc_baikal_fquest_0">
+        <text>Есть задания?</text>
+    </string>
+    <string id="esc_baikal_fquest_1">
+        <text>Пока нет, но ты мог бы отметиться у одного мужика. Найти его ты сможешь в тонелле, ведущем на старые  болота неподалёку от военной базы. Будь аккуратен.</text>
+    </string>
+    <string id="esc_baikal_fquest_11">
+        <text>Спасибо.</text>
+    </string>
+    <string id="esc_baikal_sidor_0">
+        <text>Я вернулся.</text>
+    </string>
+    <string id="esc_baikal_sidor_1">
+        <text>Значится зачем я тебя звал. Сначала я хотел тебя пострелять заслать, да только как я вижу у тебя и пострелять то не из чего особо. Вот, держи тебе стартовый комплект, так сказать.</text>
+    </string>
+    <string id="esc_baikal_sidor_11">
+        <text>Спасибо.</text>
+    </string>
+    <string id="esc_baikal_start_11">
+        <text>Тебе нужно зайти к Сидоровичу и отметиться у него. Он расскажет тебе что да как. Потом зайди ко мне, если не нагрузит сильно.</text>
+    </string>
+    <string id="esc_baikal_start_111">
+        <text>Понял.</text>
+    </string>
+    <string id="esc_baikal_start_21">
+        <text>Здравствуй.</text>
+    </string>
+    <string id="esc_baikal_start_211">
+        <text>Я вернулся.</text>
+    </string>
+    <string id="esc_baikal_start_2111">
+        <text>Значится зачем я тебя звал. Сначала я хотел тебя пострелять заслать, да только как я вижу у тебя и пострелять то не из чего особо. Вот, держи тебе стартовый комплект, так сказать.</text>
+    </string>
+    <string id="esc_baikal_start_221">
+        <text>Привет.</text>
+    </string>
+    <string id="esc_baikal_start_31">
+        <text>Здравствуй.</text>
+    </string>
+    <string id="esc_baikal_start_3111">
+        <text>Значится зачем я тебя звал. Сначала я хотел тебя пострелять заслать, да только как я вижу у тебя и пострелять то не из чего особо. Вот, держи тебе стартовый комплект, так сказать.</text>
+    </string>
+    <string id="esc_baikal_start_32">
+        <text>Здравствуй.</text>
+    </string>
+    <string id="esc_baikal_start_321">
+        <text>Я вернулся.</text>
+    </string>
+    <string id="esc_baikal_start_322">
+        <text>Привет.</text>
+    </string>
+    <string id="esc_baikal_start_dialog_0">
+        <text>Здравствуй!</text>
+    </string>
+    <string id="esc_baikal_start_dialog_1">
+        <text>Привет. Что это за место?</text>
+    </string>
+    <string id="esc_baikal_start_dialog_11">
+        <text>Это деревня новичков. Тут живут сталкеры, которые ещё не особо развились. Однако в последнее время сюда и опытные мужики приходят, всё-таки страшные вещи творятся в Зоне.</text>
+    </string>
+    <string id="esc_baikal_start_dialog_111">
+        <text>Расскажи о себе.</text>
+    </string>
+    <string id="esc_baikal_start_dialog_1111">
+        <text>Меня Байкалом тут зовут все. Приехал из Сибири на заработки в 2010. Сдружился тут с некоторыми людьми разными, Сидорович, торговец местный - не исключение. Ходил сначала к Центру, а как всё это началось - на Кордоне обжился. Ребята тут добрые. Правда и тут теперь неспокойно становится. Не нравится мне это.</text>
+    </string>
+    <string id="esc_baikal_start_dialog_11111">
+        <text>Что "началось"?</text>
+    </string>
+    <string id="esc_baikal_start_dialog_111111">
+        <text>А, ты ж не местный... Извиняй, сейчас введу в курс дела. Поначалу в Зоне относительно спокойно было. Только ближе к Центру было местами опасно (иногда даже очень, однако не в этом суть). Ну и держалось так всё какое-то время. И что думаешь? Грянул выброс страшный как-то раз, как в одиннадцатом году, и Зону всю перелопатило. Где раньше без сомнений ходили, теперь чёрт ногу сломит, а монстры всякие даже до окраин доходят.</text>
+    </string>
+    <string id="esc_baikal_start_dialog_1111111">
+        <text>Мдэ, беда. Как думаешь, есть ли этому объяснение?</text>
+    </string>
+    <string id="esc_baikal_start_dialog_11111111">
+        <text>Знаешь, чем это не похоже на простой гон мутантов? Своей масштабностью. Гоны никогда не бывают такими обильными. Мне кажется ответы нужно искать в прошлом. В 2011 уже было такое. Возможно, история повторяется. С центра огромные толпы монстров и гадов всяких идут... Всё, как в прошлый раз.</text>
+    </string>
+    <string id="esc_baikal_start_dialog_1111111111">
+        <text>Да уж... Не густо.</text>
+    </string>
+    <string id="esc_baikal_start_dialog_11111111111">
+        <text>Тебе нужно зайти к Сидоровичу и отметиться у него. Он расскажет тебе что да как. Потом зайди ко мне, если не нагрузит сильно.</text>
+    </string>
+    <string id="esc_baikal_start_dialog_111111111111">
+        <text>Понял.</text>
+    </string>
+    <string id="esc_baikal_start_dialog_3">
+        <text>Я вернулся.</text>
+    </string>
+    <string id="esc_baikal_start_dialog_31">
+        <text>Мне рассказали о проделанной работе. Ты заслуживаешь награды. Держи.</text>
+    </string>
+    <string id="esc_baikal_start_dialog_32">
+        <text>Спасибо.</text>
+    </string>
+    <string id="esc_baikal_start_dialog_321">
+        <text>Мне рассказали о проделанной работе. Ты заслуживаешь награды. Держи.</text>
+    </string>
+    <string id="esc_baikal_start_dialog_3211">
+        <text>Спасибо.</text>
+    </string>
+    <string id="esc_baikal_start_dialog_33">
+        <text>Мне рассказали о проделанной работе. Ты заслуживаешь награды. Держи.</text>
+    </string>
+    <string id="esc_baikal_start_dialog_331">
+        <text>Спасибо.</text>
+    </string>
+    <string id="esc_baikal_start_dialog_34">
+        <text>Мне рассказали о проделанной работе. Ты заслуживаешь награды. Держи.</text>
+    </string>
+    <string id="esc_baikal_start_dialog_341">
+        <text>Спасибо.</text>
+    </string>
+    <string id="esc_baikal_start_dialog_41">
+        <text>Так. Думаю что ты сгодишься. В общем есть у меня один хороший друг, ты можешь найти его в тоннеле возле армейской базы. Если будешь подбираться - действуй тихо и незаметно, чтобы вояки тебя не срисовали. Кто ты такой, и зачем пришёл я ему передам. У него ты узнаешь информацию о задании и получишь награду.</text>
+    </string>
+    <string id="esc_baikal_start_dialog_411">
+        <text>Хорошо.</text>
+    </string>
+    <string id="esc_baikal_start_dialog_412">
+        <text>Пожалуй откажусь.</text>
+    </string>
+    <string id="esc_baikal_start_dialog_42">
+        <text>Пока что всё.</text>
+    </string>
+    <string id="esc_baikal_start_start_0">
+        <text>Привет! Я вижу ты тут новенький? Тебе нужно зайти к Сидоровичу и отметиться у него. Он расскажет тебе что да как. Потом зайди ко мне, если не нагрузит сильно.</text>
+    </string>
+    <string id="esc_baikal_start_start_1">
+        <text>Хорошо.</text>
+    </string>
+    <string id="esc_baikal_work_0">
+        <text>Не найдётся работёнки для меня?</text>
+    </string>
+    <string id="esc_baikal_work_1">
+        <text>Сейчас не могу помочь. Может, появится позже.</text>
+    </string>
+    <string id="esc_baikal_work_11">
+        <text>Жаль...</text>
+    </string>
+    <string id="esc_baikal_work_2">
+        <text>Есть одно дельце... На элеваторе твари завелись, давно ещё. Так вот, суть в том, что начали они нападать на новичков. Ясно, что отпора им дать не могут. Так вот, сходи, разберись, заодно проветришься. Если перевалишь гадов - получишь гонорар.</text>
+    </string>
+    <string id="esc_baikal_work_21">
+        <text>Хорошо, я берусь.</text>
+    </string>
+    <string id="esc_baikal_work_22">
+        <text>Нет, я пожалуй ещё погуляю.</text>
+    </string>
+    <string id="esc_baikal_work_3">
+        <text>За мостом, возле базы "Свободы", появилось много тварей всяких. Мне кажется, они могут двинуть сюда. Если ты разберёшься с ними, получишь хороший оклад.</text>
+    </string>
+    <string id="esc_baikal_work_31">
+        <text>Хорошо, я берусь.</text>
+    </string>
+    <string id="esc_baikal_work_32">
+        <text>Нет, я пожалуй ещё погуляю.</text>
+    </string>
+    <string id="esc_baikal_work_4">
+        <text>Ничего не могу предложить.</text>
+    </string>
+    <string id="esc_baikal_work_41">
+        <text>Эх, жаль.</text>
+    </string>
+    <string id="esc_baikal_work_5">
+        <text>Всю работу разобрали, зайди позже.</text>
+    </string>
+    <string id="esc_baikal_work_51">
+        <text>Хорошо.</text>
+    </string>
+    <string id="esc_baikal_work_6">
+        <text>Ты как раз кстати. В одном из подвалов сидит парень. Странно себя ведёт, похоже попал под пси-излучение. Попробуй поговорить с ним, а так посмотрим...</text>
+    </string>
+    <string id="esc_baikal_work_61">
+        <text>Хорошо.</text>
+    </string>
+    <string id="esc_duty_start_0">
+        <text>Здравия. Говори чего хотел, только быстро.</text>
+    </string>
+    <string id="esc_duty_start_1">
+        <text>Ты кто?</text>
+    </string>
+    <string id="esc_duty_start_11">
+        <text>Ты опух что ли? Сейчас тебе так объясню, ты обалдеешь.</text>
+    </string>
+    <string id="esc_duty_start_111">
+        <text>Ладно-ладно, остынь, мужик. Что это за место то хоть?</text>
+    </string>
+    <string id="esc_duty_start_1111">
+        <text>Откуда ж ты такой вылез... А хотя ладно. Ты сейчас на Северном КПП. Его контролирует "Долг", то есть мы. Отсюда идёт дорога на Север, на Свалку, но туда сейчас лучше никому не соваться, к тому же я тебя туда не пущу. Там сейчас работают наши хорошие ребята, ты будешь мешать и мозолить глаза. Всё спросил?</text>
+    </string>
+    <string id="esc_duty_start_111111">
+        <text>А что происходит на Свалке?</text>
+    </string>
+    <string id="esc_duty_start_1111111">
+        <text>На Свалке-то? Ад ещё тот там. После серии сильнейших выбросов монстры со всех нор повылазили и отрезали нас от бара. Сейчас там идёт масштабная зачистка. Как понимаешь, безуспешно. Потому советую тебе пока что про неё забыть и даже не пытаться туда лезть.</text>
+    </string>
+    <string id="esc_duty_start_3">
+        <text>Я видел учёного на хуторе неподалёку.</text>
+    </string>
+    <string id="esc_duty_start_31">
+        <text>Гхм... Интересненько. Неподалёку говоришь? Как же его туда занесло...</text>
+    </string>
+    <string id="esc_duty_start_311">
+        <text>Группа военных погибла во время его сопровождения и он остался там.</text>
+    </string>
+    <string id="esc_duty_start_3111">
+        <text>Вот как... Молодец, хорошо подметил.</text>
+    </string>
+    <string id="esc_duty_start_4">
+        <text>Не поделишься информацией о подземелье под Кордоном?</text>
+    </string>
+    <string id="esc_duty_start_41">
+        <text>Не знаю о таком.</text>
+    </string>
+    <string id="esc_duty_start_42">
+        <text>Ничем помочь не могу.</text>
+    </string>
+    <string id="esc_duty_start_43">
+        <text>Не иимею подобной информации.</text>
+    </string>
+    <string id="esc_duty_start_44">
+        <text>Говорят что можно попасть туда, если пройти через дыру в заборе в сторону старой свалки неподалёку от базы "Свободы". Мне кажется байки это всё, ничего там нет и быть не может.</text>
+    </string>
+    <string id="esc_duty_start_5">
+        <text>Ничего...</text>
+    </string>
+    <string id="esc_fre_leader_start_dialog_0">
+        <text>Что-то хотел, чувак?</text>
+    </string>
+    <string id="esc_fre_leader_start_dialog_1">
+        <text>Расскажи об этом месте.</text>
+    </string>
+    <string id="esc_fre_leader_start_dialog_11">
+        <text>Это - база Свободы. Наверное самое безопасное место по эту сторону моста. Сидят тут свободовцы, как не странно, то есть - мы. Несмотря на все эти ужасы, тут ты можешь чувствовать себя в безопасности. Монстры сюда не ходят, а что до краснопёрых и армии - им тут делать нечего.</text>
+    </string>
+    <string id="esc_fre_leader_start_dialog_111">
+        <text>Занятно. Чем занимаются ребята?</text>
+    </string>
+    <string id="esc_fre_leader_start_dialog_1111">
+        <text>Наша цель - изучение Зоны и сосуществование с ней. Так что, как ты мог догадаться, мы занимаемся многими вещами. Осматриваем аномалии, общаемся с учёными и отдаём им артефакты. Сейчас правда тяжело с этим - Долг блокпост на севере занял, а учёные все в центре, или на болотах, ход туда вояки держут.</text>
+    </string>
+    <string id="esc_fre_leader_start_dialog_111111">
+        <text>Пошёл до аномалии неподалёку, Маревом называется, да забрёл далеко. Так и пропал, не вернулся.</text>
+    </string>
+    <string id="esc_fre_leader_start_dialog_1111111">
+        <text>Отправляли за ним людей?</text>
+    </string>
+    <string id="esc_fre_leader_start_dialog_11111111">
+        <text>Посылали. Нашли там аномалию странную, а его - нет. Как в воду канул. Может Долг прибрал...</text>
+    </string>
+    <string id="esc_fre_leader_start_dialog_2">
+        <text>Я видел учёного на хуторе напротив.</text>
+    </string>
+    <string id="esc_fre_leader_start_dialog_21">
+        <text>Учёного? Что он тут забыл?</text>
+    </string>
+    <string id="esc_fre_leader_start_dialog_211">
+        <text>Он сказал, что его потеряли военные во время эвакуации.</text>
+    </string>
+    <string id="esc_fre_leader_start_dialog_2111">
+        <text>Да уж, вот это история... Спасибо за наводку.</text>
+    </string>
+    <string id="esc_fre_leader_start_dialog_4">
+        <text>Тебе что-нибудь известно о подземках Кордона?</text>
+    </string>
+    <string id="esc_fre_leader_start_dialog_41">
+        <text>Нет, не слыхал ни разу.</text>
+    </string>
+    <string id="esc_fre_leader_start_dialog_42">
+        <text>Нет, не слыхал ни разу.</text>
+    </string>
+    <string id="esc_fre_leader_start_dialog_43">
+        <text>Лично не видел, но говорили что можно найти спуск, если выйдя с тоннеля под мостом на эту сторону насыпи повернуть налево и пройти через дыру в заборе в сторону старой свалки.</text>
+    </string>
+    <string id="esc_fre_leader_start_dialog_5">
+        <text>Не.</text>
+    </string>
+    <string id="esc_givi_quests_0">
+        <text>default text</text>
+    </string>
+    <string id="esc_givi_start_11">
+        <text>Здорова.</text>
+    </string>
+    <string id="esc_givi_start_21">
+        <text>Ну привет.</text>
+    </string>
+    <string id="esc_givi_start_31">
+        <text>Рассказывай.</text>
+    </string>
+    <string id="esc_hello_dialog_0">
+        <text>Привет!</text>
+    </string>
+    <string id="esc_hello_dialog_1">
+        <text>...</text>
+    </string>
+    <string id="esc_medic_help_0">
+        <text>Осмотришь меня?</text>
+    </string>
+    <string id="esc_medic_help_1">
+        <text>Не вопрос.</text>
+    </string>
+    <string id="esc_medic_help_11">
+        <text>[...]</text>
+    </string>
+    <string id="esc_medic_help_111">
+        <text>Хм... Вижу, могу подлатать за символическую плату в 500 рублей.</text>
+    </string>
+    <string id="esc_medic_help_1111">
+        <text>Хорошо, я согласен.</text>
+    </string>
+    <string id="esc_medic_help_1112">
+        <text>Спасибо, пожалуй откажусь.</text>
+    </string>
+    <string id="esc_medic_help_112">
+        <text>У тебя всё хорошо.</text>
+    </string>
+    <string id="esc_medic_start_11">
+        <text>Привет!</text>
+    </string>
+    <string id="esc_medic_start_12">
+        <text>Здравствуй.</text>
+    </string>
+    <string id="esc_medic_start_13">
+        <text>Хай!</text>
+    </string>
+    <string id="esc_noguid_dialog_0">
+        <text>Пока.</text>
+    </string>
+    <string id="esc_noname_start_dialog_0">
+        <text>Подходи. Для таких как ты у меня всегда есть что-нибудь интересное.</text>
+    </string>
+    <string id="esc_noname_start_dialog_1">
+        <text>Кто ты такой и чем занимаешься?</text>
+    </string>
+    <string id="esc_noname_start_dialog_11">
+        <text>Это не важно. Я - тот человек, у которого ты можешь купить то снаряжение, которое ты больше нигде на юге не найдёшь.</text>
+    </string>
+    <string id="esc_noname_start_dialog_111">
+        <text>Живенько. А где ты взял все эти стволы и зачем продаёшь?</text>
+    </string>
+    <string id="esc_noname_start_dialog_1111">
+        <text>Не важно. Это оружие не краденное и не битое. Если ты хочешь что-нибудь купить - бери. Если не хочешь - на этом всё.</text>
+    </string>
+    <string id="esc_noname_start_dialog_2">
+        <text>Что ты можешь мне предложить?</text>
+    </string>
+    <string id="esc_noname_start_dialog_21">
+        <text>Оружие по приемлемой цене, разумеется. Так же есть ещё несколько услуг: \n-Могу дать информацию за некоторую помощь \n-Могу помочь наладить контакт с некоторыми людьми</text>
+    </string>
+    <string id="esc_noname_start_dialog_3">
+        <text>Я пришёл к тебе по поводу одного дела.</text>
+    </string>
+    <string id="esc_noname_start_dialog_31">
+        <text>Какого? А, это ты... Байкал предупредил меня о тебе.</text>
+    </string>
+    <string id="esc_noname_start_dialog_311">
+        <text>Что нужно делать, в какой срок я должен уложиться?</text>
+    </string>
+    <string id="esc_noname_start_dialog_3111">
+        <text>Смотри, вот тебе информация. По некоторым бумагам я узнал, что тут, в этой долине где-то есть спуск в старую лабораторию. Судя по бумагам в Зоне происходит какая-то канитель, и в этой лаборатории она собственно начиналась. Что это за бумаги, и где я их взял тебе знать не обязательно. Твоё дело - найти эту подземку и осмотреть её. Всё, что ты там найдёшь - тащи Байкалу, он потом передаст всё это мне. Касаемо сроков - бумаги эти могли побывать в чьих угодно руках, поэтому я тебе советую со всем этим не затягивать. Будь осторожен, на месте тебя могут поджидать. Приступай. По завершении работы подойди ко мне. Договорюсь с Байкалом о вознаграждении.</text>
+    </string>
+    <string id="esc_noname_start_dialog_4">
+        <text>Я побывал в лаборатории.</text>
+    </string>
+    <string id="esc_noname_start_dialog_41">
+        <text>Прекрасно. Рассказывай, как там.</text>
+    </string>
+    <string id="esc_noname_start_dialog_411">
+        <text>Лаборатория как лаборатория. Большая её часть оказалась затопленной. Внутри ничего особо значимого не нашёл. Предполагаю, что она была затоплена из-за грунтовых вод. Неподалёку от неё бродили кровососы. Не знаю, имеют ли они к ней отношение</text>
+    </string>
+    <string id="esc_noname_start_dialog_5">
+        <text>...</text>
+    </string>
+    <string id="esc_scien_dialog_0">
+        <text>Здравствуй.</text>
+    </string>
+    <string id="esc_scien_dialog_1">
+        <text>Что ты тут делаешь?</text>
+    </string>
+    <string id="esc_scien_dialog_11">
+        <text>Нас должны были эвакуировать из Центра Зоны, но произошла перестрелка между военными, которые нас сопровождали и неизвестными. Мне с группой сказали остаться тут, но вдруг грянул выброс и все, кто нас сопровождал погибли...</text>
+    </string>
+    <string id="esc_scien_dialog_111">
+        <text>Где остальные люди из твоей группы? И почему тебя не забрали военные? До блокпоста три шага.</text>
+    </string>
+    <string id="esc_scien_dialog_1111">
+        <text>...когда выброс закончился, эти неизвестные пришли сюда и убили моих товарищей. Я спрятался, при мне были бумаги, которые они так и не нашли. Я боюсь выйти отсюда, так как они могут быть где-то неподалёку, а тут я чувствую себя в безопасности. Судя по всему нас всех записали в мертвецов и эвакуации уже не будет.</text>
+    </string>
+    <string id="esc_scien_dialog_11111">
+        <text>Неподалёку есть базы нейтральных к тебе группировок. Ты не против, если я сообщу им о тебе?</text>
+    </string>
+    <string id="esc_scien_dialog_111111">
+        <text>Было бы здорово. Я бы перебрался к ним, если бы была возможность.</text>
+    </string>
+    <string id="esc_scien_dialog_2">
+        <text>...</text>
+    </string>
+    <string id="esc_sidorovich_0">
+        <text>Здравствуй.</text>
+    </string>
+    <string id="esc_sidorovich_1">
+        <text>Расскажи о Зоне.</text>
+    </string>
+    <string id="esc_sidorovich_11">
+        <text>С чего бы начать... Сейчас ты находишься в Деревне Новичков, а если быть конкретнее - в моём бункере. Люди в деревне должны слушать меня и Байкала - это "нянь" нашего садика. Найти его ты сможешь в одном из домов со стороны бункера. К нему можешь обращаться за небольшими заданиями и советами. Крупняк можешь взять у меня. Иногда дверь в бункер может быть закрыта - значит, что меня нет.</text>
+    </string>
+    <string id="esc_sidorovich_111">
+        <text>Хорошо.</text>
+    </string>
+    <string id="esc_sidorovich_2">
+        <text>Пока.</text>
+    </string>
+    <string id="esc_svarog_start_11">
+        <text>Привет! Меня Сварогом кличут. Копаюсь в железе всяком. Чиню снаряжение и оружие. Если буду нужен - всегда тут.</text>
+    </string>
+    <string id="esc_svarog_start_21">
+        <text>Здрав буди!</text>
+    </string>
+    <string id="esc_svarog_start_22">
+        <text>Здравствуй!</text>
+    </string>
+    <string id="esc_svarog_start_23">
+        <text>Привет!</text>
+    </string>
+    <string id="esc_svarog_well_0">
+        <text>Насчёт работы.</text>
+    </string>
+    <string id="esc_svarog_well_1">
+        <text>Да-да?</text>
+    </string>
+    <string id="esc_svarog_well_11">
+        <text>Я нашёл инструменты.</text>
+    </string>
+    <string id="esc_svarog_well_111">
+        <text>Красота, держи награду.</text>
+    </string>
+    <string id="esc_svarog_well_12">
+        <text>Ничего.</text>
+    </string>
+    <string id="esc_svarog_work_0">
+        <text>Не подкинешь работёнки?</text>
+    </string>
+    <string id="esc_svarog_work_1">
+        <text>Ты как раз кстати! Мой старый набор инструментов пришёл в негодность. Нужны новые инструменты для грубой работы. Поищи, если не сложно. Копейкой не обижу.</text>
+    </string>
+    <string id="esc_svarog_work_11">
+        <text>Хорошо, если найду - загляну.</text>
+    </string>
+    <string id="esc_svarog_work_12">
+        <text>Извини, но я откажусь.</text>
+    </string>
+    <string id="esc_svarog_work_2">
+        <text>Извини, ничего нету.</text>
+    </string>
+    <string id="esc_svarog_work_3">
+        <text>Всё разобрали.</text>
+    </string>
+    <string id="zat_a2_stalker_barmen_b30_about_new_detector_11">
+        <text>Так что мне передать Сычу?</text>
+    </string>
+    <string id="zat_b53_artefact_hunter_1_gathering_artefacts_11111">
+        <text>Счастливо.</text>
+    </string>
+</string_table>

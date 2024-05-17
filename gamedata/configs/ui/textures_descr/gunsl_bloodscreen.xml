@@ -1,0 +1,5 @@
+<w>
+    <file name="bloodscreen\bloodscreen_main">
+		<texture id="ui_gunsl_bloodscreen" x="0" y="0" width="512" height="512" stretch="1"/>
+	</file>
+</w>

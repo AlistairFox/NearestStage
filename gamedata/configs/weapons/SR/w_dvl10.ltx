@@ -1,0 +1,257 @@
+; Снайперская винтовка Лобаева
+;-(TrickSR, Ga2z)-----------------------------------------
+; калибр 						7.62x51 мм
+; длина ствола 					400 мм
+; магазин						10
+; вес с пустым магазином		4.8
+; максимальная дальность стрельбы	-- м
+; эффективная дальность стрельбы	600 м
+; прицельная дальность			-- м
+; дульная скорость пули			850 м/с
+; темп стрельбы					28 в/м
+;---------------------------------------------------
+[wpn_dvl10]:weapon_probability,default_weapon_params,wpn_dvl10_sounds
+GroupControlSection				= spawn_group
+$spawn							= "weapons\dvl10"
+$npc							= on
+$prefetch 		 				= 8
+scheduled						= off
+cform							= skeleton
+class							= WP_dvl10
+description						= st_wpn_dvl10_descr
+
+scopes 							= none
+parent_section  				= wpn_dvl10
+
+ef_main_weapon_type				= 3
+ef_weapon_type					= 11
+ 
+
+inv_name						= st_wpn_dvl10
+inv_name_short					= st_wpn_dvl10
+
+inv_grid_width					= 6
+inv_grid_height					= 2
+inv_grid_x						= 35
+inv_grid_y						= 6
+
+upgr_icon_x						= 1750
+upgr_icon_y						= 600
+upgr_icon_width					= 300
+upgr_icon_height 				= 100
+
+kill_msg_x						= 0
+kill_msg_y						= 0
+kill_msg_width					= 98
+kill_msg_height					= 23
+
+cost							= 15000
+weapon_class					= sniper_rifle
+inv_weight						= 4.9
+hud								= wpn_dvl10_hud
+visual							= dynamics\weapons\wpn_dvl_10\wpn_dvl_10.ogf
+
+upgrades						= up_gr_firstab_svd, up_gr_seconab_svd, up_gr_thirdab_svd, up_gr_fourtab_svd, up_gr_fourtcd_svd, up_gr_fourtef_svd
+installed_upgrades				=
+upgrade_scheme					= upgrade_scheme_svd
+
+ph_mass			 				= 5
+
+ammo_class		 				= ammo_7.62x51_fmj, ammo_7.62x51_ap
+
+startup_ammo					= 10
+ammo_current					= 10
+ammo_elapsed					= 0
+ammo_limit						= 30
+ammo_mag_size					= 10
+
+fire_modes						= 1
+
+hand_dependence					= 1
+single_handed					= 0
+
+grenade_class						= ammo_m209
+
+grenade_vel 						= 76
+launch_speed						= 76
+hand_dependence						= 1
+single_handed						= 0
+
+hit_power 						= 0.9
+;hit_impulse		 			= 10
+hit_type 						= fire_wound
+fire_distance					= 1000
+bullet_speed					= 850
+rpm								= 28
+rpm_empty_click					= 200
+
+use_aim_bullet					= true
+time_to_aim						= 1
+
+misfire_probability				= 0.005
+misfire_start_condition			= 0.6
+misfire_end_condition			= 0.1
+misfire_start_prob	 			= 0.0055 
+misfire_end_prob	 			= 0.055
+condition_shot_dec				= 0.0055
+condition_queue_shot_dec		= 0.0055
+
+;zoom_dof						= 0.5,1,350
+reload_dof						= 0,0.5,5,2.2
+
+fire_dispersion_base			= 0.08
+fire_dispersion_condition_factor	= 1
+control_inertion_factor			= 2.0f
+crosshair_inertion				= 9
+
+cam_return						= 2.5
+cam_relax_speed					= 4.5
+cam_relax_speed_ai				= 360
+cam_dispersion					= 3
+cam_dispersion_inc				= 3
+cam_dispersion_frac				= 1
+cam_max_angle					= 15
+cam_max_angle_horz				= 3
+cam_step_angle_horz				= 0.25
+
+zoom_cam_relax_speed			= 5.5
+zoom_cam_relax_speed_ai			= 120.75
+zoom_cam_dispersion				= 0.5
+zoom_cam_dispersion_inc			= 1
+zoom_cam_dispersion_frac		= 1
+zoom_cam_max_angle				= 1
+zoom_cam_max_angle_horz			= 1
+zoom_cam_step_angle_horz		= 0.5
+
+PDM_disp_base 					= 1.3
+PDM_disp_vel_factor 			= 1.5
+PDM_disp_accel_factor 			= 1.5
+PDM_disp_crouch	 				= 1
+PDM_disp_crouch_no_acc 			= 1
+
+min_radius						= 50
+max_radius						= 90
+
+holder_range_modifier			= 2
+holder_fov_modifier				= 0.75
+
+hit_probability_gd_novice		= 0.55
+hit_probability_gd_stalker		= 0.65
+hit_probability_gd_veteran		= 0.75
+hit_probability_gd_master		= 0.85
+
+slot							= 2
+animation_slot					= 8
+
+position                		= -0.026,-0.077,-0.01
+orientation            	 		= 0,0,0
+
+fire_point 						= 0,0.168,0.755
+fire_point2						= 0,0.168,0.755
+
+;flame_particles				= weapons\generic_weapon06
+grenade_flame_particles				= weapons\generic_weapon01
+smoke_particles		   			= ghost_particles\weapons\flame_eft_dvl_10
+silencer_smoke_particles   		= ghost_particles\weapons\generic_smoke_eft_sil
+
+shell_point		 				= 0,0.129,0.192
+shell_dir		 				= 0,0,0.4
+;shell_particles				= ghost_particles\weapons\shells\shells_762_54_right
+
+strap_position 					= -0.15,-0.15,0.45
+strap_orientation				= -25,-189,65
+strap_bone0						= bip01_spine2
+strap_bone1						= bip01_spine1
+
+light_disabled					= false
+light_color		 				= 0.6,0.5,0.3
+light_range		 				= 4.0
+light_var_color		 			= 0.05
+light_var_range					= 0.5
+light_time 		 				= 0.2
+
+scope_status					= 1
+silencer_status					= 0
+grenade_launcher_status			= 0
+
+zoom_enabled					= true
+zoom_rotate_time				= 0.23
+scope_zoom_factor				= 15
+3d_zoom_factor					= 90
+scope_dynamic_zoom				= on
+3d_fov							= 0.08
+
+scope_texture					= wpn_crosshair_march_8x
+scope_name 						= pso1m2
+scope_x                   		= 34
+scope_y                     	= 10
+
+silencer_name					= 
+silencer_x                  	= 
+silencer_y                  	= 
+
+silencer_hit_power				= 0.85
+silencer_hit_impulse			= 20
+silencer_fire_distance			= 1000
+silencer_bullet_speed			= 830
+
+silencer_light_color			= 0.6,0.5,0.3
+silencer_light_range			= 0.01
+silencer_light_var_color		= 0.05
+silencer_light_var_range		= 0.5
+silencer_light_time 			= 0.2
+
+[wpn_dvl10_hud]:hud_base
+zoom_hide_crosshair				= true
+attach_place_idx				= 0
+item_visual						= dynamics\weapons\wpn_dvl_10\wpn_dvl_10_hud.ogf
+
+hands_position					= 0.001000,-0.023000,-0.069
+hands_orientation				= 0.510002,1.110001,0
+
+hands_position_16x9				= 0.001000,-0.023000,-0.069
+hands_orientation_16x9			= 0.510002,1.110001,0
+
+item_position					= 0,0,0
+item_orientation				= 0,0,0
+
+aim_hud_offset_pos				= -0.062350,0.012750,-0.122299
+aim_hud_offset_rot				= 0.031250,-0.013350,0.006
+
+aim_hud_offset_pos_16x9			= -0.062350,0.012750,-0.122299
+aim_hud_offset_rot_16x9			= 0.031250,-0.013350,0.006
+
+shell_point						= 0.025,0.055,0.221
+shell_dir               		= 0.0, 1.0, 0.0
+shell_bone						= wpn_body
+
+fire_point						= 0,0,0
+fire_bone               		= muzzle
+
+anm_show						= dvl_10_draw, idle
+anm_hide  		           		= dvl_10_holster, idle
+anm_shots						= dvl_10_shoot, shoot
+anm_shots_when_aim				= dvl_10_shoot_aim, shoot
+anm_reload						= dvl_10_reload, reload
+anm_reload_empty				= dvl_10_reload_empty, reload_empty
+anm_bore						= dvl_10_idle, idle
+anm_idle             			= dvl_10_idle, idle
+anm_idle_aim					= dvl_10_idle_aim, idle
+anm_idle_moving 				= dvl_10_idle_move, idle
+anm_idle_sprint					= dvl_10_idle_sprint, idle
+
+gl_hud_offset_pos				= 0,0,0
+gl_hud_offset_rot				= 0,0,0
+
+lean_hud_offset_pos				= 0,0,0
+lean_hud_offset_rot				= 0,0,0
+
+safemode_rot_enabled = true
+safemode_offset_pos				= 0.205,0.03,0
+safemode_offset_rot				= 0,-1,0.2
+safemode_offset_pos_16x9				= 0.205,0.03,0
+safemode_offset_rot_16x9				= 0,-1,0.2
+
+hud_collision_enabled = true
+hud_collision_offset_pos_16x9 = 0.0, -0.2, -0.1
+hud_collision_offset_rot_16x9  = -0.7, 0.0, 0.0

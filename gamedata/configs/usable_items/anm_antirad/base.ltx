@@ -1,0 +1,21 @@
+#include "eatable_objects.ltx"
+#include "hud_objects.ltx"
+
+
+[antirad]:booster
+$spawn 				= "food and drugs\antirad"
+visual				= dynamics\weapons\wpn_eat\world_models\injectors\injector_big_world.ogf
+inv_name			= st_antirad
+inv_name_short		        = st_antirad
+description			= st_antirad_descr
+inv_weight			= 0.05
+
+inv_grid_width      = 1
+inv_grid_height     = 1
+inv_grid_x          = 21
+inv_grid_y          = 16
+cost				= 250
+
+use_sound			= $silent ;interface\inv_medkit
+
+hud = antirad_hud_model

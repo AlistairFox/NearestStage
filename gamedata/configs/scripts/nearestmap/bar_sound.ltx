@@ -1,0 +1,58 @@
+[logic]
+active = sr_idle@play_trust_them
+
+[sr_idle@play_vision_of_red]
+on_info = %=play_sound(visions_of_red)%
+on_signal = sound_end | sr_idle@timer1
+
+[sr_idle@timer1]
+on_game_timer = 30 | sr_idle@play_trust_them
+
+[sr_idle@play_trust_them]
+on_info = %=play_sound(trust_them)%
+on_signal = sound_end | sr_idle@timer2
+
+[sr_idle@timer2]
+on_game_timer = 30 | sr_idle@play_through_the_wind
+
+[sr_idle@play_through_the_wind]
+on_info = %=play_sound(through_the_wind)%
+on_signal = sound_end | sr_idle@timer3
+
+[sr_idle@timer3]
+on_game_timer = 30 | sr_idle@play_the_hero
+
+[sr_idle@play_the_hero]
+on_info = %=play_sound(the_hero)%
+on_signal = sound_end | sr_idle@timer4
+
+[sr_idle@timer4]
+on_game_timer = 30 | sr_idle@play_mother
+
+[sr_idle@play_mother]
+on_info = %=play_sound(mother)%
+on_signal = sound_end | sr_idle@play_coming_home
+
+[sr_idle@timer5]
+on_game_timer = 30 | sr_idle@play_coming_home
+
+[sr_idle@play_coming_home]
+on_info = %=play_sound(comming_home)%
+on_signal = sound_end | sr_idle@timer6
+
+[sr_idle@timer6]
+on_game_timer = 30 | sr_idle@play_whisper
+
+[sr_idle@play_whisper]
+on_info = %=play_sound(whisper)%
+on_signal = sound_end | sr_idle@timer7
+
+[sr_idle@timer7]
+on_game_timer = 30 | sr_idle@play_end_of_the_road
+
+[sr_idle@play_end_of_the_road]
+on_info = %=play_sound(end_of_the_road)%
+on_signal = sound_end | sr_idle@timer8
+
+[sr_idle@timer8]
+on_game_timer = 30 | sr_idle@play_vision_of_red

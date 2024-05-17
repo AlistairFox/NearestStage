@@ -1,0 +1,100 @@
+[logic@trader_dolg_base]
+suitable = {=check_npc_name(dolg_trader)} true
+trade = misc\trade\trade_duty.ltx
+prior = 200
+active = animpoint@trader_dolg_base
+can_select_weapon = false
+level_spot = trader
+
+[animpoint@trader_dolg_base]
+cover_name = dolg_trader_base_cover
+avail_animations = ward_noweap
+use_camp = false
+meet = meet
+combat_ignore_cond = true
+combat_ignore_keep_when_attacked = true
+invulnerable = true
+gather_items_enabled = false
+help_wounded_enabled = false
+corpse_detection_enabled = false
+
+[meet]
+close_snd_hello = wait
+close_anim 		= nil
+close_victim 	= nil
+far_anim 		= nil
+far_victim 		= nil
+close_distance  = 0
+far_distance 	= 0
+close_snd_distance = 3
+use = true					; {=actor_enemy} false, true
+allow_break = false
+meet_on_talking = false
+
+[logic@mechanic_dolg_base]
+suitable = {=check_npc_name(dolg_mech)} true
+trade = misc\trade\trade_duty.ltx
+prior = 200
+active = animpoint@mechanic_dolg_base
+can_select_weapon = false
+level_spot = trader
+
+[animpoint@mechanic_dolg_base]
+cover_name = dolg_mech_base_cover
+avail_animations = ward_noweap
+use_camp = false
+meet = meet@mechanic_dolg_base
+combat_ignore_cond = true
+combat_ignore_keep_when_attacked = true
+invulnerable = true
+gather_items_enabled = false
+help_wounded_enabled = false
+corpse_detection_enabled = false
+
+[meet@mechanic_dolg_base]
+close_snd_hello = wait
+close_anim 		= nil
+close_victim 	= nil
+far_anim 		= nil
+far_victim 		= nil
+close_distance  = 0
+far_distance 	= 0
+close_snd_distance = 3
+use = true					; {=actor_enemy} false, true
+allow_break = false
+meet_on_talking = false
+
+
+
+[logic@trader2_dolg_base]
+suitable = {=check_npc_name(dolg_trader2)} true
+trade = misc\trade\trade_duty.ltx
+prior = 200
+active = animpoint@trader2_dolg_base
+can_select_weapon = false
+level_spot = trader
+
+[animpoint@trader2_dolg_base]
+cover_name = dolg_trader2_base
+avail_animations = ward_noweap
+use_camp = false
+meet = meet@trader2
+combat_ignore_cond = true
+combat_ignore_keep_when_attacked = true
+invulnerable = true
+gather_items_enabled = false
+help_wounded_enabled = false
+corpse_detection_enabled = false
+
+[meet@trader2]
+close_snd_hello = wait
+close_anim 		= nil
+close_victim 	= nil
+far_anim 		= nil
+far_victim 		= nil
+close_distance  = 0
+far_distance 	= 0
+close_snd_distance = 3
+use = true					; {=actor_enemy} false, true
+allow_break = false
+meet_on_talking = false

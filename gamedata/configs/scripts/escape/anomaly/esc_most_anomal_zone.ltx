@@ -1,0 +1,47 @@
+[anomal_zone]
+layers_count = 3
+respawn_tries = 8
+max_artefacts = 20
+;applying_force_xz = 200
+;applying_force_y = 400 
+artefacts = af_blood, af_mincer_meat, af_soul, af_night_star, af_fuzz_kolobok
+start_artefact = af_blood
+coeff = 3, 3, 2, 2, 1
+artefact_ways = way_most_zone
+field_name = esc_zone_field_acidic_weak
+
+[mines_core]
+
+[layer_1]
+mines_section = mines_layer_1
+
+[mines_layer_1]:mines_core
+esc_zone_mine_acidic_average_0000
+esc_zone_mine_acidic_weak
+esc_zone_mine_acidic_average_0001
+esc_zone_mine_acidic_average_0002
+
+
+[layer_2]
+mines_section = mines_layer_2
+
+[mines_layer_2]:mines_core
+esc_zone_mine_acidic_average_0003
+esc_zone_mine_acidic_average_0004
+esc_zone_mine_acidic_weak_0000
+esc_zone_mine_acidic_average_0005
+esc_zone_mine_acidic_average_0006
+
+
+[layer_3]
+mines_section = mines_layer_3
+
+[mines_layer_3]:mines_core
+esc_zone_mine_acidic_weak_0001
+esc_zone_mine_acidic_weak_0002
+esc_zone_mine_acidic_weak_0003
+esc_zone_mine_acidic_weak_0004
+esc_zone_mine_acidic_weak_0005
+esc_zone_mine_acidic_weak_0006
+esc_zone_mine_acidic_weak_0007
+esc_zone_mine_acidic_weak_0008

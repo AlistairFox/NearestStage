@@ -1,0 +1,153 @@
+<w>
+    <background x="0" y="0" width="1024" height="768">
+	  <auto_static x="0" y="0" width="1024" height="768" stretch="1">
+        <texture width="1920" height="1080">ui\mm_vid_2</texture>
+      </auto_static>
+	  <auto_static x="50000" y="50000" width="1" height="1" stretch="1">
+			<texture>ui_inGame2_mp_background</texture>
+		</auto_static>
+      <auto_static x="50000" y="50000" width="1" height="1" stretch="1">
+        <texture width="302" height="512">ui\video_bochka</texture>
+      </auto_static>
+
+		<auto_static x="419" y="288" width="394" height="363" stretch="1">
+			<texture>ui_inGame2_main_window_small</texture>
+		</auto_static>
+		<auto_static x="50000" y="50000" width="104" height="30" stretch="1">
+			<texture>ui_inGame2_GameSpy_logo</texture>
+		</auto_static>
+    </background>
+
+	<login_page x="419" y="288" width="394" height="363">
+		
+		<auto_static x="0" y="0" width="394" height="363" stretch="1">
+			<texture>ui_inGame2_main_window_small</texture>
+		</auto_static>
+		
+		<cap_header_login x="116" y="40" width="160" height="30">
+	        <text font="graffiti32" align="c" r="220" g="220" b="220">ui_st_mp_local_network_login_page</text>
+	    </cap_header_login>
+		
+		<cap_header_registration x="116" y="40" width="160" height="30">
+	        <text font="graffiti32" align="c" r="220" g="220" b="220">ui_st_mp_local_network_registr_page</text>
+	    </cap_header_registration>
+		
+		<cap_descript x="70" y="100" width="60" height="30">
+	        <text font="letterica18" align="r" vert_align="c" r="170" g="170" b="170">ui_st_mp_descr</text>
+	    </cap_descript>
+		
+		<edit_descript x="144" y="100" width="194" height="30" max_symb_count="120">
+	        <text x="6" width="239" font="letterica16" complex_mode="0" vert_align="c" r="200" g="200" b="200"/>
+	        <texture>ui_inGame2_edit_box_2</texture>
+	    </edit_descript>
+		
+		<cap_login x="70" y="135" width="60" height="30">
+	        <text font="letterica18" align="r" vert_align="c" r="170" g="170" b="170">ui_st_mp_login_net</text>
+	    </cap_login>
+
+	    <edit_login x="144" y="135" width="194" height="30" max_symb_count="21">
+	        <text x="6" width="239" font="letterica16" complex_mode="0" vert_align="c" r="200" g="200" b="200"/>
+	        <texture>ui_inGame2_edit_box_2</texture>
+	    </edit_login>
+		
+		<cap_password x="70" y="170" width="60" height="30">
+	        <text font="letterica18" align="r" vert_align="c" r="170" g="170" b="170">ui_st_mp_password</text>
+	    </cap_password>
+		
+		<edit_password x="144" y="170" width="194" height="30" max_symb_count="21" password="1">
+	        <text x="6" width="239" font="letterica16" complex_mode="0" vert_align="c" r="200" g="200" b="200"/>
+	        <texture>ui_inGame2_edit_box_2</texture>
+	    </edit_password>
+	
+		<cap_ipserver x="70" y="205" width="60" height="30">
+	        <text font="letterica18" align="r" vert_align="c" r="170" g="170" b="170">ui_st_mp_ipserver</text>
+	    </cap_ipserver>
+		
+		<edit_ip_server x="144" y="205" width="194" height="30" max_symb_count="21">
+	        <text x="6" width="239" font="letterica16" complex_mode="0" vert_align="c" r="200" g="200" b="200"/>
+	        <texture>ui_inGame2_edit_box_2</texture>
+	    </edit_ip_server>
+		
+		<cap_port x="70" y="240" width="60" height="30">
+	        <text font="letterica18" align="r" vert_align="c" r="170" g="170" b="170">ui_st_mp_port</text>
+	    </cap_port>
+		
+		<edit_port x="144" y="240" width="194" height="30" max_symb_count="21">
+	        <text x="6" width="239" font="letterica16" complex_mode="0" vert_align="c" r="200" g="200" b="200"/>
+	        <texture>ui_inGame2_edit_box_2</texture>
+	    </edit_port>
+ 
+	    <check_register_me x="252" y="275" width="35" height="29" stretch="1">
+	        <texture>ui_inGame2_checkbox</texture>
+	        <text x="-10" font="letterica16" r="170" g="170" b="170">ui_st_mp_register_me</text>
+			<text_color>
+				<e r="200" g="200" b="200"/>
+			</text_color>
+	    </check_register_me>
+
+	    <check_kit1 x="150" y="275" width="35" height="29" stretch="1" hint="hint_kit1">
+	        <texture>ui_inGame2_checkbox</texture>
+	        <text x="-10" font="letterica16" r="170" g="170" b="170">ui_st_kit1</text>
+			<text_color>
+				<e r="200" g="200" b="200"/>
+			</text_color>
+	    </check_kit1>
+
+	    <check_kit2 x="50" y="275" width="35" height="29" stretch="1" hint="hint_kit2">
+	        <texture>ui_inGame2_checkbox</texture>
+	        <text x="-10" font="letterica16" r="170" g="170" b="170">ui_st_kit2</text>
+			<text_color>
+				<e r="200" g="200" b="200"/>
+			</text_color>
+	    </check_kit2>
+
+	    <check_kit3 x="150" y="300" width="35" height="29" stretch="1" hint="hint_kit3">
+	        <texture>ui_inGame2_checkbox</texture>
+	        <text x="-10" font="letterica16" r="170" g="170" b="170">ui_st_kit3</text>
+			<text_color>
+				<e r="200" g="200" b="200"/>
+			</text_color>
+	    </check_kit3>
+
+	    <check_kit4 x="50" y="300" width="35" height="29" stretch="1" hint="hint_kit4">
+	        <texture>ui_inGame2_checkbox</texture>
+	        <text x="-10" font="letterica16" r="170" g="170" b="170">ui_st_kit4</text>
+			<text_color>
+				<e r="200" g="200" b="200"/>
+			</text_color>
+	    </check_kit4>
+		
+		<button_login x="140" y="331" width="108" height="26">
+			<text font="letterica16" r="200" g="200" b="200" align="c">ui_st_mp_login</text>
+			<texture>ui_inGame2_Mp_bigbuttone</texture>
+			<text_color>
+				<e r="200" g="200" b="200"/>
+			</text_color>
+		</button_login>
+
+		<button_regist x="140" y="331" width="108" height="26">
+			<text font="letterica16" r="200" g="200" b="200" align="c">ui_st_mp_regist</text>
+			<texture>ui_inGame2_Mp_bigbuttone</texture>
+			<text_color>
+				<e r="200" g="200" b="200"/>
+			</text_color>
+		</button_regist>
+	
+		<button_cancel x="259" y="331" width="108" height="26">
+			<text font="letterica16" r="200" g="200" b="200" align="c">mm_mp_cancel</text>
+			<texture>ui_inGame2_Mp_bigbuttone</texture>
+			<text_color>
+				<e r="200" g="200" b="200"/>
+			</text_color>
+		</button_cancel>
+		
+		<button_descr x="20" y="331" width="108" height="26">
+			<text font="letterica16" r="200" g="200" b="200" align="c">mm_mp_descr</text>
+			<texture>ui_inGame2_Mp_bigbuttone</texture>
+			<text_color>
+				<e r="200" g="200" b="200"/>
+			</text_color>
+		</button_descr>
+		
+	</login_page>
+</w>

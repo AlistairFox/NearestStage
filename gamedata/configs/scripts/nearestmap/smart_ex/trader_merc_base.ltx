@@ -1,0 +1,98 @@
+[logic@trader_merc_base]
+suitable = {=check_npc_name(trader_merc)} true
+trade = misc\trade\trade_merc.ltx
+prior = 200
+active = animpoint@trader_merc_base
+can_select_weapon = false
+level_spot = trader
+
+[animpoint@trader_merc_base]
+cover_name = merc_trader1_base
+avail_animations = ward_noweap
+use_camp = false
+meet = meet
+combat_ignore_cond = true
+combat_ignore_keep_when_attacked = true
+invulnerable = true
+gather_items_enabled = false
+help_wounded_enabled = false
+corpse_detection_enabled = false
+
+[meet@trader_merc_base]
+close_snd_hello = wait
+close_anim 		= nil
+close_victim 	= nil
+far_anim 		= nil
+far_victim 		= nil
+close_distance  = 0
+far_distance 	= 0
+close_snd_distance = 3
+use = true					; {=actor_enemy} false, true
+allow_break = false
+meet_on_talking = false
+
+[logic@trader2_merc_base]
+suitable = {=check_npc_name(trader2_merc)} true
+trade = misc\trade\trade_merc.ltx
+prior = 200
+active = animpoint@trader2_merc_base
+can_select_weapon = false
+level_spot = trader
+
+[animpoint@trader2_merc_base]
+cover_name = merc_trader2_base
+avail_animations = ward_noweap
+use_camp = false
+meet = meet2
+combat_ignore_cond = true
+combat_ignore_keep_when_attacked = true
+invulnerable = true
+gather_items_enabled = false
+help_wounded_enabled = false
+corpse_detection_enabled = false
+
+[meet@trader2_merc_base]
+close_snd_hello = wait
+close_anim 		= nil
+close_victim 	= nil
+far_anim 		= nil
+far_victim 		= nil
+close_distance  = 0
+far_distance 	= 0
+close_snd_distance = 3
+use = true					; {=actor_enemy} false, true
+allow_break = false
+meet_on_talking = false
+
+[logic@mech_merc_base]
+suitable = {=check_npc_name(mech_merc)} true
+trade = misc\trade\trade_merc.ltx
+prior = 200
+active = animpoint@mech_merc_base
+can_select_weapon = false
+level_spot = trader
+
+[animpoint@mech_merc_base]
+cover_name = merc_mech_base
+avail_animations = ward_noweap
+use_camp = false
+meet = meet3
+combat_ignore_cond = true
+combat_ignore_keep_when_attacked = true
+invulnerable = true
+gather_items_enabled = false
+help_wounded_enabled = false
+corpse_detection_enabled = false
+
+[meet@mech_merc_base]
+close_snd_hello = wait
+close_anim 		= nil
+close_victim 	= nil
+far_anim 		= nil
+far_victim 		= nil
+close_distance  = 0
+far_distance 	= 0
+close_snd_distance = 3
+use = true					; {=actor_enemy} false, true
+allow_break = false
+meet_on_talking = false

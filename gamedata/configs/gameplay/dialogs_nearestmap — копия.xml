@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="windows-1251" ?>
+<game_dialogs>
+    <dialog id="nmp_stalker_trader_aboutwork">
+        <has_info>nmp_stalker_trader_aboutwork</has_info>
+        <phrase_list>
+            <phrase id="131">
+                <text>nmp_stalker_trader_aboutwork_131</text>
+                <action>dialogs_nearestmap.complete_kolbasa</action>
+            </phrase>
+            <phrase id="12">
+                <text>nmp_stalker_trader_aboutwork_12</text>
+            </phrase>
+            <phrase id="1">
+                <text>nmp_stalker_trader_aboutwork_1</text>
+                <next>11</next>
+                <next>12</next>
+                <next>13</next>
+                <next>14</next>
+            </phrase>
+            <phrase id="11">
+                <text>nmp_stalker_trader_aboutwork_11</text>
+                <disable_info>nmp_stalker_trader_aboutwork</disable_info>
+            </phrase>
+            <phrase id="141">
+                <text>nmp_stalker_trader_aboutwork_141</text>
+            </phrase>
+            <phrase id="13">
+                <text>nmp_stalker_trader_aboutwork_13</text>
+                <precondition>dialogs_nearestmap.trader_countdown_check</precondition>
+                <action>dialogs_nearestmap.trader_countdown1_transfer</action>
+                <give_info>quest_countdown_done</give_info>
+                <has_info>nmap_trader_countdown_1</has_info>
+                <next>141</next>
+            </phrase>
+            <phrase id="142">
+                <text>nmp_stalker_trader_aboutwork_142</text>
+            </phrase>
+            <phrase id="14">
+                <text>nmp_stalker_trader_aboutwork_14</text>
+                <precondition>dialogs_nearestmap.trader_rastyapa_check</precondition>
+                <action>dialogs_nearestmap.trader_rastyapa_transfer</action>
+                <give_info>quest_rastyapa_done</give_info>
+                <has_info>nmap_trader_rastyapa</has_info>
+                <next>142</next>
+            </phrase>
+            <phrase id="0">
+                <text>nmp_stalker_trader_aboutwork_0</text>
+                <next>1</next>
+            </phrase>
+        </phrase_list>
+    </dialog>
+    <dialog id="nmp_stalker_trader_start_dialog">
+        <phrase_list>
+            <phrase id="21">
+                <text>nmp_stalker_trader_start_dialog_21</text>
+            </phrase>
+            <phrase id="12">
+                <text>nmp_stalker_trader_start_dialog_12</text>
+            </phrase>
+            <phrase id="13">
+                <text>nmp_stalker_trader_start_dialog_13</text>
+            </phrase>
+            <phrase id="1">
+                <text></text>
+                <next>11</next>
+                <next>12</next>
+                <next>13</next>
+            </phrase>
+            <phrase id="11">
+                <text>nmp_stalker_trader_start_dialog_11</text>
+            </phrase>
+            <phrase id="0">
+                <text></text>
+                <next>1</next>
+            </phrase>
+        </phrase_list>
+    </dialog>
+    <dialog id="nmp_stalker_trader_work">
+        <phrase_list>
+            <phrase id="52">
+                <text>nmp_stalker_trader_work_52</text>
+            </phrase>
+            <phrase id="51">
+                <text>nmp_stalker_trader_work_51</text>
+                <action>dialogs_nearestmap.give_countdown_1_quest</action>
+                <give_info>nmp_stalker_trader_aboutwork</give_info>
+                <give_info>nmap_trader_countdown_1</give_info>
+            </phrase>
+            <phrase id="2">
+                <text>nmp_stalker_trader_work_2</text>
+            </phrase>
+            <phrase id="12">
+                <text>nmp_stalker_trader_work_12</text>
+            </phrase>
+            <phrase id="5">
+                <text>nmp_stalker_trader_work_5</text>
+                <precondition>dialogs_nearestmap.trader_countdown_novice_check</precondition>
+                <dont_has_info>nmap_trader_countdown_1</dont_has_info>
+                <next>51</next>
+                <next>52</next>
+            </phrase>
+            <phrase id="0">
+                <text>nmp_stalker_trader_work_0</text>
+                <next>5</next>
+                <next>1</next>
+                <next>2</next>
+            </phrase>
+            <phrase id="1">
+                <text>nmp_stalker_trader_work_1</text>
+                <dont_has_info>nmap_trader_rastyapa</dont_has_info>
+                <next>11</next>
+                <next>12</next>
+            </phrase>
+            <phrase id="11">
+                <text>nmp_stalker_trader_work_11</text>
+                <action>dialogs_nearestmap.give_rastyapa_quest</action>
+                <give_info>nmap_trader_rastyapa</give_info>
+                <give_info>nmp_stalker_trader_aboutwork</give_info>
+            </phrase>
+        </phrase_list>
+    </dialog>
+</game_dialogs>

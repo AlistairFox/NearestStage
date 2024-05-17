@@ -1,0 +1,297 @@
+; Российское гладкоствольное ружьё МР-133
+;-(TrickSR, Ga2z)-----------------------------------------
+; калибр 						12/76
+; длина ствола 					510 мм
+; магазин						4/5
+; вес с пустым магазином		3 кг
+; максимальная дальность стрельбы	-- м
+; эффективная дальность стрельбы	до 80 м
+; прицельная дальность			40 м
+; дульная скорость пули			373 м/с
+; темп стрельбы					3 в/с
+;---------------------------------------------------
+[wpn_wincheaster1300]:weapon_probability,default_weapon_params,wpn_mr133_sounds
+GroupControlSection				= spawn_group
+$spawn 							= "weapons\wincheaster1300"
+$npc			 				= on
+$prefetch 		 				= 8
+scheduled						= off
+cform							= skeleton
+class							= WP_ASHTG
+description						= st_wpn_mr133_descr
+
+scopes 							= none
+parent_section  				= wpn_mr133
+snd_shoot_dist		= true
+ 
+
+ef_main_weapon_type				= 1
+ef_weapon_type					= 9
+
+inv_name						= st_wpn_mr133
+inv_name_short					= st_wpn_mr133
+
+inv_grid_width					= 6
+inv_grid_height					= 1
+inv_grid_x						= 10
+inv_grid_y						= 8
+
+upgr_icon_x						= 600
+upgr_icon_y						= 0
+upgr_icon_width					= 300
+upgr_icon_height 				= 50
+
+kill_msg_x						= 171
+kill_msg_y						= 104
+kill_msg_width					= 75
+kill_msg_height					= 20
+
+cost							= 2000
+weapon_class					= shotgun
+inv_weight						= 3.0
+hud								= wpn_mr133_hud
+visual 							= dynamics\weapons\wpn_winchester1300\wpn_winchester1300.ogf
+
+upgrades                		= up_gr_firstab_wincheaster1300, up_gr_seconab_wincheaster1300, up_gr_thirdab_wincheaster1300, up_gr_fourtab_wincheaster1300
+installed_upgrades      		=
+upgrade_scheme          		= upgrade_scheme_wincheaster1300
+
+ph_mass			 				= 3
+
+ammo_class		 				= ammo_12x70_buck, ammo_12x76_zhekan
+
+startup_ammo 					= 10
+ammo_current					= 30
+ammo_elapsed		 			= 0
+ammo_limit						= 35
+ammo_mag_size		 			= 5
+
+fire_modes						= 1
+
+tri_state_reload				= on
+
+hand_dependence 	 			= 1
+single_handed					= 0
+
+hit_power						= 0.65
+hit_impulse						= 35
+hit_type 						= fire_wound
+fire_distance					= 180
+bullet_speed					= 373
+rpm								= 60
+rpm_empty_click 	 			= 200
+
+misfire_probability				= 0.005
+misfire_start_condition			= 0.6
+misfire_end_condition			= 0.1
+misfire_start_prob	 			= 0
+misfire_end_prob	 			= 0
+condition_shot_dec				= 0.003
+condition_queue_shot_dec		= 0.0035
+
+zoom_dof						= 0.5,1,180
+;reload_dof						= 0,0.5,5,1.7
+
+fire_dispersion_base			= 0.36
+fire_dispersion_condition_factor	= 3
+control_inertion_factor			= 1.35f
+crosshair_inertion				= 6.75
+
+cam_return						= 0
+cam_relax_speed					= 10
+cam_relax_speed_ai				= 360
+cam_dispersion					= 3.0
+cam_dispersion_inc				= 2
+cam_dispersion_frac				= 0.7
+cam_max_angle					= 15
+cam_max_angle_horz				= 15
+cam_step_angle_horz				= 3
+
+PDM_disp_base 					= 0.5
+PDM_disp_vel_factor 			= 2
+PDM_disp_accel_factor 			= 2
+PDM_disp_crouch	 				= 1
+PDM_disp_crouch_no_acc 			= 1
+
+zoom_cam_relax_speed			= 10
+zoom_cam_relax_speed_ai			= 120.75
+zoom_cam_dispersion				= 3
+zoom_cam_dispersion_inc			= 2.5
+zoom_cam_dispersion_frac		= 0.7
+zoom_cam_max_angle				= 15
+zoom_cam_max_angle_horz			= 15
+zoom_cam_step_angle_horz		= 3
+
+min_radius 						= 30
+max_radius 						= 50
+
+holder_range_modifier			= 1
+holder_fov_modifier				= 1
+
+slot 				 			= 2
+animation_slot					= 3
+
+position 						= -0.023,-0.11,0.072
+orientation 					= 0,36,0
+
+fire_point 						= 0,0.168,0.755
+fire_point2						= 0,0.168,0.755
+
+flame_particles					= weapons\generic_weapon05
+smoke_particles     			= ghost_particles\weapons\flame_eft_shotgun
+silencer_smoke_particles   		= ghost_particles\weapons\generic_smoke_eft_sil
+
+shell_point						= 0,0.180,0.647
+;shell_particles				= ghost_particles\weapons\shells\shells_12x70_right
+
+strap_position 					= -0.26,-0.10,0.05
+strap_orientation				= -15,-9,110
+strap_bone0						= bip01_spine2
+strap_bone1						= bip01_spine1
+
+light_color		 				= 0.6,0.5,0.3
+light_range		 				= 6.0
+light_var_color		 			= 0.05
+light_var_range		 			= 0.5
+light_time 		 				= 0.2
+
+scope_status					= 0
+silencer_status					= 0
+grenade_launcher_status			= 0
+
+zoom_enabled					= true
+zoom_rotate_time				= 0.2
+scope_zoom_factor				= 83.3
+
+[wpn_mr133_hud]:hud_base
+zoom_hide_crosshair				= true
+attach_place_idx				= 0
+item_visual                 	= dynamics\weapons\wpn_winchester1300\wpn_winchester1300_hud.ogf
+
+hands_position					= -0.003250,0.004500,0.041251
+hands_orientation				= 0.275001,1.175000,0.200000
+
+hands_position_16x9				= -0.003250,0.004500,0.041251
+hands_orientation_16x9			= 0.275001,1.175000,0.200000
+
+item_position					= 0.001528,-0.012408,-0.099066
+item_orientation				= -0.046126,-1.000036,-0.024950
+
+aim_hud_offset_pos				= -0.049750,0.025500,-0.074250
+aim_hud_offset_rot				= -0.004625,0.004425,0.030000
+
+aim_hud_offset_pos_16x9			= -0.049750,0.025500,-0.074250
+aim_hud_offset_rot_16x9			= -0.004625,0.004425,0.030000
+
+shell_point						= 0.02,0.072,0.228
+shell_dir                  	 	= 0,1,0
+shell_bone						= wpn_body
+
+fire_point						= 0,0,0.2
+fire_bone						= muzzle
+
+anm_show						= mp133_draw
+anm_hide						= mp133_holster
+anm_idle						= mp133_idle
+anm_idle_aim					= mp133_idle_aim
+anm_idle_moving					= mp133_idle_moving
+anm_idle_moving_crouch 			= mp133_idle_moving, idle
+anm_idle_moving_empty_crouch 	= mp133_idle_moving, idle
+anm_idle_sprint					= mp133_idle_sprint, idle_sprint
+anm_bore						= mp133_idle_aim ;mp133_idle_bore
+anm_shots						= mp133_shoot, shoot
+anm_shot_l						= mp133_shoot_last, shoot_last
+anm_open						= mp133_open
+anm_add_cartridge				= mp133_insert, insert
+anm_close_empty					= mp133_close_empty, close_empty
+anm_close						= mp133_close, idle
+
+safemode_rot_enabled = true
+safemode_offset_pos				= 0.205,0.03,0
+safemode_offset_rot				= 0,-1,0.2
+safemode_offset_pos_16x9				= 0.205,0.03,0
+safemode_offset_rot_16x9				= 0,-1,0.2
+
+hud_collision_enabled = true
+hud_collision_offset_pos_16x9 = 0.0, -0.2, -0.1
+hud_collision_offset_rot_16x9  = -0.7, 0.0, 0.0
+;-----------------------------------------------------------------------------
+; Уникальные
+;-----------------------------------------------------------------------------
+[wpn_wincheaster1300_trapper]:wpn_wincheaster1300
+$spawn 							= "weapons\wpn_wincheaster1300_trapper"
+description						= st_wpn_mr133_trapper_descr
+
+inv_name						= st_wpn_mr133_trapper
+
+hud								= wpn_mr133_trapper_hud
+visual 							= dynamics\weapons\wpn_winchester1300\wpn_winchester1300_trapper.ogf
+
+cost					 		= 5000
+
+scopes 							= ac10632,eot
+parent_section  				= wpn_wincheaster1300_trapper
+
+position 						= -0.023,-0.11,0.072
+orientation 					= 0,36,0
+
+fire_point 						= 0,0.168,0.755
+fire_point2						= 0,0.168,0.755
+
+upgr_icon_x						= 600
+upgr_icon_y						= 50
+upgr_icon_width					= 300
+upgr_icon_height 				= 100
+
+inv_grid_width					= 5
+inv_grid_x						= 25
+inv_grid_y						= 40
+	
+hit_power        				= 0.7, 0.7, 0.7, 0.7
+
+scope_status 					= 2
+
+[wpn_mr133_trapper_hud]:wpn_mr133_hud
+item_visual                 	= dynamics\weapons\wpn_winchester1300\wpn_winchester1300_trapper_hud.ogf
+
+aim_hud_offset_pos				= -0.049750,0.025500,-0.074250
+aim_hud_offset_rot				= -0.006275,0.004425,0.030000
+
+aim_hud_offset_pos_16x9			= -0.049750,0.025500,-0.074250
+aim_hud_offset_rot_16x9			= -0.006275,0.004425,0.030000
+;-----------------------------------------------------------------------------
+; Аддоны
+;-----------------------------------------------------------------------------
+[wpn_wincheaster1300_trapper_ac10632]:wpn_wincheaster1300_trapper
+$spawn             				= "weapons\wpn_wincheaster1300_trapper_ac10632"
+visual							= dynamics\weapons\wpn_winchester1300\wpn_winchester1300_trapper_barska.ogf
+hud								= wpn_mr133_trapper_ac10632_hud
+
+scope_x							= 17
+scope_y							= -22
+
+[wpn_mr133_trapper_ac10632_hud]:wpn_mr133_hud
+item_visual            	 		= dynamics\weapons\wpn_winchester1300\wpn_winchester1300_trapper_barska_hud.ogf
+
+aim_hud_offset_pos				= -0.048550,0.008500,-0.074250
+aim_hud_offset_rot				= 0.029525,0.005375,0.003200
+
+aim_hud_offset_pos_16x9			= -0.048550,0.008500,-0.074250
+aim_hud_offset_rot_16x9			= 0.029525,0.005375,0.003200
+
+[wpn_wincheaster1300_trapper_eot]:wpn_wincheaster1300_trapper
+$spawn							= "weapons\wpn_wincheaster1300_trapper_eot"
+visual							= dynamics\weapons\wpn_winchester1300\wpn_winchester1300_trapper_eot.ogf
+hud								= wpn_mr133_trapper_eot_hud
+
+scope_x							= 18
+scope_y							= -18
+
+[wpn_mr133_trapper_eot_hud]:wpn_mr133_hud
+item_visual						= dynamics\weapons\wpn_winchester1300\wpn_winchester1300_trapper_eot_hud.ogf
+
+aim_hud_offset_pos				= -0.048550,0.008000,-0.058250
+aim_hud_offset_rot				= 0.053675,0.004075,0.003200
+
+aim_hud_offset_pos_16x9			= -0.048550,0.008000,-0.058250
+aim_hud_offset_rot_16x9			= 0.053675,0.004075,0.003200

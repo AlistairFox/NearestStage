@@ -1,0 +1,106 @@
+[logic@trader_freedom_base]
+suitable = {=check_npc_name(trader_freedom)} true
+trade = misc\trade\trade_freedom.ltx
+prior = 200
+active = animpoint@trader_freedom_base
+can_select_weapon = false
+level_spot = trader
+
+[animpoint@trader_freedom_base]
+cover_name = freedom_trader_cover
+avail_animations = animpoint_sit_normal
+use_camp = false
+meet = meet
+combat_ignore_cond = true
+combat_ignore_keep_when_attacked = true
+invulnerable = true
+gather_items_enabled = false
+help_wounded_enabled = false
+corpse_detection_enabled = false
+
+[meet]
+close_snd_hello = esc_trader_greet
+close_snd_bye 	= esc_trader_bye
+close_anim 		= nil
+close_victim 	= nil
+far_anim 		= nil
+far_victim 		= nil
+close_distance  = 0
+far_distance 	= 0
+close_snd_distance = 3
+use = true					; {=actor_enemy} false, true
+allow_break = false
+meet_on_talking = false
+
+
+
+[logic@trader2_freedom_base]
+suitable = {=check_npc_name(trader2_freedom)} true
+trade = misc\trade\trade_freedom.ltx
+prior = 200
+active = animpoint@trader2_freedom_base
+can_select_weapon = false
+level_spot = trader
+
+[animpoint@trader2_freedom_base]
+cover_name = freedom_trader2_cover
+avail_animations = animpoint_sit_normal
+use_camp = false
+meet = meet2
+combat_ignore_cond = true
+combat_ignore_keep_when_attacked = true
+invulnerable = true
+gather_items_enabled = false
+help_wounded_enabled = false
+corpse_detection_enabled = false
+
+[meet2]
+close_snd_hello = esc_trader_greet
+close_snd_bye 	= esc_trader_bye
+close_anim 		= nil
+close_victim 	= nil
+far_anim 		= nil
+far_victim 		= nil
+close_distance  = 0
+far_distance 	= 0
+close_snd_distance = 3
+use = true					; {=actor_enemy} false, true
+allow_break = false
+meet_on_talking = false
+
+
+
+
+[logic@mech_freedom_base]
+suitable = {=check_npc_name(mech_freedom)} true
+trade = misc\trade\trade_freedom.ltx
+prior = 200
+active = animpoint@mech_freedom_base
+can_select_weapon = false
+level_spot = trader
+
+[animpoint@mech_freedom_base]
+cover_name = freedom_mech_cover
+avail_animations = animpoint_sit_normal
+use_camp = false
+meet = meet3
+combat_ignore_cond = true
+combat_ignore_keep_when_attacked = true
+invulnerable = true
+gather_items_enabled = false
+help_wounded_enabled = false
+corpse_detection_enabled = false
+
+[meet3]
+close_snd_hello = esc_trader_greet
+close_snd_bye 	= esc_trader_bye
+close_anim 		= nil
+close_victim 	= nil
+far_anim 		= nil
+far_victim 		= nil
+close_distance  = 0
+far_distance 	= 0
+close_snd_distance = 3
+use = true					; {=actor_enemy} false, true
+allow_break = false
+meet_on_talking = false

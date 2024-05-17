@@ -1,0 +1,63 @@
+#include "eatable_objects.ltx"
+#include "hud_objects.ltx"
+
+
+[drug_coagulant]:booster
+
+;***********************************************************
+hud = drug_coagulant_hud_model
+helm_prohibited = true
+full_outfit_prohibited = true
+
+base_object = drug_coagulant ;показывает, какая секция является базовой для "одинаковых" предметов разной степени целостности
+uses_count = 3	    ;Сколько раз предмет можно использовать
+
+;При первом использовании всегда съедается базовый предмет
+using_2 = drug_coagulant2	;Секция предмета, который будет заспавнен после первого использования, и который отвечает за второе использование
+using_3 = drug_coagulant3	;Аналогично для второго использования
+;************************************************************
+
+$spawn 				= "food and drugs\drug_coagulant"
+visual				= dynamics\weapons\wpn_eat\world_models\tabletki\tabletki_coagulant_world.ogf
+inv_name			= st_drug_coagulant
+inv_name_short		        = st_drug_coagulant
+description			= st_drug_coagulant_descr
+
+inv_grid_width      = 1
+inv_grid_height     = 1
+inv_grid_x          = 25
+inv_grid_y          = 14
+cost				= 600
+inv_weight			= 0.03
+
+use_sound			= $silent ;interface\inv_pills
+visual_condition = 1.0
+
+[drug_coagulant2]:drug_coagulant
+description			= st_drug_coagulant_descr_2
+inv_weight			= 0.02
+hud = drug_coagulant_hud_model2
+cost				= 400
+visual_condition = 0.66
+
+[drug_coagulant3]:drug_coagulant
+description			= st_drug_coagulant_descr_3
+hud = drug_coagulant_hud_model3
+inv_weight			= 0.01
+trash_object = drug_coagulant_trash
+cost				= 200
+visual_condition = 0.33
+
+
+[drug_coagulant_trash]:gwr_base_trash
+visual                        = dynamics\equipments\medical\drug_coagulant_trash.ogf
+
+;направление, в котором предмет отбрасывается
+throw_dir = right
+;смещение точки спавна относительно камеры
+throw_offset_y = -0.6	//вверх-вниз
+throw_offset_x = -0.2	//вперед-назад
+throw_offset_z =  0.6	//положительные - в сторону броска, отрицательное - в противоположную
+
+throw_impulse_y = -90
+throw_impulse_z = 180

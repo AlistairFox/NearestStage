@@ -1,0 +1,366 @@
+; Снайперская винтовка Драгунова СВД / СВД-С
+;-(TrickSR, Ga2z)-----------------------------------------
+; калибр 						7.62x54 мм
+; длина ствола 					620 мм / 565 мм
+; магазин						10
+; вес с пустым магазином		3.91 / 4.18
+; вес с пустым магазином и прицелом ПСО-1М2		4.51 / 4.78
+; максимальная дальность стрельбы	3800 м / 3700 м
+; эффективная дальность стрельбы	800 м
+; прицельная дальность			1300 м / 1300 м
+; дульная скорость пули			830 м/с / 806 м/с
+; темп стрельбы					30 в/м
+;---------------------------------------------------
+[wpn_svd]:weapon_probability,default_weapon_params,wpn_svd_sounds
+GroupControlSection				= spawn_group
+$spawn							= "weapons\svd"
+$npc							= on
+$prefetch 		 				= 8
+scheduled						= off
+cform							= skeleton
+class							= WP_SVD
+description						= st_wpn_svd_descr
+
+scopes 							= pso1m2,1p78,1pn93-4,ekp,okp
+parent_section  				= wpn_svd
+
+ef_main_weapon_type				= 3
+ef_weapon_type					= 11
+snd_shoot_dist		= true
+ 
+
+inv_name						= st_wpn_svd
+inv_name_short					= st_wpn_svd
+
+inv_grid_width					= 6
+inv_grid_height					= 2
+inv_grid_x						= 0
+inv_grid_y						= 0
+
+upgr_icon_x						= 1750
+upgr_icon_y						= 200
+upgr_icon_width					= 300
+upgr_icon_height 				= 100
+
+kill_msg_x						= 0
+kill_msg_y						= 0
+kill_msg_width					= 98
+kill_msg_height					= 23
+
+cost							= 16000
+weapon_class					= sniper_rifle
+inv_weight						= 3.91
+hud								= wpn_svd_hud
+visual							= dynamics\weapons\wpn_svd\wpn_svd.ogf
+
+upgrades						= up_gr_firstab_svd, up_gr_seconab_svd, up_gr_thirdab_svd, up_gr_fourtab_svd, up_gr_fourtcd_svd, up_gr_fourtef_svd
+installed_upgrades				=
+upgrade_scheme					= upgrade_scheme_svd
+
+ph_mass			 				= 5
+
+ammo_class						= ammo_7.62x54_7h1,ammo_7.62x54_7h14,ammo_7.62x54_ap
+
+startup_ammo					= 10
+ammo_current					= 10
+ammo_elapsed					= 0
+ammo_limit						= 30
+ammo_mag_size					= 10
+
+fire_modes						= 1
+
+hand_dependence					= 1
+single_handed					= 0
+
+hit_power 						= 0.95
+;hit_impulse		 			= 10
+hit_type 						= fire_wound
+fire_distance					= 1000
+bullet_speed					= 830
+rpm								= 200
+rpm_empty_click					= 200
+
+use_aim_bullet					= true
+time_to_aim						= 1
+
+misfire_probability				= 0.005
+misfire_start_condition			= 0.6
+misfire_end_condition			= 0.1
+misfire_start_prob	 			= 0.0055 
+misfire_end_prob	 			= 0.055
+condition_shot_dec				= 0.0055
+condition_queue_shot_dec		= 0.0055
+
+;zoom_dof						= 0.5,1,350
+reload_dof						= 0,0.5,5,2.2
+
+fire_dispersion_base			= 0.1
+fire_dispersion_condition_factor	= 1
+control_inertion_factor			= 2.0f
+crosshair_inertion				= 9
+
+cam_return						= 2.5
+cam_relax_speed					= 4.5
+cam_relax_speed_ai				= 360
+cam_dispersion					= 3
+cam_dispersion_inc				= 3
+cam_dispersion_frac				= 1
+cam_max_angle					= 15
+cam_max_angle_horz				= 3
+cam_step_angle_horz				= 0.25
+
+zoom_cam_relax_speed			= 5.5
+zoom_cam_relax_speed_ai			= 120.75
+zoom_cam_dispersion				= 0.5
+zoom_cam_dispersion_inc			= 1
+zoom_cam_dispersion_frac		= 1
+zoom_cam_max_angle				= 1
+zoom_cam_max_angle_horz			= 1
+zoom_cam_step_angle_horz		= 0.5
+
+PDM_disp_base 					= 1.3
+PDM_disp_vel_factor 			= 1.5
+PDM_disp_accel_factor 			= 1.5
+PDM_disp_crouch	 				= 1
+PDM_disp_crouch_no_acc 			= 1
+
+min_radius						= 50
+max_radius						= 90
+
+holder_range_modifier			= 2
+holder_fov_modifier				= 0.75
+
+hit_probability_gd_novice		= 0.55
+hit_probability_gd_stalker		= 0.65
+hit_probability_gd_veteran		= 0.75
+hit_probability_gd_master		= 0.85
+
+slot							= 2
+animation_slot					= 8
+
+position                		= -0.026,-0.077,-0.01
+orientation            	 		= 0,0,0
+
+fire_point 						= 0,0.168,0.755
+fire_point2						= 0,0.168,0.755
+
+flame_particles					= weapons\generic_weapon06
+smoke_particles					= ghost_particles\weapons\flame_eft_00_test
+silencer_smoke_particles   		= ghost_particles\weapons\generic_smoke_eft_sil
+
+shell_point		 				= 0,0.129,0.192
+shell_dir		 				= 0,0,0.4
+shell_particles					= ghost_particles\weapons\shells\shells_762_54_right
+
+strap_position 					= -0.15,-0.15,0.45
+strap_orientation				= -25,-189,65
+strap_bone0						= bip01_spine2
+strap_bone1						= bip01_spine1
+
+light_disabled					= false
+light_color		 				= 0.6,0.5,0.3
+light_range		 				= 4.0
+light_var_color		 			= 0.05
+light_var_range					= 0.5
+light_time 		 				= 0.2
+
+scope_status					= 2
+silencer_status					= 2
+grenade_launcher_status			= 0
+
+zoom_enabled					= true
+zoom_rotate_time				= 0.25
+scope_zoom_factor				= 83.3
+
+scope_name 						= pso1m2
+scope_x                   		= 34
+scope_y                     	= 10
+
+silencer_name					= sil_tgp-v
+silencer_x                  	= 239
+silencer_y                  	= 20
+
+silencer_hit_power				= 0.9
+silencer_hit_impulse			= 20
+silencer_fire_distance			= 1000
+silencer_bullet_speed			= 830
+
+silencer_light_color			= 0.6,0.5,0.3
+silencer_light_range			= 0.01
+silencer_light_var_color		= 0.05
+silencer_light_var_range		= 0.5
+silencer_light_time 			= 0.2
+
+[wpn_svd_hud]:hud_base
+zoom_hide_crosshair				= true
+attach_place_idx				= 0
+item_visual						= dynamics\weapons\wpn_svd\wpn_svd_hud.ogf
+
+hands_position					= -0.009500,0.012000,-0.270999
+hands_orientation				= -0.055000,-0.075000,-1.100000
+
+hands_position_16x9				= -0.009500,0.012000,-0.270999
+hands_orientation_16x9			= -0.055000,-0.075000,-1.100000
+
+item_position 					= 0,0,0
+item_orientation 				= 0,0,0
+
+aim_hud_offset_pos				= -0.061250,0.028999,-0.138100
+aim_hud_offset_rot				= 0.008250,0.009625,0.000000
+
+aim_hud_offset_pos_16x9			= -0.061250,0.028999,-0.138100
+aim_hud_offset_rot_16x9			= 0.008250,0.009625,0.000000
+
+shell_point						= 0.025,0.025,0.221
+shell_dir               		= 0,1,0
+shell_bone						= wpn_body
+
+fire_point						= 0,0.05043,0.9
+fire_bone               		= wpn_body
+
+anm_show						= svd-s_ins_draw, idle
+anm_show_empty					= svd-s_ins_draw, idle_empty
+anm_hide             			= svd-s_ins_hide, idle
+anm_hide_empty             		= svd-s_ins_hide, idle_empty
+anm_idle             			= svd-s_ins_idle, idle
+anm_idle_empty             		= svd-s_ins_idle, idle_empty
+anm_shots						= svd-s_ins_shoot, shoot
+anm_shot_l						= svd-s_ins_shoot, shoot_last
+anm_shots_aim					= svd-s_ins_shoot_aim, shoot
+anm_shot_l_aim					= svd-s_ins_shoot_aim, shoot_last
+anm_shot_aim_l					= svd-s_ins_shoot_aim, shoot_last
+anm_idle_aim					= svd-s_ins_idle_aim, idle
+anm_idle_aim_empty				= svd-s_ins_idle_aim, idle_empty
+anm_reload						= svd-s_ins_reload, reload
+anm_reload_empty				= svd-s_ins_reload_full, reload_full
+anm_reload_misfire				= svd-s_ins_reload_full, reload_full
+anm_idle_moving 				= svd-s_ins_idle_moving, idle
+anm_idle_moving_empty 			= svd-s_ins_idle_moving, idle_empty
+anm_idle_moving_crouch 			= svd-s_ins_idle_crouch, idle
+anm_idle_moving_empty_crouch 	= svd-s_ins_idle_crouch, idle_empty
+anm_idle_sprint					= svd-s_ins_idle_sprint, idle
+anm_idle_sprint_empty			= svd-s_ins_idle_sprint, idle_empty
+anm_bore						= svd-s_ins_idle_aim, idle
+anm_bore_empty					= svd-s_ins_idle_aim, idle_empty
+
+gl_hud_offset_pos				= 0,0,0
+gl_hud_offset_rot				= 0,0,0
+
+lean_hud_offset_pos				= 0,0,0
+lean_hud_offset_rot				= 0,0,0
+
+safemode_rot_enabled = true
+safemode_offset_pos				= 0.205,0.03,0
+safemode_offset_rot				= 0,-1,0.2
+safemode_offset_pos_16x9				= 0.205,0.03,0
+safemode_offset_rot_16x9				= 0,-1,0.2
+
+hud_collision_enabled = true
+hud_collision_offset_pos_16x9 = 0.0, -0.2, -0.1
+hud_collision_offset_rot_16x9  = -0.7, 0.0, 0.0
+;-----------------------------------------------------------------------------
+; Уникальные
+;-----------------------------------------------------------------------------
+[wpn_svd_nimble]:wpn_svd
+$spawn                  		= "weapons\wpn_svd_nimble"
+;-----------------------------------------------------------------------------
+; Аддоны
+;-----------------------------------------------------------------------------
+[wpn_svd_1p78]:wpn_svd
+$spawn             				= "weapons\wpn_svd_1p78"
+hud								= wpn_svd_1p78_hud
+visual							= dynamics\weapons\wpn_svd\wpn_svd_1p78.ogf
+
+scope_x							= 54
+scope_y							= 3
+
+[wpn_svd_1p78_hud]:wpn_svd_hud
+item_visual                		= dynamics\weapons\wpn_svd\wpn_svd_1p78_hud.ogf
+
+aim_hud_offset_pos				= -0.063000,-0.008251,-0.073851
+aim_hud_offset_rot				= 0.004125,0.010250,-0.006875
+
+aim_hud_offset_pos_16x9			= -0.063000,-0.008251,-0.073851
+aim_hud_offset_rot_16x9			= 0.004125,0.010250,-0.006875
+
+[wpn_svd_1pn93-4]:wpn_svd
+$spawn             				= "weapons\wpn_svd_1pn93-4"
+hud								= wpn_svd_1pn93-4_hud
+visual							= dynamics\weapons\wpn_svd\wpn_svd_1pn93-4.ogf
+
+scope_x							= 36
+scope_y							= 8
+
+[wpn_svd_1pn93-4_hud]:wpn_svd_hud
+item_visual                		= dynamics\weapons\wpn_svd\wpn_svd_1pn93-4_hud.ogf
+
+aim_hud_offset_pos				= -0.050600,-0.004431,-0.090100
+aim_hud_offset_rot				= 0.004500,0.009225,-0.012050
+
+aim_hud_offset_pos_16x9			= -0.050600,-0.004431,-0.090100
+aim_hud_offset_rot_16x9			= 0.004500,0.009225,-0.012050
+
+[wpn_svd_ekp]:wpn_svd
+$spawn             				= "weapons\wpn_svd_ekp"
+hud								= wpn_svd_ekp_hud
+visual							= dynamics\weapons\wpn_svd\wpn_svd_ekp.ogf
+
+scope_x							= 63
+scope_y							= 12
+
+[wpn_svd_ekp_hud]:wpn_svd_hud
+item_visual                		= dynamics\weapons\wpn_svd\wpn_svd_ekp_hud.ogf
+
+aim_hud_offset_pos				= -0.061250,-0.002501,-0.095
+aim_hud_offset_rot				= 0.043125,0.011000,0
+
+aim_hud_offset_pos_16x9			= -0.061250,-0.002501,-0.095
+aim_hud_offset_rot_16x9			= 0.043125,0.011000,0
+
+[wpn_svd_kobra]:wpn_svd
+$spawn                  		= "weapons\svd_kobra"
+hud								= wpn_svd_kobra_hud
+visual							= dynamics\weapons\wpn_svd\wpn_svd_kobra.ogf
+
+scope_x							= 64
+scope_y							= 17
+
+[wpn_svd_kobra_hud]:wpn_svd_hud
+item_visual                		= dynamics\weapons\wpn_svd\wpn_svd_kobra_hud.ogf
+
+aim_hud_offset_pos				= -0.068350,-0.003275,-0.132002
+aim_hud_offset_rot				= -0.019375,-0.033187,0.02
+
+aim_hud_offset_pos_16x9			= -0.068350,-0.003275,-0.132002
+aim_hud_offset_rot_16x9			= -0.019375,-0.033187,0.02
+
+[wpn_svd_pso1m2]:wpn_svd
+$spawn             				= "weapons\wpn_svd_pso1m2"
+hud								= wpn_svd_pso1m2_hud
+
+scope_x                   		= 34
+scope_y                     	= 10
+
+[wpn_svd_pso1m2_hud]:wpn_svd_hud
+aim_hud_offset_pos				= -0.052750,0.004699,-0.073600
+aim_hud_offset_rot				= 0.011000,0.009875,0.000000
+
+aim_hud_offset_pos_16x9			= -0.052750,0.004699,-0.073600
+aim_hud_offset_rot_16x9			= 0.011000,0.009875,0.000000
+
+[wpn_svd_okp]:wpn_svd
+$spawn             				= "weapons\wpn_svd_okp"
+hud								= wpn_svd_okp_hud
+visual							= dynamics\weapons\wpn_svd\wpn_svd_okp.ogf
+
+scope_x							= 70
+scope_y							= 11
+
+[wpn_svd_okp_hud]:wpn_svd_hud
+item_visual                		= dynamics\weapons\wpn_svd\wpn_svd_okp_hud.ogf
+
+aim_hud_offset_pos				= -0.061250,0.019999,-0.115100
+aim_hud_offset_rot				= 0.059650,0.026125,0
+
+aim_hud_offset_pos_16x9			= -0.061250,0.019999,-0.115100
+aim_hud_offset_rot_16x9			= 0.059650,0.026125,0

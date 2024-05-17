@@ -1,0 +1,87 @@
+#include "hud_objects.ltx"
+#include "eatable_objects.ltx"
+
+[vodka]:booster
+;***********************************************************
+hud = vodka_hud_model
+helm_prohibited = true
+full_outfit_prohibited = true
+
+base_object = vodka ;показывает, какая секция является базовой для "одинаковых" предметов разной степени целостности
+uses_count = 4	    ;Сколько раз предмет можно использовать
+
+;При первом использовании всегда съедается базовый предмет
+using_2 = vodka2	;Секция предмета, который будет заспавнен после первого использования, и который отвечает за второе использование
+using_3 = vodka3	;Аналогично для второго использования
+using_4 = vodka4	;И третьего
+;************************************************************
+
+
+$spawn 				= "food and drugs\vodka"
+cform				= skeleton
+visual				= dynamics\weapons\wpn_eat\world_models\vodki\vodka_kazaki_world.ogf
+description			= st_vodka_descr
+
+inv_name			= st_vodka
+inv_name_short		= st_vodka
+inv_weight			= 0.6	;0.2
+
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 27
+inv_grid_y         = 14
+cost				= 40
+
+attach_angle_offset		= 0.000000, 0.000000, 0.000000
+attach_position_offset	= 0.087266, -0.078540, 0.052360
+attach_bone_name		= bip01_r_hand
+auto_attach				= false
+
+bone_name				= bip01_r_hand
+position_offset			 = 0.0,0.0,0.0
+angle_offset			 = 1.570790,1.570790,3.92699
+
+break_particles		= destroy_fx\destroy_bottle
+break_sound			= material\bottle\collide\bottle_break_1
+
+boost_time				= 5.0
+boost_radiation_restore	= 0.005
+eat_alcohol				= 0.1
+eat_satiety				= -0.2
+
+use_sound			= $silent ;interface\inv_vodka
+visual_condition = 1.0
+
+
+[vodka2]:vodka
+description			= st_vodka_descr_2
+hud = vodka_hud_model2
+inv_weight			= 0.45
+inv_grid_x         = 28
+inv_grid_y         = 14
+cost				= 25
+visual_condition = 0.75
+
+[vodka3]:vodka
+description			= st_vodka_descr_3
+inv_weight			= 0.3
+hud = vodka_hud_model3
+inv_grid_x         = 29
+inv_grid_y         = 14
+cost				= 15
+visual_condition = 0.5
+
+[vodka4]:vodka
+description			= st_vodka_descr_4
+hud = vodka_hud_model4
+inv_weight			= 0.15
+trash_object = vodka_trash
+inv_grid_x         = 30
+inv_grid_y         = 14
+cost				= 5
+visual_condition = 0.25
+
+[vodka_trash]:gwr_base_trash
+visual                           = dynamics\devices\dev_vodka\dev_vodka_trash.ogf
+throw_dir = left
+throw_impulse = 65

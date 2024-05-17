@@ -1,0 +1,272 @@
+; Винтовка Снайперская Специальная Крупнокалиберная «Выхлоп» 
+;-(TrickSR, Ga2z)-----------------------------------------
+; калибр 						12.7x55 мм
+; длина ствола 					450 мм
+; магазин						5
+; вес с пустым магазином		6.50 кг
+; вес с пустым магазином и прицелом ПКС-07	7.38 кг
+; максимальная дальность стрельбы		--
+; эффективная дальность стрельбы	400 м
+; прицельная дальность			600 м
+; дульная скорость пули			295 м/с
+; темп стрельбы					--
+;---------------------------------------------------
+[wpn_vssk]:weapon_probability,default_weapon_params,wpn_vssk_sounds
+GroupControlSection				= spawn_group
+$spawn							= "weapons\vssk"
+$npc					 		= on
+$prefetch 		 				= 8
+scheduled						= off
+cform							= skeleton
+class							= WP_PM
+description						= st_wpn_vssk_descr
+
+scopes 							= none
+parent_section  				= wpn_vssk
+
+ef_main_weapon_type				= 3
+ef_weapon_type					= 11
+snd_shoot_dist		= true
+ 
+
+inv_name						= st_wpn_vssk
+inv_name_short					= st_wpn_vssk
+
+inv_grid_width					= 6
+inv_grid_height					= 2
+inv_grid_x						= 35
+inv_grid_y						= 16
+
+upgr_icon_x						= 1750
+upgr_icon_y						= 1000
+upgr_icon_width					= 300
+upgr_icon_height 				= 100
+
+kill_msg_x						= 0
+kill_msg_y						= 0
+kill_msg_width					= 98
+kill_msg_height					= 23
+
+cost							= 32000
+weapon_class					= sniper_rifle
+inv_weight						= 7.38
+hud								= wpn_vssk_hud
+visual							= dynamics\weapons\wpn_vssk\wpn_vssk.ogf
+
+upgrades						= up_gr_firstab_svd, up_gr_seconab_svd, up_gr_thirdab_svd, up_gr_fourtab_svd, up_gr_fourtcd_svd, up_gr_fourtef_svd
+installed_upgrades				=
+upgrade_scheme					= upgrade_scheme_svd
+
+ph_mass			 				= 7
+
+ammo_class						= ammo_12.7x55_fmj
+
+startup_ammo					= 5
+ammo_current					= 5
+ammo_elapsed					= 0
+ammo_limit						= 5
+ammo_mag_size					= 5
+
+fire_modes						= 1
+
+hand_dependence					= 1
+single_handed					= 0
+
+hit_power 						= 1.05
+;hit_impulse		 			= 10
+hit_type 						= fire_wound
+fire_distance					= 1000
+bullet_speed					= 600
+rpm								= 30
+rpm_empty_click					= 200
+
+use_aim_bullet					= true
+time_to_aim						= 1.0
+
+misfire_probability				= 0.005
+misfire_start_condition			= 0.6
+misfire_end_condition			= 0.1
+misfire_start_prob	 			= 0.0055
+misfire_end_prob	 			= 0.055
+condition_shot_dec				= 0.0055
+condition_queue_shot_dec		= 0.0055
+
+;zoom_dof						= 0.5,1.0,350
+reload_dof						= 0,0.5,5,2.2
+
+fire_dispersion_base			= 0.1
+fire_dispersion_condition_factor	= 1
+control_inertion_factor			= 1.9f
+crosshair_inertion				= 9
+
+cam_return						= 1
+cam_relax_speed					= 4.5
+cam_relax_speed_ai				= 360
+cam_dispersion					= 2.5
+cam_dispersion_inc				= 2.5
+cam_dispersion_frac				= 1.0
+cam_max_angle					= 15.0
+cam_max_angle_horz				= 3.0
+cam_step_angle_horz				= 0.25
+
+zoom_cam_relax_speed			= 0.75
+zoom_cam_relax_speed_ai			= 120.75
+zoom_cam_dispersion				= 0.8
+zoom_cam_dispersion_inc			= 0.8
+zoom_cam_dispersion_frac		= 1.0
+zoom_cam_max_angle				= 10.0
+zoom_cam_max_angle_horz			= 5.0
+zoom_cam_step_angle_horz		= 0.25
+
+PDM_disp_base 					= 1.3
+PDM_disp_vel_factor 			= 1.5
+PDM_disp_accel_factor 			= 1.5
+PDM_disp_crouch	 				= 1.0
+PDM_disp_crouch_no_acc 			= 1.0
+
+min_radius						= 50
+max_radius						= 90
+
+holder_range_modifier			= 2.00
+holder_fov_modifier				= 0.75
+
+hit_probability_gd_novice		= 0.55
+hit_probability_gd_stalker		= 0.65
+hit_probability_gd_veteran		= 0.75
+hit_probability_gd_master		= 0.85
+
+slot							= 2
+animation_slot					= 2
+
+position						= -0.026,-0.12,0.015
+orientation						= 0,0,0
+
+fire_point						= 0,0.186,0.435
+fire_point2						= 0,0.106,0.468
+
+flame_particles					= weapons\generic_weapon06
+smoke_particles					= amik\weapons\smoke_particles\smoke_particles_01
+
+shell_point						= -0.02, 0.167,0.082
+shell_dir						= 0,0,0.4
+;shell_particles				= weapons\762x54
+
+strap_position 					= -0.15,-0.36,0.25
+strap_orientation				= -10,-5,10
+strap_bone0						= bip01_spine2
+strap_bone1						= bip01_spine1
+
+light_disabled					= false
+light_color		 				= 0.6,0.5,0.3
+light_range		 				= 4.0
+light_var_color		 			= 0.05
+light_var_range					= 0.5
+light_time 		 				= 0.2
+
+scope_status					= 1
+silencer_status					= 1
+grenade_launcher_status			= 0
+
+zoom_enabled					= true
+zoom_rotate_time				= 0.3
+scope_zoom_factor				= 10.5
+3d_zoom_factor					= 83.3
+scope_dynamic_zoom				= on
+3d_fov							= 0.08
+
+scope_texture					= wpn_crosshair_mark4
+scope_name 						= wpn_addon_scope
+scope_x                   		= 53
+scope_y                     	= 7
+
+silencer_name					= sil_kzrzp
+silencer_x                  	= 273
+silencer_y                  	= 15
+
+silencer_hit_power				= 1.05
+silencer_hit_impulse			= 20
+silencer_fire_distance			= 1000
+silencer_bullet_speed			= 600
+
+silencer_smoke_particles		= amik\weapons\smoke_particles\silencer_smoke_particles_02
+
+silencer_light_color			= 0.6,0.5,0.3
+silencer_light_range			= 0.01
+silencer_light_var_color		= 0.05
+silencer_light_var_range		= 0.5
+silencer_light_time 			= 0.2
+
+[wpn_vssk_hud]:hud_base
+zoom_hide_crosshair				= true
+attach_place_idx				= 0
+item_visual						= dynamics\weapons\wpn_vssk\wpn_vssk_hud.ogf
+
+hands_position					= -0.073255,-0.203782,0.121869
+hands_orientation				= -1.307919,-0.991817,0.430534
+
+hands_position_16x9				= -0.073255,-0.203782,0.121869
+hands_orientation_16x9			= -1.307919,-0.991817,0.430534
+
+item_position					= 0,0,0
+item_orientation				= 0,0,0
+
+aim_hud_offset_pos				= -0.069381,0.023776,-0.116095
+aim_hud_offset_rot				= 0.037874,-0.001857,0.007431
+
+aim_hud_offset_pos_16x9			= -0.069381,0.023776,-0.116095
+aim_hud_offset_rot_16x9			= 0.037874,-0.001857,0.007431
+
+shell_bone                 	 	= wpn_body
+shell_dir                   	= 0, 1, 0
+shell_point                 	= 0.02, 0.04, 0.131
+        
+fire_bone                   	= wpn_body
+fire_bone2                  	= wpn_body
+fire_point                  	= 0, 0.047854, 0.618059
+fire_point2                 	= -0.014, 0.01, -0.037
+
+anm_show                    	= barry_draw_vssk_hands, barry_draw_vssk
+anm_hide                   		= barry_holster_vssk_hands, idle
+anm_idle                    	= barry_idle_vssk_hands, idle
+anm_idle_aim                 	= barry_idle_aim_vssk_hands, idle
+anm_idle_aim_moving         	= barry_walk_vssk_hands, idle ; 0.75
+anm_idle_aim_moving_crouch  	= barry_walk_vssk_hands, idle ; 0.7
+anm_idle_moving_crouch          = barry_walk_vssk_hands, idle ; 0.7
+anm_idle_moving             	= barry_walk_vssk_hands, idle
+anm_idle_sprint             	= barry_sprint_vssk_hands, idle
+anm_reload                  	= barry_reload_vssk_hands_alt, barry_reload_vssk_alt
+anm_shots                   	= barry_shoot_vssk_hands, barry_shoot_vssk
+anm_reload_misfire		    	= barry_unjam_vssk_hands, barry_unjam_vssk
+anm_bore                        = barry_inspect_vssk_hands, idle
+
+anm_shot_l                      = barry_shoot_vssk_empty_hands, barry_shoot_vssk_empty
+anm_show_empty                  = barry_draw_vssk_hands, idle_empty
+anm_hide_empty                  = barry_holster_vssk_hands, idle_empty
+anm_idle_aim_empty              = barry_idle_aim_vssk_hands, barry_idle_aim_vssk_empty
+anm_idle_aim_moving_crouch_empty = barry_walk_vssk_hands, barry_idle_aim_vssk_empty
+anm_idle_aim_moving_empty       = barry_walk_vssk_hands, idle_empty
+anm_idle_moving_crouch_empty    = barry_walk_vssk_hands, idle_empty ; 0.7
+anm_idle_moving_empty           = barry_walk_vssk_hands, idle_empty
+anm_idle_sprint_empty           = barry_sprint_vssk_hands, idle_empty
+anm_reload_empty            	= barry_reload_vssk_hands_empty, barry_reload_vssk_empty
+anm_idle_empty				 	= barry_idle_vssk_hands, idle_empty
+anm_bore_empty                  = barry_inspect_vssk_hands, idle_empty
+anm_reload_misfire_empty        = barry_unjam_vssk_empty_hands, barry_unjam_vssk_empty
+
+gl_hud_offset_pos           	= 0,0,0
+gl_hud_offset_rot           	= 0,0,0
+        
+lean_hud_offset_pos         	= 0,0,0
+lean_hud_offset_rot         	= 0,0,0
+
+grenade_bone                	= grenade
+
+safemode_rot_enabled = true
+safemode_offset_pos				= 0.205,0.03,0
+safemode_offset_rot				= 0,-1,0.2
+safemode_offset_pos_16x9				= 0.205,0.03,0
+safemode_offset_rot_16x9				= 0,-1,0.2
+
+hud_collision_enabled = true
+hud_collision_offset_pos_16x9 = 0.0, -0.2, -0.1
+hud_collision_offset_rot_16x9  = -0.7, 0.0, 0.0

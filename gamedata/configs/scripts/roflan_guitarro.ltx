@@ -1,0 +1,13 @@
+[logic]
+active = ph_idle@wait
+
+[ph_idle@wait]
+on_use = ph_idle@play
+
+[ph_idle@play]
+on_info = %=play_sound(guitar_100)%
+on_signal = sound_end | ph_idle@midle
+
+[ph_idle@midle]
+on_info = %=stop_sound(guitar_100)%
+on_info2 = ph_idle@wait

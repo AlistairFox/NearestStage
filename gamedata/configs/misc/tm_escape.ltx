@@ -1,0 +1,30 @@
+
+
+[esc_elevator_kabans] ;Убийство кабанов на элеваторе
+icon = ui_inGame2_Mesta_evakuatsii
+prior = 2
+storyline = false
+title = {+esc_kabans_death} esc_elev_kabans_killed, esc_elev_kabans
+descr = {+esc_kabans_death} esc_elev_kabans_killed_text, esc_elev_kabans_text
+target = esc_trader_baikal, nps
+condlist_0 =  {+esc_kabans_complited} complete
+condlist_1 =  {+esc_kabans_reversed} reversed
+
+[esc_loners_start] ;Начальный квест для одиночек
+icon = ui_inGame2_Mesta_evakuatsii
+prior = 2
+storyline = false
+title = {+esc_sidor_st} esc_start_baikal2, esc_start_baikal
+descr = {+esc_sidor_st} esc_start_baikal2_text, esc_start_baikal_text
+target = esc_sidorovich, nps
+condlist_0 = {+esc_sidor_st_stop} complete
+condlist_1 =  {+esc_kabans_reversed} reversed
+
+[esc_svarog_toolkit] ;Инструменты для Сварога
+icon = ui_inGame2_Instrumenti
+prior = 2
+storyline = false
+title = esc_svarog_instrumenti
+descr = esc_svarog_instrumenti_text
+condlist_0 = {+esc_sidor_st_stop} complete
+condlist_1 =  {+esc_kabans_reversed} reversed

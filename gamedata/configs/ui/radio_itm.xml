@@ -1,0 +1,65 @@
+<window>
+	<main_wnd x="0" y="0" width="1024" height="768" deley="3000"/>
+	<background_static x="28" y="41" width="480" height="100" stretch="1">
+		<texture>ui_inGame2_pda_texture</texture>
+	</background_static>
+	
+	<background x="15" y="9" width="450" height="80" stretch="1">
+        <texture>ui_inGame2_pda_buttons_background</texture>
+	</background>
+	
+	<off_radio_btn x="10" y="10" width="95" height="20">
+		<text font="letterica16" r="200" g="200" b="200" align="c">st_off_radio</text>
+		<texture>ui_inGame2_Mp_bigbuttone</texture>
+		<text_color>
+			<e r="200" g="200" b="200"/>
+		</text_color>
+	</off_radio_btn>
+
+	<en_radio_btn x="10" y="10" width="95" height="20">
+		<text font="letterica16" r="200" g="200" b="200" align="c">st_on_radio</text>
+		<texture>ui_inGame2_Mp_bigbuttone</texture>
+		<text_color>
+			<e r="200" g="200" b="200"/>
+		</text_color>
+	</en_radio_btn>
+
+	<accept_hz x="10" y="35" width="95" height="20">
+		<text font="letterica16" r="200" g="200" b="200" align="c">st_accept_hz</text>
+		<texture>ui_inGame2_Mp_bigbuttone</texture>
+		<text_color>
+			<e r="200" g="200" b="200"/>
+		</text_color>
+	</accept_hz>
+
+	<btn_exit x="130" y="10" width="60" height="20">
+		<text font="letterica16" r="200" g="200" b="200" align="c">st_close_wnd</text>
+		<texture>ui_inGame2_Mp_bigbuttone</texture>
+		<text_color>
+			<e r="150" g="50" b="50"/>
+		</text_color>
+	</btn_exit>
+	
+	
+	<hz_edit x="130" y="35" width="60" height="18" max_symb_count="5">
+		<text x="8" width="239" font="letterica16" complex_mode="0" vert_align="c" r="200" g="200" b="200"/>
+		<texture>ui_inGame2_edit_box_2</texture>
+	</hz_edit>
+	
+	<current_hz x="10" y="60" width="100" height="16">
+		<text align="l" font="letterica16" r="121" g="3" b="128"/> 
+	</current_hz>
+	
+	<min_hz x="200" y="10" width="240" height="16">
+		<text align="l" font="letterica16" r="93" g="96" b="126"/> 
+	</min_hz>
+	
+	<max_hz x="200" y="35" width="240" height="16">
+		<text align="l" font="letterica16" r="125" g="1" b="1"/> 
+	</max_hz>
+	
+	<max_distance x="200" y="60" width="240" height="16">
+		<text align="l" font="letterica16" r="125" g="1" b="1"/> 
+	</max_distance>
+	
+</window>

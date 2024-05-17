@@ -1,0 +1,272 @@
+; Российское гладкоствольное ружьё МР-153
+;-(TrickSR, Ga2z)-----------------------------------------
+; калибр 					12/76
+; длина ствола 					660 мм
+; магазин						4/8
+; вес с пустым магазином на 8 патронов	3.6 кг
+; максимальная дальность стрельбы	-- м
+; эффективная дальность стрельбы	до 80 м
+; прицельная дальность			40 м
+; дульная скорость пули			410 м/с
+; темп стрельбы					3 в/с
+;---------------------------------------------------
+[wpn_spas12]:identity_immunities,weapon_probability,default_weapon_params,wpn_mr153_sounds
+GroupControlSection				= spawn_group
+$spawn 							= "weapons\spas12"
+$npc			 				= on
+$prefetch 		 				= 8
+scheduled						= off
+cform							= skeleton
+class							= WP_ASHTG
+description						= st_wpn_mr153_descr
+
+scopes 							= ac10632,eot
+parent_section  				= wpn_spas12
+snd_shoot_dist		= true
+ 
+
+ef_main_weapon_type				= 1
+ef_weapon_type					= 9
+
+inv_name						= st_wpn_mr153
+inv_name_short					= st_wpn_mr153
+
+inv_grid_width					= 6
+inv_grid_height					= 2
+inv_grid_x						= 0
+inv_grid_y						= 34
+
+upgr_icon_x						= 600
+upgr_icon_y						= 150
+upgr_icon_width					= 300
+upgr_icon_height 				= 50
+
+kill_msg_x						= 171
+kill_msg_y						= 104
+kill_msg_width					= 75
+kill_msg_height					= 20
+
+cost							= 12000
+weapon_class					= shotgun
+inv_weight						= 3.6
+hud								= wpn_mr153_hud
+visual 							= dynamics\weapons\wpn_spas12\wpn_spas12.ogf
+
+upgrades                		= up_gr_firstab_wincheaster1300, up_gr_seconab_wincheaster1300, up_gr_thirdab_wincheaster1300, up_gr_fourtab_wincheaster1300
+installed_upgrades      		=
+upgrade_scheme          		= upgrade_scheme_wincheaster1300
+
+ph_mass			 				= 4
+
+ammo_class		 				= ammo_12x70_buck, ammo_12x76_zhekan
+
+startup_ammo 					= 10
+ammo_current					= 30
+ammo_elapsed		 			= 8
+ammo_limit						= 35
+ammo_mag_size		 			= 8
+
+fire_modes						= 1
+
+tri_state_reload				= on
+
+hand_dependence 	 			= 1
+single_handed					= 0
+
+hit_power						= 0.78
+hit_impulse						= 35
+hit_type 						= fire_wound
+fire_distance					= 180
+bullet_speed					= 410
+rpm								= 200
+rpm_empty_click 	 			= 200
+
+misfire_probability				= 0.005
+misfire_start_condition			= 0.6
+misfire_end_condition			= 0.1
+misfire_start_prob	 			= 0
+misfire_end_prob	 			= 0
+condition_shot_dec				= 0.003
+condition_queue_shot_dec		= 0.0035
+
+zoom_dof						= 0.5,1,180
+;reload_dof						= 0,0.5,5,1.7
+
+fire_dispersion_base			= 0.32
+fire_dispersion_condition_factor	= 3
+control_inertion_factor			= 1.45f
+crosshair_inertion				= 7.0
+
+cam_return						= 0
+cam_relax_speed					= 10
+cam_relax_speed_ai				= 360
+cam_dispersion					= 3.0
+cam_dispersion_inc				= 2.0
+cam_dispersion_frac				= 0.7
+cam_max_angle					= 15.0
+cam_max_angle_horz				= 15.0
+cam_step_angle_horz				= 3.0
+
+PDM_disp_base 					= 0.5
+PDM_disp_vel_factor 			= 2
+PDM_disp_accel_factor 			= 2
+PDM_disp_crouch	 				= 1
+PDM_disp_crouch_no_acc 			= 1
+
+zoom_cam_relax_speed			= 10
+zoom_cam_relax_speed_ai			= 120.75
+zoom_cam_dispersion				= 3
+zoom_cam_dispersion_inc			= 2.5
+zoom_cam_dispersion_frac		= 0.7
+zoom_cam_max_angle				= 15
+zoom_cam_max_angle_horz			= 15
+zoom_cam_step_angle_horz		= 3
+
+min_radius 						= 30
+max_radius 						= 50
+
+holder_range_modifier			= 1
+holder_fov_modifier				= 1
+
+slot 				 			= 2
+animation_slot		 			= 3
+
+position 						= -0.023,-0.11,0.082
+orientation 					= 0,36,0
+
+fire_point 						= 0,0.168,0.755
+fire_point2						= 0,0.168,0.755
+
+flame_particles					= weapons\generic_weapon05
+smoke_particles     			= ghost_particles\weapons\flame_eft_shotgun
+silencer_smoke_particles   		= ghost_particles\weapons\generic_smoke_eft_sil
+
+shell_point						= 0,0.180,0.647
+shell_particles					= ghost_particles\weapons\shells\shells_12x70_right
+
+strap_position 					= -0.26,-0.10,0.05
+strap_orientation				= -15,-9,110
+strap_bone0						= bip01_spine2
+strap_bone1						= bip01_spine1
+
+light_color		 				= 0.6,0.5,0.3
+light_range		 				= 6.0
+light_var_color		 			= 0.05
+light_var_range		 			= 0.5
+light_time 		 				= 0.2
+
+scope_status					= 2
+silencer_status					= 0
+grenade_launcher_status			= 0
+
+scope_name 						= acog
+scope_x							= 107
+scope_y							= -2
+
+zoom_enabled					= true
+zoom_rotate_time				= 0.2
+scope_zoom_factor				= 83.3
+
+[wpn_mr153_hud]:hud_base
+zoom_hide_crosshair				= true
+attach_place_idx				= 0
+item_visual                   	= dynamics\weapons\wpn_spas12\wpn_spas12_hud.ogf
+
+hands_position					= 0.004000,-0.004500,0.054100
+hands_orientation				= 0.443000,1.360001,0.2
+
+hands_position_16x9				= 0.004000,-0.004500,0.054100
+hands_orientation_16x9			= 0.443000,1.360001,0.2
+
+item_position					= 0.001528,-0.012408,-0.099066
+item_orientation				= -0.046126,-1.000036,-0.024950
+
+shell_point						= 0.02,0.072,0.228
+shell_dir                     	= 0.0, 1.0, 0.0
+shell_bone						= wpn_body
+
+fire_point						= 0, 0.0, 0.2
+fire_bone						= muzzle
+
+aim_hud_offset_pos				= -0.056500,0.029000,-0.011000
+aim_hud_offset_rot				= -0.003000,0.007050,0.011000
+
+aim_hud_offset_pos_16x9			= -0.056500,0.029000,-0.011000
+aim_hud_offset_rot_16x9			= -0.003000,0.007050,0.011000
+
+anm_show						= mp133_draw, idle_mp153
+anm_show_empty					= mp133_draw, idle_empty_mp153
+anm_hide						= mp133_holster, idle_mp153
+anm_hide_empty					= mp133_holster, idle_empty_mp153
+anm_idle						= mp133_idle, idle_mp153
+anm_idle_empty					= mp133_idle, idle_empty_mp153
+anm_idle_aim					= mp133_idle_aim, idle_mp153
+anm_idle_aim_empty				= mp133_idle_aim, idle_empty_mp153
+anm_idle_moving					= mp133_idle_moving, idle_mp153
+anm_idle_moving_empty			= mp133_idle_moving, idle_empty_mp153
+anm_idle_moving_crouch 			= mp133_idle_moving, idle_mp153
+anm_idle_moving_empty_crouch 	= mp133_idle_moving, idle_empty_mp153
+anm_idle_sprint					= mp133_idle_sprint, idle_mp153
+anm_idle_sprint_empty			= mp133_idle_sprint, idle_mp153
+anm_bore						= mp133_idle_aim, idle_mp153
+anm_shots						= mp133_shoot_last, shoot_mp153
+anm_shot_l						= mp133_shoot_last, shoot_last_mp153
+anm_open						= mp133_open, idle_mp153
+anm_open_empty					= mp133_open, idle_empty_mp153
+anm_add_cartridge				= mp133_insert, insert_mp153
+anm_close						= mp133_close, idle_mp153
+anm_close_empty					= mp153_close_empty, close_empty_mp153
+
+safemode_rot_enabled = true
+safemode_offset_pos				= 0.205,0.03,0
+safemode_offset_rot				= 0,-1,0.2
+safemode_offset_pos_16x9				= 0.205,0.03,0
+safemode_offset_rot_16x9				= 0,-1,0.2
+
+hud_collision_enabled = true
+hud_collision_offset_pos_16x9 = 0.0, -0.2, -0.1
+hud_collision_offset_rot_16x9  = -0.7, 0.0, 0.0
+;-----------------------------------------------------------------------------
+; Аддоны
+;-----------------------------------------------------------------------------
+[wpn_spas12_ac10632]:wpn_spas12
+$spawn             				= "weapons\spas12_ac10632"
+visual							= dynamics\weapons\wpn_spas12\wpn_spas12_barska.ogf
+hud								= wpn_mr153_ac10632_hud
+
+scope_x							= 85
+scope_y							= -2
+
+[wpn_mr153_ac10632_hud]:wpn_mr153_hud
+item_visual            	 		= dynamics\weapons\wpn_spas12\wpn_spas12_barska_hud.ogf
+
+aim_hud_offset_pos				= -0.056200,0.008500,-0.136400
+aim_hud_offset_rot				= 0.024400,0.007400,0.011000
+
+aim_hud_offset_pos_16x9			= -0.056200,0.008500,-0.136400
+aim_hud_offset_rot_16x9			= 0.024400,0.007400,0.011000
+
+[wpn_spas12_eot]:wpn_spas12
+$spawn							= "weapons\spas12_eot"
+visual							= dynamics\weapons\wpn_spas12\wpn_spas12_eot.ogf
+hud								= wpn_mr153_eot_hud
+
+scope_x							= 87
+scope_y							= 1
+
+[wpn_mr153_eot_hud]:wpn_mr153_hud
+item_visual						= dynamics\weapons\wpn_spas12\wpn_spas12_eot_hud.ogf
+
+aim_hud_offset_pos				= -0.055600,0.004000,-0.122800
+aim_hud_offset_rot				= 0.033800,0.005900,0.011000
+
+aim_hud_offset_pos_16x9			= -0.055600,0.004000,-0.122800
+aim_hud_offset_rot_16x9			= 0.033800,0.005900,0.011000
+;-----------------------------------------------------------------------------
+; Уникальные
+;-----------------------------------------------------------------------------
+[wpn_spas12_nimble]:wpn_spas12
+$spawn							= "weapons\spas12_nimble"
+
+scopes 							= none
+parent_section  				= wpn_spas12_nimble

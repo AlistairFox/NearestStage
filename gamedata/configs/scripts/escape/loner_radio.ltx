@@ -1,0 +1,25 @@
+[logic]
+active = sr_idle@idle1
+
+[sr_idle@idle1]
+on_use = sr_idle@play1
+
+[sr_idle@play1]
+on_use = sr_idle@idle1
+on_info = %=play_sound(esc_radio_1)%
+on_signal = sound_end | sr_play@2
+
+[sr_idle@play2]
+on_use = sr_idle@idle1
+on_info = %=play_sound(esc_radio_2)%
+on_signal = sound_end | sr_play@3
+
+[sr_idle@play3]
+on_use = sr_idle@idle1
+on_info = %=play_sound(esc_radio_3)%
+on_signal = sound_end | sr_play@4
+
+[sr_idle@play4]
+on_use = sr_idle@idle1
+on_info = %=play_sound(esc_radio_4)%
+on_signal = sound_end | sr_play@1

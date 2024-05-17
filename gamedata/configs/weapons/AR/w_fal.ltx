@@ -1,0 +1,390 @@
+; ЋЄгка€ автоматическа€ винтовка FN FAL
+;-(TrickSR, Ga2z)-----------------------------------------
+; калибр 						7.62x51 мм
+; длина ствола 					533 мм
+; магазин						20/30
+; вес с пустым магазином на 30 патронов	4.45 кг
+; максимальная дальность стрельбы	-- м
+; эффективная дальность стрельбы	500 м
+; прицельная дальность			650 м
+; дульная скорость пули			823 м/с
+; темп стрельбы					650-700 в/с
+;---------------------------------------------------
+[wpn_sig550]:weapon_probability,default_weapon_params,wpn_fal_sounds
+GroupControlSection				= spawn_group
+$spawn							= "weapons\sig550"
+$npc							= on
+$prefetch						= 8
+scheduled						= off
+cform							= skeleton
+class							= WP_AK74
+description						= st_wpn_fal_descr
+
+scopes 							= none
+parent_section  				= wpn_sig550
+ 
+ 
+
+ef_main_weapon_type				= 2
+ef_weapon_type					= 6
+
+inv_name						= st_wpn_fal
+inv_name_short					= st_wpn_fal
+	
+inv_grid_width					= 6
+inv_grid_height					= 2
+inv_grid_x						= 10
+inv_grid_y						= 33
+
+upgr_icon_x						= 300
+upgr_icon_y						= 100
+upgr_icon_width					= 300
+upgr_icon_height 				= 100
+
+kill_msg_x						= 80
+kill_msg_y						= 59
+kill_msg_width					= 87
+kill_msg_height					= 24
+
+cost							= 13000
+weapon_class					= assault_rifle
+inv_weight						= 4.45
+hud								= wpn_fal_hud
+visual							= dynamics\weapons\wpn_sig550\wpn_sig550.ogf
+
+upgrades						= up_gr_firstab_sig550, up_gr_seconab_sig550, up_gr_thirdab_sig550, up_gr_fourtab_sig550, up_gr_fifthab_sig550
+installed_upgrades				=
+upgrade_scheme					= upgrade_scheme_sig550
+
+ph_mass							= 4
+
+ammo_class		 				= ammo_7.62x51_fmj, ammo_7.62x51_ap	
+
+startup_ammo					= 90
+ammo_current					= 120
+ammo_elapsed					= 20
+ammo_limit						= 140
+ammo_mag_size					= 20
+
+fire_modes						= 1, 3, -1
+
+grenade_class					= ammo_m209
+
+grenade_vel 					= 76
+launch_speed					= 76
+hand_dependence					= 1
+single_handed					= 0
+
+hit_power						= 0.45
+;hit_impulse					= 10
+hit_type						= fire_wound
+fire_distance					= 1000
+bullet_speed					= 823
+rpm								= 675
+rpm_empty_click					= 200
+
+use_aim_bullet					= true
+time_to_aim						= 3.0
+
+misfire_probability				= 0.005
+misfire_start_condition			= 0.6
+misfire_end_condition			= 0.1
+misfire_start_prob	 			= 0.003
+misfire_end_prob	 			= 0.045
+condition_shot_dec				= 0.00013
+condition_queue_shot_dec		= 0.0002
+
+zoom_dof						= 0.5,1,180
+reload_dof						= 0,0.5,5,2
+
+fire_dispersion_base			= 0.21
+fire_dispersion_condition_factor	= 2
+control_inertion_factor			= 1.4f
+crosshair_inertion				= 6.75
+
+cam_return						= 0
+cam_relax_speed					= 11
+cam_relax_speed_ai 				= 120.75
+cam_dispersion					= 1
+cam_dispersion_inc 				= 0.5
+cam_dispersion_frac 			= 1
+cam_max_angle					= 50
+cam_max_angle_horz 				= 5
+cam_step_angle_horz 			= 0.35
+
+zoom_cam_relax_speed			= 12
+zoom_cam_relax_speed_ai			= 120.75
+zoom_cam_dispersion				= 0.9
+zoom_cam_dispersion_inc			= 0.45
+zoom_cam_dispersion_frac		= 0.7
+zoom_cam_max_angle				= 50
+zoom_cam_max_angle_horz			= 5
+zoom_cam_step_angle_horz		= 0.3
+
+PDM_disp_base 					= 0.5
+PDM_disp_vel_factor 			= 2
+PDM_disp_accel_factor 			= 2
+PDM_disp_crouch	 				= 1
+PDM_disp_crouch_no_acc 			= 1
+
+min_radius						= 30
+max_radius						= 50
+
+holder_range_modifier			= 1
+holder_fov_modifier				= 1
+
+slot							= 2
+animation_slot					= 8
+
+position              		 	= -0.026,-0.098,0
+orientation            		 	= 0,0,0
+
+fire_point              		= 0,0.16,0.9
+fire_point2             		= 0,0.17,0.722
+
+flame_particles					= amik\weapons\nato_shoot_00
+smoke_particles					= ghost_particles\weapons\flame_eft_00_test
+grenade_flame_particles			= weapons\generic_weapon01
+silencer_smoke_particles   		= ghost_particles\weapons\generic_smoke_eft_sil
+
+shell_point						= -0.02,0.167,0.082
+shell_dir						= 0,0,0.4
+shell_particles					= ghost_particles\weapons\shells\shells_762_51_sa58
+
+strap_position					= -0.26,-0.11,0.25
+strap_orientation				= -15,-9,110
+strap_bone0						= bip01_spine2
+strap_bone1						= bip01_spine1
+
+light_disabled					= false
+light_color						= 0.6,0.5,0.3
+light_range						= 5
+light_var_color					= 0.05
+light_var_range					= 0.5
+light_time						= 0.2
+
+scope_status					= 0
+silencer_status					= 0
+grenade_launcher_status			= 0
+
+zoom_enabled					= true
+zoom_rotate_time				= 0.2
+scope_zoom_factor				= 83.3
+
+scope_name 						= acog
+scope_x							= 83
+scope_y							= 2
+
+grenade_launcher_name			= wpn_addon_grenade_launcher_m203
+grenade_launcher_x				= 133
+grenade_launcher_y				= 34
+
+silencer_name					= sil_762_nato
+silencer_x						= 235
+silencer_y						= 20
+
+silencer_hit_power				= 0.43
+silencer_hit_impulse			= 20
+silencer_fire_distance			= 1000
+silencer_bullet_speed			= 930
+
+silencer_light_color			= 0.6,0.5,0.3
+silencer_light_range			= 0.01
+silencer_light_var_color		= 0.05
+silencer_light_var_range		= 0.5
+silencer_light_time				= 0.2
+
+[wpn_fal_hud]:hud_base
+zoom_hide_crosshair				= true
+attach_place_idx				= 0
+item_visual             		= dynamics\weapons\wpn_sig550\wpn_sig550_hud
+
+hands_position					= -0.014000,0.006500,0.042830
+hands_orientation				= -0.89,-1.64,-4.5
+
+hands_position_16x9				= -0.014000,0.006500,0.042830
+hands_orientation_16x9			= -0.89,-1.64,-4.5
+
+item_position 					= -0.001257,-0.006943,0.001043
+item_orientation 				= 88.154449,-60.970139,-86.585159
+
+aim_hud_offset_pos				= -0.059430,0.022160,-0.116800
+aim_hud_offset_rot				= -0.013950,-0.006315,0.015750
+
+aim_hud_offset_pos_16x9			= -0.059430,0.022160,-0.116800
+aim_hud_offset_rot_16x9			= -0.013950,-0.006315,0.015750
+
+shell_bone						= wpn_body
+shell_dir						= 0,0,0
+shell_point						= 0.001000,-0.006000,-0.043000
+
+fire_point						= 0.006500,-0.127000,-0.009500
+fire_bone      					= muzzle
+fire_point2						= 0,0,0
+fire_bone2						= muzzle
+
+anm_show						= fal_ins_draw
+anm_hide                		= fal_ins_hide
+anm_idle                		= fal_ins_idle, idle
+anm_idle_sprint         		= fal_ins_idle_sprint
+anm_idle_moving         		= fal_ins_idle_moving
+anm_idle_moving_crouch     		= fal_ins_idle_crouch
+anm_shots               		= fal_ins_shoot, shoot
+anm_shots_when_aim              = fal_ins_shoot_aim, shoot
+anm_reload              		= fal_ins_reload_speed, reload_speed
+anm_reload_empty        		= fal_ins_reload_empty, reload_empty
+anm_idle_moving_crouch  		= fal_ins_idle_crouch
+anm_idle_aim            		= fal_ins_idle_aim
+anm_bore                		= fal_ins_bore
+
+gl_hud_offset_pos				= 0,0,0
+gl_hud_offset_rot				= 0,0,0
+
+gl_hud_offset_pos_16x9			= 0,0,0
+gl_hud_offset_rot_16x9			= 0,0,0
+
+lean_hud_offset_pos				= 0,0,0
+lean_hud_offset_rot				= 0,0,0
+
+safemode_rot_enabled = true
+safemode_offset_pos				= 0.205,0.03,0
+safemode_offset_rot				= 0,-1,0.2
+safemode_offset_pos_16x9				= 0.205,0.03,0
+safemode_offset_rot_16x9				= 0,-1,0.2
+
+hud_collision_enabled = true
+hud_collision_offset_pos_16x9 = 0.0, -0.2, -0.1
+hud_collision_offset_rot_16x9  = -0.7, 0.0, 0.0
+;-----------------------------------------------------------------------------
+; Уникальные
+;-----------------------------------------------------------------------------
+[wpn_sig550_luckygun]:wpn_sig550,wpn_sa58_sounds
+$spawn							= "weapons\sig550_luckygun"
+description						= st_wpn_sa58_descr
+hud 							= wpn_sa58_hud
+visual							= dynamics\weapons\wpn_sig550\wpn_sa58.ogf
+
+inv_name						= st_wpn_sa58
+inv_name_short					= st_wpn_sa58
+
+cost                    		= 20000
+
+scopes 							= ac10632,acog,eot,pn23
+parent_section  				= wpn_sig550_luckygun
+
+hit_power						= 0.5
+bullet_speed					= 925
+
+inv_grid_x						= 35
+inv_grid_y						= 8
+
+upgr_icon_x						= 300
+upgr_icon_y						= 200
+upgr_icon_width					= 300
+upgr_icon_height 				= 100
+
+fire_dispersion_base    		= 0.110
+
+scope_status            		= 2
+silencer_status					= 2
+
+silencer_x						= 241
+silencer_y						= 15
+
+fire_point              		= 0,0.16,0.8
+
+[wpn_sa58_hud]:wpn_fal_hud
+item_visual             		= dynamics\weapons\wpn_sig550\wpn_sa58_hud.ogf
+
+hands_position					= -0.014000,0.001500,0.042830
+hands_orientation				= -0.890000,-1.640000,-4.5
+
+hands_position_16x9				= -0.014000,0.001500,0.042830
+hands_orientation_16x9			= -0.890000,-1.640000,-4.5
+
+aim_hud_offset_pos				= -0.058930,0.026360,-0.116800
+aim_hud_offset_rot				= -0.013950,-0.008315,0.015750
+
+aim_hud_offset_pos_16x9			= -0.058930,0.026360,-0.116800
+aim_hud_offset_rot_16x9			= -0.013950,-0.008315,0.015750
+
+anm_show						= sa_ins_draw
+anm_hide                		= sa_ins_hide
+anm_idle                		= sa_ins_idle, idle
+anm_idle_sprint         		= sa_ins_idle_sprint
+anm_idle_moving         		= sa_ins_idle_moving
+anm_idle_moving_crouch     		= sa_ins_idle_crouch
+anm_shots               		= sa_ins_shoot, shoot
+anm_shots_when_aim              = sa_ins_shoot_aim, shoot
+anm_reload              		= sa_ins_reload, reload
+anm_reload_empty        		= sa_ins_reload_empty_speed, reload_empty_speed
+anm_idle_moving_crouch  		= sa_ins_idle_crouch
+anm_idle_aim            		= sa_ins_idle_aim
+anm_bore                		= sa_ins_bore
+;-----------------------------------------------------------------------------
+; Аддоны
+;-----------------------------------------------------------------------------
+[wpn_sig550_luckygun_ac10632]:wpn_sig550_luckygun
+$spawn             				= "weapons\sig550_luckygun_ac10632"
+visual							= dynamics\weapons\wpn_sig550\wpn_sa58_barska.ogf
+hud								= wpn_sa58_ac10632_hud
+
+scope_x 						= 85
+scope_y 						= -6
+
+[wpn_sa58_ac10632_hud]:wpn_sa58_hud
+item_visual            	 		= dynamics\weapons\wpn_sig550\wpn_sa58_barska_hud.ogf
+
+aim_hud_offset_pos_16x9			= -0.059530,0.002660,-0.156800
+aim_hud_offset_rot_16x9			= 0.010250,-0.007365,0.015750
+
+aim_hud_offset_pos_16x9			= -0.059530,0.002660,-0.156800
+aim_hud_offset_rot_16x9			= 0.010250,-0.007365,0.015750
+
+[wpn_sig550_luckygun_acog]:wpn_sig550_luckygun
+$spawn							= "weapons\sig550_luckygun_acog"
+hud								= wpn_sa58_acog_hud
+
+scope_x							= 84
+scope_y							= -5
+
+[wpn_sa58_acog_hud]:wpn_sa58_hud
+aim_hud_offset_pos				= -0.058930,-0.004640,-0.195
+aim_hud_offset_rot				= -0.012400,-0.010365,0.015750
+
+aim_hud_offset_pos_16x9			= -0.058930,-0.004640,-0.195
+aim_hud_offset_rot_16x9			= -0.012400,-0.010365,0.015750
+
+[wpn_sig550_luckygun_eot]:wpn_sig550_luckygun
+$spawn							= "weapons\sig550_luckygun_eot"
+visual							= dynamics\weapons\wpn_sig550\wpn_sa58_eot.ogf
+hud								= wpn_sa58_eot_hud
+
+scope_x							= 86
+scope_y							= -3
+
+[wpn_sa58_eot_hud]:wpn_sa58_hud
+item_visual						= dynamics\weapons\wpn_sig550\wpn_sa58_eot_hud.ogf
+
+aim_hud_offset_pos				= -0.058130,-0.008640,-0.116800
+aim_hud_offset_rot				= -0.004300,-0.009565,0.015750
+
+aim_hud_offset_pos_16x9			= -0.058130,-0.008640,-0.116800
+aim_hud_offset_rot_16x9			= -0.004300,-0.009565,0.015750
+
+[wpn_sig550_luckygun_pn23]:wpn_sig550_luckygun
+$spawn							= "weapons\sig550_luckygun_pn23"
+visual							= dynamics\weapons\wpn_sig550\wpn_sa58_pn23.ogf
+hud								= wpn_sa58_pn23_hud
+
+scope_x							= 58
+scope_y							= -7
+
+[wpn_sa58_pn23_hud]:wpn_sa58_hud
+item_visual						= dynamics\weapons\wpn_sig550\wpn_sa58_pn23_hud.ogf
+
+aim_hud_offset_pos				= -0.059930,-0.018640,-0.116800
+aim_hud_offset_rot				= -0.013950,-0.008965,0.015750
+
+aim_hud_offset_pos_16x9			= -0.059930,-0.018640,-0.116800
+aim_hud_offset_rot_16x9			= -0.013950,-0.008965,0.015750

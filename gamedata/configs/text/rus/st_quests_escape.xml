@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="windows-1251" ?>
+<string_table>
+    <string id="esc_elev_kabans_killed">
+        <text>Убить кабанов: вернуться к Байкалу.</text>
+    </string>
+	<string id="esc_elev_kabans">
+        <text>Убить кабанов: помочь Байкалу.</text>
+    </string>
+	<string id="esc_elev_kabans_killed_text">
+        <text>Кабаны на Элеваторе убиты. Теперь можно вернуться в деревню.</text>
+    </string>
+	<string id="esc_elev_kabans_text">
+        <text>На элеваторе завелись кабаны. Они мешают жизни по эту сторону моста.</text>
+    </string>
+	<string id="esc_start_baikal">
+        <text>Первые шаги: Поговорить с Сидоровичем.</text>
+    </string>
+	<string id="esc_start_baikal_text">
+        <text>Байкал послал отметиться у Сидоровича. Он введёт меня в курс дела.</text>
+    </string>
+	<string id="esc_start_baikal2">
+        <text>Первые шаги: Вернуться к Байкалу.</text>
+    </string>
+	<string id="esc_start_baikal2_text">
+        <text>Я поговорил с Сидоровичем. Теперь нужно вернуться к Байкалу и узнать, что он хотел.</text>
+    </string>
+	<string id="esc_svarog_instrumenti">
+        <text>Небесный огонь: Найти инструменты для грубой работы.</text>
+    </string>
+	<string id="esc_svarog_instrumenti_text">
+        <text>Инструменты для грубой работы Сварога пришли в негодность. Нужно найти для него новый комплект.</text>
+    </string>
+</string_table>

@@ -1,0 +1,32 @@
+[logic@mechanic_stalker_base_ex]
+suitable = {=check_npc_name(mechanic_stalker_base)} true
+trade = misc\trade\trade_stalker_base.ltx
+prior = 200
+active = animpoint@mechanic_stalker_base
+can_select_weapon = false
+level_spot = trader
+
+[animpoint@mechanic_stalker_base]
+cover_name = trader_stalker_base_mech
+avail_animations = animpoint_sit_normal
+use_camp = false
+meet = meet@mechanic_stalker_base
+combat_ignore_cond = true
+combat_ignore_keep_when_attacked = true
+invulnerable = true
+gather_items_enabled = false
+help_wounded_enabled = false
+corpse_detection_enabled = false
+
+[meet@mechanic_stalker_base]
+close_snd_hello = wait
+close_anim 		= nil
+close_victim 	= nil
+far_anim 		= nil
+far_victim 		= nil
+close_distance  = 0
+far_distance 	= 0
+close_snd_distance = 3
+use = true					; {=actor_enemy} false, true
+allow_break = false
+meet_on_talking = false

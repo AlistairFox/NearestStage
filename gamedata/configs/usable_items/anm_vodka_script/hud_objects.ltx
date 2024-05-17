@@ -1,0 +1,87 @@
+[vodka_script_hud_model]:gwr_base_usable
+visual				= dynamics\weapons\wpn_eat\world_models\vodki\vodka_kazaki_world.ogf
+hud = anm_vodka_script_hud
+hud_fov_factor = 0.9 
+
+description			= st_vodka_script_descr
+inv_name			= st_vodka_script
+inv_name_short			= st_vodka_script
+
+inv_grid_width		= 5
+inv_grid_height		= 5
+inv_grid_x			= 5
+inv_grid_y			= 2
+cost				= 0
+inv_weight		 	= 0.0
+
+snd_draw   = $silent
+snd_using   = interface\item_usage\vodka_use
+timing = 4000					;задержка на время проигрывания анимации перед назначением эффекта (мс)
+gwr_changed_object = vodka_script			;Какой предмет заменили
+gwr_eatable_object = vodka_script_eatable		;Какой предмет есть после проигрывания анимы
+
+
+[vodka_script_hud_model2]:vodka_script_hud_model
+gwr_changed_object = vodka_script2
+hud = vodka_script_hud2
+
+[vodka_script_hud_model3]:vodka_script_hud_model
+gwr_changed_object = vodka_script3
+hud = vodka_script_hud3
+
+[vodka_script_hud_model4]:vodka_script_hud_model
+gwr_changed_object = vodka_script4
+hud = vodka_script_hud4
+
+[vodka_script_hud_model5]:vodka_script_hud_model
+gwr_changed_object = vodka_script5
+snd_using   = interface\item_usage\vodka_use
+timing = 4000
+timing_trash = 6100
+hud = vodka_script_hud5
+
+[anm_vodka_script_hud]:gwr_base_usable_hud
+zoom_hide_crosshair			= true
+
+hands_position				= 0.0000,-0.1000,0.4000
+hands_orientation			= -0.500000,1.000000,1.149999
+
+hands_position_16x9				= 0.0000,-0.1000,0.4000
+hands_orientation_16x9			= 2.349998,2.749999,2.849998
+
+item_position    = 0.000075,-0.004612,0.001283
+item_orientation   = 0.045015,1.047468,0.056850
+
+item_visual             	= dynamics\weapons\wpn_eat\vodki\wpn_vodka_kazaki_hud.ogf
+
+anm_show				= vodka_hands_eat_invtrans, vodka_wpn_eat		;binoculars_draw
+anm_hide				= eat_vodka_draw		;binoculars_holster
+anm_idle				= eat_vodka_idle			;binoculars_idle
+anm_idle_aim			= eat_vodka_idle			;binoculars_idle
+anm_idle_moving			= eat_vodka_idle_moving	;binoculars_idle_moving
+anm_idle_sprint			= eat_vodka_idle_sprint	;binoculars_idle_sprint
+anm_bore				= eat_vodka_use		;binoculars_idle_bore
+
+aim_hud_offset_pos			= 0.0,0.022,0.0
+aim_hud_offset_rot			= 0.0,0.0,0.0
+
+aim_hud_offset_pos_16x9		= 0.0,0.022,0.0
+aim_hud_offset_rot_16x9		= 0.0,0.0,0.0
+
+gl_hud_offset_pos				= 0,0,0
+gl_hud_offset_rot				= 0,0,0
+
+lean_hud_offset_pos			= 0,0,0
+lean_hud_offset_rot			= 0,0,0
+
+[vodka_script_hud2]:anm_vodka_script_hud
+anm_show = vodka_hands_eat_invtrans, vodka_wpn_eat		;binoculars_draw
+
+[vodka_script_hud3]:anm_vodka_script_hud
+anm_show = vodka_hands_eat_invtrans, vodka_wpn_eat		;binoculars_draw
+
+[vodka_script_hud4]:anm_vodka_script_hud
+anm_show = vodka_hands_eat_invtrans, vodka_wpn_eat		;binoculars_draw
+
+[vodka_script_hud5]:anm_vodka_script_hud
+anm_show = vodka_hands_eat_invtrans, vodka_wpn_eat		;binoculars_draw

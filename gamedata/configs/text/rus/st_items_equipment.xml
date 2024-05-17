@@ -1,0 +1,528 @@
+<?xml version="1.0" encoding="windows-1251" ?>
+<string_table>
+	<string id="st_antirad">
+		<text>Противорадиационный препарат</text>
+	</string>
+	<string id="st_antirad_descr">
+		<text>Препарат радиозащитного действия «Мексамин», широко распространённый на территории Зоны. При применении вызывает сужение периферических кровеносных сосудов и кислородное голодание, что в данном случае является средством профилактики и лечения лучевой болезни. Хорошо переносится подавляющим большинством людей; в отдельных случаях возможны лёгкая тошнота, головокружение, боли, реже рвота.</text>
+	</string>
+	<string id="st_bandage">
+		<text>Бинт</text>
+	</string>
+	<string id="st_bandage_descr">
+		<text>Асептический бинт для остановки кровотечения и предотвращения попадания в рану инфекции. При обычном кровотечении позволяет перевязать рану, при артериальном - перетянуть артерию.</text>
+	</string>
+	<string id="st_binocular_descr">
+		<text>Армейский бинокль с регулируемой (до 7,5 диоптрии) кратностью. Позволяет детально рассматривать местность и строения с большого расстояния.</text>
+	</string>
+	<string id="st_binocular_name">
+		<text>Бинокль</text>
+	</string>
+	<string id="st_bread">
+		<text>Хлеб</text>
+	</string>
+	<string id="st_bread_descr">
+		<text>Неизвестно, кто умудряется печь батоны на территории Зоны, или каким образом их протаскивают через периметр. Однако этот хлеб не заражен, не радиоактивен, достаточно свеж и вполне съедобен. Во всяком случае, никто из сталкеров пока не жаловался.</text>
+	</string>
+	<string id="st_conserva">
+		<text>Консервы «Завтрак туриста»</text>
+	</string>
+	<string id="st_conserva_descr">
+		<text>Предположительно, консервы с растащенного сталкерами армейского продовольственного склада; точно установить не представляется возможным из-за отсутствия какой-либо этикетки. Главное, что срок годности вроде бы ещё не истёк.</text>
+	</string>
+	<string id="st_detector1">
+		<text>Детектор «Отклик»</text>
+	</string>
+	<string id="st_detector1_descr">
+		<text>Устаревшая модель детектора аномальной активности. Реагирует звуковым сигналом на попадание аномальных частичек в специальную камеру при приближении к аномалиям. Кроме того, может регистрировать присутствие артефактов и измерять расстояние до ближайшего из них - расстояние до артефакта определяется периодичностью подаваемого звукового сигнала. Режим поиска артефактов включается поднятием крышки-антенны на лицевой панели прибора. Ввиду простоты конструкции способен находить только самые распространённые артефакты.</text>
+	</string>
+	<string id="st_detector2">
+		<text>Детектор «Медведь»</text>
+	</string>
+	<string id="st_detector3">
+		<text>Детектор «Велес»</text>
+	</string>
+	<string id="st_detector3_descr">
+		<text>Детектор-сканер нового поколения, используемый учёными. Благодаря трём усовершенствованным регистрационным камерам расположение артефакта относительно детектора отображается на специальном экране. Способен фиксировать излучение и присутствие аномалий. Режим поиска артефактов включается поднятием индикатора-табло на лицевой стороне прибора; в данном режиме способен обнаруживать все известные науке артефакты.</text>
+	</string>
+	<string id="st_detector4">
+		<text>Прототип детектора «Сварог»</text>
+	</string>
+	<string id="st_detector4_descr">
+		<text>Прототип сканера аномальных зон расширенной функциональности. Добавлена программа распознавания статичных зон аномальной активности, которые имеются в базе данных; при этом сохранена возможность обнаружения артефактов. Расположение аномальных зон и артефактов относительно детектора отображаются на специальном экране. Программа поиска артефактов, включаемая при поднятии индикатора-табло на лицевой стороне прибора, усовершенствована; теоретически это позволяет обнаружить пока не известные науке аномальные образования.</text>
+	</string>
+	<string id="st_device_torch_descr">
+		<text>Фонарь с креплением на голову. Пригодится сталкеру, которого ночь застала в дороге; с другой стороны, может привлечь чьё-то нежелательное внимание.</text>
+	</string>
+	<string id="st_device_torch_name">
+		<text>Фонарик</text>
+	</string>
+	<string id="st_drug_anabiotic">
+		<text>Анабиотик</text>
+	</string>
+	<string id="st_drug_antidot">
+		<text>Антидот</text>
+	</string>
+	<string id="st_drug_antidot_descr">
+		<text>Препарат «Антитоксикант ИП2» представляет собой комплекс антидотов: метоклопрамида, пиридоксина, тиамина, рибоксии и других. Вводит в кровь вещества, способные разлагать белковые яды, а также абсорбенты синтетических ядов. Особой популярностью не пользуется, поскольку большинство сталкеров больше полагаются на противогаз и комбинезон. Обладает продолжительным действием.</text>
+	</string>
+	<string id="st_drug_booster">
+		<text>«Геркулес»</text>
+	</string>
+	<string id="st_drug_coagulant">
+		<text>«Барвинок»</text>
+	</string>
+	<string id="st_drug_coagulant_descr">
+		<text>«Викасол» - синтетический аналог витамина К. Основное действие заключается в повышении свёртываемости крови. Пользуется спросом среди сталкеров, поскольку позволяет организму быстрее рубцевать рваные раны. Обладает продолжительным действием.</text>
+	</string>
+	<string id="st_drug_psy_blockade">
+		<text>Пси-блокада</text>
+	</string>
+	<string id="st_drug_psy_blockade_descr">
+		<text>Наркотический препарат, блокирующий лавинообразные нервные импульсы. Интересен побочный эффект: после приёма препарата наблюдается кратковременное исчезновение каких-либо эмоций. В Зоне используется для противодействия аномальным полям повышенной пси-активности; за её пределами применения не нашёл. Обладает продолжительным действием.</text>
+	</string>
+	<string id="st_drug_radioprotector">
+		<text>Радиопротектор</text>
+	</string>
+	<string id="st_energy_drink">
+		<text>Энергетический напиток «Сталкер»</text>
+	</string>
+	<string id="st_energy_drink_descr">
+		<text>Часто используется сталкерами в многодневных походах, когда нет возможности остановиться и отдохнуть. Содержит легко усваиваемые углеводы, а также препараты, вызывающие выброс адреналина в кровь.</text>
+	</string>
+	<string id="st_guitar_descr">
+		<text>Поговори хоть ты со мной, гитара семиструнная!..</text>
+	</string>
+	<string id="st_guitar_name">
+		<text>Гитара</text>
+	</string>
+	<string id="st_kolbasa">
+		<text>Колбаса «Диетическая»</text>
+	</string>
+	<string id="st_kolbasa_descr">
+		<text>Часто за неимением лучшего эта колбаса - смесь курятины и соевого заменителя - становится завтраком, обедом и ужином сталкера. Из-за большого количества консервантов довольно долго не портится.</text>
+	</string>
+	<string id="st_medkit">
+		<text>Аптечка</text>
+	</string>
+	<string id="st_medkit_army">
+		<text>Армейская аптечка</text>
+	</string>
+	<string id="st_medkit_army_descr">
+		<text>Специализированный медицинский набор для оказания первой помощи при ранениях на поле боя. В набор входят средства для ускорения свертывания крови на основе «Менадиона», обезболивающие, антибиотики и стимуляторы иммунитета; кроме того, здесь имеется простейший хирургический набор для извлечения осколков и пуль. Стандартная армейская аптечка; реже встречается в экипировке «долговцев».</text>
+	</string>
+	<string id="st_medkit_descr">
+		<text>Универсальный медицинский набор разового применения. Позволяет справляться с травмами различного типа и степени сложности: ранениями, ушибами мягких тканей, термическими и химическими ожогами, разного рода отравлениями. Пользуется неизменной популярностью у сталкеров.</text>
+	</string>
+	<string id="st_medkit_science">
+		<text>Научная аптечка</text>
+	</string>
+	<string id="st_medkit_science_descr">
+		<text>Медицинский набор, разработанный специально для научных сотрудников, которые работают в условиях Зоны. Содержит средства как для заживления механических травм, так и для предотвращения развития лучевой болезни. В отличие от других наборов, в этом можно найти «Викасол», «Батилол» и С-нафтизин.</text>
+	</string>
+	<string id="st_pda_descr">
+		<text>Нет сохранённых данных.</text>
+	</string>
+	<string id="st_pda_name">
+		<text>КПК</text>
+	</string>
+	<string id="st_vodka">
+		<text>Водка «Казаки»</text>
+	</string>
+	<string id="st_vodka_descr">
+		<text>Водка производства компании «GSC». Хорошо пьётся, заметно снижает воздействие радиации на организм, хотя злоупотреблять ею не следует.</text>
+	</string>
+	<string id="st_detector2_descr">
+		<text>Детектор аномальной активности прошлого поколения. Снабжён локатором аномальных образований и светодиодным табло для отображения направления на артефакт, причём способен не только обнаруживать артефакты, но и определять расстояния до них. Режим поиска артефактов включается поднятием крышки-антенны на лицевой стороне прибора. К сожалению, уже несколько устаревший список обнаруживаемых артефактов вшит в прибор намертво - на аппаратном уровне.</text>
+	</string>
+	<string id="st_drug_anabiotic_descr">
+		<text>Экспериментальный препарат, разработанный для научно-исследовательских групп, действующих в Зоне. Входящий в формулу препарата тетрадотоксин, известный как «порошок зомби», вызывает полный паралич центральной нервной системы; предположительно, это может обеспечить выживание вне укрытия во время выброса. Препарат не испытывался в полевых условиях и не прошёл клинических испытаний, что ставит под сомнение его эффективность и заставляет задуматься о возможных побочных эффектах.</text>
+	</string>
+	<string id="st_bolt">
+		<text>Болт</text>
+	</string>
+	<string id="st_drug_booster_descr">
+		<text>Основной компонент - искусственно созданный стероид, по химическому составу сходный с тестостероном. Применяется сталкерами в долгих переходах для повышения порога утомляемости мышц. Помогает значительно увеличить переносимый вес. Препарат длительного действия.</text>
+	</string>
+	<string id="st_drug_radioprotector_descr">
+		<text>Радиопротектор «Индралин-Б190» входил в состав личных аптечек работников АЭС. Появился в Зоне как замена излишне токсичному цистамину гидрохлорида (РС1). Уменьшает воздействие гамма-излучения на ткани живого организма. Данный препарат желательно применять превентивно, до облучения, поскольку он не оказывает мгновенного эффекта. Обладает продолжительным действием.</text>
+	</string>
+	<string id="st_harmonica_name">
+		<text>Губная гармоника</text>
+	</string>
+	<string id="st_harmonica_descr">
+		<text>Для любителей блюза и тюремной романтики.</text>
+	</string>
+	<string id="st_svoboda_key">
+		<text>Ключ от двери на базе Свободы</text>
+	</string>
+	<string id="st_svoboda_key_descr">
+		<text>Ключ от запертой двери на базе Свободы.</text>
+	</string>
+	<string id="st_misc_card">
+		<text>Пластиковая карточка</text>
+	</string>
+	<string id="st_misc_card_descr">
+		<text>Потёртая пластиковая карточка. Может быть ключом от одной из северных лабораторий. \n%c[1,44,181,239]Не представляет особой ценности</text>
+	</string>
+	<string id="st_trader_key">
+		<text>Ключ от двери бункера Сидоровича</text>
+	</string>
+	<string id="st_trader_key_descr">
+		<text>Предположительно ключ от бункера Сидоровича. Приодится чтобы узнать, что произошло с торговцем.</text>
+	</string>
+	<string id="mutant_boar_leg_description">
+		<text>Некоторые сталкеры вешают копыта кабанов себе на шею как талисман. Кое-кто также находит им более экзотическое применение, перетирая их в порошок.</text>
+	</string>
+	<string id="mutant_boar_leg">
+		<text>Копыто кабана</text>
+	</string>
+	<string id="mutant_flesh_eye_description">
+		<text>Абсолютно отличающийся от глаз обычных свиней, от которых эти существа произошли, глаз Плоти представляет из себя большой тяжелый шар полностью коричневого цвета.</text>
+	</string>
+	<string id="mutant_flesh_eye">
+		<text>Глаз Плоти</text>
+	</string>
+	<string id="mutant_dog_tail_description">
+		<text>Длинный, бесшёрстный хвост слепого пса. Не имеет абсолютно никакой пользы и является самым дешёвым трофеем в Зоне.</text>
+	</string>
+	<string id="mutant_dog_tail">
+		<text>Хвост собаки</text>
+	</string>
+	<string id="mutant_krovosos_jaw_description">
+		<text>Щупальца Кровососа содержат особую железу: она выделяет фермент, растворяющий кожу жертвы, и одновременно препятствующий сворачиванию крови. Если учёным удастся определить структуру фермента, то это поможет осуществить прорыв в медицине.</text>
+	</string>
+	<string id="mutant_krovosos_jaw">
+		<text>Щупальца кровососа</text>
+	</string>
+	<string id="mutant_burer_hand_description">
+		<text>Руки бюреров определенно связаны с их способностями двигать объекты, создавать защитные поля и атаковать противников ментальными волнами. Представляют большую ценность для учёных.</text>
+	</string>
+	<string id="mutant_burer_hand">
+		<text>Рука бюрера</text>
+	</string>
+	<string id="mutant_snork_leg_description">
+		<text>Стопа снорка, в отличие от человеческой, содержит большее количество сухожилий, обладающих потрясающей эластичностью. Этим объясняется способность снорков совершать невероятные прыжки.</text>
+	</string>
+	<string id="mutant_snork_leg">
+		<text>Стопа снорка</text>
+	</string>
+	<string id="mutant_psevdodog_tail_description">
+		<text>Мех на хвосте псевдособаки является отличным термоизолятором, поэтому сталкеры часто вшивают их под комбинезоны и бронежилеты в холодные времена года.</text>
+	</string>
+	<string id="mutant_psevdodog_tail">
+		<text>Хвост псевдособаки</text>
+	</string>
+	<string id="mutant_zombie_hand_description">
+		<text>Грязная и мерзкая рука зомби. Потеряв всё, кроме первобытных инстинктов, зомбированные используют их в качестве оружия.</text>
+	</string>
+	<string id="mutant_zombie_hand">
+		<text>Рука Зомби</text>
+	</string>
+	<string id="st_pie">
+		<text>Кулич</text>
+	</string>
+	<string id="st_pie_descr">
+		<text>Праздничный кулич. Может быть использован для поздравление приятеля, либо просто как вкусная еда.</text>
+	</string>
+	<string id="st_nastoika">
+		<text>Настойка</text>
+	</string>
+	<string id="st_nastoika_descr">
+		<text>Произведённая в Зоне спиртовая настойка. Выводит радиацию заметно быстрее, чем водка, однако из за большей крепости её употребление приводит к более сильному опьянению. Из-за дешевизны может служить "противорадиационным препаратом" для новичков.</text>
+	</string>
+	<string id="st_nv_poition">
+		<text>Зелье регенерации.</text>
+	</string>
+	<string id="st_nv_poition_descr">
+		<text>Зелье регенерации. I уровень.</text>
+	</string>
+	<string id="st_prapor_key">
+		<text>Ключ прапорщика</text>
+	</string>
+	<string id="st_prapor_key_descr">
+		<text>Ключ, принадлежащий прапорщику с военного КПП. Открывает ящик с оружием.</text>
+	</string>
+	<string id="mutant_pseudogigant_hand">
+		<text>Лапа псевдогиганта</text>
+	</string>
+	<string id="mutant_mutant_pseudogigant_hand_description">
+		<text>Лапа псевдогиганта может оказаться весьма ценной находкой для учёных, которые с удовольствием возьмутся за её изучение. Пахнет, как старые носки вперемешку с прокисшими овощами.</text>
+	</string>
+	<string id="mutant_chimera_claw">
+		<text>Коготь химеры </text>
+	</string>
+	<string id="mutant_chimera_claw_description">
+		<text>У химеры коготь прочнее любого металла, поэтому им очень интересуются ученые и военные.</text>
+	</string>
+	<string id="mutant_controller_brain">
+		<text>Мозг контролера</text>
+	</string>
+	<string id="mutant_controller_brain_description">
+		<text>Контролёры обладают мощными умственными способностями и можно с уверенностью сказать, что эти силы зарождаются в их мозге. Что интересно, каждый мутант, обладающий такого рода способностями, связанными с пси-волнами, имеет подобную структуру мозга. Учёные щедро заплатят за образцы таких тканей. Мозг имеет запах прокисшей тыквы.</text>
+	</string>
+	<string id="st_banka_bolts_descr">
+		<text>Старая стеклянная банка с разными болтами и шурупами</text>
+	</string>
+	<string id="st_banka_bolts_name">
+		<text>Банка с болтами</text>
+	</string>
+	<string id="st_nabor_nitok_descr">
+		<text>Старый советский набор с нитками, вполне подходит для использования</text>
+	</string>
+	<string id="st_nabor_nitok_name">
+		<text>Набор ниток</text>
+	</string>
+	<string id="st_transisters_descr">
+		<text>Небольшая коробка с разными транзисторами, некоторые с виду явно откуда-то выпаяны. Вполне может пригодится.</text>
+	</string>
+	<string id="st_transisters_name">
+		<text>Набор транзисторов</text>
+	</string>
+	<string id="st_resisters_descr">
+		<text>Небольшая коробка с резисторами разного сопротивления.</text>
+	</string>
+	<string id="st_resisters_name">
+		<text>Набор резисторов</text>
+	</string>
+	<string id="st_condensators_descr">
+		<text>Небольшая коробка с конденсаторами разной емкости и напряжения. Не самая полезная вещь в зоне.</text>
+	</string>
+	<string id="st_condensators_name">
+		<text>Набор резисторов</text>
+	</string>
+	<string id="st_elementy_plat_descr">
+		<text>Небольшая коробка с различными текстолитовыми платами, возможно на них остались работоспособные элементы.</text>
+	</string>
+	<string id="st_elementy_plat_name">
+		<text>Элементы текстолитовых плат</text>
+	</string>
+	<string id="st_sovetskyi_payalnik_descr">
+		<text>Старый советский паяльник и небольшой коробок канифоли. Им явно много паяли</text>
+	</string>
+	<string id="st_sovetskyi_payalnik_name">
+		<text>Советский паяльник</text>
+	</string>
+	<string id="st_banka_s_gilzamy_descr">
+		<text>металическая банка с отстрелянными гильзами</text>
+	</string>
+	<string id="st_banka_s_gilzamy_name">
+		<text>Банка с гильзами</text>
+	</string>
+	<string id="st_sovetskye_monety_descr">
+		<text>пакет с тарыми советскими монетами 70х годов</text>
+	</string>
+	<string id="st_sovetskye_monety_name">
+		<text>Советские монеты</text>
+	</string>
+	<string id="st_scrap_descr">
+		<text>Различный металический хлам</text>
+	</string>
+	<string id="st_scrap_name">
+		<text>Металлолом</text>
+	</string>
+	<string id="st_palka_descr">
+		<text>Палка...</text>
+	</string>
+	<string id="st_palka_name">
+		<text>Палка</text>
+	</string>
+	<string id="st_svyashennaya_palka_descr">
+		<text>Великий древний артефакт наделенный силами древних монахов, за столько лет смогла сохранить жизнь в себе. Ходят легенды, что она может исцелять любые болезни при правильном использовании.</text>
+	</string>
+	<string id="st_svyashennaya_palka_name">
+		<text>Священная палка</text>
+	</string>
+	<string id="st_conservnie_banky_descr">
+		<text>Консервные банки, Сидорович оценит.</text>
+	</string>
+	<string id="st_conservnie_banky_name">
+		<text>Консервные банки</text>
+	</string>
+	<string id="st_old_instuments_descr">
+		<text>Набор старых советских инструментов</text>
+	</string>
+	<string id="st_old_instuments_name">
+		<text>Старые инструменты</text>
+	</string>
+	<string id="st_car_accum_descr">
+		<text>Свинцовый автомобильный аккумулятор</text>
+	</string>
+	<string id="st_car_accum_name">
+		<text>Аккумулятор</text>
+	</string>
+	<string id="st_otvertka_descr">
+		<text>Старая, советская, ржавая отвертка на плюс</text>
+	</string>
+	<string id="st_otvertka_name">
+		<text>Отвертка</text>
+	</string>
+	<string id="st_vilka_descr">
+		<text>Жестянная вилка</text>
+	</string>
+	<string id="st_vilka_name">
+		<text>Вилка</text>
+	</string>
+	<string id="st_gas_ballon_descr">
+		<text>Небольшой газовый балон, судя по весу - пустой</text>
+	</string>
+	<string id="st_gas_ballon_name">
+		<text>Газовый балон</text>
+	</string>
+	<string id="st_mednyi_provoda_descr">
+		<text>Пакет не жжённых проводов, видимо срезанных еще до аварии.</text>
+	</string>
+	<string id="st_mednyi_provoda_name">
+		<text>Медные провода</text>
+	</string>
+	<string id="st_crash_radio_descr">
+		<text>Старое сломанное радио, умельцы смогу отремонтировать при наличии нужных инструментов и деталей.</text>
+	</string>
+	<string id="st_crash_radio_name">
+		<text>Сломанное радио</text>
+	</string>
+	<string id="st_crash_radio_descr">
+		<text>Старое сломанное радио, умельцы смогу отремонтировать при наличии нужных инструментов и деталей.</text>
+	</string>
+	<string id="st_crash_radio_name">
+		<text>Сломанное радио</text>
+	</string>
+	<string id="st_dead_crisa_descr">
+		<text>Уже высохшая дохлая крыса, видимо не смогла вылезти с ящика. Незнаю зачем, но я обязан забрать ее с собой</text>
+	</string>
+	<string id="st_dead_crisa_name">
+		<text>Дохлая крыса</text>
+	</string>
+	<string id="st_old_gasets_descr">
+		<text>Газета за 26 апреля 1986 год. Явно намекающая на взрыв Чернобыльской Атомной Электростанции.</text>
+	</string>
+	<string id="st_old_gasets_name">
+		<text>Старая газета</text>
+	</string>
+	<string id="st_lampochka_descr">
+		<text>Обычная советская лампочка</text>
+	</string>
+	<string id="st_lampochka_name">
+		<text>Лампочка</text>
+	</string>
+	<string id="st_banka_poroha_descr">
+		<text>Жестянная банка с порохом</text>
+	</string>
+	<string id="st_banka_poroha_name">
+		<text>Банка с порохом</text>
+	</string>
+	<string id="st_korobok_spichek_descr">
+		<text>Обычный спичечный коробок</text>
+	</string>
+	<string id="st_korobok_spichek_name">
+		<text>Коробок спичек</text>
+	</string>
+	<string id="st_strannaya_banka_descr">
+		<text>Странная стеклянная банка с подозрительным содержимым, на запах не очень</text>
+	</string>
+	<string id="st_strannaya_banka_name">
+		<text>Странная банка</text>
+	</string>
+	<string id="st_paket_s_travoy_descr">
+		<text>Небольшой зип-пак с марихуаной, радиоактивна, явно выращенна в ЧЗО, поможет расслабиться в трудный момент</text>
+	</string>
+	<string id="st_paket_s_travoy_name">
+		<text>Пакет с травой</text>
+	</string>
+	<string id="st_nabor_shpricov_descr">
+		<text>Набор металических советских шприцов</text>
+	</string>
+	<string id="st_nabor_shpricov_name">
+		<text>Набор шприцов</text>
+	</string>
+	<string id="st_gvozdi_descr">
+		<text>Просто ржавые гвозди</text>
+	</string>
+	<string id="st_gvozdi_name">
+		<text>Гвозди</text>
+	</string>
+	<string id="st_koleso_velosipeda_descr">
+		<text>Советское колесо от велосипеда Салют</text>
+	</string>
+	<string id="st_koleso_velosipeda_name">
+		<text>Колесо велосипеда</text>
+	</string>
+	<string id="st_perfo_carta_descr">
+		<text>Старая перфокарта, возможно у кого-нибудь будет оборудование, чтобы считать ее</text>
+	</string>
+	<string id="st_perfo_carta_name">
+		<text>Перфокарта</text>
+	</string>
+	<string id="st_disceta_descr">
+		<text>Старая дискета</text>
+	</string>
+	<string id="st_disceta_name">
+		<text>Дискета</text>
+	</string>
+	<string id="st_dragocennosty_descr">
+		<text>Старая шкатулка с различными драгоценными украшениями</text>
+	</string>
+	<string id="st_dragocennosty_name">
+		<text>Драгоценности</text>
+	</string>
+	<string id="st_merc_post_key_descr">
+		<text>Ключ от поста в лощину</text>
+	</string>
+	<string id="st_merc_post_key_name">
+		<text>Ключ от поста в Лощину</text>
+	</string>
+	<string id="st_key_karta_pesher_descr">
+		<text>Небольшой лист бумаги, с различными пометками, тут неподалеку отмечен некий обходной путь в Лощину</text>
+	</string>
+	<string id="st_key_karta_pesher_name">
+		<text>Карта пещер</text>
+	</string>
+	<string id="st_key_lab_descr">
+		<text>Металический ключ с выгравированной буквой "X" и какими-то сильно затертыми символами, возможно местные торговцы знают что-то об этом</text>
+	</string>
+	<string id="st_key_lab_name">
+		<text>Странный ключ</text>
+	</string>
+	<string id="st_document_pidor_descr">
+		<text>Небольшая уже пожелтевшая, пыльная книга, в ней рассказывается о экспериментах проводимых в данном комплексе</text>
+	</string>
+	<string id="st_document_pidor_name">
+		<text>Отчет деятельности комплекса</text>
+	</string>
+	<string id="st_document_hui_descr">
+		<text>Небольшая папка с бумагами с отчетами персонала безопасности комплекса</text>
+	</string>
+	<string id="st_document_hui_name">
+		<text>Отчет охраны</text>
+	</string>
+	<string id="st_document_zalupa_descr">
+		<text>Доклад с точным описание всех подопытных и персоналом комплекса</text>
+	</string>
+	<string id="st_document_zalupa_name">
+		<text>Список субъектов</text>
+	</string>
+	<string id="st_document_her_descr">
+		<text>Описание геоданных и общей аномальной активности местности</text>
+	</string>
+	<string id="st_document_her_name">
+		<text>Описание местности</text>
+	</string>
+	<string id="st_dengi5_descr">
+		<text>Карта, на балансе которой находится пять тысяч рублей.</text>
+	</string>
+	<string id="st_dengi5_name">
+		<text>Пять тысяч рублей.</text>
+	</string>
+	<string id="st_jameson">
+		<text>Виски «Jameson»</text>
+	</string>
+	<string id="st_jameson_descr">
+		<text>Качественный ирландский виски. Если верить содержанию этикетки, настаивался на протяжении трёх лет, однако с учётом пребывания в Зоне, вероятно он значительно старше. Имеет приятный дубовый привкус, легко пьётся.</text>
+	</string>
+	<string id="st_detector">
+		<text>Детектор аномалий</text>
+	</string>
+	<string id="st_detector_descr">
+		<text>Многофункциональный детектор аномальной активности, способен обнаруживать большинство типов аномалий, а так же аномальных полей. Так же имеет встроенный дозиметр.</text>
+	</string>
+</string_table>

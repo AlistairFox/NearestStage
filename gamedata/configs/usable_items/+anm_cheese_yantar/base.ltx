@@ -1,0 +1,22 @@
+#include "eatable_objects.ltx"
+#include "hud_objects.ltx"
+
+
+[cheese_yantar]:booster
+$spawn 				= "food and drugs\cheese_yantar"
+visual				= dynamics\weapons\wpn_eat\world_models\conservi\wpn_conserva.ogf
+description			= st_cheese_yantar_descr
+
+inv_name			= st_cheese_yantar
+inv_name_short		        = st_cheese_yantar
+inv_weight			= 0.05	;0.2
+cost				= 80
+
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 24
+inv_grid_y         = 17
+
+use_sound			= $silent ;interface\inv_bandage
+
+hud = cheese_yantar_hud_model

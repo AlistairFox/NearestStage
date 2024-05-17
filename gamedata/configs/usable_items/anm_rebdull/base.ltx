@@ -1,0 +1,33 @@
+#include "eatable_objects.ltx"
+#include "hud_objects.ltx"
+
+
+[energy_drink]:booster
+$spawn 				= "food and drugs\energy_drink"
+inv_name			= st_redbull
+inv_name_short		= st_redbull
+visual				= dynamics\weapons\wpn_eat\world_models\banki\banka_1_redbull_world.ogf
+description			= st_redbull_descr
+cost				= 50
+
+inv_grid_width     = 1
+inv_grid_height    = 1
+inv_grid_x         = 21
+inv_grid_y         = 14
+inv_weight			= 0.2
+
+attach_angle_offset		= 0.000000, 0.000000, 0.000000
+attach_position_offset	= 0.087266, -0.078540, 0.052360
+attach_bone_name		= bip01_r_hand
+auto_attach				= false
+
+hud = energy_drink_hud_model
+helm_prohibited = true
+full_outfit_prohibited = true
+trash_object = energetic_trash
+
+
+[energetic_trash]:gwr_base_trash
+visual                        = dynamics\devices\dev_drink_stalker\dev_drink_stalker_old.ogf
+throw_dir = right
+throw_impulse = 90
