@@ -1,5 +1,5 @@
 <p align="center">
- <img width="200px" src="NSE_replogo.png" alt="qr"/>
+ <img width="1920px" height="1080px" src="NSE_replogo.png" alt="qr"/>
 </p>
 
 # NEAREST-STAGE: ENGINE
