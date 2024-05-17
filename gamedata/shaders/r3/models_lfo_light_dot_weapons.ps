@@ -1,6 +1,7 @@
 #include "common.h"
 
 uniform float4 m_hud_params;
+uniform float4 screen_res;
 
 float resize(float input, float factor, float offset)
 {
@@ -10,7 +11,7 @@ float resize(float input, float factor, float offset)
 float4 main	(p_flat I, float4 pos2d: SV_Position, float2 tc0: TEXCOORD0): SV_Target
 {
 	float factor = screen_res.y / 2160.0;
-	factor = factor * (1.0 / (m_hud_params.z / 0.45)) * 0.75;
+	factor = factor * (1.0 / (m_hud_params.w / 0.45)) * 0.75;
 	float size = 512.0 * factor;
 	
 	pos2d.x = pos2d.x - (screen_res.x - size) / 2.0;

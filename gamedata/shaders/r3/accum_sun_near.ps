@@ -43,9 +43,7 @@ float4 main ( v2p_volume I ) : SV_Target
 #endif
 {
 	gbuffer_data gbd = gbuffer_load_data( GLD_P(I.tc.xy/I.tc.w, I.hpos, ISAMPLE) );
-	
-	gbd.P += gbd.N*0.02f;
-	
+
 	float4 _P = float4( gbd.P, gbd.mtl );
 	float4  _N = float4( gbd.N, gbd.hemi );
 	float4 _C = float4( gbd.C, gbd.gloss );
@@ -58,7 +56,12 @@ float4 main ( v2p_volume I ) : SV_Target
 	float4	light	= plight_infinity ( m, _P, _N, _C, Ldynamic_dir );
 
 	// ----- shadow
-  	float4 	P4 	= float4( _P.x, _P.y, _P.z, 1.0);
+	// SHADOWS FIXES - SSS Update 19
+	// Normal Offset for biasing
+	float3 NormalOffset = 0;
+	NormalOffset = _N * ssfx_shadow_bias.y;
+
+  	float4 	P4 	= float4( _P.xyz + NormalOffset, 1.0);
 	float4 	PS	= mul( m_shadow, P4 );
 	float 	s 	= sunmask( P4 );
 			s *= shadow( PS );

@@ -41,6 +41,17 @@ float SSFX_HEIGHT_FOG(float3 P, float World_Py, inout float3 color)
 float SSFX_FOGGING(float Fog, float World_Py)
 {
 	// Height fog
+	float fog_height = smoothstep(lowland_fog_params.x, -lowland_fog_params.y, World_Py) * 1.0f;
+
+	// Add height fog to default distance fog.
+	float fog_extra = saturate(Fog + fog_height * (Fog * 5.0f));
+	
+	return 1.0f - fog_extra;
+}
+
+float SSFX_FOGGING_OLD(float Fog, float World_Py)
+{
+	// Height fog
 	float fog_height = smoothstep(G_FOG_HEIGHT, -G_FOG_HEIGHT, World_Py) * G_FOG_HEIGHT_INTENSITY;
 
 	// Add height fog to default distance fog.

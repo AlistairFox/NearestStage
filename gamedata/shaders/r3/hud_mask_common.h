@@ -22,7 +22,7 @@ uniform float2 hud_mask_params;
 //float4 screen_res;
 
 //Gasmask settings
-#define GM_DIST_INT 0.1 //Refraction intensity
+#define GM_DIST_INT 0.2 //Refraction intensity
 #define GM_DIFF_INT 0.15 //Diffuse cracks intensity
 #define GM_VIG_INT 0.5 //Vignette intensity
 

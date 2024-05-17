@@ -5,6 +5,7 @@
 #include "hmodel.h"
 #include "mip_fog.h"
 #define SSFX_LUT
+#define SSFX_SHADOWS
 
 // Check MODs
 #include "check_screenspace.h"
@@ -198,10 +199,6 @@ _out main ( _input I, uint iSample : SV_SAMPLEINDEX )
 
 		float3       color     = C.rgb + spec;
 		
-	// SSR Implementation
-#ifdef SSFX_SSR
-	SSFX_ScreenSpaceReflections(I.tc0, P, N, D.a, color, ISAMPLE);	
-#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 
