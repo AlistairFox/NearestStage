@@ -1,3 +1,7 @@
+<p align="center">
+ <img width="200px" src="NSE_replogo.png" alt="qr"/>
+</p>
+
 # NEAREST-STAGE: ENGINE
 NEAREST-STAGE: ENGINE - движок изначально основанный на наработках X-RAY OMP, но притерпел огромнейшие изменения в графическом, техническом и геймплейном плане.
 
