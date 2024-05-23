@@ -473,10 +473,10 @@ void			CLevel::OnBuildVersionChallenge		()
 		Msg("Registration on");
 
 	P.w_u64					(auth);
+	P.w_u8(registration);
 	P.w_stringZ(Core.UserName);
 	P.w_stringZ(Core.Password);
 	P.w_stringZ(h);
-	P.w_u8(registration);
 	P.w_stringZ(Descript_name);
 	P.w_u8(kit_numb);
 	registration = false;

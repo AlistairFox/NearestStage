@@ -3218,6 +3218,10 @@ public:
 		}
 	}
 };
+
+#include <fstream>
+#include "..\jsonxx\jsonxx.h"
+using namespace jsonxx;
  
 class CCC_AdmRegisterAccount : public IConsole_Command {
 public:
@@ -3227,278 +3231,98 @@ public:
 	{
 		if (OnServer())
 		{
-			string_path filepath;
+			string_path JsonFilePath;
+			FS.update_path(JsonFilePath, "$mp_saves_logins$", "logins.json");
 
-			FS.update_path(filepath, "$mp_saves_logins$", "logins.ltx");
+			Object JsonMain;
+			Array RegIns;
+			Array ReloadRegIns;
+			std::ifstream ifile(JsonFilePath);
 
-			CInifile* file = xr_new<CInifile>(filepath, false, true);
+			std::string str((std::istreambuf_iterator<char>(ifile)), std::istreambuf_iterator<char>());
+			JsonMain.parse(str);
+			ifile.close();
 
-			string256 tmp, login, password, comp_name;
+			Object NowRegistrationAccount;
+			bool NeedReg = false;
+			std::string name = args;
+			std::string login;
+			std::string password;
+			std::string Hwid;
 			u8 kit;
-			exclude_raid_from_args(args, tmp, sizeof(tmp));
 
-			sscanf(tmp, "%s %s %s %d", &login, &password, &comp_name, &kit);
+			u32 StaticId = 1;
 
-			LPCSTR hwid = comp_name;
-			string_path reg_data;
-			FS.update_path(reg_data, "$reg_data$", "hw_buffer.ltx");
-			CInifile* reg_data_file = xr_new<CInifile>(reg_data, false, true);
-
-			if (reg_data_file->line_exist("hwbuffer", hwid))
+			if (JsonMain.has<Value>("STATIC_ID:"))
 			{
-				Msg("!!!ERROR: User with HWid %s already exist.", comp_name);
-				return;
-			}else
-			if (file)
-			{
-				reg_data_file->w_string("hwbuffer", comp_name, comp_name);
-				file->w_string(login, "password", password);
-				file->w_string(login, "hwid", comp_name);
-				file->w_u8(login, "kit_number", kit);
+				StaticId = JsonMain.get<Value>("STATIC_ID:").number_value_;
+				StaticId++;
 			}
-
-			Msg("--Complete! User: %s has been registered.", login);
-			reg_data_file->save_as(reg_data);
-			file->save_as(filepath);
-
-
-			string_path idpath;
-			FS.update_path(idpath, "$players_static_id$", "players_id_list.ltx");
-			CInifile* StaticIdFile = xr_new<CInifile>(idpath, false, true);
-			u16 LastId = 1;
-
-
-			if (StaticIdFile->line_exist("last_players_id", "last_id"))
+			if (JsonMain.has<Array>("REGISTRATION REQUESTS:"))
 			{
-				LastId = StaticIdFile->r_u16("last_players_id", "last_id");
-
-				++LastId;
-
-				StaticIdFile->remove_line("last_players_id", "last_id");
-					StaticIdFile->w_u16("last_players_id", "last_id", LastId);
-			}
-			else
-				StaticIdFile->w_u16("last_players_id", "last_id", LastId);
-
-			StaticIdFile->w_u16(login,"static_id", LastId);
-
-			string256 player_name;
-			string128 temp_id;
-			xr_sprintf(player_name, "\"%s\"", login);
-			xr_sprintf(temp_id, "id_%d", LastId);
-			StaticIdFile->w_string(temp_id, "name", player_name);
-
-			StaticIdFile->save_as(idpath); 
-			xr_delete(StaticIdFile);
-
-
-		}
-		else
-		{
-			NET_Packet P;
-			P.w_begin(M_REMOTE_CONTROL_CMD);
-			string128 str;
-			xr_sprintf(str, "adm_register_account %s %s", Core.UserName, Core.Password);
-			P.w_stringZ(str);
-			Level().Send(P, net_flags(TRUE, TRUE));
-		}
-	}
-};
-
-class CCC_AdmRegisterFileAcc : public IConsole_Command {
-public:
-	CCC_AdmRegisterFileAcc(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = false; };
-
-	virtual void Execute(LPCSTR args)
-	{
-		if (OnServer())
-		{
-			string_path registered_file;
-
-			string256 tmp, regfile_name;
-			exclude_raid_from_args(args, tmp, sizeof(tmp));
-
-			sscanf(tmp, "%s", &regfile_name);
-			xr_strcat(regfile_name, ".ltx");
-
-			LPCSTR login, password, comp_name;
-			u8 kit;
-			FS.update_path(registered_file, "$mp_acces_reg$", regfile_name);
-			CInifile* registr_file = xr_new<CInifile>(registered_file,true);
-
-				if (FS.exist(registered_file))
+				RegIns = JsonMain.get<Array>("REGISTRATION REQUESTS:");
+				for (int i = 0; i != RegIns.size(); i++)
 				{
-					if (registr_file->section_exist("user_data"))
+					Object NowCheckedRegFile = RegIns.get<Object>(i);
+					if (NowCheckedRegFile.has<String>("login"))
 					{
-						Msg("--File acces.");
-						Msg("~ regfile name: %s.", regfile_name);
-						login = registr_file->r_string("user_data", "username");
-						password = registr_file->r_string("user_data", "user_password");
-						comp_name = registr_file->r_string("user_data", "hwid");
-						kit = registr_file->r_u8("user_data", "kit_numb");
-						Msg("* User Login: %s.", login);
-						Msg("* User password: %s.", password);
-						Msg("* User HWid: %s.", comp_name);
-
-						string_path regdata;
-						sprintf(regdata, "adm_register_account %s %s %s %d", login, password, comp_name, kit);
-
-						Console->Execute(regdata);
-
-						xr_delete(registr_file);
-						FS.file_delete(registered_file);
+						login = NowCheckedRegFile.get<String>("login");
+						Msg("login: %s", login.c_str());
+						if (login == name)
+						{
+							NeedReg = true;
+							password = NowCheckedRegFile.get<String>("password");
+							Hwid = NowCheckedRegFile.get<String>("hwid");
+							kit = NowCheckedRegFile.get<Value>("kit").number_value_;
+							//RegIns.remove(i);
+						}
+						else
+						{
+							ReloadRegIns << NowCheckedRegFile;
+						}
 					}
-				}
-				else
-				{
-					Msg("!!!ERROR: Uncorrect file name");
-					return;
-				}
-
-		}
-		else
-		{
-			NET_Packet P;
-			P.w_begin(M_REMOTE_CONTROL_CMD);
-			string128 str;
-			xr_sprintf(str, "adm_register_account %s %s", Core.UserName, Core.Password);
-			P.w_stringZ(str);
-			Level().Send(P, net_flags(TRUE, TRUE));
-		}
-	}
-};
-
-class CCC_disRegisterFile : public IConsole_Command
-{
-public:
-	CCC_disRegisterFile(LPCSTR N) :IConsole_Command(N) { bEmptyArgsHandled = false; }
-	virtual void Execute(LPCSTR args)
-	{
-		if (OnServer())
-		{
-			string_path registered_file;
-
-			string256 tmp, regfile_name;
-			exclude_raid_from_args(args, tmp, sizeof(tmp));
-
-			sscanf(tmp, "%s", &regfile_name);
-
-			xr_strcat(regfile_name, ".ltx");
-
-			FS.update_path(registered_file, "$mp_acces_reg$", regfile_name);
-			CInifile* registr_file = xr_new<CInifile>(registered_file, true);
-
-			if (FS.exist(registered_file))
-			{
-				if (registr_file->section_exist("user_data"))
-				{
-					Msg("--File acces.");
-					Msg("~ regfile name: %s.", regfile_name);
-					LPCSTR user_hwid;
-					user_hwid = registr_file->r_string("user_data", "hwid");
-					Msg("-- User with HWid: %s, has bad register name!", user_hwid);
-					string_path badreg_list;
-					FS.update_path(badreg_list, "$mp_bad_register$", "bad_register.ltx");
-					CInifile* badreg_list_file = xr_new<CInifile>(badreg_list, false, true);
-					if (!badreg_list_file->line_exist("bad_registration", user_hwid))
-					{
-						badreg_list_file->w_string("bad_registration", user_hwid, "0");
-						badreg_list_file->save_as(badreg_list);
-						FS.file_delete(registered_file);
-					}
-					else
-					{
-						Msg("!!!ERROR: User already in BadRegister List!");
-						return;
-					}
-					xr_delete(badreg_list_file);
 				}
 			}
 			else
 			{
-				Msg("!!!ERROR: Uncorrect file name");
+				Msg("!! ERROR: Not Enought Accounts for Registration!");
 				return;
 			}
 
-			xr_delete(registr_file);
-		}
-		else
-		{
-			NET_Packet P;
-			P.w_begin(M_REMOTE_CONTROL_CMD);
-			string128 str;
-			xr_sprintf(str, "Admin has rights %s", Core.UserName);
-			P.w_stringZ(str);
-			Level().Send(P, net_flags(TRUE, TRUE));
-		}
-	}
-
-};
-
-class CCC_disRegisterPassFile : public IConsole_Command
-{
-public:
-	CCC_disRegisterPassFile(LPCSTR N) :IConsole_Command(N) { bEmptyArgsHandled = false; }
-	virtual void Execute(LPCSTR args)
-	{
-		if (OnServer())
-		{
-			string_path registered_file;
-
-			string256 tmp, regfile_name;
-			exclude_raid_from_args(args, tmp, sizeof(tmp));
-
-			sscanf(tmp, "%s", &regfile_name);
-
-			xr_strcat(regfile_name, ".ltx");
-
-			FS.update_path(registered_file, "$mp_acces_reg$", regfile_name);
-			CInifile* registr_file = xr_new<CInifile>(registered_file, true);
-
-			if (FS.exist(registered_file))
+			Array AccountsArray;
+			if (JsonMain.has<Array>("ACCOUNTS:"))
 			{
-				if (registr_file->section_exist("user_data"))
+				AccountsArray = JsonMain.get<Array>("ACCOUNTS:");
+			}
+
+			NowRegistrationAccount << "login" << login;
+			NowRegistrationAccount << "password" << password;
+			NowRegistrationAccount << "hwid" << Hwid;
+			NowRegistrationAccount << "kit" << kit;
+			NowRegistrationAccount << "static_id" << StaticId;
+			AccountsArray << NowRegistrationAccount;
+
+			JsonMain << "STATIC_ID:" << StaticId;
+			JsonMain << "REGISTRATION REQUESTS:" << ReloadRegIns;
+			JsonMain << "ACCOUNTS:" << AccountsArray;
+
+			if (NeedReg)
+			{
+				IWriter* writer = FS.w_open(JsonFilePath);
+				if (writer)
 				{
-					Msg("--File acces.");
-					Msg("~ regfile name: %s.", regfile_name);
-					LPCSTR user_hwid;
-					user_hwid = registr_file->r_string("user_data", "hwid");
-					Msg("-- User with HWid: %s, has bad register pass!", user_hwid);
-					string_path badreg_list;
-					FS.update_path(badreg_list, "$mp_bad_register$", "bad_register.ltx");
-					CInifile* badreg_list_file = xr_new<CInifile>(badreg_list, false, true);
-					if (!badreg_list_file->line_exist("bad_registration", user_hwid))
-					{
-						badreg_list_file->w_string("bad_registration", user_hwid, "1");
-						badreg_list_file->save_as(badreg_list);
-						FS.file_delete(registered_file);
-					}
-					else
-					{
-						Msg("!!!ERROR: User already in BadRegister List!");
-						return;
-					}
-					xr_delete(badreg_list_file);
+					writer->w_string(JsonMain.json().c_str());
+					FS.w_close(writer);
 				}
+
 			}
 			else
 			{
-				Msg("!!!ERROR: Uncorrect file name");
+				Msg("!! ERROR: Not Find this reg acc: %s", name.c_str());
 				return;
 			}
-			xr_delete(registr_file);
-		}
-		else
-		{
-			NET_Packet P;
-			P.w_begin(M_REMOTE_CONTROL_CMD);
-			string128 str;
-			xr_sprintf(str, "Admin has rights %s", Core.UserName);
-			P.w_stringZ(str);
-			Level().Send(P, net_flags(TRUE, TRUE));
 		}
 	}
-
 };
 
 class CCC_write_sect_items : public IConsole_Command
@@ -3743,10 +3567,7 @@ void register_mp_console_commands()
 	{
 		CMD1(CCC_OnlineAdminGive,		"give_admin_rights");
 		CMD1(CCC_OnlineAdminRemove,		"remove_admin_rights");
-		CMD1(CCC_AdmRegisterAccount,	"adm_register_account");
-		CMD1(CCC_AdmRegisterFileAcc,	"adm_register_file");
-		CMD1(CCC_disRegisterFile,		"adm_badregistername_file");
-		CMD1(CCC_disRegisterPassFile,	"adm_badregisterpass_file");
+		CMD1(CCC_AdmRegisterAccount,	"af_sv_register_account");
 		CMD1(CCC_OffCompToPlayer,		"off_player_pc");
 		CMD4(CCC_Integer,				"alife_switch", &alife_on, 0, 1);
 		CMD4(CCC_Integer,				"af_filltime_player", &save_time, 1, 1000000);

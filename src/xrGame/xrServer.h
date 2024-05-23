@@ -15,6 +15,9 @@
 #include "xrServer_updates_compressor.h"
 #include "xrClientsPool.h"
 #include "script_event.h"
+#include <fstream>
+#include "..\jsonxx\jsonxx.h"
+using namespace jsonxx;
 
 #ifdef DEBUG
 //. #define SLOW_VERIFY_ENTITIES
@@ -198,6 +201,24 @@ public:
 	void					SendProfileCreationError(IClient* CL, char const * reason);
 	void					AttachNewClient			(IClient* CL);
 	virtual void			OnBuildVersionRespond				(IClient* CL, NET_Packet& P);
+	string_path JsonFilePath;
+			bool			Registration(IClient* CL, std::string Login, std::string Password, std::string Hwid, std::string Descr, u8 kit);
+			bool			Loggining(IClient* CL, std::string Login, std::string Password, std::string Hwid);
+			bool			CheckHwidBlock(IClient* CL, std::string Hwid, Object& JsonMain);
+			bool			CheckBadRegister(IClient* CL, std::string Hwid, Object& JsonMain);
+			bool			CheckAlreadyExistAccount(IClient* CL, std::string Login,std::string Hwid, Object& JsonMain);
+
+IC	bool containsOnlyDigits(const std::string& str) {
+	return str.find_first_not_of("0123456789") == std::string::npos;
+}
+
+IC bool containsRestrictedChars(const std::string& str) {
+	return str.find_first_of("!@#$%^&*()_+¹;:?,><.") == std::string::npos;
+}
+
+IC 	bool containsSpaces(const std::string& str) {
+	return str.find(' ') != std::string::npos;
+}
 protected:
 	xrClientsPool			m_disconnected_clients;
 	bool					CheckAdminRights		(const shared_str& user, const shared_str& pass, string512& reason);

@@ -197,6 +197,7 @@ bool xrServer::NeedToCheckClient_BuildVersion		(IClient* CL)
 	return true;
 };
 
+
 void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 {
 	u16 Type;
@@ -204,219 +205,54 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 	u64 _our		=	23;
 	u64 _him		=	P.r_u64();
 
-	u8 reg, kit;
-
-	shared_str login, password, comp_name, descript;  
+	BOOL IsRegistration =  P.r_u8();
+	shared_str login, password, comp_name, descript;
+	u8 kit;
 	P.r_stringZ(login);
 	P.r_stringZ(password);
 	P.r_stringZ(comp_name);
-	P.r_u8(reg);
 	P.r_stringZ(descript);
 	P.r_u8(kit);
 
-	string256 game_version;
-	sprintf(game_version, "Различные версии движка! Ваша: %d | Сервер: %d", _him, _our);
-
-	string_path denied_reg;// filtering names
-	string_path path_xray; // logins
-	string_path banned_user; // hwid banlist
-	string_path bad_register; // callback on uncorrect registration
-
-	LPCSTR blockednames = login.c_str();
-
-	FS.update_path(denied_reg, "$denied_accounts$", blockednames); // filtering names
-	FS.update_path(path_xray, "$mp_saves_logins$", "logins.ltx"); // logins
-	FS.update_path(banned_user, "$mp_banned_users$", "banned_list.ltx"); // hwid banlist
-	FS.update_path(bad_register, "$mp_bad_register$", "bad_register.ltx"); // callback on uncorrect registration
-
-	CInifile* file = xr_new<CInifile>(path_xray, true); // logins
-	CInifile* banlist = xr_new<CInifile>(banned_user, true); // hwid banlist
-	CInifile* bad_register_file = xr_new<CInifile>(bad_register, false, true);  // callback on uncorrect registration
+	std::string SLogin = login.c_str();
+	std::string SPassword = password.c_str();
+	std::string SHwid = comp_name.c_str();
+	std::string SDescr = descript.c_str();
 
 	if (!CL->flags.bLocal)
 	{
-
 		Msg("--User HWID: %s, User Login: %s ", comp_name.c_str(), login.c_str());
 
+		string256 game_version;
+		sprintf(game_version, "Различные версии движка! Ваша: %d | Сервер: %d", _him, _our);
 		if (_our != _him)
 		{
 			SendConnectResult(CL, 0, ecr_data_verification_failed, game_version);
 			Msg("!!ERROR Попытка входа с другой версии! Севрер: %d | Клиент: %d", _our, _him);
-			xr_delete(file);
-			xr_delete(banlist);
-			xr_delete(bad_register_file);
 			return;
 		}
 
-		if (banlist->line_exist("blocklist", comp_name.c_str()))
+		FS.update_path(JsonFilePath, "$mp_saves_logins$", "logins.json");
+		if (IsRegistration)
 		{
-			u8 ban_descr = banlist->r_u8("blocklist", comp_name.c_str());
-			xr_delete(file);
-			xr_delete(banlist);
-			xr_delete(bad_register_file);
-			if (ban_descr == 0)
+			if (!Registration(CL, SLogin, SPassword, SHwid, SDescr, kit))
 			{
-				Msg("!! ERROR: пользователь был заблокирован по причине 0.");
-				SendConnectResult(CL, 0, ecr_data_verification_failed, "Вы были заблокированны, по причине: Оскорбление Администрации!");
 				return;
 			}
-			else if (ban_descr == 1)
+			else
 			{
-				Msg("!! ERROR: пользователь был заблокирован по причине 1.");
-				SendConnectResult(CL, 0, ecr_data_verification_failed, "Вы были заблокированны, по причине: Использование стороннего ПО, дающего преимущество в игре!");
-				return;
-			}
-			else if (ban_descr == 2)
-			{
-				Msg("!! ERROR: пользователь был заблокирован по причине 2.");
-				SendConnectResult(CL, 0, ecr_data_verification_failed, "Вы были заблокированны, по причине: Неадекватное поведение или оскорбления на сервере!");
-				return;
-			}
-			else if (ban_descr == 3)
-			{
-				Msg("!! ERROR: пользователь был заблокирован по причине пидорас.");
-				SendConnectResult(CL, 0, ecr_data_verification_failed, "Вы были заблокированны, по причине: Пидорас!");
+				SendConnectResult(CL, 0, ecr_data_verification_failed, "Вас зарегистрируют в ближайшее время!!");
+				Msg("-- Пользователь: %s подал запрос на регистрацию!", SLogin.c_str());
 				return;
 			}
 		}
 		else
 		{
-			if (!bad_register_file->line_exist("bad_registration", comp_name.c_str())) 
+			if (!Loggining(CL, SLogin, SPassword, SHwid))
 			{
-				if (reg == 0)
-				{
-					if (file->section_exist(login))
-					{
-						shared_str pass_check;
-
-						if (file->line_exist(login, "password"))
-						{
-							pass_check = file->r_string(login, "password");
-
-						}
-
-
-						if (xr_strcmp(pass_check, password) != 0)
-						{
-							Msg("!! ERROR: Пользователь ввел неверный пароль");
-							SendConnectResult(CL, 0, ecr_data_verification_failed, "Проверьте пароль.");
-							return;
-						}
-
-						if (file->line_exist(login, "banned"))
-						{
-							SendConnectResult(CL, 0, ecr_data_verification_failed, "Вы забанены.");
-							return;
-						}
-
-						if (Level().game)
-							for (auto pl : Game().players)
-							{
-								if (!xr_strcmp(pl.second->getName(), login))
-								{
-									Msg("!! ERROR: Повторный вход с одного аккаунта");
-									SendConnectResult(CL, 0, ecr_data_verification_failed, "Повторный вход с одного аккаунта.");
-									return;
-								}
-							}
-					}
-					else
-					{
-						Msg("!! ERROR: Пользователь ввел неверный логин");
-						SendConnectResult(CL, 0, ecr_data_verification_failed, "Неверный Логин.");
-						return;
-					}
-
-				}
-				else
-				{
-					LPCSTR hwid = comp_name.c_str();
-					string_path reg_data;
-					FS.update_path(reg_data, "$reg_data$", "hw_buffer.ltx");
-					CInifile* reg_data_file = xr_new<CInifile>(reg_data, false, true);
-
-					if (reg_data_file->line_exist("hwbuffer", hwid))
-					{
-						Msg("!! ERROR: Попытка повторного запроса на регистрацию от пользователя с HWid: %s", hwid);
-						SendConnectResult(CL, 0, ecr_data_verification_failed, "У вас уже имеется зарегистрированный аккаунт!");
-						xr_delete(reg_data_file);
-						return;
-					}
-					else if (FS.exist(denied_reg))
-					{
-						Msg("!! ERROR: попытка регистрации некорректного никнейма!");
-						SendConnectResult(CL, 0, ecr_data_verification_failed, "Заявка на регистрацию отклоненна: некорректный никнейм");
-						xr_delete(reg_data_file);
-						return;
-					}
-					else if (!file->section_exist(login))
-					{
-						xr_delete(reg_data_file);
-						LPCSTR username = login.c_str();
-						string_path path_registered;
-						string256 transl;
-						sprintf(transl, "%s.ltx", username);
-						FS.update_path(path_registered, "$mp_acces_reg$", transl);
-						if (FS.exist(path_registered))
-						{
-							Msg("!! ERROR: Попытка повторной регистрации аккаунта %s", username);
-							SendConnectResult(CL, 0, ecr_data_verification_failed, "Данный никнейм уже ожидает регистрации.");
-							return;
-						}
-						else
-						{
-							CInifile* regacc = xr_new<CInifile>(path_registered, false, true);
-							if (regacc)
-							{
-								regacc->w_string("user_data", "username", username);
-								regacc->w_string("user_data", "user_password", password.c_str());
-								regacc->w_string("user_data", "hwid", comp_name.c_str());
-								regacc->w_u8("user_data", "kit_numb", kit);
-								regacc->w_string("user_data", "description", descript.c_str());
-								regacc->save_as(path_registered);
-								Msg("~ Пользователь %s подал запрос на регистрацию!", username);
-							}
-							xr_delete(regacc);
-							SendConnectResult(CL, 0, ecr_data_verification_failed, "Вас Зарегистрируют в Ближайшее время!");
-							return;
-						}
-					}
-					else
-					{
-						xr_delete(reg_data_file);
-						Msg("!! ERROR: Попытка регистрации занятого никнейма!");
-						SendConnectResult(CL, 0, ecr_data_verification_failed, "Данный никнейм уже зарегистрирован!");
-						return;
-					}
-					xr_delete(reg_data_file);
-				}
-			}
-			else
-			{
-				u8 bad_register_descr = bad_register_file->r_u8("bad_registration", comp_name.c_str());
-				bad_register_file->remove_line("bad_registration", comp_name.c_str());
-				bad_register_file->save_as(bad_register);
-				if (bad_register_descr == 0)
-				{
-					Msg("!! ERROR: пользователю была отказана регистрация по причине некорректный никнейм");
-					SendConnectResult(CL, 0, ecr_data_verification_failed, "Отказ регистрации: смените никнейм!");
-					return;
-				}
-				else if (bad_register_descr == 1)
-				{
-					Msg("!! ERROR: пользователю была отказана регистрация по причине некорректный пароль");
-					SendConnectResult(CL, 0, ecr_data_verification_failed, "Отказ регистрации: смените пароль!");
-					return;
-				}
-				else
-				{
-					Msg("!! ERROR: пользователю была отказана регистрация по причине %s", bad_register_descr);
-					SendConnectResult(CL, 0, ecr_data_verification_failed, "Отказ регистрации: повторите попытку!");
-					return;
-				}
+				return;
 			}
 		}
-
 	}
 
 	{				
@@ -439,7 +275,291 @@ void xrServer::OnBuildVersionRespond				( IClient* CL, NET_Packet& P )
 			SendConnectResult( CL, 0, ecr_password_verification_failed, res_check );
 		}
 	}
-};
+}
+
+bool xrServer::Registration(IClient* CL, std::string Login, std::string Password, std::string Hwid, std::string Descr, u8 kit)
+{
+	if (!containsOnlyDigits(Password))
+	{
+		Msg("!! ERROR: пользователь ввел запрещенные символы в пароль!");
+		SendConnectResult(CL, 0, ecr_data_verification_failed, "Пароль может содержать только цифры!");
+		return false;
+	}
+
+	if (containsOnlyDigits(Login))
+	{
+		Msg("!! ERROR: пользователь ввел запрещенные символы в логин!");
+		SendConnectResult(CL, 0, ecr_data_verification_failed, "Логин не может содержать цифры!");
+		return false;
+	}
+
+	if (!containsRestrictedChars(Login))
+	{
+		Msg("!! ERROR: пользователь ввел запрещенные символы в логин!");
+		SendConnectResult(CL, 0, ecr_data_verification_failed, "Логин не может содержать что-либо кроме буквенных символов!");
+		return false;
+	}
+
+	if (containsSpaces(Login))
+	{
+		Msg("!! ERROR: пользователь ввел запрещенные символы в логин!");
+		SendConnectResult(CL, 0, ecr_data_verification_failed, "Логин не может содержать пробелы!");
+		return false;
+	}
+
+
+	Object JsonMain;
+	Array RegIns;
+	std::ifstream ifile(JsonFilePath);
+
+	std::string str((std::istreambuf_iterator<char>(ifile)), std::istreambuf_iterator<char>());
+	JsonMain.parse(str);
+	ifile.close();
+
+	if (!CheckHwidBlock(CL, Hwid, JsonMain))
+		return false;
+
+	if (!CheckAlreadyExistAccount(CL, Login, Hwid, JsonMain))
+		return false;
+
+	if (JsonMain.has<Array>("REGISTRATION REQUESTS:"))
+	{
+		RegIns = JsonMain.get<Array>("REGISTRATION REQUESTS:");
+
+		for (int i = 0; i != RegIns.size(); i++)
+		{
+			Object RegData = RegIns.get<Object>(i);
+
+			if (RegData.has<String>("login"))
+			{
+				std::string NowCheckHwid = RegData.get<String>("hwid");
+				if (NowCheckHwid == Hwid)
+				{
+					Msg("!! ERROR: Попытка повторной регистрации аккаунта %s", Login.c_str());
+					SendConnectResult(CL, 0, ecr_data_verification_failed, "У вас уже имеется аккаунт ожидающий регистрации!");
+					return false;
+				}
+
+				std::string NowCheckLogin = RegData.get<String>("login");
+				if (NowCheckLogin == Login)
+				{
+					Msg("!! ERROR: Попытка повторной регистрации аккаунта %s", Login.c_str());
+					SendConnectResult(CL, 0, ecr_data_verification_failed, "Данный никнейм уже ожидает регистрации.");
+					return false;
+				}
+			}
+		}
+		
+	}
+
+	Object NowRegistryAccount;
+	NowRegistryAccount << "login" << Login;
+	NowRegistryAccount << "password" << Password;
+	NowRegistryAccount << "hwid" << Hwid;
+	NowRegistryAccount << "Descr" << Descr;
+	NowRegistryAccount << "kit" << kit;
+	RegIns << NowRegistryAccount;
+	JsonMain << "REGISTRATION REQUESTS:" << RegIns;
+
+	IWriter* writer = FS.w_open(JsonFilePath);
+	if (writer)
+	{
+		writer->w_string(JsonMain.json().c_str());
+		FS.w_close(writer);
+	}
+
+	return true;
+}
+
+bool xrServer::Loggining(IClient* CL, std::string Login, std::string Password, std::string Hwid)
+{
+	Object JsonMain;
+
+	Array LogIns;
+	std::ifstream ifile(JsonFilePath);
+
+	std::string str((std::istreambuf_iterator<char>(ifile)), std::istreambuf_iterator<char>());
+	JsonMain.parse(str);
+	ifile.close();
+
+	if (!CheckHwidBlock(CL, Hwid, JsonMain))
+		return false;
+
+	if (Level().game)
+		for (auto pl : Game().players)
+			if (pl.second->getName() == Login)
+			{
+				Msg("!! ERROR: Повторный вход с одного аккаунта");
+				SendConnectResult(CL, 0, ecr_data_verification_failed, "Повторный вход с одного аккаунта.");
+				return false;
+			}
+
+	if (JsonMain.has<Array>("ACCOUNTS:"))
+	{
+		bool FindAccount = false;
+		LogIns = JsonMain.get<Array>("ACCOUNTS:");
+		for (int i = 0; i != LogIns.size(); i++)
+		{
+			Object Account = LogIns.get<Object>(i);
+			if (Account.has<String>("login"))
+			{
+				std::string AccountLogin = Account.get<String>("login");
+				if (Login == AccountLogin)
+				{
+					if (Account.has<String>("password"))
+					{
+						FindAccount = true;
+						std::string AccountPassword = Account.get<String>("password");
+						if (Password != AccountPassword)
+						{
+							Msg("!! ERROR: Пользователь ввел неверный пароль");
+							SendConnectResult(CL, 0, ecr_data_verification_failed, "Проверьте пароль.");
+							return false;
+						}
+						return true;
+					}
+				}
+			}
+			
+		}
+
+		if (!FindAccount)
+		{
+			Msg("!! ERROR: Пользователь ввел неверный логин");
+			SendConnectResult(CL, 0, ecr_data_verification_failed, "Неверный Логин.");
+			return false;
+		}
+	}
+
+	Msg("!! ERROR: Нет аккаунтов!");
+	SendConnectResult(CL, 0, ecr_data_verification_failed, "Еще не существует зарегистрированных аккаунтов!");
+	return false;
+}
+
+bool xrServer::CheckHwidBlock(IClient* CL, std::string Hwid, Object& JsonMain)
+{
+	Array BlockingArray;
+	if (JsonMain.has<Array>("BLOCKING HWIDS:"))
+	{
+		BlockingArray = JsonMain.get<Array>("BLOCKING HWIDS:");
+		for (int i = 0; i != BlockingArray.size(); i++)
+		{
+			Object Obj = BlockingArray.get<Object>(i);
+			if (Obj.has<String>("hwid"))
+			{
+				std::string NowCheckHwid = Obj.get<String>("hwid");
+				if (NowCheckHwid == Hwid)
+				{
+					std::string reason = Obj.get<String>("reason");
+					std::string ServerReason = "!! ERROR: пользователь был заблокирован по причине: ";
+					ServerReason += reason;
+
+					std::string ClientReason = "Вы были заблокированны по причине: ";
+					ClientReason += reason;
+
+					char Res[128];
+					strcpy(Res, ClientReason.c_str());
+					Msg(ServerReason.c_str());
+					SendConnectResult(CL, 0, ecr_data_verification_failed, Res);
+					return false;
+				}
+			}
+		}
+	}
+	
+	if (!CheckBadRegister(CL, Hwid, JsonMain))
+		return false;
+
+	return true;
+}
+
+bool xrServer::CheckBadRegister(IClient* CL, std::string Hwid, Object& JsonMain)
+{
+	Array RejectArray;
+	Array ReloadReject;
+	bool NeedDisconnect = false;
+	if (JsonMain.has<Array>("REJECTED REQUESTS:"))
+	{
+		RejectArray = JsonMain.get<Array>("REJECTED REQUESTS:");
+		for (int i = 0; i != RejectArray.size(); i++)
+		{
+			Object Obj = RejectArray.get<Object>(i);
+			if (Obj.has<String>("hwid"))
+			{
+				std::string NowCheckHwid = Obj.get<String>("hwid");
+				if (NowCheckHwid == Hwid)
+				{
+					std::string reason = Obj.get<String>("reason");
+					std::string ServerReason = "!! ERROR: пользователь был отключен по причине: ";
+					ServerReason += reason;
+
+					std::string ClientReason = "Запрос не регистрацию отклонен по причине: ";
+					ClientReason += reason;
+
+					char Res[128];
+					strcpy(Res, ClientReason.c_str());
+					Msg(ServerReason.c_str());
+					SendConnectResult(CL, 0, ecr_data_verification_failed, Res);
+
+					NeedDisconnect = true;
+				}
+				else
+				{
+					ReloadReject << Obj;
+				}
+			}
+		}
+	}
+
+	if (NeedDisconnect)
+	{
+		JsonMain << "REJECTED REQUESTS:" << ReloadReject;
+
+		IWriter* writer = FS.w_open(JsonFilePath);
+		if (writer)
+		{
+			writer->w_string(JsonMain.json().c_str());
+			FS.w_close(writer);
+		}
+		return false;
+	}
+
+	return true;
+}
+
+bool xrServer::CheckAlreadyExistAccount(IClient* CL, std::string Login,std::string Hwid, Object& JsonMain)
+{
+	Array AccountsArray;
+	if (JsonMain.has<Array>("ACCOUNTS:"))
+	{
+		AccountsArray = JsonMain.get<Array>("ACCOUNTS:");
+		for (int i = 0; i != AccountsArray.size(); i++)
+		{
+			Object Account = AccountsArray.get<Object>(i);
+			if (Account.has<String>("login"))
+			{
+				std::string NowChekHwid = Account.get<String>("hwid");
+
+				if (NowChekHwid == Hwid)
+				{
+					Msg("!! ERROR: Попытка повторного запроса на регистрацию от пользователя с HWid: %s", Hwid.c_str());
+					SendConnectResult(CL, 0, ecr_data_verification_failed, "У вас уже имеется зарегистрированный аккаунт!");
+					return false;
+				}
+
+				std::string NowCheckLogin = Account.get<String>("login");
+				if (Login == NowCheckLogin)
+				{
+					Msg("!! ERROR: Попытка регистрации занятого никнейма!");
+					SendConnectResult(CL, 0, ecr_data_verification_failed, "Данный никнейм уже зарегистрирован!");
+					return false;
+				}
+			}
+		}
+	}
+
+	return true;
+}
 
 void xrServer::Check_BuildVersion_Success			( IClient* CL )
 {

@@ -2542,6 +2542,9 @@
     <Filter Include="Walkie-Talkie">
       <UniqueIdentifier>{a751275d-04dd-43b3-b2d7-37c5af0ba0b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Json">
+      <UniqueIdentifier>{390afa74-ab83-4b8d-9325-5b993971aa58}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mt_config.h">
@@ -7467,6 +7470,9 @@
     <ClInclude Include="UIWalkieTalkie.h">
       <Filter>Walkie-Talkie</Filter>
     </ClInclude>
+    <ClInclude Include="..\jsonxx\jsonxx.h">
+      <Filter>Json</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -11188,6 +11194,9 @@
     </ClCompile>
     <ClCompile Include="UIWalkieTalkie.cpp">
       <Filter>Walkie-Talkie</Filter>
+    </ClCompile>
+    <ClCompile Include="..\jsonxx\jsonxx.cc">
+      <Filter>Json</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

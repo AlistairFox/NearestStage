@@ -16,6 +16,8 @@
 #include "xrGameSpyServer.h"
 #include "GamePersistent.h"
 #include "Actor.h"
+#include <fstream>
+#include "..\jsonxx\jsonxx.h"
 
 extern ENGINE_API	bool g_dedicated_server;
 
@@ -368,24 +370,47 @@ void game_sv_GameState::OnPlayerConnect			(ClientID id_who)
 
 	if (PlayersStaticIdMap.find(ps_who->getName()) == PlayersStaticIdMap.end())
 	{
-		u16 LastId = 1;
-		string_path idpath;
-		FS.update_path(idpath, "$players_static_id$", "players_id_list.ltx");
-		CInifile* StaticIdFile = xr_new<CInifile>(idpath, true, true);
-		if (StaticIdFile->section_exist(ps_who->getName()))
+		string_path JsonFilePath;
+		FS.update_path(JsonFilePath, "$mp_saves_logins$", "logins.json");
+
+		Object JsonMain;
+		Array AccountsArray;
+		std::ifstream ifile(JsonFilePath);
+
+		if (ifile.is_open())
 		{
-			LastId = StaticIdFile->r_u16(ps_who->getName(), "static_id");
-			Msg("Last Id: %d", LastId);
-			PlayersStaticIdMap[ps_who->getName()] = LastId;
-			ps_who->SetStaticID(LastId);
+			std::string str((std::istreambuf_iterator<char>(ifile)), std::istreambuf_iterator<char>());
+			JsonMain.parse(str);
+			ifile.close();
+
+			if (JsonMain.has<Array>("ACCOUNTS:"))
+			{
+				AccountsArray = JsonMain.get<Array>("ACCOUNTS:");
+				for (int i = 0; i != AccountsArray.size(); i++)
+				{
+					Object NowCheckAcc = AccountsArray.get<Object>(i);
+					if (NowCheckAcc.has<String>("login"))
+					{
+						std::string name = NowCheckAcc.get<String>("login");
+						std::string name2 = ps_who->getName();
+
+						if (name == name2)
+						{
+							u16 sid = NowCheckAcc.get<Value>("static_id").number_value_;
+							ps_who->SetStaticID(sid);
+							PlayersStaticIdMap[name2] = sid;
+						}
+					}
+
+				}
+			}
 		}
 		else
 			ps_who->SetStaticID(0);
-
-		xr_delete(StaticIdFile);
 	}
 	else
 		ps_who->SetStaticID(PlayersStaticIdMap[ps_who->getName()]);
+
 	signal_Syncronize	();
 }
 
@@ -740,23 +765,32 @@ game_sv_GameState::game_sv_GameState()
 
 	for (int i=0; i<TEAM_COUNT; i++) rpoints_MinDist[i] = 1000.0f;
 
+	string_path JsonFilePath;
+	FS.update_path(JsonFilePath, "$mp_saves_logins$", "logins.json");
 
-	string_path idpath;
-	FS.update_path(idpath, "$players_static_id$", "players_id_list.ltx");
-	CInifile* StaticIdFile = xr_new<CInifile>(idpath, true, true);
-	u16 items_count = 1;
-	if (StaticIdFile->line_exist("last_players_id", "last_id"))
-		items_count = StaticIdFile->r_u16("last_players_id", "last_id");
-	
-	for (u16 i = 1; i != items_count; i++)
+	Object JsonMain;
+	Array AccountsArray;
+	std::ifstream ifile(JsonFilePath);
+
+	if (ifile.is_open())
 	{
-		string128 temp;
-		xr_sprintf(temp, "id_%d", i);
-		std::string tmp = StaticIdFile->r_string(temp, "name");
-		PlayersStaticIdMap[tmp] = i;
+		std::string str((std::istreambuf_iterator<char>(ifile)), std::istreambuf_iterator<char>());
+		JsonMain.parse(str);
+		ifile.close();
 
+		if (JsonMain.has<Array>("ACCOUNTS:"))
+		{
+			AccountsArray = JsonMain.get<Array>("ACCOUNTS:");
+
+			for (int i = 0; i != AccountsArray.size(); i++)
+			{
+				Object NowCheckAccount = AccountsArray.get<Object>(i);
+				std::string name = NowCheckAccount.get<String>("login");
+				u16 sid = NowCheckAccount.get<Value>("static_id").number_value_;
+				PlayersStaticIdMap[name] = sid;
+			}
+		}
 	}
-	xr_delete(StaticIdFile);
 }
 
 game_sv_GameState::~game_sv_GameState()
