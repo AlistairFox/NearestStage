@@ -743,301 +743,6 @@ public:
 };
 
 
-
-#ifdef DEBUG
-
-class CCC_DbgMakeScreenshot : public IConsole_Command
-{
-public:
-	CCC_DbgMakeScreenshot(LPCSTR N) : IConsole_Command(N)  { bEmptyArgsHandled = true; };
-	virtual void Execute(LPCSTR args) {
-		if (!g_pGameLevel || !Level().Server)
-			return;
-		ClientID server_id(Level().Server->GetServerClient()->ID);
-		Level().Server->MakeScreenshot(server_id, server_id);
-	}
-}; //CCC_DbgMakeScreenshot
-
-#endif //#ifdef DEBUG
-
-class CCC_BanPlayerByCDKEY : public IConsole_Command {
-public:
-	CCC_BanPlayerByCDKEY (LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = false; };
-	virtual void	Execute		(LPCSTR args_) 
-	{
-		if (!g_pGameLevel || !Level().Server || !Level().Server->game) return;
-		game_sv_mp*	tmp_sv_game = smart_cast<game_sv_mp*>(Level().Server->game);
-		if (!tmp_sv_game) return;
-
-		u32 len	= xr_strlen(args_);
-		if ((len == 0) || (len >= 256))		//two digits and raid:%u
-			return;
-
-		ClientID client_id = 0;
-		s32 ban_time = 0;
-		if (!strncmp(args_, LAST_PRINTED_PLAYER_STR, sizeof(LAST_PRINTED_PLAYER_STR) - 1))
-		{
-			client_id = last_printed_player;
-			if (sscanf_s(args_ + sizeof(LAST_PRINTED_PLAYER_STR), "%d", &ban_time) != 1)
-			{
-				Msg("! ERROR: bad command parameters.");
-				Msg("Ban player. Format: \"sv_banplayer <player session id | \'%s\'> <ban_time_in_sec>\". To receive list of players ids see sv_listplayers",
-					LAST_PRINTED_PLAYER_STR
-				);
-				return;
-			}
-		} else
-		{
-			u32 tmp_client_id;
-			if (sscanf_s(args_, "%u %d", &tmp_client_id, &ban_time) != 2)
-			{
-				Msg("! ERROR: bad command parameters.");
-				Msg("Ban player. Format: \"sv_banplayer <player session id | \'%s\'> <ban_time_in_sec>\". To receive list of players ids see sv_listplayers",
-					LAST_PRINTED_PLAYER_STR
-				);
-				return;
-			}
-			client_id.set(tmp_client_id);
-		}
-			
-		
-		IClient* to_disconnect = tmp_sv_game->BanPlayer(
-			client_id,
-			ban_time,
-			exclude_command_initiator(args_)
-		);
-		if (to_disconnect)
-		{
-			Level().Server->DisconnectClient(to_disconnect, STRING_KICKED_BY_SERVER);
-		} else
-		{
-			Msg("! ERROR: bad client id [%u]", client_id.value());
-		}
-	}
-	virtual void	Info		(TInfo& I)
-	{
-		xr_strcpy(I, 
-			make_string(
-				"Ban player. Format: \"sv_banplayer <player session id | \'%s\'> <ban_time_in_sec>\". To receive list of players ids see sv_listplayers",
-				LAST_PRINTED_PLAYER_STR
-			).c_str()
-		);
-	}
-};
-
-class CCC_BanPlayerByCDKEYDirectly : public IConsole_Command {
-public:
-	CCC_BanPlayerByCDKEYDirectly (LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = false; };
-	virtual void	Execute		(LPCSTR args_) 
-	{
-		if (!g_pGameLevel || !Level().Server || !Level().Server->game) return;
-		game_sv_mp*	tmp_sv_game = smart_cast<game_sv_mp*>(Level().Server->game);
-		if (!tmp_sv_game) return;
-
-		u32 len	= xr_strlen(args_);
-		if ((len == 0) || (len >= 256))
-			return;
-
-		char hex_digest[64];
-		s32 ban_time = 0;
-		if (sscanf_s(args_, "%s %i", &hex_digest, sizeof(hex_digest), &ban_time) != 2)
-		{
-			Msg("! ERROR: bad command parameters.");
-			Msg("Ban player. Format: \"sv_banplayer_by_digest <hex digest> <ban_time_in_sec>\". To get player hex digest you can enter: sv_listplayers_banned");
-			return;
-		}
-			
-		tmp_sv_game->BanPlayerDirectly(hex_digest,
-			ban_time,
-			exclude_command_initiator(args_)
-		);
-	}
-	virtual void	Info		(TInfo& I)
-	{
-		xr_strcpy(I, 
-			"Ban player by hex digest (CAREFULLY: low level command). Format: \"sv_banplayer_by_digest <hex digest> <ban_time_in_sec>\". To get player hex digest you can enter: sv_listplayers_banned"
-		);
-	}
-};
-
-
-class CCC_UnBanPlayerByIndex : public IConsole_Command {
-public:
-	CCC_UnBanPlayerByIndex(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = false; };
-	virtual void	Execute		(LPCSTR args_) 
-	{
-		if (!g_pGameLevel || !Level().Server || !Level().Server->game) return;
-		game_sv_mp*	tmp_sv_game = smart_cast<game_sv_mp*>(Level().Server->game);
-		if (!tmp_sv_game) return;
-		u32 len	= xr_strlen(args_);
-		if ((len == 0) || (len >= 64))		//one digit and raid:%u
-			return;
-		
-		if (!strncmp(args_, LAST_PRINTED_PLAYER_BANNED_STR, sizeof(LAST_PRINTED_PLAYER_BANNED_STR) - 1))
-		{
-			tmp_sv_game->UnBanPlayer(last_printed_player_banned);
-		} else
-		{
-			size_t player_index = 0;
-			if (sscanf_s(args_, "%u", &player_index) != 1)
-			{
-				Msg("! ERROR: bad command parameters.");
-				Msg(" Unban player. Format: \"sv_unbanplayer <banned player index | \'%s\'>. To receive list of banned players se sv_listplayers_banned",
-					LAST_PRINTED_PLAYER_BANNED_STR
-				);
-				return;
-			}
-			tmp_sv_game->UnBanPlayer(player_index);
-		}
-	}
-	virtual void	Info		(TInfo& I)
-	{
-		xr_strcpy(I,
-			make_string(
-				"Unban player. Format: \"sv_unbanplayer <banned player index | \'%s\'>. To receive list of banned players see sv_listplayers_banned",
-				LAST_PRINTED_PLAYER_BANNED_STR
-			).c_str()
-		);
-	}
-};
-
-	
-class CCC_BanPlayerByName : public IConsole_Command {
-public:
-					CCC_BanPlayerByName	(LPCSTR N) : IConsole_Command(N)  { bEmptyArgsHandled = false; };
-	virtual void	Execute				(LPCSTR args_) 
-	{
-		if (!g_pGameLevel || !Level().Server || !Level().Server->game) return;
-		string4096				buff;
-		xr_strcpy					(buff, args_);
-		u32 len					= xr_strlen(buff);
-		
-		if (0==len) 
-			return;
-
-		string1024				digits;
-		LPSTR					p = buff+len-1;
-		while(isdigit(*p))
-		{
-			if (p == buff) break;
-			--p;
-		}
-		R_ASSERT				(p>=buff);
-		xr_strcpy					(digits,p);
-		*p						= 0;
-		if (!xr_strlen(buff))
-		{
-			Msg("incorrect parameter passed. bad name.");
-			return;
-		}
-		
-		u32 ban_time			= atol(digits);
-		if(ban_time==0)
-		{
-			Msg("incorrect parameters passed.  name and time required");
-			return;
-		}
-		string4096 PlayerName		= "";
-		u32 const max_name_length	=	GP_UNIQUENICK_LEN - 1;
-		if (xr_strlen(buff)>max_name_length)
-		{
-
-			strncpy_s				(PlayerName, buff, max_name_length);
-			PlayerName[max_name_length]		= 0;
-		}else
-			xr_strcpy				(PlayerName, buff);
-
-		xr_strlwr			(PlayerName);
-
-		IClient*	tmp_client = Level().Server->FindClient(SearcherClientByName(PlayerName));
-		if (tmp_client && (tmp_client != Level().Server->GetServerClient()))
-		{
-			Msg("Disconnecting and Banning: %s", PlayerName);
-			Level().Server->BanClient(tmp_client, ban_time);
-			Level().Server->DisconnectClient(tmp_client, STRING_KICKED_BY_SERVER );
-		} else
-		{
-			Msg("! Can't disconnect player [%s]", PlayerName);
-		}
-	};
-
-	virtual void	Info	(TInfo& I){xr_strcpy(I,"Ban Player by Name"); }
-};
-
-
-class CCC_BanPlayerByIP : public IConsole_Command {
-public:
-					CCC_BanPlayerByIP	(LPCSTR N) : IConsole_Command(N)  { bEmptyArgsHandled = false; };
-	virtual void	Execute				(LPCSTR args_) 
-	{
-		if (!g_pGameLevel || !Level().Server) return;
-//-----------
-		string4096					buff;
-		exclude_raid_from_args		(args_, buff, sizeof(buff)); //xr_strcpy(buff, args_);
-		
-		u32 len					= xr_strlen(buff);
-		if (0==len) 
-			return;
-
-		string1024				digits;
-		LPSTR					p = buff+len-1;
-		while(isdigit(*p))
-		{
-			if (p == buff) break;
-			--p;
-		}
-		R_ASSERT				(p>=buff);
-		xr_strcpy					(digits,p);
-		*p						= 0;
-		if (!xr_strlen(buff))
-		{
-			Msg("incorrect parameter passed. bad IP address.");
-			return;
-		}
-		u32 ban_time			= atol(digits);
-		if(ban_time==0)
-		{
-			Msg("incorrect parameters passed.  IP and time required");
-			return;
-		}
-
-		string1024				s_ip_addr;
-		xr_strcpy					(s_ip_addr, buff);
-//-----------
-
-		ip_address							Address;
-		Address.set							(s_ip_addr);
-		Msg									("Disconnecting and Banning: %s",Address.to_string().c_str() ); 
-		Level().Server->BanAddress			(Address, ban_time);
-		Level().Server->DisconnectAddress	(Address, STRING_KICKED_BY_SERVER);
-	};
-
-	virtual void	Info	(TInfo& I){xr_strcpy(I,"Ban Player by IP. Format: \"sb_banplayer_ip <ip address>\""); }
-};
-
-class CCC_UnBanPlayerByIP : public IConsole_Command {
-public:
-					CCC_UnBanPlayerByIP	(LPCSTR N) : IConsole_Command(N)  { bEmptyArgsHandled = false; };
-	virtual void	Execute				(LPCSTR args) 
-	{
-		if (!g_pGameLevel || !Level().Server) return;
-
-		if (!xr_strlen(args)) return;
-
-		string4096					buff;
-		exclude_raid_from_args		(args, buff, sizeof(buff)); //xr_strcpy(buff, args_);
-		if (!xr_strlen(buff)) 
-			return;
-
-		ip_address						Address;
-		Address.set						(buff);
-		Level().Server->UnBanAddress	(Address);
-	};
-
-	virtual void	Info	(TInfo& I){xr_strcpy(I,"UnBan Player by IP. Format: \"sv_unbanplayer_ip <ip address>\"");}
-};
-
-
 class CCC_ListPlayers : public IConsole_Command {
 public:
 					CCC_ListPlayers	(LPCSTR N) : IConsole_Command(N)  { bEmptyArgsHandled = true; };
@@ -1166,29 +871,6 @@ public:
 	}
 
 	virtual void	Info	(TInfo& I)	{xr_strcpy(I,"player name"); }
-};
-
-
-class CCC_ListPlayers_Banned : public IConsole_Command {
-public:
-					CCC_ListPlayers_Banned	(LPCSTR N) : IConsole_Command(N)  { bEmptyArgsHandled = true; };
-	virtual void	Execute					(LPCSTR args) 
-	{
-		if (!g_pGameLevel || !Level().Server || !Level().Server->game) return;
-		game_sv_mp*	tmp_sv_game = smart_cast<game_sv_mp*>(Level().Server->game);
-		if (!tmp_sv_game) return;
-		string512 tmp_dest;
-		string512 filter_dest = "";
-		exclude_raid_from_args(args, tmp_dest, sizeof(tmp_dest));
-		if (xr_strlen(tmp_dest))
-		{
-			sscanf_s(tmp_dest, "%s", filter_dest, sizeof(filter_dest));
-		}
-		tmp_sv_game->PrintBanList(filter_dest);
-		Level().Server->Print_Banned_Addreses();
-	};
-
-	virtual void	Info	(TInfo& I){xr_strcpy(I,"List of Banned Players. Format: \"sv_listplayers_banned [ filter string ]\""); }
 };
 
 class CCC_ChangeLevelGameType : public IConsole_Command {
@@ -1580,30 +1262,6 @@ public:
 		}
 	}
 };
-
-/*
-class CCC_SetWeather : public IConsole_Command {
-public:
-					CCC_SetWeather	(LPCSTR N) : IConsole_Command(N)  { bEmptyArgsHandled = false; };
-	virtual void	Execute			(LPCSTR weather_name) 
-	{
-		if (!g_pGamePersistent) return;
-		if (!OnServer())		return;
-
-		if ( weather_name && weather_name[0] )
-		{
-			g_pGamePersistent->Environment().SetWeather(weather_name);		
-		}
-	};
-
-	virtual void fill_tips(vecTips& tips, u32 mode)
-	{
-		get_files_list(tips, "$game_weathers$", ".ltx");
-	}
-
-	virtual void	Info	(TInfo& I){xr_strcpy(I,"Set new weather"); }
-};
-*/
 
 class CCC_SetWeather : public IConsole_Command {
 public:
@@ -2384,36 +2042,62 @@ public:
 				Msg("uncorrect args");
 				return;
 			}
-			name[127] = '\0';
-			if (level > 2)
+			std::string SName = name;
+			if (level > 2 || level < 0)
 			{
-				Msg("uncorrect level");
-				return;
-			}
-			//reg file
-			string_path filepath;
-			FS.update_path(filepath, "$mp_saves_logins$", "logins.ltx");
-			CInifile* file = xr_new<CInifile>(filepath, false, true);
-
-			if (file->line_exist(name, "Admin"))
-			{
-				Msg("!!%s already have admin rights", name);
+				Msg("uncorrect level: 0 - don't have admin, 1 - base admin, 2 - super admin rights");
 				return;
 			}
 
-			if (file && file->section_exist(name))
+			string_path JsonFilePath;
+			FS.update_path(JsonFilePath, "$mp_saves_logins$", "logins.json");
+
+			Object JsonMain;
+			Array AccountsArray;
+			Array ReloadAccountsArray;
+			std::ifstream ifile(JsonFilePath);
+
+			std::string str((std::istreambuf_iterator<char>(ifile)), std::istreambuf_iterator<char>());
+			JsonMain.parse(str);
+			ifile.close();
+
+			if (JsonMain.has<Array>("ACCOUNTS:"))
 			{
-				file->w_u8(name, "Admin", level);
-				Msg("--Complete!!! %s have Admin rights", name);
+				bool NeedSave = false;
+				Object NowCheckAccount;
+				AccountsArray = JsonMain.get<Array>("ACCOUNTS:");
+				for (int i = 0; i != AccountsArray.size(); i++)
+				{
+					NowCheckAccount = AccountsArray.get<Object>(i);
+					if (NowCheckAccount.has<String>("login"))
+					{
+						std::string AccLogin = NowCheckAccount.get<String>("login");
+						if (AccLogin == SName)
+						{
+							NeedSave = true;
+							NowCheckAccount << "Admin" << level;
+						}
+							ReloadAccountsArray << NowCheckAccount;
+					}
+				}
+
+				if (NeedSave)
+				{
+					JsonMain << "ACCOUNTS:" << ReloadAccountsArray;
+
+					IWriter* writer = FS.w_open(JsonFilePath);
+					if (writer)
+					{
+						writer->w_string(JsonMain.json().c_str());
+						FS.w_close(writer);
+					}
+				}
 			}
 			else
 			{
-				Msg("!!%s not found", name);
+				Msg("!! ERROR: Can't Find Exist's Account's");
 				return;
 			}
-			file->save_as(filepath);
-			xr_delete(file);
-			//
 
 			//take CLIENT ID from name
 			ClientID ID;
@@ -2441,7 +2125,24 @@ public:
 
 				if (CL && CL->ps)
 				{
-					if (level == 1)
+					if (level == 0)
+					{
+						CL->m_admin_rights.m_has_admin_rights = FALSE;
+						CL->m_admin_rights.m_has_super_admin_rights = FALSE;
+						if (CL->ps)
+						{
+							CL->ps->resetFlag(GAME_PLAYER_SUPER_ADMIN);
+							CL->ps->resetFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS);
+							Level().Server->game->signal_Syncronize();
+						}
+
+						NET_Packet			P_answ;
+						P_answ.w_begin(M_REMOTE_CONTROL_AUTH);
+						P_answ.w_stringZ("remove admin");
+						Level().Server->SendTo(CL->ID, P_answ, net_flags(TRUE, TRUE));
+						Msg("-- %s - лишился сессионных админ прав", CL->ps->getName());
+					}
+					else if (level == 1)
 					{
 						CL->m_admin_rights.m_has_admin_rights = TRUE;
 						CL->m_admin_rights.m_has_super_admin_rights = FALSE;
@@ -2477,105 +2178,6 @@ public:
 						Level().Server->SendTo(CL->ID, P_answ, net_flags(TRUE, TRUE));
 						Msg("-- %s является супер администратором", name);
 					}
-
-				}
-				else
-				{
-					Msg("! Can't find online player %s", name);
-				}
-			}
-			else
-			{
-				Msg("! Can't find online player %s", name);
-			}
-		}
-	}
-};
-
-
-
-class CCC_OnlineAdminRemove : public IConsole_Command {
-public:
-	CCC_OnlineAdminRemove(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = false; };
-
-	virtual void Execute(LPCSTR args)
-	{
-		if (OnServer() && g_dedicated_server)
-		{
-			string128 name;
-
-			sscanf_s(args, "%s", &name);
-			name[127] = '\0';
-
-			//reg file
-			string_path filepath;
-			FS.update_path(filepath, "$mp_saves_logins$", "logins.ltx");
-			CInifile* file = xr_new<CInifile>(filepath, false, true);
-
-			if (file && file->section_exist(name))
-			{
-				if (file->line_exist(name, "Admin"))
-				{
-					file->remove_line(name, "Admin");
-
-					Msg("--Complete!!! %s was demoted", name);
-				}
-				else
-				{
-					Msg("!!%s not have admin rights", name);
-					return;
-				}
-			}
-			else
-			{
-				Msg("!!%s not found", name);
-				return;
-			}
-
-			file->save_as(filepath);
-			xr_delete(file);
-			//
-
-			//take CLIENT ID from name
-			ClientID ID;
-			for (auto& player : Game().players)
-			{
-				if (player.second->GameID == Game().local_player->GameID)
-				{
-					continue;
-				}
-
-				std::string player_name = player.second->getName();
-
-				if (player_name == name)
-				{
-					ID = player.first;
-					break;
-				}
-			}
-			// **//
-
-			// check online player or not
-			xrClientData* CL = static_cast<xrClientData*>(Level().Server->GetClientByID(ID));
-			if (CL && CL->ps && (CL != Level().Server->GetServerClient()))
-			{
-
-				if (CL && CL->ps)
-				{
-					CL->m_admin_rights.m_has_admin_rights = FALSE;
-					CL->m_admin_rights.m_has_super_admin_rights = FALSE;
-					if (CL->ps)
-					{
-						CL->ps->resetFlag(GAME_PLAYER_SUPER_ADMIN);
-						CL->ps->resetFlag(GAME_PLAYER_HAS_ADMIN_RIGHTS);
-						Level().Server->game->signal_Syncronize();
-					}
-
-					NET_Packet			P_answ;
-					P_answ.w_begin(M_REMOTE_CONTROL_AUTH);
-					P_answ.w_stringZ("remove admin");
-					Level().Server->SendTo(CL->ID, P_answ, net_flags(TRUE, TRUE));
-					Msg("-- %s - лишился сессионных админ прав", CL->ps->getName());
 
 				}
 				else
@@ -3446,76 +3048,6 @@ public:
 	}
 };
 
-class CCC_AdmBanAccount : public IConsole_Command
-{
-public:
-	CCC_AdmBanAccount(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = false; };
-
-	virtual void Execute(LPCSTR args)
-	{
-		if (OnServer())
-		{
-			string_path filepath;
-			FS.update_path(filepath, "$mp_saves_logins$", "logins.ltx");
-			CInifile* file = xr_new<CInifile>(filepath, false, true);
-
-			string256 tmp, login;
-			exclude_raid_from_args(args, tmp, sizeof(tmp));
-
-			sscanf(tmp, "%s", &login);
-
-			if (file && file->section_exist(login))
-				file->w_bool(login, "banned", true);
-
-			file->save_as(filepath);
-		}
-		else
-		{
-			NET_Packet P;
-			P.w_begin(M_REMOTE_CONTROL_CMD);
-			string128 str;
-			xr_sprintf(str, "adm_ban_account %s", Core.UserName);
-			P.w_stringZ(str);
-			Level().Send(P, net_flags(TRUE, TRUE));
-		}
-	}
-};
-
-class CCC_AdmUnBanAccount : public IConsole_Command
-{
-public:
-	CCC_AdmUnBanAccount(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = false; };
-
-	virtual void Execute(LPCSTR args)
-	{
-		if (OnServer())
-		{
-			string_path filepath;
-			FS.update_path(filepath, "$mp_saves_logins$", "logins.ltx");
-			CInifile* file = xr_new<CInifile>(filepath, false, true);
-
-			string256 tmp, login;
-			exclude_raid_from_args(args, tmp, sizeof(tmp));
-
-			sscanf(tmp, "%s", &login);
-
-			if (file && file->section_exist(login))
-				file->remove_line(login, "banned");
-
-			file->save_as(filepath);
-		}
-		else
-		{
-			NET_Packet P;
-			P.w_begin(M_REMOTE_CONTROL_CMD);
-			string128 str;
-			xr_sprintf(str, "adm_unban_account %s", Core.UserName);
-			P.w_stringZ(str);
-			Level().Send(P, net_flags(TRUE, TRUE));
-		}
-	}
-};
-
 class CCC_WeatherSync : public IConsole_Command {
 public:
 	CCC_WeatherSync(LPCSTR N) : IConsole_Command(N) {
@@ -3560,13 +3092,9 @@ void register_mp_console_commands()
 	CMD1(CCC_AdmGodMode,			"adm_god_mode"			);
 	CMD1(CCC_AdmUnlimatedAmmo,      "adm_unlimated_ammo");
 
-	CMD1(CCC_AdmBanAccount,			"adm_ban_account");
-	CMD1(CCC_AdmUnBanAccount,		"adm_unban_account");
-
 	if(g_dedicated_server)
 	{
-		CMD1(CCC_OnlineAdminGive,		"give_admin_rights");
-		CMD1(CCC_OnlineAdminRemove,		"remove_admin_rights");
+		CMD1(CCC_OnlineAdminGive,		"af_give_admin_rights");
 		CMD1(CCC_AdmRegisterAccount,	"af_sv_register_account");
 		CMD1(CCC_OffCompToPlayer,		"off_player_pc");
 		CMD4(CCC_Integer,				"alife_switch", &alife_on, 0, 1);
@@ -3637,13 +3165,6 @@ void register_mp_console_commands()
 	CMD1(CCC_KickPlayerByName,	"sv_kick"					);	//saved for backward compatibility
 	CMD1(CCC_KickPlayerByID,	"sv_kick_id"				);
 
-	//CMD1(CCC_BanPlayerByName,	"sv_banplayer"				);
-	CMD1(CCC_BanPlayerByCDKEY,			"sv_banplayer"				);
-	CMD1(CCC_BanPlayerByCDKEYDirectly,	"sv_banplayer_by_digest"	);
-	CMD1(CCC_BanPlayerByIP,				"sv_banplayer_ip"			);
-
-
-
 	CMD1(CCC_SetDemoPlaySpeed,			"mpdemoplay_speed_set"		);
 	CMD1(CCC_DemoPlayPauseOn,			"mpdemoplay_pause_on"		);
 	CMD1(CCC_DemoPlayCancelPauseOn,		"mpdemoplay_cancel_pause_on");
@@ -3652,20 +3173,8 @@ void register_mp_console_commands()
 	CMD1(CCC_DemoPlayRestart,			"mpdemoplay_restart"		);
 	CMD1(CCC_MulDemoPlaySpeed,			"mpdemoplay_mulspeed"		);
 	CMD1(CCC_DivDemoPlaySpeed,			"mpdemoplay_divspeed"		);
-	
-	
-	
-#ifdef DEBUG
-	CMD1(CCC_DbgMakeScreenshot,			"dbg_make_screenshot"		);
-#endif
 
-	
-
-	CMD1(CCC_UnBanPlayerByIP,	"sv_unbanplayer_ip"			);
-	CMD1(CCC_UnBanPlayerByIndex,"sv_unbanplayer"			);
-
-	CMD1(CCC_ListPlayers,			"sv_listplayers"			);		
-	CMD1(CCC_ListPlayers_Banned,	"sv_listplayers_banned"		);		
+	CMD1(CCC_ListPlayers,			"sv_listplayers"			);			
 	
 	CMD1(CCC_ChangeGameType,		"sv_changegametype"			);
 	CMD1(CCC_ChangeLevel,			"sv_changelevel"			);
