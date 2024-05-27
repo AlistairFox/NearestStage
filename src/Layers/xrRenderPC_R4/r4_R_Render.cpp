@@ -332,6 +332,12 @@ void CRender::Render		()
 	r_pmask										(true,false);	// disable priority "1"
 	Device.Statistic->RenderCALC.End			();
 
+	if (ps_r2_ls_flags.test(R4FLAG_TERRAIN_PREPASS))
+	{
+		Target->u_setrt(Device.dwWidth, Device.dwHeight, NULL, NULL, NULL, !RImplementation.o.dx10_msaa ? HW.pBaseZB : Target->rt_MSAADepth->pZRT);
+		r_dsgraph_render_landscape(0, false);
+	}
+
 	BOOL	split_the_scene_to_minimize_wait		= FALSE;
 	if (ps_r2_ls_flags.test(R2FLAG_EXP_SPLIT_SCENE))
 		split_the_scene_to_minimize_wait=TRUE;
@@ -349,6 +355,7 @@ void CRender::Render		()
 		r_dsgraph_render_graph					(0);
 		r_dsgraph_render_lods					(true,true);
 		if(Details)	Details->Render				();
+		if (ps_r2_ls_flags.test(R4FLAG_TERRAIN_PREPASS)) r_dsgraph_render_landscape(1, true);
 		Target->phase_scene_end					();
 	} 
 	else 
@@ -422,6 +429,7 @@ void CRender::Render		()
 		Device.Statistic->Render_dsgHUD_UI.End();
 		if(Details)	
 			Details->Render				();
+		if (ps_r2_ls_flags.test(R4FLAG_TERRAIN_PREPASS)) r_dsgraph_render_landscape(1, true);
 		Target->phase_scene_end					();
 	}
 

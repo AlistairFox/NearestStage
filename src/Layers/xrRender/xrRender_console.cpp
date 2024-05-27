@@ -191,7 +191,6 @@ Flags32		ps_r2_ls_flags				= { R2FLAG_SUN
 	| R3FLAG_VOLUMETRIC_SMOKE
 	//| R3FLAG_MSAA 
 	//| R3FLAG_MSAA_OPT
-	| R3FLAG_GBUFFER_OPT
 	|R2FLAG_DETAIL_BUMP
 	|R2FLAG_DOF
 	|R2FLAG_SOFT_PARTICLES
@@ -981,7 +980,7 @@ void		xrRender_initconsole	()
 
 	CMD3(CCC_Mask,		"r2_aa",				&ps_r2_ls_flags,			R2FLAG_AA);
 	CMD4(CCC_Float,		"r2_aa_kernel",			&ps_r2_aa_kernel,			0.3f,	0.7f	);
-	CMD3(CCC_Mask, "r2_mblur_enable", &ps_r2_ls_flags, R2FLAG_MBLUR);
+	//CMD3(CCC_Mask, "r2_mblur_enable", &ps_r2_ls_flags, R2FLAG_MBLUR);
 	CMD4(CCC_Float, "r2_mblur", &ps_r2_mblur, 0.0f, 1.5f);
 
 	CMD3(CCC_Mask,		"r2_gi",				&ps_r2_ls_flags,			R2FLAG_GI);
@@ -1068,6 +1067,7 @@ void		xrRender_initconsole	()
 	//Raindrops
 	CMD4(CCC_Float, "r2_rain_drops_power_debug", &droplets_power_debug, 0.f, 3.f);
 
+	CMD3(CCC_Mask, "r4_terrain_z_prepass", &ps_r2_ls_flags, R4FLAG_TERRAIN_PREPASS);
 
 	//Hbao+
 	CMD4(CCC_Float, "r4_hbao_plus_radius", &hbao_plus_radius, 0, 10);
@@ -1079,7 +1079,6 @@ void		xrRender_initconsole	()
 	CMD3(CCC_Token,		"r3_msaa",						&ps_r3_msaa,				qmsaa_token);
 	//CMD3(CCC_Mask,		"r3_msaa_hybrid",				&ps_r2_ls_flags,			R3FLAG_MSAA_HYBRID);
 	//CMD3(CCC_Mask,		"r3_msaa_opt",					&ps_r2_ls_flags,			R3FLAG_MSAA_OPT);
-	CMD3(CCC_Mask,		"r3_gbuffer_opt",				&ps_r2_ls_flags,			R3FLAG_GBUFFER_OPT);
 	CMD3(CCC_Mask,		"r3_use_dx10_1",				&ps_r2_ls_flags,			(u32)R3FLAG_USE_DX10_1);
 	//CMD3(CCC_Mask,		"r3_msaa_alphatest",			&ps_r2_ls_flags,			(u32)R3FLAG_MSAA_ALPHATEST);
 	CMD3(CCC_Token,		"r3_msaa_alphatest",			&ps_r3_msaa_atest,			qmsaa__atest_token);

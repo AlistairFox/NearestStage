@@ -47,6 +47,7 @@ public:
 	R_dsgraph::mapSorted_T										mapEmissive;
 	R_dsgraph::mapSorted_T										mapHUDEmissive;
 	R_dsgraph::mapHUD_T											mapHUDSorted;
+	R_dsgraph::mapLandscape_T									mapLandscape;
 	R_dsgraph::mapWater_T										mapWater;
 
 	// Runtime structures 
@@ -146,6 +147,7 @@ public:
 		mapEmissive.destroy		();
 		mapHUDEmissive.destroy();
 		mapHUDSorted.destroy();
+		mapLandscape.destroy();
 		mapWater.destroy();
 	}
 
@@ -165,6 +167,9 @@ public:
 	void		r_dsgraph_render_subspace						(IRender_Sector* _sector, CFrustum* _frustum, Fmatrix& mCombined, Fvector& _cop, BOOL _dynamic, BOOL _precise_portals=FALSE	);
 	void		r_dsgraph_render_subspace						(IRender_Sector* _sector, Fmatrix& mCombined, Fvector& _cop, BOOL _dynamic, BOOL _precise_portals=FALSE	);
 	void		r_dsgraph_render_R1_box							(IRender_Sector* _sector, Fbox& _bb, int _element);
+
+	void r_dsgraph_render_landscape								(u32 pass, bool _clear);
+
 	void		r_dsgraph_render_water();
 
 public:

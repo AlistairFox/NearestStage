@@ -769,3 +769,42 @@ void	R_dsgraph_structure::r_dsgraph_render_R1_box	(IRender_Sector* _S, Fbox& BB,
 	}
 }
 
+void __fastcall pLandscape_0(mapLandscape_Node* N)
+{
+	VERIFY(N);
+	dxRender_Visual* V = N->val.pVisual;
+	VERIFY(V && V->shader._get());
+	RCache.set_Element(N->val.se, 0);
+	float LOD = calcLOD(N->val.ssa, V->vis.sphere.R);
+#ifdef USE_DX11
+	RCache.LOD.set_LOD(LOD);
+#endif
+	V->Render(LOD);
+}
+
+void __fastcall pLandscape_1(mapLandscape_Node* N)
+{
+	VERIFY(N);
+	dxRender_Visual* V = N->val.pVisual;
+	VERIFY(V && V->shader._get());
+	RCache.set_Element(N->val.se, 1);
+	RImplementation.apply_lmaterial();
+	float LOD = calcLOD(N->val.ssa, V->vis.sphere.R);
+#ifdef USE_DX11
+	RCache.LOD.set_LOD(LOD);
+#endif
+	V->Render(LOD);
+}
+
+void R_dsgraph_structure::r_dsgraph_render_landscape(u32 pass, bool _clear)
+{
+	RCache.set_xform_world(Fidentity);
+
+	if (pass == 0)
+		mapLandscape.traverseLR(pLandscape_0);
+	else
+		mapLandscape.traverseLR(pLandscape_1);
+
+	if (_clear)
+		mapLandscape.clear();
+}

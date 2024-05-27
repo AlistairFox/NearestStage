@@ -69,10 +69,23 @@ void	CBlender_BmmD::Compile	(CBlender_Compile& C)
 	// ***only pixel shaders differ***
 	string256				mask;
 	strconcat				(sizeof(mask),mask,C.L_textures[0].c_str(),"_mask");
+
+	bool z_prepass = ps_r2_ls_flags.test(R4FLAG_TERRAIN_PREPASS);
 	switch(C.iElement) 
 	{
 	case SE_R2_NORMAL_HQ: 		// deffer
+
+		if (z_prepass)
+		{
+			C.SH->flags.bLandscape = TRUE;
+			C.r_Pass("shadow_direct_base", "shadow_direct_base", false, true, true);
+			C.r_ColorWriteEnable(false, false, false, false);
+			C.r_End();
+		}
 		uber_deffer		(C, true,	"impl","impl",false,oT2_Name[0]?oT2_Name:0,true);
+
+		if (z_prepass) C.RS.SetRS(D3DRS_ZFUNC, D3DCMP_EQUAL);
+
 		C.r_dx10Texture		("s_mask",	mask);
 		C.r_dx10Texture		("s_lmap",	C.L_textures[1]);
 
@@ -100,7 +113,17 @@ void	CBlender_BmmD::Compile	(CBlender_Compile& C)
 		C.r_End			();
 		break;
 	case SE_R2_NORMAL_LQ: 		// deffer
+
+		if (z_prepass)
+		{
+			C.SH->flags.bLandscape = TRUE;
+			C.r_Pass("shadow_direct_base", "shadow_direct_base", false, true, true);
+			C.r_ColorWriteEnable(false, false, false, false);
+			C.r_End();
+		}
 		uber_deffer		(C, false,	"base","impl",false,oT2_Name[0]?oT2_Name:0,true);
+
+		if (z_prepass) C.RS.SetRS(D3DRS_ZFUNC, D3DCMP_EQUAL);
 
 		//C.r_Sampler		("s_lmap",	C.L_textures[1]);
 
