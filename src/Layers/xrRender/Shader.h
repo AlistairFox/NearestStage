@@ -106,6 +106,7 @@ public:
 		u32	bDistort	:	1;
 		u32	bWmark		:	1;
 		u32 bLandscape	:	1;
+		u32 isLandscape :	1;
 		u32 isWater		:	1;
 	};
 public:

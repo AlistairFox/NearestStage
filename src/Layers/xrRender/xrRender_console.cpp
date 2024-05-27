@@ -289,6 +289,9 @@ Fvector4 ps_ssfx_ssr_2 = { 1.0f, 1.3f, 2.0f, 0.1f }; // Quality, Fade, Int, Wpn 
 Fvector4 ps_ssfx_volumetric = { 0, 1.0f, 3.0f, 8.0f };
 Fvector3 ps_ssfx_shadow_bias = { 0.4f, 0.03f, 0.0f };
 
+Fvector4 ps_ssfx_terrain_quality = { 6, 0, 0, 0 };
+Fvector4 ps_ssfx_terrain_offset = { 0, 0, 0, 0 };
+
 Fvector3	ps_r2_dof					= Fvector3().set(-1.25f, 1.4f, 10000.f);
 float		ps_r2_dof_sky				= 30;				//	distance to sky
 float		ps_r2_dof_kernel_size		= 5.0f;						//	7.0f
@@ -1120,6 +1123,8 @@ void		xrRender_initconsole	()
 	CMD4(CCC_Vector4, "ssfx_ssr_2", &ps_ssfx_ssr_2, Fvector4().set(0, 0, 0, 0), Fvector4().set(2, 2, 2, 2));
 	CMD4(CCC_Vector4, "ssfx_volumetric", &ps_ssfx_volumetric, Fvector4().set(0, 0, 1.0, 1.0), Fvector4().set(1.0, 5.0, 5.0, 16.0));
 	CMD4(CCC_Vector3, "ssfx_shadow_bias", &ps_ssfx_shadow_bias, Fvector3().set(0, 0, 0), Fvector3().set(1.0, 1.0, 1.0));
+	CMD4(CCC_Vector4, "ssfx_terrain_quality", &ps_ssfx_terrain_quality, Fvector4().set(0, 0, 0, 0), Fvector4().set(12, 0, 0, 0));
+	CMD4(CCC_Vector4, "ssfx_terrain_offset", &ps_ssfx_terrain_offset, Fvector4().set(-1, -1, -1, -1), Fvector4().set(1, 1, 1, 1));
 
 	// Geometry optimization
 	CMD4(CCC_Integer, "r__optimize_static_geom", &opt_static, 0, 2);

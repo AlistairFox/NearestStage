@@ -68,6 +68,7 @@ ShaderElement::ShaderElement()
 	flags.bDistort		= FALSE;
 	flags.bWmark		= FALSE;
 	flags.bLandscape	= FALSE;
+	flags.isLandscape = FALSE;
 	flags.isWater		= FALSE;
 }
 

@@ -148,6 +148,7 @@ extern ECORE_API float ps_r2_img_exposure;
 extern ECORE_API float ps_r2_img_gamma;
 extern ECORE_API float ps_r2_img_saturation;
 extern ECORE_API Fvector ps_r2_img_cg;
+extern ECORE_API Fvector4 ps_ssfx_terrain_quality;
 
 //	x - min (0), y - focus (1.4), z - max (100)
 extern ECORE_API Fvector3		ps_r2_dof;

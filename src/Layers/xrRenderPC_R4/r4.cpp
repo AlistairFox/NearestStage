@@ -60,7 +60,19 @@ ShaderElement*			CRender::rimp_select_sh_static	(dxRender_Visual	*pVisual, float
 	int		id	= SE_R2_SHADOW;
 	if	(CRender::PHASE_NORMAL == RImplementation.phase)
 	{
-		id = ((_sqrt(cdist_sq) - pVisual->vis.sphere.R) < r_dtex_range) ? SE_R2_NORMAL_HQ : SE_R2_NORMAL_LQ;
+		if (pVisual->shader->E[0]->flags.isLandscape)
+		{
+			float sec_dist = _sqrt(cdist_sq) - pVisual->vis.sphere.R;
+			id = (sec_dist < ps_ssfx_terrain_quality.x * 10) ? SE_R2_NORMAL_HQ : SE_R2_NORMAL_LQ;
+
+			// Very low shader variation
+			if (sec_dist > 240)
+				id = 3;
+		}
+		else
+		{
+			id = ((_sqrt(cdist_sq) - pVisual->vis.sphere.R) < r_dtex_range) ? SE_R2_NORMAL_HQ : SE_R2_NORMAL_LQ;
+		}
 	}
 	return pVisual->shader->E[id]._get();
 }
