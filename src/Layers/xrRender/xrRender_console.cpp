@@ -1070,8 +1070,6 @@ void		xrRender_initconsole	()
 	//Raindrops
 	CMD4(CCC_Float, "r2_rain_drops_power_debug", &droplets_power_debug, 0.f, 3.f);
 
-	CMD3(CCC_Mask, "r4_terrain_z_prepass", &ps_r2_ls_flags, R4FLAG_TERRAIN_PREPASS);
-
 	//Hbao+
 	CMD4(CCC_Float, "r4_hbao_plus_radius", &hbao_plus_radius, 0, 10);
 	CMD4(CCC_Float, "r4_hbao_plus_bias", &hbao_plus_bias, 0, 1);

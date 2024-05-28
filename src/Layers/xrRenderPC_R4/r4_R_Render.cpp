@@ -248,11 +248,7 @@ void CRender::Render		()
 	RImplementation.o.distortion				= FALSE;		// disable distorion
 	Fcolor					sun_color			= ((light*)Lights.sun._get())->color;
 	BOOL					bSUN				= ps_r2_ls_flags.test(R2FLAG_SUN) && (u_diffuse2s(sun_color.r,sun_color.g,sun_color.b)>EPS);
-	if (o.sunstatic)		bSUN				= FALSE;
 
-//	if (RImplementation.currentViewPort == SECONDARY_WEAPON_SCOPE)
-//		bSUN = FALSE;
-	// Msg						("sstatic: %s, sun: %s",o.sunstatic?;"true":"false", bSUN?"true":"false");
 
 	// HOM
 	ViewBase.CreateFromMatrix					(Device.mFullTransform, FRUSTUM_P_LRTB + FRUSTUM_P_FAR);
@@ -332,11 +328,9 @@ void CRender::Render		()
 	r_pmask										(true,false);	// disable priority "1"
 	Device.Statistic->RenderCALC.End			();
 
-	if (ps_r2_ls_flags.test(R4FLAG_TERRAIN_PREPASS))
-	{
-		Target->u_setrt(Device.dwWidth, Device.dwHeight, NULL, NULL, NULL, !RImplementation.o.dx10_msaa ? HW.pBaseZB : Target->rt_MSAADepth->pZRT);
-		r_dsgraph_render_landscape(0, false);
-	}
+	Target->u_setrt(Device.dwWidth, Device.dwHeight, NULL, NULL, NULL, !RImplementation.o.dx10_msaa ? HW.pBaseZB : Target->rt_MSAADepth->pZRT);
+	r_dsgraph_render_landscape(0, false);
+
 
 	BOOL	split_the_scene_to_minimize_wait		= FALSE;
 	if (ps_r2_ls_flags.test(R2FLAG_EXP_SPLIT_SCENE))
@@ -355,7 +349,7 @@ void CRender::Render		()
 		r_dsgraph_render_graph					(0);
 		r_dsgraph_render_lods					(true,true);
 		if(Details)	Details->Render				();
-		if (ps_r2_ls_flags.test(R4FLAG_TERRAIN_PREPASS)) r_dsgraph_render_landscape(1, true);
+		r_dsgraph_render_landscape(1, true);
 		Target->phase_scene_end					();
 	} 
 	else 
@@ -429,7 +423,7 @@ void CRender::Render		()
 		Device.Statistic->Render_dsgHUD_UI.End();
 		if(Details)	
 			Details->Render				();
-		if (ps_r2_ls_flags.test(R4FLAG_TERRAIN_PREPASS)) r_dsgraph_render_landscape(1, true);
+		r_dsgraph_render_landscape(1, true);
 		Target->phase_scene_end					();
 	}
 

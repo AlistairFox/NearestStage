@@ -522,7 +522,6 @@ void CEnvironment::OnFrame()
 
 	//	Igor. Dynamic sun position. 
 	if (false)
-	if ( !::Render->is_sun_static())
 		calculate_dynamic_sun_dir();
 
 #ifndef MASTER_GOLD

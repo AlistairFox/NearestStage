@@ -89,12 +89,10 @@ public:
 		u32		pseudo_pbr			: 1;
 
 		u32		sunfilter			: 1;
-		u32		sunstatic			: 1;
 		u32		sjitter				: 1;
 		u32		noshadows			: 1;
 		u32		Tshadows			: 1;						// transluent shadows
 		u32		disasm				: 1;
-		u32		advancedpp			: 1;	//	advanced post process (DOF, SSAO, volumetrics, etc.)
 		u32		volumetricfog		: 1;
 
       u32		dx10_msaa			: 1;	//	DX10.0 path
@@ -265,7 +263,6 @@ public:
 	// feature level
 	virtual	GenerationLevel			get_generation			()	{ return IRender_interface::GENERATION_R2; }
 
-	virtual bool					is_sun_static			()	{ return o.sunstatic;}
 	virtual DWORD					get_dx_level			()	{ return HW.FeatureLevel >= D3D_FEATURE_LEVEL_10_1?0x000A0001:0x000A0000; }
 
 	// Loading / Unloading

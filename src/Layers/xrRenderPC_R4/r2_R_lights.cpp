@@ -197,7 +197,7 @@ void	CRender::render_lights	(light_Package& LP)
 			}
 
 			PIX_EVENT(ACCUM_VOLUMETRIC);
-			if (RImplementation.o.advancedpp && ps_r2_ls_flags.is(R2FLAG_VOLUMETRIC_LIGHTS))
+			if (ps_r2_ls_flags.is(R2FLAG_VOLUMETRIC_LIGHTS))
 			{
 				// Current Resolution
 				float w = float(Device.dwWidth);

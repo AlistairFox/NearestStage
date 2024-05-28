@@ -74,24 +74,20 @@ void CBlender_BmmD::Compile(CBlender_Compile& C)
 	C.SH->flags.isLandscape = FALSE;
 	string256 mask;
 	strconcat(sizeof(mask), mask, C.L_textures[0].c_str(), "_mask");
-	bool z_prepass = ps_r2_ls_flags.test(R4FLAG_TERRAIN_PREPASS);
 	LPSTR LodTexture;
 	switch (C.iElement)
 	{
 	case SE_R2_NORMAL_HQ: // deffer
-		if (z_prepass)
-		{
-			C.SH->flags.bLandscape = TRUE;
-			C.r_Pass("shadow_direct_base", "shadow_direct_base", false, true, true);
-			C.r_ColorWriteEnable(false, false, false, false);
-			C.r_End();
-		}
 
+		C.SH->flags.bLandscape = TRUE;
+		C.r_Pass("shadow_direct_base", "shadow_direct_base", false, true, true);
+		C.r_ColorWriteEnable(false, false, false, false);
+		C.r_End();
 
-			C.SH->flags.isLandscape = TRUE;
-			uber_deffer(C, true, "terrain", "terrain_high", false, oT2_Name[0] ? oT2_Name : 0, true, z_prepass);
+		C.SH->flags.isLandscape = TRUE;
+		uber_deffer(C, true, "terrain", "terrain_high", false, oT2_Name[0] ? oT2_Name : 0, true, true);
 
-		if (z_prepass) C.RS.SetRS(D3DRS_ZFUNC, D3DCMP_EQUAL);
+		C.RS.SetRS(D3DRS_ZFUNC, D3D11_COMPARISON_EQUAL);
 
 		C.r_dx10Texture("s_mask", mask);
 		C.r_dx10Texture("s_lmap", C.L_textures[1]);
@@ -106,10 +102,10 @@ void CBlender_BmmD::Compile(CBlender_Compile& C)
 		C.r_dx10Texture("s_dn_b", strconcat(sizeof(mask), mask, oB_Name, "_bump"));
 		C.r_dx10Texture("s_dn_a", strconcat(sizeof(mask), mask, oA_Name, "_bump"));
 
-			C.r_dx10Texture("s_height_r", strconcat(sizeof(mask), mask, oR_Name, "_height"));
-			C.r_dx10Texture("s_height_g", strconcat(sizeof(mask), mask, oG_Name, "_height"));
-			C.r_dx10Texture("s_height_b", strconcat(sizeof(mask), mask, oB_Name, "_height"));
-			C.r_dx10Texture("s_height_a", strconcat(sizeof(mask), mask, oA_Name, "_height"));
+		C.r_dx10Texture("s_height_r", strconcat(sizeof(mask), mask, oR_Name, "_height"));
+		C.r_dx10Texture("s_height_g", strconcat(sizeof(mask), mask, oG_Name, "_height"));
+		C.r_dx10Texture("s_height_b", strconcat(sizeof(mask), mask, oB_Name, "_height"));
+		C.r_dx10Texture("s_height_a", strconcat(sizeof(mask), mask, oA_Name, "_height"));
 
 		C.r_dx10Texture("s_puddles_normal", "fx\\water_normal");
 		C.r_dx10Texture("s_puddles_perlin", "fx\\puddles_perlin");
@@ -125,38 +121,29 @@ void CBlender_BmmD::Compile(CBlender_Compile& C)
 		C.r_End();
 		break;
 	case SE_R2_NORMAL_LQ: // deffer
-		if (z_prepass)
-		{
-			C.SH->flags.bLandscape = TRUE;
-			C.r_Pass("shadow_direct_base", "shadow_direct_base", false, true, true);
-			C.r_ColorWriteEnable(false, false, false, false);
-			C.r_End();
-		}
 
-			C.SH->flags.isLandscape = TRUE;
-			uber_deffer(C, false, "base", "terrain_mid", false, oT2_Name[0] ? oT2_Name : 0, true, z_prepass);
+		C.SH->flags.bLandscape = TRUE;
+		C.r_Pass("shadow_direct_base", "shadow_direct_base", false, true, true);
+		C.r_ColorWriteEnable(false, false, false, false);
+		C.r_End();
 
-		if (z_prepass) C.RS.SetRS(D3DRS_ZFUNC, D3DCMP_EQUAL);
+		C.SH->flags.isLandscape = TRUE;
+		uber_deffer(C, false, "base", "terrain_mid", false, oT2_Name[0] ? oT2_Name : 0, true, true);
 
-		//C.r_Sampler		("s_lmap",	C.L_textures[1]);
-
-
-		//C.r_dx10Texture("s_lmap", C.L_textures[1]);
+		C.RS.SetRS(D3DRS_ZFUNC, D3D11_COMPARISON_EQUAL);
 
 		C.r_dx10Texture("s_mask", mask);
 
-			LodTexture = strconcat(sizeof(mask), mask, C.L_textures[0].c_str(), "_lod_textures");
-			string_path fn;
-			if (FS.exist(fn, "$game_textures$", LodTexture, ".dds"))
-			{
-				C.r_dx10Texture("s_lod_texture", LodTexture);
-			}
-			else
-			{
-				C.r_dx10Texture("s_lod_texture", "terrain\\default_lod_textures");
-			}
-
-		//C.r_dx10Texture("s_lmap", C.L_textures[1]);
+		LodTexture = strconcat(sizeof(mask), mask, C.L_textures[0].c_str(), "_lod_textures");
+		string_path fn;
+		if (FS.exist(fn, "$game_textures$", LodTexture, ".dds"))
+		{
+			C.r_dx10Texture("s_lod_texture", LodTexture);
+		}
+		else
+		{
+			C.r_dx10Texture("s_lod_texture", "terrain\\default_lod_textures");
+		}
 		C.r_dx10Sampler("smp_base");
 		C.r_dx10Sampler("smp_linear");
 
@@ -169,18 +156,16 @@ void CBlender_BmmD::Compile(CBlender_Compile& C)
 
 	case 3: // SSFX Low quality terrain
 
-		if (z_prepass)
-		{
-			C.SH->flags.bLandscape = TRUE;
-			C.r_Pass("shadow_direct_base", "shadow_direct_base", false, true, true);
-			C.r_ColorWriteEnable(false, false, false, false);
-			C.r_End();
-		}
+
+		C.SH->flags.bLandscape = TRUE;
+		C.r_Pass("shadow_direct_base", "shadow_direct_base", false, true, true);
+		C.r_ColorWriteEnable(false, false, false, false);
+		C.r_End();
 
 		C.SH->flags.isLandscape = TRUE;
 
-		uber_deffer(C, false, "base", "terrain_low", false, oT2_Name[0] ? oT2_Name : 0, true, z_prepass);
-		if (z_prepass) C.RS.SetRS(D3DRS_ZFUNC, D3DCMP_EQUAL);
+		uber_deffer(C, false, "base", "terrain_low", false, oT2_Name[0] ? oT2_Name : 0, true, true);
+		C.RS.SetRS(D3DRS_ZFUNC, D3D11_COMPARISON_EQUAL);
 
 		C.r_dx10Sampler("smp_linear");
 
@@ -191,10 +176,7 @@ void CBlender_BmmD::Compile(CBlender_Compile& C)
 		break;
 
 	case SE_R2_SHADOW: // smap
-		//if (RImplementation.o.HW_smap)	C.r_Pass	("shadow_direct_base","dumb",	FALSE,TRUE,TRUE,FALSE);
-				//else							C.r_Pass	("shadow_direct_base","shadow_direct_base",FALSE);
 		C.r_Pass("shadow_direct_terrain", "dumb", false, true, true, false);
-		//C.r_Sampler		("s_base",C.L_textures[0]);
 		C.r_dx10Texture("s_base", C.L_textures[0]);
 		C.r_dx10Sampler("smp_base");
 		C.r_dx10Sampler("smp_linear");

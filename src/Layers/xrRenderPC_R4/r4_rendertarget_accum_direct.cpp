@@ -296,20 +296,7 @@ void CRenderTarget::accum_direct		(u32 sub_phase)
 		 RCache.set_Stencil(TRUE, D3D11_COMPARISON_LESS_EQUAL, dwLightMarkerID, 0xff, 0x00);
       }
 
-		// Fetch4 : disable
-//		if (RImplementation.o.HW_smap_FETCH4)	{
-			//. we hacked the shader to force smap on S0
-//#			define FOURCC_GET1  MAKEFOURCC('G','E','T','1') 
-//			HW.pDevice->SetSamplerState	( 0, D3DSAMP_MIPMAPLODBIAS, FOURCC_GET1 );
-//		}
-
-//	TODO: DX10: Check if DX10 has analog for NV DBT
-		// disable depth bounds
-//		u_DBT_disable	();
-
-		//	Igor: draw volumetric here
-		//if (ps_r2_ls_flags.test(R2FLAG_SUN_SHAFTS))
-		if ( RImplementation.o.advancedpp&&(ps_r_sun_shafts>0))
+		if (ps_r_sun_shafts>0)
 			accum_direct_volumetric	(sub_phase, Offset, m_shadow);
 	}
 }
@@ -678,7 +665,7 @@ void CRenderTarget::accum_direct_cascade	( u32 sub_phase, Fmatrix& xform, Fmatri
 
 		//	Igor: draw volumetric here
 		//if (ps_r2_ls_flags.test(R2FLAG_SUN_SHAFTS))
-		if ( RImplementation.o.advancedpp&&(ps_r_sun_shafts>0) && sub_phase == SE_SUN_FAR)
+		if ((ps_r_sun_shafts>0) && sub_phase == SE_SUN_FAR)
 			accum_direct_volumetric	(sub_phase, Offset, m_shadow);
 	}
 }
