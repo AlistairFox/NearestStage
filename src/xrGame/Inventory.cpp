@@ -1421,6 +1421,8 @@ void CInventory::AddSaveAvailableItems(TIItemContainer& items_container) const
 		u16 E = LastSlot();
 		for (; I <= E; ++I)
 		{
+			if (I == BOLT_SLOT)
+				continue;
 			PIItem item = ItemFromSlot(I);
 			if(item)
 			{
