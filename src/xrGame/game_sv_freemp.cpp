@@ -313,24 +313,55 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 
 	Msg("Player connected: name: %s, static id: %d", ps->getName(), ps->GetStaticID());
 
-	string_path filepath;
-	string_path login_path;
+	string_path JsonFilePath;
+	FS.update_path(JsonFilePath, "$mp_saves_logins$", "logins.json");
 
+	Object JsonMain;
+	Array AccountsArray;
+	Array ReloadAccountsArray;
 
-	FS.update_path(login_path, "$mp_saves_logins$", "logins.ltx"); // file with player logins
+	std::ifstream ifile(JsonFilePath);
 
-	FS.update_path(filepath, "$mp_saves_logins$", "checkstuf.ltx"); // file for check on first connect player or not
+	std::string str((std::istreambuf_iterator<char>(ifile)), std::istreambuf_iterator<char>());
+	JsonMain.parse(str);
+	ifile.close();
+	u8 kit_numb = 1;
 
-
-	CInifile* checkstuf_file = xr_new<CInifile>(filepath, false, true); // inifile for check on first connect player
-
-	if (checkstuf_file && !checkstuf_file->line_exist(ps->getName(), "staf_load"))
+	std::string SName = ps->getName();
+	bool need_load_stuf = true;
+	if (JsonMain.has<Array>("ACCOUNTS:"))
 	{
-		CInifile* login_file = xr_new<CInifile>(login_path, true, true);
-
-		if (login_file->section_exist(ps->getName()))
+		Object NowCheckAccounts;
+		AccountsArray = JsonMain.get<Array>("ACCOUNTS:");
+		for (int i = 0; i != AccountsArray.size(); i++)
 		{
-			u8 kit_numb = login_file->r_u8(ps->getName(), "kit_number");
+			NowCheckAccounts = AccountsArray.get<Object>(i);
+			if (NowCheckAccounts.has<String>("login"))
+			{
+				std::string AccLogin = NowCheckAccounts.get<String>("login");
+				if (SName == AccLogin)
+				{
+					if (NowCheckAccounts.has<String>("stafloaded"))
+						need_load_stuf = false;
+					else
+						NowCheckAccounts << "stafloaded" << "true";
+
+					kit_numb = NowCheckAccounts.get<Number>("kit");
+				}
+			}
+			ReloadAccountsArray << NowCheckAccounts;
+		}
+	}
+
+	if (need_load_stuf)
+	{
+		JsonMain << "ACCOUNTS:" << ReloadAccountsArray;
+		IWriter* writer = FS.w_open(JsonFilePath);
+		if (writer)
+		{
+			writer->w_string(JsonMain.json().c_str());
+			FS.w_close(writer);
+		}
 
 			LPCSTR N, V;
 			s32 money;
@@ -357,13 +388,7 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 			}
 			else
 				Msg("!! Can't Find spawn_kit section: [%s]", spawn_section);
-
-			checkstuf_file->w_bool(ps->getName(), "staf_load", true);
-			checkstuf_file->save_as(filepath);
-		}
-		xr_delete(login_file);
 	}
-	xr_delete(checkstuf_file);
 
 	if (ps)
 	{

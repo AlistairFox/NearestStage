@@ -252,6 +252,9 @@ ALife::_SPAWN_ID CALifeSimulator__spawn_id		(CALifeSimulator *self, ALife::_SPAW
 
 void CALifeSimulator__release					(CALifeSimulator *self, CSE_Abstract *object, bool)
 {
+	if (!object)
+		return;
+
 	VERIFY								(self);//
 //	self->release						(object,true);
 
