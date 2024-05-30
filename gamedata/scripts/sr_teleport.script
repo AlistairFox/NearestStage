@@ -10,56 +10,162 @@ local teleport_activated = 1
 class "action_teleport"
 function action_teleport:__init(obj, storage)
 	self.object = obj
+	
 	self.st = storage
 	
 	self.state = teleport_idle
 	self.timer = nil
+	
+	self.state_checked = false
 end
-function action_teleport:update(delta)
-	if not db.get_actor() then
-		return
+
+function action_teleport:check_debug()
+	self.state_checked = true
+	
+	local temp = {}
+	local max_rnd = 0
+	
+	local size_temp = 0
+
+	for k,v in pairs(self.st.points) do		
+		-- Определяются допустимые состояния для лагеря.
+		temp[k] = v
+		max_rnd = max_rnd + v.prob
+		size_temp = size_temp + 1
+	end
+	
+	local skip = {}
+	--skip["teleport_to_labx10_from_radar_1_look"] = true	
+	--skip["teleport_to_redforest_from_millitary_1_look"] = true
+	--skip["teleport_to_limansk_from_redforest_1_look"] = true
+	--skip["teleport_to_redforest_from_limansk_1_look"] = true 
+	--skip["teleport_to_millitary_from_radar_1_look"] = true
+	--skip["teleport_to_radar_from_millitary_1_look"] = true
+	--skip["teleport_to_garbage_from_bar_1_look"] = true
+	--skip["teleport_to_bar_from_garbage_1_look"] = true
+	--skip["teleport_to_millitary_from_redforest_1_look"] = true
+	 
+
+ 	local p = math.random(0,max_rnd)
+ 
+	local id = 0
+	for k, v in pairs(temp) do
+		
+		p = p - v.prob
+		if p <= 0 then
+		
+			local pos = patrol(v.point)
+			local pos_look = patrol(v.look)
+			
+			--[[				
+			print_msg( string.format("Проверка Телепорта walk [%s]  ", v.point) )
+			if (pos ~= nil and pos:point(0)) then 				
+				print_msg( string.format("Если написало то все ок walk[%f][%f][%f]", pos:point(0).x, pos:point(0).y, pos:point(0).z) )
+			end
+			]]
+			
+			print_msg( string.format("ID: %d/%d, Teleport look [%s]  ", id, size_temp,v.look) )
+			if (skip[v.look] == nil and pos_look ~= nil) then 
+				if ( pos_look:point(0) ~= nil) then 
+					print_msg( string.format("ALL fine wp look[%f][%f][%f]", pos_look:point(0).x, pos_look:point(0).y, pos_look:point(0).z) )
+				else 
+					print_msg("Warning")
+				end
+			end
+			
+			-- телепорт в выбранную точку
+			--db.get_actor():set_actor_position(patrol(v.point):point(0))
+			--local dir = patrol(v.look):point(0):sub(patrol(v.point):point(0))
+			--db.get_actor():set_actor_direction(-dir:getH())
+			--local snd_obj = sound_object("affects\\tinnitus3a")
+			--snd_obj:play_no_feedback(db.get_actor(), sound_object.s2d, 0, vector(), 1.0)					
+			break
+		end
+		
+		id = id + 1 
 	end
 
-	if self.state == teleport_idle then	
-		if self.object:inside(db.get_actor():position()) then
-			-- Обработка телепорта
-			level.add_pp_effector ("levelchang.ppe", 2006, false)
-			--set_postprocess("scripts\\teleport.ltx")
-			self.state = teleport_activated
-			self.timer = time_global()	
-		end
+end
+
+
+function action_teleport:update(delta)
+
+	if (OnClient()) then 
+		return 
 	end
-	if self.state == teleport_activated then	
+ 
+	if (self.state_checked == false) then 
+		--	self:check_debug()
+	end
+
+	--printf_msg("Update Teleport sr : %s", self.object:name());
+	local player_selected = nil
+	
+	--if self.state == teleport_idle then	
+		for k, player in pairs (db.players) do 
+			if self.object:inside(player:position()) then
+				player_selected = player
+				
+				-- Обработка телепорта
+				if self.state == teleport_idle then 
+					self.state = teleport_activated
+					self.timer = time_global()
+				end
+			
+				-- TODO SEND EVENT TO CLIENT
+				--level.add_pp_effector ("teleport.ppe", 2006, false)
+ 			end
+		end
+	--end
+ 
+	if self.state == teleport_activated and player_selected ~= nil then	
+		printf_msg("SR_ZONE TP: Player Selected: %s", player_selected:name())
 		if time_global() - self.timer >= self.st.timeout then
 			-- Производим телепортацию
+			printf_msg("SR_ZONE TP: Start Teleport Selected: %s", player_selected:name())
 			local temp = {}
 			local max_rnd = 0
+			
 			for k,v in pairs(self.st.points) do		
 				-- Определяются допустимые состояния для лагеря.
 				temp[k] = v
 				max_rnd = max_rnd + v.prob
 			end
+
+			printf_msg("SR_ZONE TP: Max rnd: %s", tostring(max_rnd) )
+
 			-- Осуществляется рандомный взвешенный переход.
 			local p = math.random(0,max_rnd)
-			for k,v in pairs(temp) do
+			for k, v in pairs(temp) do
 				p = p - v.prob
+ 				
 				if p <= 0 then
+					
 					-- телепорт в выбранную точку
-					printf("teleporting to [%s] look [%s]", v.point, v.look)
-					db.get_actor():set_actor_position(patrol(v.point):point(0))
-					local dir = patrol(v.look):point(0):sub(patrol(v.point):point(0))
-					db.get_actor():set_actor_direction(-dir:getH())					
+					printf_msg("teleporting to [%s] look [%s]", v.point, v.look)
+					
+					local actor_client_id 		= level.get_client_by_gameid( player_selected:id() )
+					
+					local actor_position 		= patrol(v.point):point(0)
+ 					local actor_direction 		= -patrol(v.look):point(0):sub(patrol(v.point):point(0)):getH()	
+					mp.add_cl_eff(actor_client_id, "levelchang.ppe")
+					mp.sv_teleport_player(actor_client_id, actor_position, actor_direction )
+
+					-- TODO SEND EVENT TO CLIENT
+					--local snd_obj = sound_object("affects\\tinnitus3a")
+					--snd_obj:play_no_feedback(db.get_actor(), sound_object.s2d, 0, vector(), 1.0)					
 					break
 				end
+
 			end
+ 
 			self.state = teleport_idle
 		else
 			return
 		end
 	end
-	if xr_logic.try_switch_to_another_section(self.object, self.st, db.get_actor()) then
-		return
-	end	
+	
+	 
 		
 end
 
@@ -75,7 +181,7 @@ function set_scheme(obj, ini, scheme, section, gulag_name)
 	local st = xr_logic.assign_storage_and_bind(obj, ini, scheme, section)
 	st.logic = xr_logic.cfg_get_switch_conditions(ini, section, obj)
 	
-	st.timeout = utils.cfg_get_number(ini, section, "timeout", obj, false, 900)
+	st.timeout = utils.cfg_get_number(ini, section, "timeout", obj, false, 0)
 	
 	st.points = {}
 	for i=1,10 do
