@@ -784,7 +784,8 @@ BOOL CCustomMonster::net_Spawn	(CSE_Abstract* DC)
 	shedule.t_min				= 100;
 	shedule.t_max				= 250; // This equaltiy is broken by Dima :-( // 30 * NET_Latency / 4;
 
-	m_moving_object				= xr_new<moving_object>(this);
+	if(OnServer())
+		m_moving_object				= xr_new<moving_object>(this);
 
 	return TRUE;
 }

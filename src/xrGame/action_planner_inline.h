@@ -65,54 +65,88 @@ IC	_object_type &CPlanner::object		() const
 TEMPLATE_SPECIALIZATION
 void CPlanner::update				()
 {
-	m_solving				= true;
-	solve					();
-	m_solving				= false;
+	m_solving = true;
+	try
+	{
+		solve();
+	}
+	catch (...)
+	{
+
+	}
+
+	m_solving = false;
 
 #ifdef LOG_ACTION
 	// printing solution
 	if (m_use_log) {
 		if (m_solution_changed) {
 			show_current_world_state();
-			show_target_world_state	();
-			Msg						("%6d : Solution for object %s [%d vertices searched]",Device.dwTimeGlobal,object_name(),ai().graph_engine().solver_algorithm().data_storage().get_visited_node_count());
-			for (int i=0; i<(int)solution().size(); ++i)
-				Msg					("%s",action2string(solution()[i]));
+			show_target_world_state();
+			Msg("%6d : Solution for object %s [%d vertices searched]", Device.dwTimeGlobal, object_name(), ai().graph_engine().solver_algorithm().data_storage().get_visited_node_count());
+			for (int i = 0; i < (int)solution().size(); ++i)
+				Msg("%s", action2string(solution()[i]));
 		}
 	}
 #endif
 
 #ifdef LOG_ACTION
-	if (m_failed) {
+	if (m_failed)
+	{
 		// printing current world state
-		show						();
+		show();
 
-		Msg							("! ERROR : there is no action sequence, which can transfer current world state to the target one");
-		Msg							("Time : %6d",Device.dwTimeGlobal);
-		Msg							("Object : %s",object_name());
+		Msg("! ERROR : there is no action sequence, which can transfer current world state to the target one");
+		Msg("Time : %6d", Device.dwTimeGlobal);
+		Msg("Object : %s", object_name());
 
-		show_current_world_state	();
-		show_target_world_state		();
-//		VERIFY2						(!m_failed,"Problem solver couldn't build a valid path - verify your conditions, effects and goals!");
-	}
+		show_current_world_state();
+		show_target_world_state();
+		//		VERIFY2						(!m_failed,"Problem solver couldn't build a valid path - verify your conditions, effects and goals!");
+		}
 #endif
 
-	THROW							(!solution().empty());
+	THROW(!solution().empty());
 
-	if (initialized()) {
-		if (current_action_id() != solution().front()) {
-			current_action().finalize	();
-			m_current_action_id			= solution().front();
-			current_action().initialize	();
+	if (initialized())
+	{
+		try
+		{
+			if (current_action_id() != solution().front())
+			{
+				current_action().finalize();
+				m_current_action_id = solution().front();
+				current_action().initialize();
+			}
+		}
+		catch (...)
+		{
+			//Msg("[action_planner] Crushed finalize, init");
 		}
 	}
-	else {
-		m_initialized				= true;
-		m_current_action_id			= solution().front();
-		current_action().initialize	();
+	else
+	{
+		try
+		{
+			m_initialized = true;
+			m_current_action_id = solution().front();
+			current_action().initialize();
+		}
+		catch (...)
+		{
+			//Msg("action_planner] Intilize first time");
+		}
 	}
 
-	current_action().execute	();
+	try
+	{
+		current_action().execute();
+	}
+	catch (...)
+	{
+		//Msg("[action_planner] Execute CRUSH ACTION_ID: %d", m_current_action_id);
+	}
+
 }
 
 TEMPLATE_SPECIALIZATION

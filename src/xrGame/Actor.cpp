@@ -944,6 +944,12 @@ void CActor::Die	(CObject* who)
 #endif // #ifdef DEBUG
 	inherited::Die		(who);
 
+	if (Local())
+	{
+		Level().MapManager().RemoveMapLocation("actor_location", ID());
+		Level().MapManager().RemoveMapLocation("actor_location_p", ID());
+	}
+
 	//ANIM MODE 
 	StopAllSNDs();
 

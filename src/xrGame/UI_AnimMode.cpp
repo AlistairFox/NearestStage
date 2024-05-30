@@ -10,11 +10,12 @@
 #include <string_table.h>
 #include "Actor.h"
 
-extern int ANIM_SELECTED = 0;
-
 bool CUIAMode::OnMouseAction(float x, float y, EUIMessages mouse_action)
 {
     CActor* pA = smart_cast<CActor*>(Level().CurrentControlEntity());
+
+    if (!pA)
+        return false;
 
     if (pA->MpWoundMODE())
         return false;
@@ -37,7 +38,7 @@ bool CUIAMode::OnMouseAction(float x, float y, EUIMessages mouse_action)
                 if (wind == text[id])
                 {
                     //Msg("Click Anim [%d] [%s] ", id, text[id]->GetText());
-                    ANIM_SELECTED = id;
+                    pA->ANIM_SELECTED = id;
                 }
             }
             id += 1;

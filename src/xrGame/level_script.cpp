@@ -1048,6 +1048,17 @@ void send_news_item_drop(u16 gameid, LPCSTR name, int count)
 	}
 }
 
+u32 get_client_by_gameid(u16 GameID)
+{
+	for (auto player : Level().game->players)
+	{
+		if (player.second->GameID == GameID)
+			return player.first.value();
+	}
+
+	return 0;
+}
+
 u8 get_actor_team()
 {
 	Msg("Actor team: %d", Actor()->g_Team());
@@ -1131,6 +1142,21 @@ void unblock_player_action(EGameActions dik)
 	Actor()->unblock_action(dik);
 }
 
+void add_effector_to_client(u32 clientId, LPCSTR eff)
+{
+	NET_Packet P;
+	P.w_begin(M_SET_EFFECTOR);
+	P.w_stringZ(eff);
+	Level().Server->SendTo(clientId, P);
+}
+
+void add_snd_to_client(u32 clientId, LPCSTR snd)
+{
+	NET_Packet P;
+	P.w_begin(M_SET_SND_EFF);
+	P.w_stringZ(snd);
+	Level().Server->SendTo(clientId, P);
+}
 
 #pragma optimize("s",on)
 void CLevel::script_register(lua_State *L)
@@ -1159,6 +1185,7 @@ void CLevel::script_register(lua_State *L)
 
 		def("block_player_action", &block_player_action),
 		def("unblock_player_action", &unblock_player_action),
+		def("get_client_by_gameid", get_client_by_gameid),
 
 def("get_weather", get_weather),
 def("set_weather", set_weather),
@@ -1262,6 +1289,8 @@ def("game_id", &GameID),
 		def("change_team", change_team),
 		def("get_actor_team", get_actor_team),
 		def("get_game_time_mp", get_time_hours_mp),
+		def("add_cl_eff", &add_effector_to_client),
+		def("add_snd_client", &add_snd_to_client),
 		def("have_nearby_player", &HavePlayersNearby)
 	],
 	

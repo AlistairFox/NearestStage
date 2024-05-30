@@ -150,6 +150,8 @@ public:
 	bool						MpWoundMODE() const;
 	bool						MpLootMODE() const;
 
+	int ANIM_SELECTED = 0;
+
 	float satiety;
 	float thirst;
 	float radiation;

@@ -17,6 +17,8 @@
 #include "../xrphysics/iphworld.h"
 #include "../xrEngine/FDemoRecord.h"
 #include "../xrEngine/CameraManager.h"
+#include "PostprocessAnimator.h"
+#include "ActorEffector.h"
 //#include "../xrEngine/XR_IOConsole.h"
 
 extern LPCSTR map_ver_string;
@@ -500,6 +502,32 @@ void CLevel::ClientReceive()
 			if (OnClient())
 			{
 				g_pGameLevel->Cameras().AddCamEffector(xr_new<CDemoRecord>());
+			}
+		}break;
+
+		case M_SET_SND_EFF:
+		{
+			if (OnClient() && g_actor && g_actor->g_Alive())
+			{
+				Msg("snd!!");
+				shared_str snd;
+				P->r_stringZ(snd);
+				ref_sound rSnd;
+				rSnd.create(snd.c_str(), st_Effect, sg_SourceType);
+				rSnd.play(NULL, sm_2D);
+			}
+		}break;
+
+		case M_SET_EFFECTOR:
+		{
+			if (OnClient() && g_actor && g_actor->g_Alive())
+			{
+				Msg("eff!");
+				shared_str eff;
+				P->r_stringZ(eff);
+				CPostprocessAnimator* pp = xr_new<CPostprocessAnimator>(2006, false);
+				pp->Load(eff.c_str());
+				Actor()->Cameras().AddPPEffector(pp);
 			}
 		}break;
 

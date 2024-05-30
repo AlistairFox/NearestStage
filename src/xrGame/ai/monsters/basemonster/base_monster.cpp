@@ -437,7 +437,8 @@ void CBaseMonster::UpdateCL()
 
 	if ( g_Alive() ) 
 	{
-		update_enemy_accessible_and_at_home_info();
+		if(OnServer())
+			update_enemy_accessible_and_at_home_info();
 		CStepManager::update(false);
 
 		if (IsGameTypeSingle() || OnServer())

@@ -4,8 +4,6 @@
 #include "Inventory.h"
 #include "../Include/xrRender/Kinematics.h"
 
-extern int ANIM_SELECTED;
-
 void CActor::SetAnim(int ANIM)
 {
 	ANIM_SELECTED = ANIM;
