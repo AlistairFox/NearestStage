@@ -107,7 +107,7 @@ public:
 	float		GetActorMaxSatiety() override;
 	float		GetActorMaxThirst() override;
 	float		GetActorThirst() override;
-	bool		GetClearMaskProcess() override;
+	virtual Fvector3				GetRainDropsParams() override;
 };
 
 IC CGamePersistent&		GamePersistent()		{ return *((CGamePersistent*) g_pGamePersistent);			}

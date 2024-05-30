@@ -26,7 +26,7 @@ namespace DynamicHudGlass
 		if (helmet)
 		{
 			float condition = helmet->GetCondition();
-			HudGlassElement = 0;
+			HudGlassElement = 1;
 			bool HelmetHasGlass = helmet->m_b_HasGlass;
 
 			if (HelmetHasGlass)
@@ -38,18 +38,26 @@ namespace DynamicHudGlass
 				DynamicHudGlassEnabled = false;
 			}
 
-			if (condition < 0.85)
+			if (condition < 0.90)
 			{
-				if (condition > 0.75)
-					HudGlassElement = 1;
-				else if (condition > 0.65)
+				if (condition > 0.80)
 					HudGlassElement = 2;
-				else if (condition > 0.45)
+				else if (condition > 0.70)
 					HudGlassElement = 3;
-				else if (condition > 0.25)
+				else if (condition > 0.60)
 					HudGlassElement = 4;
-				else
+				else if (condition > 0.50)
 					HudGlassElement = 5;
+				else if (condition > 0.40)
+					HudGlassElement = 6;
+				else if (condition > 0.30)
+					HudGlassElement = 7;
+				else if (condition > 0.20)
+					HudGlassElement = 8;
+				else if (condition > 0.10)
+					HudGlassElement = 9;
+				else
+					HudGlassElement = 10;
 			}
 		}
 		else
@@ -68,18 +76,26 @@ namespace DynamicHudGlass
 					DynamicHudGlassEnabled = false;
 				}
 
-				if (condition < 0.85)
+				if (condition < 0.90)
 				{
-					if (condition > 0.75)
-						HudGlassElement = 1;
-					else if (condition > 0.65)
+					if (condition > 0.80)
 						HudGlassElement = 2;
-					else if (condition > 0.45)
+					else if (condition > 0.70)
 						HudGlassElement = 3;
-					else if (condition > 0.25)
+					else if (condition > 0.60)
 						HudGlassElement = 4;
-					else
+					else if (condition > 0.50)
 						HudGlassElement = 5;
+					else if (condition > 0.40)
+						HudGlassElement = 6;
+					else if (condition > 0.30)
+						HudGlassElement = 7;
+					else if (condition > 0.20)
+						HudGlassElement = 8;
+					else if (condition > 0.10)
+						HudGlassElement = 9;
+					else
+						HudGlassElement = 10;
 				}
 			}
 			else

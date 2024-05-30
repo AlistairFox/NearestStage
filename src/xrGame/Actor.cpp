@@ -235,7 +235,6 @@ CActor::CActor() : CEntityAlive(),current_ik_cam_shift(0)
 
 
 	m_bEatAnimActive = false;
-	need_en_raindrops = false;
 
 	m_iInventoryCapacity = 50;
 	m_iInventoryFullness = 0;
@@ -1173,61 +1172,9 @@ void CActor::UpdateCL	()
 	TimeUnblockAction();
 	EndTorchAnm();
 
-	if(g_Alive() && Level().CurrentViewEntity() == this)
+	if (Level().CurrentControlEntity() == this && OnClient())
 	{
-		if (OnClient())
-		{
-			if (need_set_cond && g_Alive())
-			{
-				Msg("-- Set condition: S: %f, T: %f, R: %f", satiety, thirst, radiation);
-				need_set_cond = false;
-				SetActorSatiety(satiety);
-				SetActorThirst(thirst);
-				SetfRadiation(radiation);
-				satiety = 1.f;
-				thirst = 1.f;
-				radiation = 0.f;
-			}
-
-
-			if (g_Alive() && ExportTimer <= Device.dwTimeGlobal)
-			{
-				ExportTimer = Device.dwTimeGlobal + 20000;
-				Msg("-- Process import stats start");
-				NET_Packet P;
-				u_EventGen(P, GE_PLAYER_IMPORT_CONDITIONS, this->ID());
-				P.w_float(conditions().GetThirstActor());
-				P.w_float(conditions().GetSatietyActor());
-				P.w_float(conditions().GetRadiation());
-				u_EventSend(P);
-				Msg("-- Process import stats end");
-			}
-		}
-
-		if (MpLootMODE() && !ANIMSET)
-		{
-			SetAnim(30);
-			ANIMSET = true;
-		}
-
-		if (!MpLootMODE() && ANIMSET && !OutAnim)
-		{
-			FastExit();
-		}
-
-		if (GetfHealth() <= 0.2 && g_Alive())
-		{
-			ANIM_WOUND = 1;
-			need_ex_wound = true;
-		}
-		else
-		{
-			if (ANIM_WOUND > 0 && need_ex_wound)
-			{
-				StartWoundExit();
-				need_ex_wound = false;
-			}
-		}
+		RainDropsParamsUpdate();
 
 		if (g_Alive())
 		{
@@ -1258,6 +1205,63 @@ void CActor::UpdateCL	()
 		}
 		else
 			StartWoundDeathTimer = false;
+	}
+
+	if(g_Alive() && Level().CurrentViewEntity() == this)
+	{
+		if (OnClient())
+		{
+			if (need_set_cond)
+			{
+				Msg("-- Set condition: S: %f, T: %f, R: %f", satiety, thirst, radiation);
+				need_set_cond = false;
+				SetActorSatiety(satiety);
+				SetActorThirst(thirst);
+				SetfRadiation(radiation);
+				satiety = 1.f;
+				thirst = 1.f;
+				radiation = 0.f;
+			}
+
+
+			if (ExportTimer <= Device.dwTimeGlobal)
+			{
+				ExportTimer = Device.dwTimeGlobal + 20000;
+				Msg("-- Process import stats start");
+				NET_Packet P;
+				u_EventGen(P, GE_PLAYER_IMPORT_CONDITIONS, this->ID());
+				P.w_float(conditions().GetThirstActor());
+				P.w_float(conditions().GetSatietyActor());
+				P.w_float(conditions().GetRadiation());
+				u_EventSend(P);
+				Msg("-- Process import stats end");
+			}
+		}
+
+		if (MpLootMODE() && !ANIMSET)
+		{
+			SetAnim(30);
+			ANIMSET = true;
+		}
+
+		if (!MpLootMODE() && ANIMSET && !OutAnim)
+		{
+			FastExit();
+		}
+
+		if (GetfHealth() <= 0.2)
+		{
+			ANIM_WOUND = 1;
+			need_ex_wound = true;
+		}
+		else
+		{
+			if (ANIM_WOUND > 0 && need_ex_wound)
+			{
+				StartWoundExit();
+				need_ex_wound = false;
+			}
+		}
 
 		if(CurrentGameUI() && NULL==CurrentGameUI()->TopInputReceiver())
 		{
@@ -2794,6 +2798,9 @@ void CActor::unblock_action(EGameActions cmd)
 
 void CActor::StartClearMask()
 {
+	if (!DynamicHudGlass::GetHudGlassEnabled())
+		return;
+
 	if (!need_clear_mask)
 	{
 		CWeapon* Wpn = smart_cast<CWeapon*>(inventory().ActiveItem());
@@ -2804,7 +2811,6 @@ void CActor::StartClearMask()
 		PlayAnmSound("interface\\item_usage\\mask_clean");
 
 		oldmaskTimer = Device.dwTimeGlobal + 5000;
-		need_en_raindrops = false;
 		maskTimer = Device.dwTimeGlobal + ((g_player_hud->motion_length_script("clear_mask_anm", "anm_use", 1.0f)) / 2.5);
 		need_clear_mask = true;
 	}
@@ -2814,19 +2820,7 @@ void CActor::EndClearMask()
 {
 	if (need_clear_mask && maskTimer <= Device.dwTimeGlobal && g_Alive())
 	{
-		Msg("EndMask");
-		//Console->Execute("r2_rain_drops_control 0");
-		//Console->Execute("r2_rain_drops_control 1");
-		need_clear_mask = false;
-		need_en_raindrops = true;
 		maskTimer = 0;
-	}
-
-	if ((need_en_raindrops && oldmaskTimer <= Device.dwTimeGlobal) || !g_Alive())
-	{
-		//Console->Execute("r2_rain_drops_control 1");
-		need_en_raindrops = false;
-		oldmaskTimer = 0;
 	}
 }
 
@@ -2943,6 +2937,49 @@ void CActor::ChangeInventoryFullness(int val)
 	}
 	else
 		return;
+}
+
+void CActor::RainDropsParamsUpdate()
+{
+	bool IsHelm = DynamicHudGlass::GetHudGlassEnabled();
+	if (IsHelm)
+	{
+		if (Device.dwTimeGlobal > (last_ray_pick_time + 2000)) { //Апдейт рейтрейса - раз в секунду. Чаще апдейтить нет смысла.
+			last_ray_pick_time = Device.dwTimeGlobal;
+
+			collide::rq_result RQ;
+			actor_in_hideout = !!g_pGameLevel->ObjectSpace.RayPick(Device.vCameraPosition, Fvector().set(0, 1, 0), 50.f, collide::rqtBoth, RQ, g_pGameLevel->CurrentViewEntity());
+		}
+	}
+
+	if (need_clear_mask)
+	{
+		droplet_pwr -= 0.1f;
+		clamp(droplet_pwr, 0.f, 1.f);
+
+		if (droplet_pwr <= 0.01)
+			need_clear_mask = false;
+	}
+	else if (IsHelm)
+	{
+		if (Device.dwTimeGlobal > DropletTimer)
+		{
+			DropletTimer = Device.dwTimeGlobal + 500;
+			float step = (!actor_in_hideout) && (g_pGamePersistent->Environment().CurrentEnv->rain_density > 0.2) ? DropletStep : 0;
+			droplet_pwr += (step > 0) ? (step * std::min(1.0f, std::max(0.5f, g_pGamePersistent->Environment().CurrentEnv->rain_density))) : -DropletStep;
+			clamp(droplet_pwr, 0.f, 1.f);
+
+
+			DropletSpeed = (step > 0) ? 1 : 0.1;
+		}
+	}
+	else
+		droplet_pwr = 0.f;
+
+	if (droplet_pwr < 0.1f)
+		DropletSpeed = 0.f;
+
+	RainDropsParams = Fvector().set(droplet_pwr, 0.f, DropletSpeed);
 }
 
 //Максимальная вместительность инвентаря

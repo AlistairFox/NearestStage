@@ -168,8 +168,6 @@ public:
 	u32 maskTimer = 0;
 	u32 oldmaskTimer = 0;
 	bool need_clear_mask = false;
-	bool need_en_raindrops;
-	bool			MaskClearInProcess() { return need_en_raindrops; }
 	void StartClearMask();
 	void EndClearMask();
 	void PlayAnmSound(shared_str sndname);
@@ -179,7 +177,12 @@ public:
 	float add_cam_effector(LPCSTR fn, int id, bool cyclic, LPCSTR cb_func);
 	void						TimeBlockAction(LPCSTR anim_sect);
 	void						TimeUnblockAction();
-
+	float droplet_pwr = 0;
+	u32 DropletTimer = 0;
+	float DropletStep = 0.005f;
+	float DropletSpeed = 0.f;
+	bool actor_in_hideout = true;
+	u32 last_ray_pick_time = 0;
 	bool DontInv = false;
 
 	void StartTorchAnm();
@@ -194,6 +197,9 @@ public:
 	int						GetInventoryFullness() const { return m_iInventoryFullness; }
 	int						MaxCarryInvCapacity() const;
 	void					ChangeInventoryFullness(int val);
+
+	void					RainDropsParamsUpdate();
+	Fvector3				RainDropsParams = {0,0,0};
 
 	int						m_iInventoryCapacity;
 	int						m_iInventoryFullness;

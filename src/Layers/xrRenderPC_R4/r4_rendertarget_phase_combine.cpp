@@ -384,8 +384,11 @@ void	CRenderTarget::phase_combine	()
 	{
 		bool HudGlassEnabled = g_pGamePersistent->GetHudGlassEnabled();
 		bool IsActorAlive = g_pGamePersistent->GetActorAliveStatus();
-		if (ps_r2_hud_mask_flags.test(R_FLAG_HUD_MASK) && HudGlassEnabled && IsActorAlive)
-		phase_hud_mask();
+		if (HudGlassEnabled && IsActorAlive)
+		{
+			phase_gasmask_dudv();
+			phase_gasmask_drops();
+		}
 	}
 
    //Hud Effects
@@ -414,8 +417,6 @@ void	CRenderTarget::phase_combine	()
 	BOOL	PP_Complex		= u_need_PP	() | (BOOL)RImplementation.m_bMakeAsyncSS;
 	if (_menu_pp)			PP_Complex	= FALSE;
 
-	if (ps_r2_rain_drops_flags.test(R2FLAG_RAIN_DROPS))
-		PhaseRainDrops();
 
    // HOLGER - HACK
    PP_Complex = TRUE;

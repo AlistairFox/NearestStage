@@ -136,19 +136,19 @@ public:
 	virtual void					SetBaseDof			(const Fvector3& dof){};
 	virtual void					OnSectorChanged		(int sector){};
 	virtual void					OnAssetsChanged		();
-	virtual float					GetActorMaxHealth() { return 0; };
-	virtual float					GetActorHealth() { return 0; };
-	virtual float					GetActorMaxPower() { return 0; };
-	virtual float					GetActorPower() { return 0; };
-	virtual float					GetActorBleeding() { return 0; };
-	virtual bool					GetActorAliveStatus() { return 0; };
-	virtual float					GetActorSatiety() { return 0; };
-	virtual float					GetActorMaxSatiety() { return 0; };
-	virtual int						GetHudGlassElement() { return 0; };
-	virtual bool					GetHudGlassEnabled() { return 0; };
-	virtual float					GetActorMaxThirst() { return 0; };
-	virtual	float					GetActorThirst() { return 0; };
-	virtual bool					GetClearMaskProcess() { return 0; };
+	virtual float					GetActorMaxHealth() { return 0; }
+	virtual float					GetActorHealth() { return 0; }
+	virtual float					GetActorMaxPower() { return 0; }
+	virtual float					GetActorPower() { return 0; }
+	virtual float					GetActorBleeding() { return 0; }
+	virtual bool					GetActorAliveStatus() { return 0; }
+	virtual float					GetActorSatiety() { return 0; }
+	virtual float					GetActorMaxSatiety() { return 0; }
+	virtual int						GetHudGlassElement() { return 0; }
+	virtual Fvector3				GetRainDropsParams() { return Fvector().set(0, 0, 0); }
+	virtual bool					GetHudGlassEnabled() { return 0; }
+	virtual float					GetActorMaxThirst() { return 0; }
+	virtual	float					GetActorThirst() { return 0; }
 
 	virtual void					RegisterModel		(IRenderVisual* V)
 #ifndef _EDITOR

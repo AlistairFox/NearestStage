@@ -280,7 +280,6 @@ Global
 		{AC9B12ED-A2D7-4337-A981-5BD8430E96D8}.Debug|x86.ActiveCfg = Release|Win32
 		{AC9B12ED-A2D7-4337-A981-5BD8430E96D8}.Debug|x86.Build.0 = Release|Win32
 		{AC9B12ED-A2D7-4337-A981-5BD8430E96D8}.Release_Dedicated|x64.ActiveCfg = Release|x64
-		{AC9B12ED-A2D7-4337-A981-5BD8430E96D8}.Release_Dedicated|x64.Build.0 = Release|x64
 		{AC9B12ED-A2D7-4337-A981-5BD8430E96D8}.Release_Dedicated|x86.ActiveCfg = Release|Win32
 		{AC9B12ED-A2D7-4337-A981-5BD8430E96D8}.Release_Dedicated|x86.Build.0 = Release|Win32
 		{AC9B12ED-A2D7-4337-A981-5BD8430E96D8}.Release|x64.ActiveCfg = Release|x64

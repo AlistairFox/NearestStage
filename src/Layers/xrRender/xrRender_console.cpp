@@ -316,10 +316,6 @@ float dm_current_fade = 47.5; //float(2*dm_current_size)-.5f;
 float ps_current_detail_density = 1.f;
 float ps_current_detail_height = 1.2f;
 
-//raindrops
-float		droplets_power_debug = 0.f;
-float		ps_r2_rain_drops_intensity = 0.00025f;
-float		ps_r2_rain_drops_speed = 1.25f;
 
 //ogse sunshafts
 float		ps_r2_ss_sunshafts_length = 1.f;
@@ -347,11 +343,6 @@ Flags32 psDeviceFlags2 = { 0 };
 Flags32		ps_actor_shadow_flags = { 1 };
 
 
-Flags32		ps_r2_rain_drops_flags = { R2FLAG_RAIN_DROPS
-	| R2FLAG_RAIN_DROPS_CONTROL
-};
-
-Flags32		ps_r2_hud_mask_flags = { R_FLAG_HUD_MASK };
 
 float ps_r2_gloss_factor = 10.0f;
 float ps_r2_gloss_min = 0.0f;
@@ -932,15 +923,8 @@ void		xrRender_initconsole	()
 	CMD4(CCC_Float, "r__gamma", &ps_r2_img_gamma, 0.5f, 2.2f);
 	CMD4(CCC_Float, "r__saturation", &ps_r2_img_saturation, 0.0f, 2.0f);
 
-
-	CMD3(CCC_Mask, "r2_raindrops", &ps_r2_rain_drops_flags, R2FLAG_RAIN_DROPS);
-	CMD3(CCC_Mask, "r2_rain_drops_control", &ps_r2_rain_drops_flags, R2FLAG_RAIN_DROPS_CONTROL);
-	CMD4(CCC_Float, "r2_rain_drops_intensity", &ps_r2_rain_drops_intensity, 0.f, 1.f);
-	CMD4(CCC_Float, "r2_rain_drops_speed", &ps_r2_rain_drops_speed, 0.8f, 5.f);
 	CMD3(CCC_Token, "r2_smap_size", &ps_r2_smapsize, qsmapsize_token);
 
-	// Hud Mask
-	CMD3(CCC_Mask, "r2_hud_mask", &ps_r2_hud_mask_flags, R_FLAG_HUD_MASK);
 
 	//no ram textures should be enabled by default on r3/r4
 	if (RENDER == R_R4) ps_r__common_flags.set(RFLAG_NO_RAM_TEXTURES, TRUE);
@@ -1066,9 +1050,6 @@ void		xrRender_initconsole	()
 	CMD3(CCC_Mask, "r2_use_bump", &ps_r2_static_flags, R2FLAG_USE_BUMP);//Need restart
 
 	CMD3(CCC_Token,		"r2_sun_quality",				&ps_r_sun_quality,			qsun_quality_token);
-
-	//Raindrops
-	CMD4(CCC_Float, "r2_rain_drops_power_debug", &droplets_power_debug, 0.f, 3.f);
 
 	//Hbao+
 	CMD4(CCC_Float, "r4_hbao_plus_radius", &hbao_plus_radius, 0, 10);

@@ -941,11 +941,12 @@ float CGamePersistent::GetActorThirst()
 	return (Actor()->conditions().GetThirst());
 }
 
-bool CGamePersistent::GetClearMaskProcess()
+Fvector3 CGamePersistent::GetRainDropsParams()
 {
 	if (!Actor())
-		return 0;
-	return Actor()->MaskClearInProcess();
+		return Fvector().set(0, 0, 0);
+
+	return Actor()->RainDropsParams;
 }
 
 void CGamePersistent::SetEffectorDOF(const Fvector& needed_dof)

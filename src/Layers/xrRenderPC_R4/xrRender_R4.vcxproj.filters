@@ -753,9 +753,6 @@
     <ClInclude Include="blender_hud_blood.h">
       <Filter>Shading templates</Filter>
     </ClInclude>
-    <ClInclude Include="blender_hud_mask.h">
-      <Filter>Shading templates</Filter>
-    </ClInclude>
     <ClInclude Include="blender_hud_satiety.h">
       <Filter>Shading templates</Filter>
     </ClInclude>
@@ -777,6 +774,8 @@
     <ClInclude Include="blender_cut.h">
       <Filter>Shading templates</Filter>
     </ClInclude>
+    <ClInclude Include="blender_gasmask_drops.h" />
+    <ClInclude Include="blender_gasmask_dudv.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1388,9 +1387,6 @@
     <ClCompile Include="blender_hud_blood.cpp">
       <Filter>Shading templates</Filter>
     </ClCompile>
-    <ClCompile Include="blender_hud_mask.cpp">
-      <Filter>Shading templates</Filter>
-    </ClCompile>
     <ClCompile Include="blender_hud_satiety.cpp">
       <Filter>Shading templates</Filter>
     </ClCompile>
@@ -1406,9 +1402,6 @@
     <ClCompile Include="blender_ss_sunshafts.cpp">
       <Filter>Shading templates</Filter>
     </ClCompile>
-    <ClCompile Include="r4_rendertarget_phase_hud_mask.cpp">
-      <Filter>Core_Target</Filter>
-    </ClCompile>
     <ClCompile Include="r4_rendertarget_phase_lens_flares.cpp">
       <Filter>Core_Target</Filter>
     </ClCompile>
@@ -1416,9 +1409,6 @@
       <Filter>Core_Target</Filter>
     </ClCompile>
     <ClCompile Include="..\xrRender\rendertarget_phase_hud_effects.cpp">
-      <Filter>Core_Target</Filter>
-    </ClCompile>
-    <ClCompile Include="..\xrRender\rendertarget_raindrops.cpp">
       <Filter>Core_Target</Filter>
     </ClCompile>
     <ClCompile Include="blender_blur.cpp">
@@ -1433,5 +1423,9 @@
     <ClCompile Include="blender_cut.cpp">
       <Filter>Shading templates</Filter>
     </ClCompile>
+    <ClCompile Include="rendertarget_phase_gasmask_drops.cpp" />
+    <ClCompile Include="rendertarget_phase_gasmask_dudv.cpp" />
+    <ClCompile Include="blender_gasmask_drops.cpp" />
+    <ClCompile Include="blender_gasmask_dudv.cpp" />
   </ItemGroup>
 </Project>

@@ -314,9 +314,10 @@
     <ClInclude Include="blender_deffer_aref.h" />
     <ClInclude Include="blender_deffer_flat.h" />
     <ClInclude Include="blender_deffer_model.h" />
+    <ClInclude Include="blender_gasmask_drops.h" />
+    <ClInclude Include="blender_gasmask_dudv.h" />
     <ClInclude Include="blender_hud_bleeding.h" />
     <ClInclude Include="blender_hud_blood.h" />
-    <ClInclude Include="blender_hud_mask.h" />
     <ClInclude Include="blender_hud_satiety.h" />
     <ClInclude Include="blender_hud_stamina.h" />
     <ClInclude Include="blender_hud_thirst.h" />
@@ -458,7 +459,6 @@
     <ClCompile Include="..\xrRender\ParticleGroup.cpp" />
     <ClCompile Include="..\xrRender\PSLibrary.cpp" />
     <ClCompile Include="..\xrRender\rendertarget_phase_hud_effects.cpp" />
-    <ClCompile Include="..\xrRender\rendertarget_raindrops.cpp" />
     <ClCompile Include="..\xrRender\ResourceManager.cpp" />
     <ClCompile Include="..\xrRender\ResourceManager_Loader.cpp" />
     <ClCompile Include="..\xrRender\ResourceManager_Reset.cpp" />
@@ -504,9 +504,10 @@
     <ClCompile Include="blender_deffer_aref.cpp" />
     <ClCompile Include="blender_deffer_flat.cpp" />
     <ClCompile Include="blender_deffer_model.cpp" />
+    <ClCompile Include="blender_gasmask_drops.cpp" />
+    <ClCompile Include="blender_gasmask_dudv.cpp" />
     <ClCompile Include="blender_hud_bleeding.cpp" />
     <ClCompile Include="blender_hud_blood.cpp" />
-    <ClCompile Include="blender_hud_mask.cpp" />
     <ClCompile Include="blender_hud_satiety.cpp" />
     <ClCompile Include="blender_hud_stamina.cpp" />
     <ClCompile Include="blender_hud_thirst.cpp" />
@@ -555,7 +556,6 @@
     <ClCompile Include="r4_rendertarget_phase_combine.cpp" />
     <ClCompile Include="r4_rendertarget_phase_cut.cpp" />
     <ClCompile Include="r4_rendertarget_phase_hdao.cpp" />
-    <ClCompile Include="r4_rendertarget_phase_hud_mask.cpp" />
     <ClCompile Include="r4_rendertarget_phase_lens_flares.cpp" />
     <ClCompile Include="r4_rendertarget_phase_luminance.cpp" />
     <ClCompile Include="r4_rendertarget_phase_occq.cpp" />
@@ -570,6 +570,8 @@
     <ClCompile Include="r4_R_render.cpp" />
     <ClCompile Include="r4_R_sun_support.cpp" />
     <ClCompile Include="rendertarget_phase_blur.cpp" />
+    <ClCompile Include="rendertarget_phase_gasmask_drops.cpp" />
+    <ClCompile Include="rendertarget_phase_gasmask_dudv.cpp" />
     <ClCompile Include="R_Backend_LOD.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

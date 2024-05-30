@@ -308,11 +308,6 @@ float dm_current_fade = 47.5; //float(2*dm_current_size)-.5f;
 float ps_current_detail_density = 1.f;
 float ps_current_detail_height = 1.2f;
 
-//raindrops
-float		droplets_power_debug = 0.f;
-float		ps_r2_rain_drops_intensity = 0.00025f;
-float		ps_r2_rain_drops_speed = 1.25f;
-
 //ogse sunshafts
 float		ps_r2_ss_sunshafts_length = 1.f;
 float		ps_r2_ss_sunshafts_radius = 1.f;
@@ -337,13 +332,6 @@ Flags32 psDeviceFlags2 = { 0 };
 
 
 Flags32		ps_actor_shadow_flags = { 1 };
-
-
-Flags32		ps_r2_rain_drops_flags = { R2FLAG_RAIN_DROPS
-	| R2FLAG_RAIN_DROPS_CONTROL
-};
-
-Flags32		ps_r2_hud_mask_flags = { R_FLAG_HUD_MASK };
 
 float ps_r2_gloss_factor = 10.0f;
 float ps_r2_gloss_min = 0.0f;

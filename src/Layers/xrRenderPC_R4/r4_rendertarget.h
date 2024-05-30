@@ -52,12 +52,13 @@ public:
 	IBlender*					b_hud_blood;
 	IBlender*					b_hud_power;
 	IBlender*					b_hud_bleeding;
-	IBlender*					b_hud_mask;
 	IBlender*					b_hud_satiety;
 	IBlender*					b_hud_thirst;
 	IBlender* b_lfx;
 	IBlender* b_sunshafts;
 	IBlender* b_blur;
+	IBlender* b_gasmask_drops;
+	IBlender* b_gasmask_dudv;
 
     // compute shader for hdao
     IBlender*                   b_hdao_cs;
@@ -172,9 +173,6 @@ private:
 	//Hud Bleeding
 	ref_shader					s_hud_bleeding;
 
-	//Hud Mask
-	ref_shader					s_hud_mask;
-
 	//hud satiety
 	ref_shader					s_hud_satiety;
 
@@ -274,8 +272,9 @@ private:
 	ref_shader				s_combine;
    ref_shader				s_combine_msaa[8];
 	ref_shader				s_combine_volumetric;
-	ref_geom				g_rain_drops;
-	ref_shader				s_rain_drops;
+
+	ref_shader				s_gasmask_drops;
+	ref_shader				s_gasmask_dudv;
 
 public:
 	ref_shader				s_postprocess;
@@ -357,7 +356,8 @@ public:
 	void						phase_accumulator		();
 	void						phase_vol_accumulator	();
 	void 						PhaseRainDrops();
-	void						shadow_direct			(light* L, u32 dls_phase);
+	void						phase_gasmask_drops();
+	void						phase_gasmask_dudv();
 
 	void						phase_cut();
 	void						SwitchViewPort(ViewPort vp);

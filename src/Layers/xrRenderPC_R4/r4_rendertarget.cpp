@@ -17,7 +17,6 @@
 #include "blender_hud_blood.h"
 #include "blender_hud_stamina.h"
 #include "blender_hud_bleeding.h"
-#include "blender_hud_mask.h"
 #include "blender_hud_satiety.h"
 #include "blender_hud_thirst.h"
 #include "blender_lens_flares.h"
@@ -28,6 +27,8 @@
 #include "../xrRender/dxRenderDeviceRender.h"
 
 #include <D3DX10Tex.h>
+#include "blender_gasmask_drops.h"
+#include "blender_gasmask_dudv.h"
 
 extern ENGINE_API float psSVPImageSizeK;
 
@@ -349,9 +350,6 @@ CRenderTarget::CRenderTarget		()
 	//HUD BLEEDING
 	b_hud_bleeding = xr_new<CBlender_Hud_Bleeding>();
 
-	//HUD MASK
-	b_hud_mask = xr_new<CBlender_hud_mask>();
-
 	//Hud Satiety
 	b_hud_satiety = xr_new<CBlender_Hud_Satiety>();
 
@@ -364,6 +362,9 @@ CRenderTarget::CRenderTarget		()
 	// Screen Space Shaders Stuff
 	b_ssfx_ssr = xr_new<CBlender_ssfx_ssr>(); // [Ascii1457] SSS new Phase
 	b_ssfx_volumetric_blur = xr_new<CBlender_ssfx_volumetric_blur>(); // [Ascii1457] SSS new Phase
+
+	b_gasmask_drops = xr_new<CBlender_gasmask_drops>();
+	b_gasmask_dudv = xr_new<CBlender_gasmask_dudv>();
 
 	// HDAO
 	b_hdao_cs               = xr_new<CBlender_CS_HDAO>			();
@@ -514,9 +515,6 @@ CRenderTarget::CRenderTarget		()
 	//Hud Bleeding
 	s_hud_bleeding.create(b_hud_bleeding, "r3\\hud_bleeding");
 
-	//Hud Mask
-	s_hud_mask.create(b_hud_mask, "r3\\hud_mask");
-
 	//hud satiety
 	s_hud_satiety.create(b_hud_satiety, "r3\\hud_power");
 
@@ -526,6 +524,9 @@ CRenderTarget::CRenderTarget		()
 	//SFZ Lens Flares
 	s_lfx.create(b_lfx, "r3\\lfx");
 	g_lfx.create(FVF::F_V, RCache.Vertex.Buffer(), RCache.QuadIB);
+
+	s_gasmask_drops.create(b_gasmask_drops, "r2\\gasmask_drops");
+	s_gasmask_dudv.create(b_gasmask_dudv, "r2\\gasmask_dudv");
 
 	// DIRECT (spot)
 	DXGI_FORMAT						depth_format	= (DXGI_FORMAT)RImplementation.o.HW_smap_FORMAT;
@@ -818,9 +819,6 @@ CRenderTarget::CRenderTarget		()
 
 		t_envmap_0.create			(r2_T_envs0);
 		t_envmap_1.create			(r2_T_envs1);
-
-		s_rain_drops.create("raindrops");
-		g_rain_drops.create(fvf_aa_AA, RCache.Vertex.Buffer(), RCache.QuadIB);
 	}
 
 	// Build textures
@@ -1167,13 +1165,14 @@ CRenderTarget::~CRenderTarget	()
 	xr_delete					(b_hud_blood			); //Hud Blood
 	xr_delete					(b_hud_power			); //Hud Stamina
 	xr_delete					(b_hud_bleeding			); //Hud Bleeding
-	xr_delete					(b_hud_mask				); //Hud Mask
 	xr_delete					(b_hud_satiety			); //satiety
 	xr_delete					(b_hud_thirst			); //thirst
 	xr_delete(b_sunshafts);
 	xr_delete(b_lfx); //SFZ Lens Flares
 	xr_delete(b_ssfx_ssr); // [Ascii1457] SSS new Phase
 	xr_delete(b_ssfx_volumetric_blur); // [Ascii1457] SSS new Phase
+	xr_delete(b_gasmask_drops);
+	xr_delete(b_gasmask_dudv);
 
    if( RImplementation.o.dx10_msaa )
    {

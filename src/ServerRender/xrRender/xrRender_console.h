@@ -165,9 +165,6 @@ extern ECORE_API float			ps_r2_ss_sunshafts_length;
 extern ECORE_API float			ps_r2_ss_sunshafts_radius;
 extern u32						ps_sunshafts_mode;
 
-extern ECORE_API float			ps_r2_rain_drops_intensity;
-extern ECORE_API float			ps_r2_rain_drops_speed;
-
 extern ECORE_API int			opt_static;
 extern ECORE_API int			opt_dynamic;
 
@@ -280,12 +277,6 @@ enum
 
 enum
 {
-	R2FLAG_RAIN_DROPS = (1 << 0),
-	R2FLAG_RAIN_DROPS_CONTROL = (1 << 1),
-};
-
-enum
-{
 	RFLAG_NO_RAM_TEXTURES = (1 << 0),
 };
 
@@ -294,12 +285,6 @@ extern ECORE_API Flags32 ps_r__common_flags;
 //Rezy: cleanup flags
 extern Flags32 psDeviceFlags2;
 
-extern ECORE_API Flags32 ps_r2_hud_mask_flags;
-
-enum
-{
-	R_FLAG_HUD_MASK = (1 << 0),
-};
 
 
 extern void						xrRender_initconsole	();
