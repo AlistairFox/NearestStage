@@ -353,7 +353,7 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 	case GEG_PLAYER_NEED_EAT_ITEM:
 	{
 		SendTo(SV_Client->ID, P, net_flags(TRUE, TRUE, FALSE, TRUE));
-	}
+	}break;
 	case GEG_PLAYER_ITEM_SELL:
 		{
 			game->OnPlayer_Sell_Item(sender, P);

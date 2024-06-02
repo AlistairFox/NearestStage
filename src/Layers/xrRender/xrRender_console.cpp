@@ -286,7 +286,7 @@ Fvector4 ps_ssfx_wind_trees = { 11.0f, 0.15f, 0.5f, 0.15f };
 int ps_ssfx_ssr_quality = 2; // Quality
 Fvector4 ps_ssfx_ssr = { 1.0f, 0.4f, 0.6f, 0.0f }; // Res, Blur, Temp, Noise
 Fvector4 ps_ssfx_ssr_2 = { 1.0f, 1.3f, 2.0f, 0.1f }; // Quality, Fade, Int, Wpn Int
-Fvector4 ps_ssfx_volumetric = { 0, 1.0f, 3.0f, 8.0f };
+Fvector4 ps_ssfx_volumetric = { 0, 1.0f, 3.0f, 8.0f }; // x - ? y - ? z - ? w - Resolution
 Fvector3 ps_ssfx_shadow_bias = { 0.4f, 0.03f, 0.0f };
 
 Fvector4 ps_ssfx_terrain_quality = { 6, 0, 0, 0 };
