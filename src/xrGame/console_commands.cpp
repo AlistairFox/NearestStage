@@ -103,6 +103,8 @@ extern float	g_smart_cover_animation_speed_factor;
 extern	BOOL	g_ai_use_old_vision;
 float			g_aim_predict_time = 0.44f;
 int				g_keypress_on_start	= 1;
+extern Fvector3 testangle = { 0,0,0 };
+extern Fvector3 testposs = { 0,0,0 };
 
 ENGINE_API extern float	g_console_sensitive;
 
@@ -1883,8 +1885,8 @@ void CCC_RegisterCommands()
 
 	CMD3(CCC_Mask,				"hud_crosshair",		&psHUD_Flags,	HUD_CROSSHAIR_DIST);
 	CMD3(CCC_Mask,				"hud_crosshair_dist",	&psHUD_Flags,	HUD_CROSSHAIR_DIST);
-
- 
+	CMD4(CCC_Vector3, "test_angle", &testangle, Fvector().set(-1000.f, -1000.f, -1000.f), Fvector().set(1000.f, 1000.f, 1000.f));
+	CMD4(CCC_Vector3, "test_poss", &testposs, Fvector().set(-1000.f, -1000.f, -1000.f), Fvector().set(1000.f, 1000.f, 1000.f));
 	CMD4(CCC_Float,				"hud_fov",				&psHUD_FOV,		0.1f,	1.0f);
  
 

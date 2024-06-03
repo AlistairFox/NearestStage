@@ -65,6 +65,8 @@ void CHelmet::Load(LPCSTR section)
 
 	m_b_HasGlass = !!READ_IF_EXISTS(pSettings, r_bool, section, "has_glass", FALSE);
 	m_SuitableRepairKit = READ_IF_EXISTS(pSettings, r_string, section, "suitable_repair_kit", "repair_kit");
+
+	AttachableBone = READ_IF_EXISTS(pSettings, r_string, section, "attach_bone", "bip01_neck");
 }
 
 void CHelmet::ReloadBonesProtection()
@@ -118,9 +120,85 @@ void CHelmet::OnH_A_Chield()
 //	ReloadBonesProtection();
 }
 
+void CHelmet::renderable_Render()
+{
+	UpdateXForm();
+
+	inherited::renderable_Render();
+}
+extern Fvector3 testangle;
+extern Fvector3 testposs;
+void CHelmet::UpdateXForm()
+{
+	if (0 == H_Parent())	return;
+
+	// Get access to entity and its visual
+	CEntityAlive* E = smart_cast<CEntityAlive*>(H_Parent());
+	if (!E) return;
+
+	if (E->cast_base_monster()) return;
+
+	const CInventoryOwner* parent = smart_cast<const CInventoryOwner*>(E);
+	if (parent && parent->use_simplified_visual())
+		return;
+
+	if (parent->attached(this))
+		return;
+
+	R_ASSERT(E);
+	IKinematics* V = smart_cast<IKinematics*>	(E->Visual());
+	VERIFY(V);
+
+	// Get matrices
+	V->CalculateBones();
+	Fmatrix& mL = V->LL_GetTransform(u16(Actor()->m_neck));
+	V->LL_SetBoneVisible(u16(Actor()->m_head), 0, TRUE);
+	// Calculate
+	Fmatrix			mRes;
+	Fmatrix Rotation;
+	Rotation.setHPB(deg2rad(testangle.x), deg2rad(testangle.y), deg2rad(testangle.z));
+	mRes = mL;
+	mRes.mulB_43(Rotation);
+	mRes.c.x += testposs.x;
+	mRes.c.y += testposs.y;
+	mRes.c.z += testposs.z;
+	mRes.mulA_43(E->XFORM());
+	       
+	//if (fis_zero(D.magnitude()))
+	//{
+	//	mRes.set(E->XFORM());
+	//	mRes.c.set(mR.c);
+	//}
+	//else
+	//{
+	//	D.normalize();
+	//	R.crossproduct(mR.j, D);
+	//
+	//	N.crossproduct(D, R);
+	//	N.normalize();
+	//
+	//	mRes.set(R, N, D, mR.c);
+	//	mRes.mulA_43(E->XFORM());
+	//}
+	renderable.xform = mRes;
+
+}
+
 void CHelmet::UpdateCL()
 {
 	inherited::UpdateCL();
+
+	if (!H_Parent())
+		return;
+
+	CInventoryOwner* owner = smart_cast<CInventoryOwner*>(H_Parent());
+	CActor* pA = smart_cast<CActor*>(owner);
+	if (!pA)
+		return;
+
+	//m_bone_name = "bip01_neck";
+	//pA->attach(this);
+
 }
 
 

@@ -626,7 +626,7 @@ protected:
 	//crouch+no acceleration
 	float								m_fDispCrouchNoAccelFactor;
 
-protected:
+	public:
 	//косточки используемые при стрельбе
 	int									m_r_hand;
 	int									m_l_finger1;

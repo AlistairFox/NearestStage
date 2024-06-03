@@ -27,6 +27,8 @@ public:
 	virtual void			net_Export				(NET_Packet& P);
 	virtual void			net_Import				(NET_Packet& P);
 	virtual void			OnH_A_Chield			();
+	virtual void			renderable_Render()override;
+	virtual void			UpdateXForm() override;
 
 	float					GetDefHitTypeProtection	(ALife::EHitType hit_type);
 	float					GetHitTypeProtection	(ALife::EHitType hit_type, s16 element);
@@ -51,6 +53,7 @@ public:
 protected:
 	HitImmunity::HitTypeSVec	m_HitTypeProtection;
 	SBoneProtections*		m_boneProtection;	
+	shared_str	AttachableBone;
 
 protected:
 	virtual bool			install_upgrade_impl	( LPCSTR section, bool test );
