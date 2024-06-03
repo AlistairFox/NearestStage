@@ -65,8 +65,6 @@ void CHelmet::Load(LPCSTR section)
 
 	m_b_HasGlass = !!READ_IF_EXISTS(pSettings, r_bool, section, "has_glass", FALSE);
 	m_SuitableRepairKit = READ_IF_EXISTS(pSettings, r_string, section, "suitable_repair_kit", "repair_kit");
-
-	AttachableBone = READ_IF_EXISTS(pSettings, r_string, section, "attach_bone", "bip01_neck");
 }
 
 void CHelmet::ReloadBonesProtection()

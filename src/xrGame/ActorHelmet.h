@@ -53,7 +53,6 @@ public:
 protected:
 	HitImmunity::HitTypeSVec	m_HitTypeProtection;
 	SBoneProtections*		m_boneProtection;	
-	shared_str	AttachableBone;
 
 protected:
 	virtual bool			install_upgrade_impl	( LPCSTR section, bool test );
