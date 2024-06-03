@@ -554,107 +554,104 @@ void CInventory::Activate_deffered	(u32 slot, u32 _frame)
 	 m_iLoadActiveSlotFrame		= _frame;
 }*/
 
-
+#define DUMP_MSG
 void CInventory::Activate(u16 slot, bool bForce) 
 {	
-	if(!OnServer())
-	{
+	if (!OnServer())
 		return;
-	}
 
 	PIItem tmp_item = NULL;
 	if (slot != NO_ACTIVE_SLOT)
 		tmp_item = ItemFromSlot(slot);
 
+#ifdef DUMP_MSG 
+	Msg("--- TEST SLOT: %d, ptr: %p", slot, tmp_item);
+#endif	
+
+
 	if (tmp_item && IsSlotBlocked(tmp_item) && (!bForce))
 	{
 		//to restore after unblocking ...
 		SetPrevActiveSlot(slot);
-		return;
-	}
-
-	if (GetActiveSlot()==slot || (GetNextActiveSlot()==slot && !bForce))
-	{
-//		if (m_iNextActiveSlot != slot) {
-//			LPCSTR const name = smart_cast<CGameObject const*>(m_pOwner)->cName().c_str();
-//			if ( !xr_strcmp("jup_b43_stalker_assistant_pri6695", name) )
-//				LogStackTrace	("");
-//			Msg				( "[%6d][%s] CInventory::Activate changing next active slot to %d", Device.dwTimeGlobal, name, slot );
-//		}
-		m_iNextActiveSlot=slot;
-#ifdef DEBUG
-//		Msg("--- There's no need to activate slot [%d], next active slot is [%d]", slot, m_iNextActiveSlot);
+#ifdef DUMP_MSG 
+		Msg("--- IsSlotBlocked: %s", tmp_item->m_name.c_str());
 #endif
 		return;
 	}
 
-	R_ASSERT2(slot<=LastSlot(), "wrong slot number");
-
-	if (slot != NO_ACTIVE_SLOT && !m_slots[slot].CanBeActivated()) 
+	if (GetActiveSlot() == slot || (GetNextActiveSlot() == slot && !bForce))
+	{
+		m_iNextActiveSlot = slot;
+#ifdef DUMP_MSG 
+		Msg("--- m_iNextActiveSlot: %s", tmp_item ? tmp_item->m_name.c_str() : "NO_ACTIVE_SLOT");
+#endif
 		return;
+	}
 
-#ifdef DEBUG
-//	Msg("--- Activating slot [%d], inventory owner: [%s], Frame[%d]", slot, m_pOwner->Name(), Device.dwFrame);
-#endif // #ifdef DEBUG
-	
+	R_ASSERT2(slot <= LastSlot(), "wrong slot number");
+
+	if (slot != NO_ACTIVE_SLOT && !m_slots[slot].CanBeActivated())
+	{
+#ifdef DUMP_MSG 
+		Msg("--- !m_slots[slot].CanBeActivated(): %s", tmp_item ? tmp_item->m_name.c_str() : "NO_ACTIVE_SLOT");
+#endif
+		return;
+	}
 	//активный слот не выбран
 	if (GetActiveSlot() == NO_ACTIVE_SLOT)
 	{
 		if (tmp_item)
 		{
-//			if ( m_iNextActiveSlot != slot) {
-//				LPCSTR const name = smart_cast<CGameObject const*>(m_pOwner)->cName().c_str();
-//				if ( !xr_strcmp("jup_b43_stalker_assistant_pri6695", name) )
-//					LogStackTrace	("");
-//				Msg				( "[%6d][%s] CInventory::Activate changing next active slot2 to %d", Device.dwTimeGlobal, name, slot );
-//			}
-			m_iNextActiveSlot		= slot;
+			m_iNextActiveSlot = slot;
+#ifdef DUMP_MSG 
+			Msg("--- GetActiveSlot() == NO_ACTIVE_SLOT: %s", tmp_item ? tmp_item->m_name.c_str() : "NO_ACTIVE_SLOT");
+#endif
 		}
-		else 
+		else
 		{
-			if(slot==GRENADE_SLOT)//fake for grenade
+			if (slot == GRENADE_SLOT)//fake for grenade
 			{
 				PIItem gr = SameSlot(GRENADE_SLOT, NULL, true);
-				if(gr)
-					Slot(GRENADE_SLOT,gr);
+				if (gr)
+					Slot(GRENADE_SLOT, gr);
 			}
 		}
 	}
+
 	//активный слот задействован
-	else if (slot==NO_ACTIVE_SLOT || tmp_item)
+	else if (slot == NO_ACTIVE_SLOT || tmp_item)
 	{
+
 		PIItem active_item = ActiveItem();
-		if(active_item && !bForce)
+		if (active_item && !bForce)
 		{
 			CHudItem* tempItem = active_item->cast_hud_item();
 			R_ASSERT2(tempItem, active_item->object().cNameSect().c_str());
-			
+
+#ifdef DUMP_MSG 
+			Msg("--- SendDeactivateItem: %s and activate: %s", tempItem ? tempItem->object().cName().c_str() : "", tmp_item ? tmp_item->m_name.c_str() : "NO_ACTIVE_SLOT");
+#endif
+
 			tempItem->SendDeactivateItem();
-#ifdef DEBUG
-//			Msg("--- Inventory owner [%s]: send deactivate item [%s]", m_pOwner->Name(), active_item->NameItem());
-#endif // #ifdef DEBUG
-		} else //in case where weapon is going to destroy
+		}
+		else //in case where weapon is going to destroy
 		{
 			if (tmp_item)
 				tmp_item->ActivateItem();
-			
-//!			if ( m_iActiveSlot != slot ) {
-//!				LPCSTR const name = smart_cast<CGameObject const*>(m_pOwner)->cName().c_str();
-//				if ( !xr_strcmp("jup_b43_stalker_assistant_pri6695", name) )
-//					LogStackTrace	("");
-//!				Msg				("[%6d][%s] CInventory::Activate changing active slot from %d to %d", Device.dwTimeGlobal, name, m_iActiveSlot, slot );
-//!			}
 
-			m_iActiveSlot		= slot;
+#ifdef DUMP_MSG 
+			Msg("--- NO HAS ACTIVE ITEM Activate Item: %s ", tmp_item ? tmp_item->m_name.c_str() : "NO_ACTIVE_SLOT");
+#endif
+
+
+			m_iActiveSlot = slot;
 		}
-//		if ( m_iNextActiveSlot != slot ) {
-//			LPCSTR const name = smart_cast<CGameObject const*>(m_pOwner)->cName().c_str();
-//			if ( !xr_strcmp("jup_b43_stalker_assistant_pri6695", name) && !slot )
-//				LogStackTrace	("");
-//			Msg				( "[%6d][%s] CInventory::Activate changing next active slot3 to %d", Device.dwTimeGlobal, name, slot );
-//		}
-		m_iNextActiveSlot		= slot;
+		m_iNextActiveSlot = slot;
 	}
+
+#ifdef DUMP_MSG 
+	Msg("--- Activate Item: %s, ActiveSlot: %d, NextSlot: %d", tmp_item ? tmp_item->m_name.c_str() : "NO_ACTIVE_SLOT", m_iActiveSlot, m_iNextActiveSlot);
+#endif
 }
 
 
@@ -756,6 +753,24 @@ bool CInventory::Action(u16 cmd, u32 flags)
 				ActiveWeapon( slot );
 			}
 		}break;
+	case kRadioItem:
+	{
+		b_send_event = true;
+
+		if (flags & CMD_START)
+		{
+			if (GetActiveSlot() == RADIO_SLOT && ActiveItem())
+			{
+				Msg("Deactivate");
+				Activate(NO_ACTIVE_SLOT);
+			}
+			else
+			{
+				Msg("Activate");
+				Activate(RADIO_SLOT);
+			}
+		}
+	}break;
 	case kARTEFACT:
 		{
 		    b_send_event = true;

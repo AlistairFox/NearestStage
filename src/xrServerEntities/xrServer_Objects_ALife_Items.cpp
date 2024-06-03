@@ -950,6 +950,7 @@ CSE_ALifeItemWalkieTalkie::CSE_ALifeItemWalkieTalkie(LPCSTR caSection) : CSE_ALi
 	MaxFreq = READ_IF_EXISTS(pSettings, r_u16, caSection, "maximum_hz", 100.f);
 	MaxDistance = READ_IF_EXISTS(pSettings, r_float, caSection, "maximal_distance", 5000);
 	CurrentFreq = 0;
+	State = 0;
 }
 
 CSE_ALifeItemWalkieTalkie::~CSE_ALifeItemWalkieTalkie()
@@ -972,12 +973,14 @@ void CSE_ALifeItemWalkieTalkie::UPDATE_Read		(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Read		(tNetPacket);
 	tNetPacket.r_u16(CurrentFreq);
+	tNetPacket.r_u8(State);
 }
 
 void CSE_ALifeItemWalkieTalkie::UPDATE_Write	(NET_Packet	&tNetPacket)
 {
 	inherited::UPDATE_Write		(tNetPacket);
 	tNetPacket.w_u16(CurrentFreq);
+	tNetPacket.w_u8(State);
 }
 
 void CSE_ALifeItemWalkieTalkie::OnEvent(NET_Packet& tNetPacket, u16 type, u32 time, ClientID sender)

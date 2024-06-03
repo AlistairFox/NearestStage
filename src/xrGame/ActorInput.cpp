@@ -254,19 +254,19 @@ void CActor::IR_OnKeyboardPress(int cmd)
 
 	case kRadioItem:
 	{
-		CCustomDetector* pDet = smart_cast<CCustomDetector*>(inventory().ItemFromSlot(DETECTOR_SLOT));
-		if (pDet && !pDet->IsHidden())
-			return;
-
-		PIItem itm = inventory().ItemFromSlot(RADIO_SLOT);
-		if (itm)
-		{
-			CWalkieTalkie* Radio = smart_cast<CWalkieTalkie*>(itm);
-			if (Radio)
-			{
-				Radio->IsInHand() ? Radio->TakeOff() : Radio->TakeOn();
-			}
-		}
+		//CCustomDetector* pDet = smart_cast<CCustomDetector*>(inventory().ItemFromSlot(DETECTOR_SLOT));
+		//if (pDet && !pDet->IsHidden())
+		//	return;
+		//
+		//PIItem itm = inventory().ItemFromSlot(RADIO_SLOT);
+		//if (itm)
+		//{
+		//	CWalkieTalkie* Radio = smart_cast<CWalkieTalkie*>(itm);
+		//	if (Radio)
+		//	{
+		//		Radio->IsInHand() ? Radio->TakeOff() : Radio->TakeOn();
+		//	}
+		//}
 	}break;
 	case kACTIVE_JOBS:
 	{

@@ -257,6 +257,7 @@ SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemDetector,CSE_ALifeItem)
 
 SERVER_ENTITY_DECLARE_BEGIN(CSE_ALifeItemWalkieTalkie, CSE_ALifeItem)
 		u16 CurrentFreq;
+		u8 State;
 		u16 MaxFreq;
 		u16 MinFreq;
 		float MaxDistance;

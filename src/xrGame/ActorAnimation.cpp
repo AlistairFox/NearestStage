@@ -21,6 +21,7 @@
 #include "IKLimbsController.h"
 #include "player_hud.h"
 #include "PDA.h"
+#include "WalkieTalkie.h"
 
 static const float y_spin0_factor = 0.0f;
 static const float y_spin1_factor = 0.4f;
@@ -594,6 +595,7 @@ void CActor::g_SetAnimation(u32 mstate_rl)
 		CMissile* M = smart_cast<CMissile*>(_i);
 		CArtefact* A = smart_cast<CArtefact*>(_i);
 		CPda* P = smart_cast<CPda*>(_i);
+		CWalkieTalkie* Walkie = smart_cast<CWalkieTalkie*>(_i);
 
 		if (!MpSafeMODE())
 		{
@@ -730,6 +732,17 @@ void CActor::g_SetAnimation(u32 mstate_rl)
 							default: M_torso = ST->m_torso[4].moving[moving_idx];
 								break;
 							}
+						}
+						else if (Walkie)
+						{
+							switch (Walkie->GetState())
+							{
+							case CWalkieTalkie::eIdle: M_torso = TW->moving[moving_idx];	break;
+							case CWalkieTalkie::eShowing: M_torso = TW->draw;					break;
+							case CWalkieTalkie::eHiding: M_torso = TW->holster;				break;
+							default: M_torso = TW->moving[moving_idx];
+							}
+							
 						}
 					}
 				}

@@ -42,6 +42,8 @@ BOOL CWalkieTalkie::net_Spawn(CSE_Abstract* DC)
 		MinHZ = pSE_WT->MinFreq;
 		MaxHZ = pSE_WT->MaxFreq;
 		MaxDistance = pSE_WT->MaxDistance;
+		SetState(pSE_WT->State);
+		SetNextState(pSE_WT->State);
 	}
 
 	return TRUE;
@@ -50,12 +52,6 @@ BOOL CWalkieTalkie::net_Spawn(CSE_Abstract* DC)
 void CWalkieTalkie::Load(LPCSTR section)
 {
 	inherited::Load(section);
-
-	/* это мы более не читаем, получаем данные параметры с серверного объекта
-	MinHZ = READ_IF_EXISTS(pSettings, r_u16, section, "minimal_hz", 0.f);
-	MaxHZ = READ_IF_EXISTS(pSettings, r_u16, section, "maximum_hz", 100.f);
-	MaxDistance = READ_IF_EXISTS(pSettings, r_float, section, "maximal_distance", 5000);
-	*/
 
 	m_sounds.LoadSound(section, "snd_draw", "sndShow");
 	m_sounds.LoadSound(section, "snd_holster", "sndHide");
@@ -93,6 +89,7 @@ void CWalkieTalkie::OnEvent(NET_Packet& P, u16 type)
 		P.r_u16(CurrentHZ);
 	}break;
 	default:
+		inherited::OnEvent(P, type);
 		break;
 	}
 }
@@ -101,12 +98,14 @@ void CWalkieTalkie::net_Export(NET_Packet& P)
 {
 	inherited::net_Export(P);
 	P.w_u16(CurrentHZ);
+	P.w_u8(GetState());
 }
 
 void CWalkieTalkie::net_Import(NET_Packet& P)
 {
 	inherited::net_Import(P);
 	CurrentHZ = P.r_u16();
+	P.r_u8();
 }
 
 void CWalkieTalkie::OnH_A_Chield()
@@ -162,26 +161,26 @@ void CWalkieTalkie::UpdateHudAdditional(Fmatrix& trans)
 	clamp(m_sFactor, 0.f, 1.f);
 }
 
-void CWalkieTalkie::OnH_B_Independet(bool just_before_destroy)
+void CWalkieTalkie::OnH_B_Independent(bool just_before_destroy)
 {
 	inherited::OnH_B_Independent(just_before_destroy);
 
+	SetPending(FALSE);
+	SwitchState(eHidden);
+	TakeOff();
 	CurrentActor = 0;
 	CurrentInvOwner = 0;
+	g_player_hud->detach_item(this);
 }
 
 void CWalkieTalkie::OnHiddenItem()
 {
+	SwitchState(eHidden);
 }
 
 void CWalkieTalkie::OnActiveItem()
 {
-	return;
-}
-
-void CWalkieTalkie::UpdateXForm()
-{
-	CInventoryItem::UpdateXForm();
+	SwitchState(eShowing);
 }
 
 BOOL CWalkieTalkie::net_Relevant()
@@ -212,34 +211,43 @@ void CWalkieTalkie::ShowUI(bool show)
 void CWalkieTalkie::OnStateSwitch(u32 S)
 {
 	inherited::OnStateSwitch(S);
-	switch (S)
+
+	if (OnServer() || (H_Parent() == Level().CurrentControlEntity()))
 	{
-	case eShowing:
-	{
-		g_player_hud->attach_item(this);
-		PlayHUDMotion("anm_show", FALSE, this, GetState());
-		m_sounds.PlaySound("sndShow", Fvector().set(0, 0, 0), this, true, false);
-		SetPending(TRUE);
-	}break;
-	case eHiding:
-	{
-		m_sounds.PlaySound("sndHide", Fvector().set(0, 0, 0), this, true, false);
-		PlayHUDMotion("anm_hide", FALSE, this, GetState());
-		SetPending(TRUE);
-	}break;
-	case eIdle:
-	{
-		PlayAnimIdle();
-		SetPending(FALSE);
-	}break;
-	default:
-		break;
+		switch (S)
+		{
+		case eShowing:
+		{
+			g_player_hud->attach_item(this);
+			PlayHUDMotion("anm_show", true, this, GetState());
+			m_sounds.PlaySound("sndShow", Fvector().set(0, 0, 0), this, true, false);
+			SetPending(TRUE);
+			m_bRadioInHand = true;
+			SoundTimer = 0;
+		}break;
+		case eHiding:
+		{
+			m_sounds.PlaySound("sndHide", Fvector().set(0, 0, 0), this, true, false);
+			PlayHUDMotion("anm_hide", true, this, GetState());
+			SetPending(TRUE);
+			TakeOff();
+		}break;
+		case eIdle:
+		{
+			PlayAnimIdle();
+			SetPending(FALSE);
+		}break;
+		case eHidden:
+		{
+			g_player_hud->detach_item(this);
+			SetPending(FALSE);
+		}break;
+		}
 	}
 }
 
 void CWalkieTalkie::OnAnimationEnd(u32 state)
 {
-	inherited::OnAnimationEnd(state);
 	switch (state)
 	{
 	case eShowing:
@@ -249,9 +257,7 @@ void CWalkieTalkie::OnAnimationEnd(u32 state)
 	case eHiding:
 	{
 		SwitchState(eHidden);
-		//TurnOff();
-		g_player_hud->detach_item(this);
-	}
+	}break;
 	default:
 		break;
 	}
@@ -262,77 +268,25 @@ void CWalkieTalkie::SwitchState(u32 S)
 	if (OnServer())
 	{
 		inherited::SwitchState(S);
-		return;
 	}
 
-	if (OnClient())
+	if (OnClient()  && H_Parent() == Level().CurrentControlEntity())
 	{
 		SetNextState(S);
-		OnStateSwitch(S);
-
-		switch (S)
-		{
-		case eHidden:
-		{
-
-		}break;
-		case eShowing:
-		case eIdle:
-		{
-
-		}break;
-		default:
-			break;
-		}
+		OnStateSwitch(u32(S));
 	}
 }
 
 void CWalkieTalkie::TakeOn()
 {
-	m_bNeedActivation = false;
-
-	if (GetState() == eHidden)
-	{
-		if (m_pInventory->ActiveItem())
-		{
-			if (OnServer())
-			{
-				// Пытаемся достать допустимый предмет: нож, оружие или тп
-				// при этом будет спрятано текущее оружие
-				m_pInventory->Activate(NO_ACTIVE_SLOT);
-			}
-			else
-			{
-				if (H_Parent() && H_Parent() == Level().CurrentViewEntity())
-				{
-					Msg("ActivateSlot");
-					NET_Packet						P;
-					CGameObject::u_EventGen(P, GEG_PLAYER_ACTIVATE_SLOT, H_Parent()->ID());
-					P.w_u16(NO_ACTIVE_SLOT);
-					CGameObject::u_EventSend(P);
-				}
-			}
-			m_bNeedActivation = true;
-		}
-		else
-		{
-			SwitchState(eShowing);
-			m_bRadioInHand = true;
-		}
-	}
-
-	SoundTimer = 0;
+	SwitchState(eShowing);
 }
 
 void CWalkieTalkie::TakeOff()
 {
-	if (m_bRadioInHand)
-		SwitchState(eHiding);
-
 	SayNow = false;
 	m_bRadioInHand = false;
 	ShowUI(false);
-
 }
 
 void CWalkieTalkie::ActivateVoice(bool status)
@@ -413,32 +367,6 @@ void CWalkieTalkie::UpdateCL()
 
 	if (CurrentActor != smart_cast<CActor*>(Level().CurrentControlEntity()))
 		return;
-
-	if (m_bNeedActivation && !m_pInventory->ActiveItem())
-	{
-		TakeOn();
-	}
-
-	if (IsInHand())
-	{
-		if (OnClient())
-		{
-			u16 curSlot = m_pInventory->GetActiveSlot();
-			if (curSlot != NO_ACTIVE_SLOT)
-			{
-				PIItem pItm = m_pInventory->ItemFromSlot(m_pInventory->GetNextActiveSlot());
-				if (pItm)
-				{
-					if (GetState() == eIdle || GetState() == eShowing)
-					{
-						m_bNeedActivation = false;
-						SwitchState(eHiding);
-						return;
-					}
-				}
-			}
-		}
-	}
 
 	if (!CurrentActor->g_Alive())
 	{

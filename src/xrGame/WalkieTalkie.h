@@ -24,13 +24,12 @@ public:
 	virtual void	net_Import(NET_Packet& P);
 
 	virtual void	OnH_A_Chield()override;
-	virtual void	OnH_B_Independet(bool just_before_destroy);
+	virtual void	OnH_B_Independent(bool just_before_destroy) override;
 	virtual void	OnHiddenItem() override;
 	virtual void	OnActiveItem() override;
 	virtual void	OnStateSwitch(u32 S) override;
 	virtual void	OnAnimationEnd(u32 state) override;
 	virtual void	SwitchState(u32 S) override;
-	virtual void	UpdateXForm() override;
 	virtual BOOL	net_Relevant() override;
 			void	ShowUI(bool show);
 			void	TakeOn();
