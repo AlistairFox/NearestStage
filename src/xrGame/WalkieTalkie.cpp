@@ -390,3 +390,8 @@ void CWalkieTalkie::UpdateCL()
 		}
 	}
 }
+
+void CWalkieTalkie::UpdateXForm()
+{
+	CInventoryItem::UpdateXForm();
+}

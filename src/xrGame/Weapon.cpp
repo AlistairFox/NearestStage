@@ -75,8 +75,6 @@ CWeapon::CWeapon()
 	m_strap_bone1			= 0;
 	m_strap_bone0_id		= -1;
 	m_strap_bone1_id		= -1;
-	m_StrapOffset.identity	();
-	m_StrapOffset_alt.identity();
 	m_strapped_mode			= false;
 	m_strapped_mode_rifle	= false;
 	m_can_be_strapped_rifle = false;

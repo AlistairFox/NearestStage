@@ -44,6 +44,7 @@ public:
 	virtual void	UpdateHudAdditional(Fmatrix& trans) override;
 	virtual void	shedule_Update(u32 dt) override;
 	virtual void	UpdateCL() override;
+	virtual void	UpdateXForm() override;
 
 
 	u16					CurrentHZ;
