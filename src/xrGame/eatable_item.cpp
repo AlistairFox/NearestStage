@@ -104,21 +104,6 @@ void CEatableItem::UpdateCL()
 {
 	inherited::UpdateCL();
 
-	if (need_hide_timer && HideTimer <= Device.dwTimeGlobal)
-	{
-		CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
-		if (pActor)
-			pActor->TimeBlockAction(anim_sect);
-
-		if(pActor && m_iCamEffector != nullptr)
-			pActor->add_cam_effector(m_iCamEffector, 8555, false, "");
-
-		m_bItmStartAnim = true;
-
-		need_hide_timer = false;
-		HideTimer = 0;
-	}
-
 	if (m_bItmStartAnim && m_pInventory->GetActiveSlot() == NO_ACTIVE_SLOT)
 		StartAnimation();
 
@@ -145,23 +130,11 @@ void CEatableItem::HideWeapon()
 		if (OnClient())
 		{
 			CActor* pActor = smart_cast<CActor*>(Level().CurrentEntity());
-			game_cl_freemp* huita = smart_cast<game_cl_freemp*>(&Game());
-			if (huita && huita->m_game_ui->ActorMenu().IsShown())
-			{
-				huita->m_game_ui->HideActorMenu();
-				g_player_hud->script_anim_play(2, "item_ea_backpack_close_hud", "anm_ea_show", false, 1.0f);
-				pActor->PlayAnmSound("interface\\item_usage\\backpack_close");
-				pActor->add_cam_effector("itemuse_anm_effects\\backpack_open.anm", 8555, false, "");
-				HideTimer = Device.dwTimeGlobal + 1500;
-				need_hide_timer = true;
-			}
-			else
-			{
-				if (pActor)
-					pActor->TimeBlockAction(anim_sect);
-				pActor->add_cam_effector(m_iCamEffector, 8555, false, "");
-				m_bItmStartAnim = true;
-			}
+
+			if (pActor)
+				pActor->TimeBlockAction(anim_sect);
+			pActor->add_cam_effector(m_iCamEffector, 8555, false, "");
+			m_bItmStartAnim = true;
 		}
 
 		if (OnServer())

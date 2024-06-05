@@ -44,8 +44,6 @@ public:
 	shared_str		use_cam_effector;
 	ref_sound		m_using_sound;
 	LPCSTR m_iCamEffector;
-	u32 HideTimer = 0;
-	bool need_hide_timer = false;
 //	LPCSTR m_iHudAnm;
 };
 

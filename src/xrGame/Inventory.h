@@ -77,6 +77,9 @@ public:
 	PIItem					ItemFromSlot		(u16 slot) const;
 
 	bool					Action				(u16 cmd, u32 flags);
+	bool need_open_inventory = false;
+	u32 OpenTimer = 0;
+
 	void					ActiveWeapon		(u16 slot);
 	void					Update				();
 	// »щет на по€се аналогичный IItem

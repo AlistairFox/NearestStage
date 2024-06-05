@@ -26,6 +26,7 @@
 #include"PDA.h"
 #include "Inventory.h"
 #include "CustomOutfit.h"
+#include "Backpack.h"
 
 using namespace InventoryUtilities;
 
@@ -735,6 +736,7 @@ bool CInventory::Action(u16 cmd, u32 flags)
 			ActiveItem()->Action(cmd, flags)) 
 											return true;
 	bool b_send_event = false;
+	u16 ActivateSlot = -1;
 	switch(cmd) 
 	{
 	case kWPN_1:
@@ -755,19 +757,60 @@ bool CInventory::Action(u16 cmd, u32 flags)
 		}break;
 	case kRadioItem:
 	{
-		b_send_event = true;
 
 		if (flags & CMD_START)
 		{
+			b_send_event = true;
 			if (GetActiveSlot() == RADIO_SLOT && ActiveItem())
 			{
 				Msg("Deactivate");
+				ActivateSlot = NO_ACTIVE_SLOT;
 				Activate(NO_ACTIVE_SLOT);
 			}
 			else
 			{
+				ActivateSlot = RADIO_SLOT;
 				Msg("Activate");
 				Activate(RADIO_SLOT);
+			}
+		}
+	}break;
+	case kINVENTORY:
+	{
+		if (flags & CMD_START)
+		{
+			CBackpack* backp = smart_cast<CBackpack*>(ItemFromSlot(BACKPACK_SLOT));
+			if (backp)
+			{
+				b_send_event = true;
+
+				if (GetActiveSlot() == BACKPACK_SLOT && ActiveItem())
+				{
+					ActivateSlot = NO_ACTIVE_SLOT;
+					Activate(NO_ACTIVE_SLOT);
+				}
+				else
+				{
+					ActivateSlot = BACKPACK_SLOT;
+					Activate(BACKPACK_SLOT);
+				}
+			}
+			else
+			{
+				if (!need_open_inventory)
+				{
+					CActor* pA = smart_cast<CActor*>(Level().CurrentControlEntity());
+					if (pA && pA->g_Alive() && !pA->DontInv && !pA->MpWoundMODE() && !pA->inventory_disabled())
+					{
+						if (!CurrentGameUI()->ActorMenu().IsShown())
+						{
+							pA->EventHideState();
+						}
+						need_open_inventory = true;
+						OpenTimer = Device.dwTimeGlobal + 800;
+						Actor()->add_cam_effector("itemuse_anm_effects\\backpack_open.anm", 8555, false, "");
+					}
+				}
 			}
 		}
 	}break;
@@ -819,6 +862,9 @@ bool CInventory::Action(u16 cmd, u32 flags)
 				CCustomDetector *pDetector = smart_cast<CCustomDetector*>(pHudItem);
 				if (pDetector)
 				{
+					if (ActivateSlot != -1)
+						slot = ActivateSlot;
+					Msg("slot: %d", slot);
 					PIItem pItem = ItemFromSlot(slot);
 					// Pavel: достаем пушку только после того, как убрали детектор
 					if (pItem && pItem->BaseSlot() != INV_SLOT_2)
@@ -875,6 +921,18 @@ void CInventory::ActiveWeapon( u16 slot )
 
 void CInventory::Update() 
 {
+	if (OnClient())
+	{
+		if (need_open_inventory && OpenTimer <= Device.dwTimeGlobal)
+		{
+			need_open_inventory = false;
+			OpenTimer = 0;
+
+			CurrentGameUI()->ShowActorMenu();
+		}
+	}
+
+
 	if( OnServer() )
 	{
 		if(m_iActiveSlot!=m_iNextActiveSlot)

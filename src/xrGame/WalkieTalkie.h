@@ -35,7 +35,7 @@ public:
 			void	TakeOn();
 			void	TakeOff();
 			void	ActivateVoice(bool status);
-			bool	IsInHand() { return m_bRadioInHand && (GetState() == eIdle || GetState() == eHiding); }
+			bool	IsInHand() { return m_bRadioInHand && (GetState() != eHidden); }
 			bool	IsEnabled() { return m_bRadioEnabled; }
 			void	EnableRadio(bool status);
 	virtual void	OnMoveToSlot(const SInvItemPlace& prev) override;
@@ -45,6 +45,7 @@ public:
 	virtual void	shedule_Update(u32 dt) override;
 	virtual void	UpdateCL() override;
 	virtual void	UpdateXForm() override;
+	virtual bool	Action(u16 cmd, u32 flags) override;
 
 
 	u16					CurrentHZ;

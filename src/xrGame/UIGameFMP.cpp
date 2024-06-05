@@ -87,34 +87,6 @@ void _BCL CUIGameFMP::OnFrame()
 
 	inherited::OnFrame();
 
-	if (hide_wpn && wpnTime <= Device.dwTimeGlobal)
-	{
-		g_player_hud->script_anim_play(2, "item_ea_backpack_open_hud", "anm_ea_show", false, 1.0f);
-		Actor()->PlayAnmSound("interface\\item_usage\\backpack_open");
-		Actor()->add_cam_effector("itemuse_anm_effects\\backpack_open.anm", 8555, false, "");
-		old_timer = Device.dwTimeGlobal + g_player_hud->motion_length_script("item_ea_backpack_open_hud", "anm_ea_show", 1.0f);
-		need_activate_inventory = true;
-		hide_wpn = false;
-		wpnTime = 0;
-	}
-
-	if (need_activate_inventory && old_timer <= Device.dwTimeGlobal)
-	{
-		CInventoryOwner* pInvOwner = smart_cast<CInventoryOwner*>(Level().CurrentEntity());
-		CActor* pActor = smart_cast<CActor*>(pInvOwner);
-		if (pInvOwner && pActor && pActor->g_Alive())
-		{
-			g_player_hud->script_anim_play(2, "item_ea_backpack_open_hud", "anm_ea_idle", false, 1.0f);
-			if (!pActor->inventory_disabled())
-				ShowActorMenu();
-		}
-
-		old_timer = 0;
-		need_activate_inventory = false;
-	}
-
-
-
 	if (g_cl_draw_mp_statistic && Level().game->local_player)
 	{
 		IClientStatistic& stats = Level().GetStatistic();
@@ -177,10 +149,6 @@ void _BCL CUIGameFMP::OnFrame()
 	}
 }
 
-#include "actoreffector.h"
-#include <CustomDetector.h>
-
-
 bool CUIGameFMP::IR_UIOnKeyboardPress(int dik)
 {
 	if (inherited::IR_UIOnKeyboardPress(dik)) return true;
@@ -201,32 +169,6 @@ bool CUIGameFMP::IR_UIOnKeyboardPress(int dik)
 
 	switch (get_binded_action(dik))
 	{
-	case kINVENTORY:
-	{
-		CInventoryOwner* pInvOwner = smart_cast<CInventoryOwner*>(Level().CurrentEntity());
-		CActor* pActor = smart_cast<CActor*>(pInvOwner);
-		CCustomDetector* pDet = smart_cast<CCustomDetector*>(pActor->inventory().ItemFromSlot(DETECTOR_SLOT));
-
-		if (!need_activate_inventory && !pActor->DontInv && !pActor->MpWoundMODE())
-		{
-			if (pInvOwner && pActor && pActor->g_Alive())
-			{
-				if (pDet && pDet->DetectorActive())
-				{
-					Msg("DetectorActive");
-					wpnTime = Device.dwTimeGlobal + 2000;
-					pDet->HideDetector(false);
-
-				}
-				else
-				{
-					wpnTime = Device.dwTimeGlobal + 1000;
-				}
-				pActor->EventHideState();
-				hide_wpn = true;
-			}
-		}
-	} break;
 
 		case kAnimationMode:
 		{

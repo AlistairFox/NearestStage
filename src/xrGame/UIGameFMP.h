@@ -17,15 +17,6 @@ protected:
 	CUIAMode* m_anims;
 public:
 	SDrawStaticStruct* m_game_objective;
-
-	u32 close_time = 0;
-	bool need_close_inventory = false;
-
-	u32 old_timer = 0;
-	bool need_activate_inventory = false;
-
-	u32 wpnTime = 0;
-	bool hide_wpn = false;
 				CUIGameFMP();
 	virtual		~CUIGameFMP();
 

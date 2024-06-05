@@ -130,6 +130,14 @@ void CWalkieTalkie::SetRadioHZ(u16 hz)
 
 void CWalkieTalkie::UpdateHudAdditional(Fmatrix& trans)
 {
+	if (!H_Parent())
+		return;
+
+	if (H_Parent() != Level().CurrentControlEntity())
+		return;
+
+	if (OnServer())
+		return;
 
 	Fvector						curr_offs, curr_rot;
 	curr_offs = toggle_offsets[0];//pos,aim
@@ -393,5 +401,75 @@ void CWalkieTalkie::UpdateCL()
 
 void CWalkieTalkie::UpdateXForm()
 {
-	CInventoryItem::UpdateXForm();
+	if (0 == H_Parent())	return;
+
+	// Get access to entity and its visual
+	CEntityAlive* E = smart_cast<CEntityAlive*>(H_Parent());
+	if (!E) return;
+
+	if (E->cast_base_monster()) return;
+
+	const CInventoryOwner* parent = smart_cast<const CInventoryOwner*>(E);
+	if (parent && parent->use_simplified_visual())
+		return;
+
+	if (parent->attached(this))
+		return;
+
+	R_ASSERT(E);
+	IKinematics* V = smart_cast<IKinematics*>	(E->Visual());
+	VERIFY(V);
+
+	// Get matrices
+	u16 BoneId = V->LL_BoneID(bone_name().c_str());
+	V->CalculateBones();
+	Fmatrix& mL = V->LL_GetTransform(BoneId);
+	// Calculate
+	Fmatrix			mRes;
+	mRes = mL;
+	mRes.mulA_43(E->XFORM());
+	mRes.mulB_43(offset());
+	renderable.xform = mRes;
+}
+
+bool CWalkieTalkie::Action(u16 cmd, u32 flags)
+{
+	if (inherited::Action(cmd, flags)) return true;
+
+	if (IsPending()) return false;
+
+	if (Level().CurrentControlEntity() != H_Parent())
+		return false;
+
+	switch (cmd)
+	{
+	case kWPN_FIRE:
+	{
+		if (flags & CMD_START)
+		{
+			ActivateVoice(true);
+			return true;
+		}
+
+		if (flags & CMD_STOP)
+		{
+			if (!SayNow)
+				return false;
+			ActivateVoice(false);
+			return true;
+		}
+
+	}break;
+	case kWPN_ZOOM:
+	{
+		if (flags & CMD_START)
+		{
+			ShowUI(true);
+			return true;
+		}
+	}break;
+	default:
+		break;
+	}
+	return false;
 }

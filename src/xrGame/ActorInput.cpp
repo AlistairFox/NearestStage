@@ -70,13 +70,6 @@ void CActor::IR_OnKeyboardPress(int cmd)
 	{
 	case kWPN_FIRE:
 		{
-			CWalkieTalkie* radio = smart_cast<CWalkieTalkie*>(inventory().ItemFromSlot(RADIO_SLOT));
-			if (radio && radio->IsInHand())
-			{
-				radio->ActivateVoice(true);
-				break;
-			}
-
 			if ((mstate_wishful & mcLookout) && CheckGameFlag(F_DISABLE_WEAPON_FIRE_WHEN_LOOKOUT)) return;
 			u16 slot = inventory().GetActiveSlot();
 			if (inventory().ActiveItem() && (slot == INV_SLOT_3 || slot == INV_SLOT_2))
@@ -90,15 +83,6 @@ void CActor::IR_OnKeyboardPress(int cmd)
 				u_EventSend(P);
 			}
 		}break;
-
-	case kWPN_ZOOM:
-	{
-		CWalkieTalkie* radio = smart_cast<CWalkieTalkie*>(inventory().ItemFromSlot(RADIO_SLOT));
-		if (radio && radio->IsInHand())
-		{
-			radio->ShowUI(true);
-		}
-	}break;
 
 	case kAnimExit:
 	{
@@ -239,10 +223,6 @@ void CActor::IR_OnKeyboardPress(int cmd)
 	break;
 	case kDETECTOR:
 		{
-			CWalkieTalkie* pRadio = smart_cast<CWalkieTalkie*>(inventory().ItemFromSlot(RADIO_SLOT));
-			if (pRadio && !pRadio->IsHidden())
-				return;
-
 			PIItem det_active					= inventory().ItemFromSlot(DETECTOR_SLOT);
 			if(det_active)
 			{
@@ -251,23 +231,6 @@ void CActor::IR_OnKeyboardPress(int cmd)
 				return;
 			}
 		}break;
-
-	case kRadioItem:
-	{
-		//CCustomDetector* pDet = smart_cast<CCustomDetector*>(inventory().ItemFromSlot(DETECTOR_SLOT));
-		//if (pDet && !pDet->IsHidden())
-		//	return;
-		//
-		//PIItem itm = inventory().ItemFromSlot(RADIO_SLOT);
-		//if (itm)
-		//{
-		//	CWalkieTalkie* Radio = smart_cast<CWalkieTalkie*>(itm);
-		//	if (Radio)
-		//	{
-		//		Radio->IsInHand() ? Radio->TakeOff() : Radio->TakeOn();
-		//	}
-		//}
-	}break;
 	case kACTIVE_JOBS:
 	{
 
@@ -381,14 +344,6 @@ void CActor::IR_OnKeyboardRelease(int cmd)
 		{
 		case kJUMP:		mstate_wishful &=~mcJump;		break;
 		case kDROP:		if(GAME_PHASE_INPROGRESS == Game().Phase()) g_PerformDrop();				break;
-		case kWPN_FIRE:
-		{
-			CWalkieTalkie* radio = smart_cast<CWalkieTalkie*>(inventory().ItemFromSlot(RADIO_SLOT));
-			if (radio && radio->IsInHand() && radio->SayNow)
-			{
-				radio->ActivateVoice(false);
-			}
-		}break;
 		}
 	}
 }
@@ -913,9 +868,6 @@ void CActor::NoClipFly(int cmd)
 	}break;
 	case kDETECTOR:
 		{
-			CWalkieTalkie* pRadio = smart_cast<CWalkieTalkie*>(inventory().ItemFromSlot(RADIO_SLOT));
-			if (pRadio && !pRadio->IsHidden())
-				return;
 
 			PIItem det_active = inventory().ItemFromSlot(DETECTOR_SLOT);
 			if(det_active)

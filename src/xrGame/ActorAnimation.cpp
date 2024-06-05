@@ -22,6 +22,7 @@
 #include "player_hud.h"
 #include "PDA.h"
 #include "WalkieTalkie.h"
+#include "Backpack.h"
 
 static const float y_spin0_factor = 0.0f;
 static const float y_spin1_factor = 0.4f;
@@ -596,6 +597,7 @@ void CActor::g_SetAnimation(u32 mstate_rl)
 		CArtefact* A = smart_cast<CArtefact*>(_i);
 		CPda* P = smart_cast<CPda*>(_i);
 		CWalkieTalkie* Walkie = smart_cast<CWalkieTalkie*>(_i);
+		CBackpack* BackPack = smart_cast<CBackpack*>(_i);
 
 		if (!MpSafeMODE())
 		{
@@ -743,6 +745,16 @@ void CActor::g_SetAnimation(u32 mstate_rl)
 							default: M_torso = TW->moving[moving_idx];
 							}
 							
+						}
+						else if (BackPack)
+						{
+							switch (BackPack->GetState())
+							{
+							case CBackpack::eIdle: M_torso = TW->moving[moving_idx]; break;
+							case CBackpack::eShowing: M_torso = TW->draw; break;
+							case CBackpack::eHiding: M_torso = TW->holster; break;
+							default: M_torso = TW->moving[moving_idx];
+							}
 						}
 					}
 				}
