@@ -457,10 +457,40 @@ void CPda::UpdateHudAdditional(Fmatrix& trans)
 	}
 	clamp(m_fZoomfactor, 0.f, 1.f);
 }
-
+extern Fvector3 test_pos;
+extern Fvector3 test_angle;
 void CPda::UpdateXForm()
 {
-	CInventoryItem::UpdateXForm();
+	if (0 == H_Parent())	return;
+
+	// Get access to entity and its visual
+	CEntityAlive* E = smart_cast<CEntityAlive*>(H_Parent());
+	if (!E) return;
+
+	if (E->cast_base_monster()) return;
+
+	const CInventoryOwner* parent = smart_cast<const CInventoryOwner*>(E);
+	if (parent && parent->use_simplified_visual())
+		return;
+
+	if (parent->attached(this))
+		return;
+
+	R_ASSERT(E);
+	IKinematics* V = smart_cast<IKinematics*>	(E->Visual());
+	VERIFY(V);
+
+	// Get matrices
+	u16 Bone = V->LL_BoneID(bone_name().c_str());
+
+	V->CalculateBones();
+	Fmatrix& mL = V->LL_GetTransform(Bone);
+	// Calculate
+	Fmatrix			mRes;
+	mRes = mL;
+	mRes.mulA_43(E->XFORM());
+	mRes.mulB_43(offset());
+	renderable.xform = mRes;
 }
 
 void CPda::OnActiveItem()

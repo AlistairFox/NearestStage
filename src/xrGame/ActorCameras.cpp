@@ -284,9 +284,6 @@ static const float	ik_cam_shift_tolerance = 0.2f;
 static const float	ik_cam_shift_speed = 0.01f;
 #endif
 
-u16 eyeID;
-u16 headID;
-
 void CActor::cam_Update(float dt, float fFOV)
 {
 	if(m_holder)		return;
@@ -367,11 +364,6 @@ void CActor::cam_Update(float dt, float fFOV)
 	{
 		bool bClimb = ((Actor()->MovingState() & mcClimb) != 0);
 		Fmatrix m;
-		if (eyeID == NULL)
-			eyeID = k->LL_BoneID("bip01_neck");
-
-		if (headID == NULL)
-			headID = k->LL_BoneID("bip01_head");
 
 		if (!bClimb)
 		{
@@ -399,8 +391,7 @@ void CActor::cam_Update(float dt, float fFOV)
 						C->lim_pitch.set(-0.6, 0.4);
 
 
-						k->LL_SetBoneVisible(headID, 0, TRUE);
-						m.mul_43(XFORM(), k->LL_GetTransform(eyeID));
+						m.mul_43(XFORM(), k->LL_GetTransform(u16(Actor()->m_neck)));
 
 						point = m.c; //Head position
 						point.y += 0.15;
@@ -410,8 +401,6 @@ void CActor::cam_Update(float dt, float fFOV)
 
 			if (!(MpAnimationMODE() || MpWoundMODE()))
 			{
-
-				k->LL_SetBoneVisible(headID, 1, TRUE);
 
 				C->lim_pitch[0] = -1.5;
 				C->lim_pitch[1] = 1.5;
@@ -423,13 +412,6 @@ void CActor::cam_Update(float dt, float fFOV)
 			}
 		}
 	}
-	else
-	{
-		if (headID == NULL)
-			headID = k->LL_BoneID("bip01_head");
-
-		k->LL_SetBoneVisible(headID, 1, TRUE);
-	}
 
 	C->Update						(point,dangle);
 	C->f_fov						= fFOV;
@@ -440,8 +422,7 @@ void CActor::cam_Update(float dt, float fFOV)
 		{
 			_viewport_near = 0.2;
 			Fmatrix wp;
-			k->LL_SetBoneVisible(headID, 0, TRUE);
-			wp.mul_43(XFORM(), k->LL_GetTransform(eyeID));
+			wp.mul_43(XFORM(), k->LL_GetTransform(u16(Actor()->m_neck)));
 			C->vPosition.set(wp.c);
 			C->vDirection.set(wp.k);
 			C->vNormal.set(wp.i);
@@ -451,19 +432,11 @@ void CActor::cam_Update(float dt, float fFOV)
 		{
 			_viewport_near = 0.2;
 			Fmatrix zalupa;
-			k->LL_SetBoneVisible(headID, 0, TRUE);
-			zalupa.mul_43(XFORM(), k->LL_GetTransform(eyeID));
+			zalupa.mul_43(XFORM(), k->LL_GetTransform(u16(Actor()->m_neck)));
 			C->vPosition.set(zalupa.c);
 			C->vDirection.set(zalupa.k);
 			C->vNormal.set(zalupa.i);
 		}
-	}
-	else
-	{
-		if (headID == NULL)
-			headID = k->LL_BoneID("bip01_head");
-
-		k->LL_SetBoneVisible(headID, 1, TRUE);
 	}
 
 	if(eacFirstEye != cam_active)

@@ -84,8 +84,16 @@ void  CActor::HeadCallback(CBoneInstance* B)
 	float				bone_yaw = angle_normalize_signed(A->r_torso.yaw - A->r_model_yaw - A->r_model_yaw_delta) * y_head_factor;
 	float				bone_pitch = angle_normalize_signed(A->r_torso.pitch) * p_head_factor;
 	float				bone_roll = angle_normalize_signed(A->r_torso.roll) * r_head_factor;
+	if (Actor() && Level().CurrentControlEntity() == Actor() && (Actor()->MpAnimationMODE() || Actor()->MpWoundMODE() || !Actor()->g_Alive()))
+	{
+		spin.scale(0.01f, 0.01f, 0.01f);
+	}
+	else
+	{
+		spin.setXYZ(-bone_pitch, bone_yaw, bone_roll);
+	}
+
 	Fvector c = B->mTransform.c;
-	spin.setXYZ(-bone_pitch, bone_yaw, bone_roll);
 	B->mTransform.mulA_43(spin);
 	B->mTransform.c = c;
 }
@@ -200,6 +208,7 @@ void SActorState::Create(IKinematicsAnimated* K, LPCSTR base)
 	m_torso[10].Create(K, base, "_11");
 	m_torso[11].Create(K, base, "_12");
 	m_torso[12].Create(K, base, "_13");
+	m_torso[13].Create(K, base, "_pda");
 
 	m_torso_idle = K->ID_Cycle(strconcat(sizeof(buf), buf, base, "_torso_0_aim_0"));
 	m_head_idle = K->ID_Cycle("head_idle_0");
@@ -276,6 +285,7 @@ void SAnimSafeMotions::CreateSafeAnims(IKinematicsAnimated* K, LPCSTR base)
 	m_safe_torso[10].CreateTorsoSafe(K, base, "_11");
 	m_safe_torso[11].CreateTorsoSafe(K, base, "_12");
 	m_safe_torso[12].CreateTorsoSafe(K, base, "_13");
+	m_safe_torso[13].CreateTorsoSafe(K, base, "_pda");
 
 	char buf[128];
 	m_head_idle = K->ID_Cycle("head_idle_0");

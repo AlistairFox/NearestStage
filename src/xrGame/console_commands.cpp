@@ -82,6 +82,8 @@ extern	int		x_m_x;
 extern	int		x_m_z;
 extern	BOOL	net_cl_inputguaranteed	;
 extern	BOOL	net_sv_control_hit		;
+extern Fvector3 test_pos = { 0,0,0 };
+extern Fvector3 test_angle = { 0,0,0 };
 
 extern	int		g_dwInputUpdateDelta	;
 #ifdef DEBUG
@@ -2257,6 +2259,9 @@ extern BOOL dbg_moving_bones_snd_player;
 	CMD4(CCC_Integer,	"ai_use_old_vision",	&g_ai_use_old_vision, 0, 1);
 
 	CMD4(CCC_Float,		"ai_aim_predict_time",	&g_aim_predict_time, 0.f, 10.f);
+
+	CMD4(CCC_Vector3, "test_pos", &test_pos, Fvector().set(-1000, -1000, -1000), Fvector().set(1000, 1000, 1000));
+	CMD4(CCC_Vector3, "test_angle", &test_angle, Fvector().set(-1000, -1000, -1000), Fvector().set(1000, 1000, 1000));
 
 #ifdef DEBUG
 	//extern BOOL g_use_new_ballistics;
