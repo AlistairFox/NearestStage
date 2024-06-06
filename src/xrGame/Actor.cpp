@@ -1175,8 +1175,11 @@ float CActor::currentFOV()
 void CActor::UpdateCL	()
 {
 	CHelmet* pHelm = smart_cast<CHelmet*>(inventory().ItemFromSlot(HELMET_SLOT));
-	pHelm ? UseHelmet = true : UseHelmet = false;
 
+	if (pHelm && pHelm->IsDynamicHeldAvaliable)
+		UseHelmet = true;
+	else
+		UseHelmet = false;
 
 	EndClearMask();
 	TimeUnblockAction();

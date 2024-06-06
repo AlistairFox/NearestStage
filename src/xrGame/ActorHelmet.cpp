@@ -67,6 +67,7 @@ void CHelmet::Load(LPCSTR section)
 	m_SuitableRepairKit = READ_IF_EXISTS(pSettings, r_string, section, "suitable_repair_kit", "repair_kit");
 	m_helmtattach_offsets[0] = READ_IF_EXISTS(pSettings, r_fvector3, section, "helm_attach_offsets_pos", Fvector().set(0.f, 0.01f, -0.033));
 	m_helmtattach_offsets[1] = READ_IF_EXISTS(pSettings, r_fvector3, section, "helm_attach_offsets_ros", Fvector().set(10.f, 10.f, 90.f));
+	IsDynamicHeldAvaliable = READ_IF_EXISTS(pSettings, r_bool, section, "dynamic_helm_avaliable", false);
 }
 
 void CHelmet::ReloadBonesProtection()
@@ -290,6 +291,9 @@ void CHelmet::AddBonesProtection(LPCSTR bones_section)
 
 void CHelmet::renderable_Render()
 {
+	if (!IsDynamicHeldAvaliable)
+		return;
+
 	UpdateXForm();
 
 	inherited::renderable_Render();
