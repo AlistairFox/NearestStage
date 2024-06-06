@@ -23,7 +23,6 @@ CPda::CPda(void)
 {
 	m_idOriginalOwner = u16(-1);
 	m_SpecificChracterOwner = nullptr;
-	TurnOff();
 	m_bZoomed = false;
 	joystick = BI_NONE;
 	target_screen_switch = 0.f;
@@ -51,7 +50,6 @@ BOOL CPda::net_Spawn(CSE_Abstract* DC)
 void CPda::net_Destroy()
 {
 	inherited::net_Destroy();
-	TurnOff();
 	feel_touch.clear();
 	UpdateActiveContacts();
 }
@@ -81,15 +79,6 @@ void CPda::OnEvent(NET_Packet& P, u16 type)
 {
 	switch (type)
 	{
-	case GEG_PDA_ACTIVATED:
-	{
-		u16 slot = P.r_u16();
-		CActor* pA = smart_cast<CActor*>(H_Parent());
-		if (pA)
-		{
-			pA->inventory().Activate(slot);
-		}
-	}break;
 	default:
 		inherited::OnEvent(P, type);
 		break;
@@ -98,130 +87,105 @@ void CPda::OnEvent(NET_Packet& P, u16 type)
 
 void CPda::SwitchState(u32 S)
 {
-	if (IsGameTypeSingle() || OnServer())
+	if (OnServer())
 	{
 		inherited::SwitchState(S);
-		return;
 	}
 
-	if (!IsGameTypeSingle() && OnClient())
+	if (OnClient() && H_Parent() == Level().CurrentControlEntity())
 	{
 		SetNextState(S);
 		OnStateSwitch(u32(S));
-
-		switch (S)
-		{
-		case eHidden:
-		{
-		}break;
-		case eShowing:
-		{
-		}break;
-		case eIdle:
-		{
-		}break;
-		case eHiding:
-		{
-		}break;
-		}
 	}
 }
 
 void CPda::OnStateSwitch(u32 S)
 {
 	inherited::OnStateSwitch(S);
-	if (OnServer())
+
+	if (OnServer() || H_Parent() == Level().CurrentControlEntity())
 	{
 		switch (S)
 		{
 		case eShowing:
 		{
 			g_player_hud->attach_item(this);
+			g_pGamePersistent->pda_shader_data.pda_display_factor = 0.f;
+
+			if (!OnServer())
+			{
+				Msg("Play Snd");
+				m_sounds.PlaySound("sndShow", Fvector().set(0, 0, 0), this, true, false);
+			}
+
 			PlayHUDMotion("anm_show", false, this, GetState());
+
+			if (auto pda = CurrentGameUI() ? &CurrentGameUI()->PdaMenu() : nullptr)
+				pda->ResetJoystick(true);
+
 			SetPending(true);
-		}break;
+			target_screen_switch = Device.fTimeGlobal + m_screen_on_delay;
+		}
+		break;
 		case eHiding:
 		{
-			PlayHUDMotion("anm_hide", false, this, GetState());
+			if (!OnServer())
+				m_sounds.PlaySound("sndHide", Fvector().set(0, 0, 0), this, true, false);
+			PlayHUDMotion("anm_hide", true, this, GetState());
 			SetPending(true);
-		}break;
+			m_bZoomed = false;
+			if (auto pda = CurrentGameUI() ? &CurrentGameUI()->PdaMenu() : nullptr)
+			{
+				pda->Enable(false);
+				pda->ResetJoystick(false);
+				//CurrentGameUI()->SetMainInputReceiver(nullptr, false);
+			}
+			g_player_hud->reset_thumb(false);
+			if (joystick != BI_NONE && HudItemData())
+				HudItemData()->m_model->LL_GetBoneInstance(joystick).reset_callback();
+			target_screen_switch = Device.fTimeGlobal + m_screen_off_delay;
+		}
+		break;
+		case eHidden:
+		{
+			m_bZoomed = false;
+			m_fZoomfactor = 0.f;
+			g_player_hud->reset_thumb(true);
+
+			CUIPdaWnd* pda = CurrentGameUI() ? &CurrentGameUI()->PdaMenu() : nullptr;
+			if (pda)
+			{
+				if (CurrentGameUI() && CurrentGameUI()->TopInputReceiver() == pda)
+					CurrentGameUI()->SetMainInputReceiver(nullptr, false);
+
+				if (pda->IsShown())
+					pda->HideDialog();
+				pda->ResetJoystick(true);
+			}
+
+			if (joystick != BI_NONE && HudItemData())
+				HudItemData()->m_model->LL_GetBoneInstance(joystick).reset_callback();
+
+			g_player_hud->detach_item(this);
+			SetPending(FALSE);
+		}
+		break;
 		case eIdle:
 		{
-		PlayAnimIdle();
-		SetPending(false);
-		}break;
-		default:
-			break;
+			PlayAnimIdle();
+			SetPending(false);
+			if (m_joystick_bone && joystick == BI_NONE && HudItemData())
+				joystick = HudItemData()->m_model->LL_BoneID(m_joystick_bone);
+
+			if (joystick != BI_NONE && HudItemData())
+			{
+				CBoneInstance* bi = &HudItemData()->m_model->LL_GetBoneInstance(joystick);
+				if (bi)
+					bi->set_callback(bctCustom, JoystickCallback, this);
+			}
 		}
-		return;
-	}
-	if (!H_Parent() || !Level().CurrentControlEntity())
-		return;
-	if (H_Parent()->ID() == Level().CurrentControlEntity()->ID())
-	switch (S)
-	{
-	case eShowing:
-	{
-		g_player_hud->attach_item(this);
-		g_pGamePersistent->pda_shader_data.pda_display_factor = 0.f;
-
-		m_sounds.PlaySound("sndShow", Position(), H_Root(), !!GetHUDmode(), false);
-		PlayHUDMotion("anm_show", false, this, GetState());
-
-		if (auto pda = CurrentGameUI() ? &CurrentGameUI()->PdaMenu() : nullptr)
-			pda->ResetJoystick(true);
-
-		SetPending(true);
-		target_screen_switch = Device.fTimeGlobal + m_screen_on_delay;
-	}
-	break;
-	case eHiding:
-	{
-		m_sounds.PlaySound("sndHide", Position(), H_Root(), !!GetHUDmode(), false);
-		PlayHUDMotion("anm_hide", true, this, GetState());
-		SetPending(true);
-		m_bZoomed = false;
-		if (auto pda = CurrentGameUI() ? &CurrentGameUI()->PdaMenu() : nullptr)
-		{
-			pda->Enable(false);
-			pda->ResetJoystick(false);
-			//CurrentGameUI()->SetMainInputReceiver(nullptr, false);
+		break;
 		}
-		g_player_hud->reset_thumb(false);
-		if (joystick != BI_NONE && HudItemData())
-			HudItemData()->m_model->LL_GetBoneInstance(joystick).reset_callback();
-		target_screen_switch = Device.fTimeGlobal + m_screen_off_delay;
-	}
-	break;
-	case eHidden:
-	{
-		m_bZoomed = false;
-		m_fZoomfactor = 0.f;
-		CUIPdaWnd* pda = CurrentGameUI() ? &CurrentGameUI()->PdaMenu() : nullptr;
-		if (CurrentGameUI() && CurrentGameUI()->TopInputReceiver() == pda)
-			CurrentGameUI()->SetMainInputReceiver(nullptr, false);
-
-		g_player_hud->reset_thumb(true);
-		if (pda && pda->IsShown())
-			pda->HideDialog();
-
-	}
-	break;
-	case eIdle:
-	{
-		PlayAnimIdle();
-		SetPending(false);
-		if (m_joystick_bone && joystick == BI_NONE && HudItemData())
-			joystick = HudItemData()->m_model->LL_BoneID(m_joystick_bone);
-
-		if (joystick != BI_NONE && HudItemData())
-		{
-			CBoneInstance* bi = &HudItemData()->m_model->LL_GetBoneInstance(joystick);
-			if (bi)
-				bi->set_callback(bctCustom, JoystickCallback, this);
-		}
-	}
-	break;
 	}
 }
 
@@ -238,20 +202,9 @@ void CPda::OnAnimationEnd(u32 state)
 	case eHiding:
 	{
 		SwitchState(eHidden);
-		g_player_hud->detach_item(this);
 	}
 	break;
 	}
-}
-
-void CPda::TogglePda()
-{
-	u16 slot_to_activate = GetState() == eHidden ? PDA_SLOT:NO_ACTIVE_SLOT;
-	NET_Packet						P;
-	CGameObject::u_EventGen(P, GEG_PDA_ACTIVATED, ID());
-	P.w_u16(slot_to_activate);
-	CGameObject::u_EventSend(P);
-	//SwitchState(GetState() == eHidden ? eShowing : eHiding);
 }
 
 // inertion
@@ -264,9 +217,7 @@ IC float _inertion(float _val_cur, float _val_trgt, float _friction)
 void CPda::JoystickCallback(CBoneInstance* B)
 {
 	CPda* Pda = static_cast<CPda*>(B->callback_param());
-	if (!Pda->H_Parent() || !Level().CurrentControlEntity())
-		return;
-	if (Pda->H_Parent()->ID() != Level().CurrentControlEntity()->ID())
+	if (!Pda->H_Parent() || Pda->H_Parent() != Level().CurrentControlEntity())
 		return;
 
 	CUIPdaWnd* pda = CurrentGameUI() ? &CurrentGameUI()->PdaMenu() : nullptr;
@@ -333,10 +284,10 @@ void CPda::UpdateCL()
 {
 	inherited::UpdateCL();
 
-	if (!H_Parent() || !Level().CurrentControlEntity())
+	if (!H_Parent())
 		return;
 
-	if (H_Parent()->ID() != Level().CurrentControlEntity()->ID())
+	if (H_Parent() != Level().CurrentControlEntity())
 		return;
 
 	const u32 state = GetState();
@@ -401,26 +352,7 @@ void CPda::UpdateCL()
 }
 void CPda::OnMoveToRuck(const SInvItemPlace& prev)
 {
-	inherited::OnMoveToRuck(prev);
-
-	if (!H_Parent() || !Level().CurrentControlEntity())
-		return;
-
-	if (H_Parent()->ID() != Level().CurrentControlEntity()->ID())
-		return;
-
-
-	if (prev.type == eItemPlaceSlot)
-	{
-		SwitchState(eHidden);
-		if (joystick != BI_NONE && HudItemData())
-			HudItemData()->m_model->LL_GetBoneInstance(joystick).reset_callback();
-		g_player_hud->detach_item(this);
-	}
-	CUIPdaWnd* pda = CurrentGameUI() ? &CurrentGameUI()->PdaMenu() : nullptr;
-	if (pda && pda->IsShown()) pda->HideDialog();
-	StopCurrentAnimWithoutCallback();
-	SetPending(false);
+	SwitchState(eHidden);
 }
 
 void CPda::UpdateHudAdditional(Fmatrix& trans)
@@ -457,8 +389,7 @@ void CPda::UpdateHudAdditional(Fmatrix& trans)
 	}
 	clamp(m_fZoomfactor, 0.f, 1.f);
 }
-extern Fvector3 test_pos;
-extern Fvector3 test_angle;
+
 void CPda::UpdateXForm()
 {
 	if (0 == H_Parent())	return;
@@ -500,7 +431,7 @@ void CPda::OnActiveItem()
 
 void CPda::OnHiddenItem()
 {
-	SwitchState(eHiding);
+	SwitchState(eHidden);
 }
 
 void CPda::shedule_Update(u32 dt)
@@ -508,20 +439,18 @@ void CPda::shedule_Update(u32 dt)
 	inherited::shedule_Update(dt);
 
 	if (!H_Parent()) return;
+
 	Position().set(H_Parent()->Position());
 
-	if (IsOn() && Level().CurrentEntity() && Level().CurrentEntity()->ID() == H_Parent()->ID())
-	{
 		CEntityAlive* EA = smart_cast<CEntityAlive*>(H_Parent());
 		if (!EA || !EA->g_Alive())
-		{
-			TurnOff();
 			return;
-		}
 
-		feel_touch_update(Position(), m_fRadius);
-		UpdateActiveContacts();
-	}
+		if (H_Parent() == Level().CurrentControlEntity())
+		{
+			feel_touch_update(Position(), m_fRadius);
+			UpdateActiveContacts();
+		}
 }
 
 void CPda::UpdateActiveContacts()
@@ -581,11 +510,7 @@ BOOL CPda::feel_touch_contact(CObject* O)
 
 void CPda::OnH_A_Chield()
 {
-	VERIFY(IsOff());
-
-	//âêëþ÷èòü PDA òîëüêî åñëè îíî íàõîäèòñÿ ó ïåðâîãî âëàäåëüöà
 	if (H_Parent()->ID() == m_idOriginalOwner) {
-		TurnOn();
 		if (m_sFullName.empty()) {
 			m_sFullName.assign(NameItem());
 			m_sFullName += " ";
@@ -598,34 +523,7 @@ void CPda::OnH_A_Chield()
 void CPda::OnH_B_Independent(bool just_before_destroy)
 {
 	inherited::OnH_B_Independent(just_before_destroy);
-
-	if (!H_Parent() || !Level().CurrentControlEntity())
-		return;
-	if (H_Parent()->ID() != Level().CurrentControlEntity()->ID())
-		return;
-
-	//âûêëþ÷èòü
-	TurnOff();
-
-	m_sounds.PlaySound("sndHide", Position(), H_Root(), !!GetHUDmode(), false);
-
 	SwitchState(eHidden);
-	SetPending(false);
-	m_bZoomed = false;
-	m_fZoomfactor = 0.f;
-
-	CUIPdaWnd* pda = CurrentGameUI() ? &CurrentGameUI()->PdaMenu() : nullptr;
-	if (pda)
-	{
-		if (pda->IsShown()) pda->HideDialog();
-		pda->ResetJoystick(true);
-	}
-	g_player_hud->reset_thumb(true);
-
-	if (joystick != BI_NONE && HudItemData())
-		HudItemData()->m_model->LL_GetBoneInstance(joystick).reset_callback();
-
-	g_player_hud->detach_item(this);
 }
 
 
@@ -669,25 +567,6 @@ CObject* CPda::GetOwnerObject()
 {
 	return				Level().Objects.net_Find(GetOriginalOwnerID());
 }
-/* remove must
-LPCSTR		CPda::Name				()
-{
-	if( !m_SpecificChracterOwner.size() )
-		return inherited::Name();
-
-	if(m_sFullName.empty())
-	{
-		m_sFullName.assign(inherited::Name());
-
-		CSpecificCharacter spec_char;
-		spec_char.Load(m_SpecificChracterOwner);
-		m_sFullName += " ";
-		m_sFullName += xr_string(spec_char.Name());
-	}
-
-	return m_sFullName.c_str();
-}
-*/
 
 CPda* CPda::GetPdaFromOwner(CObject* owner)
 {

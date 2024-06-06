@@ -814,6 +814,23 @@ bool CInventory::Action(u16 cmd, u32 flags)
 			}
 		}
 	}break;
+	case kACTIVE_JOBS:
+	{
+		if (flags & CMD_START)
+		{
+			b_send_event = true;
+			if (GetActiveSlot() == PDA_SLOT && ActiveItem())
+			{
+				ActivateSlot = NO_ACTIVE_SLOT;
+				Activate(NO_ACTIVE_SLOT);
+			}
+			else
+			{
+				ActivateSlot = PDA_SLOT;
+				Activate(PDA_SLOT);
+			}
+		}
+	}break;
 	case kARTEFACT:
 		{
 		    b_send_event = true;

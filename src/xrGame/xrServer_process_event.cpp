@@ -483,14 +483,6 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 			SendBroadcast(SV_Client->ID, P, net_flags(true, true));
 		}
 	}break;
-	case GEG_PDA_STATE:
-	{
-		SendTo(SV_Client->ID, P, net_flags(true, true));
-	}break;
-	case GEG_PDA_ACTIVATED:
-	{
-		SendTo(SV_Client->ID, P, net_flags(true, true));
-	}break;
 	case GE_MONEY_ACTOR:
 	{
 		s32 money = P.r_s32();

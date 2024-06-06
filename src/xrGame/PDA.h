@@ -41,13 +41,6 @@ public:
 	virtual CObject* GetOwnerObject();
 
 
-	void							TurnOn() { m_bTurnedOff = false; }
-	void							TurnOff() { m_bTurnedOff = true; }
-
-	bool 							IsActive() { return IsOn(); }
-	bool 							IsOn() { return !m_bTurnedOff; }
-	bool 							IsOff() { return m_bTurnedOff; }
-
 
 	void							ActivePDAContacts(xr_vector<CPda*>& res);
 	CPda* GetPdaFromOwner(CObject* owner);
@@ -72,7 +65,6 @@ protected:
 	shared_str								m_SpecificChracterOwner;
 	xr_string								m_sFullName;
 
-	bool									m_bTurnedOff;
 	shared_str								m_functor_str;
 protected:
 
@@ -92,7 +84,6 @@ public:
 	virtual void SwitchState(u32 S);
 	virtual void OnStateSwitch(u32 S);
 	virtual void OnAnimationEnd(u32 state);
-	virtual void TogglePda();
 	virtual void UpdateHudAdditional(Fmatrix& trans);
 	virtual void OnMoveToRuck(const SInvItemPlace& prev);
 	virtual void UpdateCL();
