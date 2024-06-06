@@ -65,6 +65,8 @@ void CHelmet::Load(LPCSTR section)
 
 	m_b_HasGlass = !!READ_IF_EXISTS(pSettings, r_bool, section, "has_glass", FALSE);
 	m_SuitableRepairKit = READ_IF_EXISTS(pSettings, r_string, section, "suitable_repair_kit", "repair_kit");
+	m_helmtattach_offsets[0] = READ_IF_EXISTS(pSettings, r_fvector3, section, "helm_attach_offsets_pos", Fvector().set(0.f, 0.01f, -0.033));
+	m_helmtattach_offsets[1] = READ_IF_EXISTS(pSettings, r_fvector3, section, "helm_attach_offsets_ros", Fvector().set(10.f, 10.f, 90.f));
 }
 
 void CHelmet::ReloadBonesProtection()
@@ -284,6 +286,48 @@ void CHelmet::AddBonesProtection(LPCSTR bones_section)
 
 	if ( parent && parent->Visual() && m_BonesProtectionSect.size() )
 		m_boneProtection->add(bones_section, smart_cast<IKinematics*>( parent->Visual() ) );
+}
+
+void CHelmet::renderable_Render()
+{
+	UpdateXForm();
+
+	inherited::renderable_Render();
+}
+
+void CHelmet::UpdateXForm()
+{
+	if (0 == H_Parent())	return;
+
+	// Get access to entity and its visual
+	CEntityAlive* E = smart_cast<CEntityAlive*>(H_Parent());
+	if (!E) return;
+
+	if (E->cast_base_monster()) return;
+
+	const CInventoryOwner* parent = smart_cast<const CInventoryOwner*>(E);
+	CActor* pA = smart_cast<CActor*>(E);
+	if (parent && parent->use_simplified_visual())
+		return;
+
+	if (parent->attached(this))
+		return;
+
+	R_ASSERT(E);
+	IKinematics* V = smart_cast<IKinematics*>	(E->Visual());
+	VERIFY(V);
+
+
+	V->CalculateBones();
+
+	Fmatrix	mRes = V->LL_GetTransform(V->LL_BoneID("bip01_neck"));
+	Fmatrix Rotation;
+	Rotation.setHPB(deg2rad(m_helmtattach_offsets[1].x), deg2rad(m_helmtattach_offsets[1].y), deg2rad(m_helmtattach_offsets[1].z));
+	Rotation.c = m_helmtattach_offsets[0];
+	mRes.mulA_43(E->XFORM());
+	mRes.mulB_43(Rotation);
+	renderable.xform = mRes;
+
 }
 
 float CHelmet::HitThroughArmor(float hit_power, s16 element, float ap, bool& add_wound, ALife::EHitType hit_type)

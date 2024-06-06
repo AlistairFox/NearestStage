@@ -349,6 +349,10 @@ void CInventoryOwner::renderable_Render		()
 	if (lWeapon && lValid && lWeapon != inventory().ActiveItem())
 		lWeapon->renderable_Render();
 
+	auto Helmet = inventory().ItemFromSlot(HELMET_SLOT);
+	bool hValid = Helmet->BaseSlot() == HELMET_SLOT;
+	if (Helmet && hValid)
+		Helmet->renderable_Render();
 
 	CAttachmentOwner::renderable_Render();
 }

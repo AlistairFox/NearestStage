@@ -77,6 +77,7 @@ void  CActor::ShoulderCallback(CBoneInstance* B)
 	B->mTransform.mulA_43(spin);
 	B->mTransform.c = c;
 }
+
 void  CActor::HeadCallback(CBoneInstance* B)
 {
 	CActor* A = static_cast<CActor*>(B->callback_param());	VERIFY(A);
@@ -84,13 +85,20 @@ void  CActor::HeadCallback(CBoneInstance* B)
 	float				bone_yaw = angle_normalize_signed(A->r_torso.yaw - A->r_model_yaw - A->r_model_yaw_delta) * y_head_factor;
 	float				bone_pitch = angle_normalize_signed(A->r_torso.pitch) * p_head_factor;
 	float				bone_roll = angle_normalize_signed(A->r_torso.roll) * r_head_factor;
-	if (Actor() && Level().CurrentControlEntity() == Actor() && (Actor()->MpAnimationMODE() || Actor()->MpWoundMODE() || !Actor()->g_Alive()))
+	if (A->UseHelmet)
 	{
-		spin.scale(0.01f, 0.01f, 0.01f);
+		spin.scale(0.7f,0.7f,0.7f);
 	}
 	else
 	{
-		spin.setXYZ(-bone_pitch, bone_yaw, bone_roll);
+		if (A && Level().CurrentControlEntity() == A && (A->MpAnimationMODE() || A->MpWoundMODE() || !A->g_Alive()))
+		{
+			spin.scale(0.01f, 0.01f, 0.01f);
+		}
+		else
+		{
+			spin.setXYZ(-bone_pitch, bone_yaw, bone_roll);
+		}
 	}
 
 	Fvector c = B->mTransform.c;

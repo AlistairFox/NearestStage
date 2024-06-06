@@ -215,6 +215,8 @@ public:
 
 	bool old_block_state = false;
 
+	bool UseHelmet = false;
+
 	virtual BOOL						AlwaysTheCrow				()						{ return TRUE; }
 
 	virtual CAttachmentOwner*			cast_attachment_owner		()						{return this;}

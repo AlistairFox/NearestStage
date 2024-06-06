@@ -48,9 +48,13 @@ public:
 
 	void					ReloadBonesProtection	();
 	void					AddBonesProtection		(LPCSTR bones_section);
+
+	virtual void			renderable_Render()override;
+	virtual void			UpdateXForm() override;
 protected:
 	HitImmunity::HitTypeSVec	m_HitTypeProtection;
 	SBoneProtections*		m_boneProtection;	
+	Fvector3				m_helmtattach_offsets[2];
 
 protected:
 	virtual bool			install_upgrade_impl	( LPCSTR section, bool test );
