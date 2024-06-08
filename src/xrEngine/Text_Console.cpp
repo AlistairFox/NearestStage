@@ -243,7 +243,7 @@ void CTextConsole::DrawLog( HDC hDC, RECT* pRect )
 	int Width = wRC.right - wRC.left;
 	int Height = wRC.bottom - wRC.top;
 	wRC = *pRect;
-	int y_top_max = (int)(0.45f * Height);
+	int y_top_max = (int)(0.35f * Height);
 
 	//---------------------------------------------------------------------------------
 	LPCSTR s_edt = ec().str_edit();
@@ -375,6 +375,9 @@ void CTextConsole::DrawLog( HDC hDC, RECT* pRect )
 	sprintf(temp, "All Objects: %d", all_objects);
 	SetTextColor(hDC, RGB(255, 0, 255));
 	TextOut(hDC, 400, 130, temp, xr_strlen(temp));
+
+	string256 Limiter = "____________________________________________________________________________________________________________________";
+	TextOut(hDC, 0, y_top_max, Limiter, xr_strlen(Limiter));
 
 }
 /*
