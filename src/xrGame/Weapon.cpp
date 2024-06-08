@@ -844,7 +844,7 @@ void CWeapon::net_Destroy	()
 	StopLight			();
 	Light_Destroy		();
 
-	while (m_magazine.size()) m_magazine.pop_back();
+//	while (m_magazine.size()) m_magazine.pop_back();
 }
 
 BOOL CWeapon::IsUpdating()
