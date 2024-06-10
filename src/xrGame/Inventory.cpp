@@ -555,7 +555,7 @@ void CInventory::Activate_deffered	(u32 slot, u32 _frame)
 	 m_iLoadActiveSlotFrame		= _frame;
 }*/
 
-#define DUMP_MSG
+//#define DUMP_MSG
 void CInventory::Activate(u16 slot, bool bForce) 
 {	
 	if (!OnServer())

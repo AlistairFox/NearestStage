@@ -19,7 +19,7 @@ namespace smart_cover {
 
 class object;
 
-class loophole final: private boost::noncopyable 
+class loophole: private boost::noncopyable 
 {
 private:
 	class action_predicate {

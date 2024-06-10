@@ -1,5 +1,3 @@
-#pragma once
-
 // new(0)
 template <class T>
 IC T* xr_new() {
@@ -20,7 +18,6 @@ struct xr_special_free
 	IC void operator()(T*& ptr)
 	{
 		void* _real_ptr = dynamic_cast<void*>(ptr);
-
 		ptr->~T();
 		Memory.mem_free(_real_ptr);
 	}
@@ -37,20 +34,21 @@ struct xr_special_free<false, T>
 };
 
 template <class T>
-IC	void	xr_delete(T*& ptr)
+IC void xr_delete(T*& ptr)
 {
 	if (ptr)
 	{
-		xr_special_free<std::is_polymorphic<T>::value, T>()(ptr);
+		xr_special_free<is_polymorphic<T>::result, T>()(ptr);
 		ptr = NULL;
 	}
 }
+
 template <class T>
-IC	void	xr_delete(T* const& ptr)
+IC void xr_delete(T* const& ptr)
 {
 	if (ptr)
 	{
-		xr_special_free<std::is_polymorphic<T>::value, T>()(const_cast<T*&>(ptr));
-		const_cast<T*&>(ptr) = NULL;
+		xr_special_free<is_polymorphic<T>::result, T>(ptr);
+		reinterpret_cast<T*&>(ptr) = NULL;
 	}
 }

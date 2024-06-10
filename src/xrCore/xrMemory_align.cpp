@@ -20,9 +20,12 @@
 *
 *******************************************************************************/
 
-#define IS_2_POW_N(X)   (((X)&(X-1)) == 0)
-#define PTR_SZ          sizeof(void *)
+#define IS_2_POW_N(X) (((X)&(X-1)) == 0)
+#define PTR_SZ sizeof(void *)
 
+#ifdef __BORLANDC__
+typedef _W64 unsigned int  uintptr_t;
+#endif
 /***
 *
 * |1|___6___|2|3|4|_________5__________|_6_|
@@ -54,10 +57,7 @@
 *       Faliure: Null
 *******************************************************************************/
 
-void* __stdcall xr_aligned_malloc(
-	size_t size,
-	size_t alignment
-)
+void* __stdcall xr_aligned_malloc(size_t size, size_t alignment)
 {
 	return xr_aligned_offset_malloc(size, alignment, 0);
 }
@@ -82,11 +82,7 @@ void* __stdcall xr_aligned_malloc(
 *******************************************************************************/
 
 
-void* __stdcall xr_aligned_offset_malloc(
-	size_t size,
-	size_t align,
-	size_t offset
-)
+void* __stdcall xr_aligned_offset_malloc(size_t size, size_t align, size_t offset)
 {
 	uintptr_t ptr, retptr, gap;
 
@@ -137,11 +133,7 @@ void* __stdcall xr_aligned_offset_malloc(
 *
 *******************************************************************************/
 
-void* __stdcall xr_aligned_realloc(
-	void* memblock,
-	size_t size,
-	size_t alignment
-)
+void* __stdcall xr_aligned_realloc(void* memblock, size_t size, size_t alignment)
 {
 	return xr_aligned_offset_realloc(memblock, size, alignment, 0);
 }
@@ -173,12 +165,7 @@ void* __stdcall xr_aligned_realloc(
 *
 *******************************************************************************/
 
-void* __stdcall xr_aligned_offset_realloc(
-	void* memblock,
-	size_t size,
-	size_t align,
-	size_t offset
-)
+void* __stdcall xr_aligned_offset_realloc(void* memblock, size_t size, size_t align, size_t offset)
 {
 	uintptr_t ptr, retptr, gap, stptr, diff;
 	uintptr_t movsz, reqsz;
@@ -305,7 +292,7 @@ u32 __stdcall xr_aligned_msize(void* memblock)
 	uintptr_t ptr;
 
 	if (memblock == NULL)
-		return	0;
+		return 0;
 
 	ptr = (uintptr_t)memblock;
 
@@ -314,5 +301,5 @@ u32 __stdcall xr_aligned_msize(void* memblock)
 
 	/* ptr is the pointer to the start of memory block*/
 	ptr = *((uintptr_t*)ptr);
-	return	(u32)_msize((void*)ptr);
+	return (u32)_msize((void*)ptr);
 }

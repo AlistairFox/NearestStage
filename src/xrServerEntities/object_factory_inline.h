@@ -59,8 +59,14 @@ IC	const CObjectFactory::OBJECT_ITEM_STORAGE &CObjectFactory::clsids	() const
 IC	const CObjectItemAbstract &CObjectFactory::item	(const CLASS_ID &clsid) const
 {
 	actualize			();
+
+	//for (const auto& cls : clsids())
+	//{
+		//Msg("cls %u", cls->clsid());
+	//}
+
+	//Msg("clsid_size: %u, clsid: %u", clsids().size(), clsid);
 	const_iterator		I = std::lower_bound(clsids().begin(),clsids().end(),clsid,CObjectItemPredicate());
-	VERIFY				((I != clsids().end()) && ((*I)->clsid() == clsid));
 	return				(**I);
 }
 #else

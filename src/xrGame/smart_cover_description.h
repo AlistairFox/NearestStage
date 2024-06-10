@@ -21,7 +21,7 @@ namespace transitions {
 	class action;
 }
 
-class description final:
+class description:
 	private boost::noncopyable, 
 	public  detail::intrusive_base_time
 {

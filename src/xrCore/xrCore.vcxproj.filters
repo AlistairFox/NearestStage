@@ -265,6 +265,15 @@
     <ClCompile Include="FS_Hide.cpp">
       <Filter>FS\encripting</Filter>
     </ClCompile>
+    <ClCompile Include="xrMemory_pso_Fill32.cpp">
+      <Filter>Memory manager</Filter>
+    </ClCompile>
+    <ClCompile Include="xrMemory_pso_Copy.cpp">
+      <Filter>Memory manager</Filter>
+    </ClCompile>
+    <ClCompile Include="xrMemory_pso_Fill.cpp">
+      <Filter>Memory manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FTimer.h">

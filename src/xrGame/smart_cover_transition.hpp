@@ -19,7 +19,7 @@ namespace transitions {
 
 class animation_action;
 
-class action final: private boost::noncopyable
+class action : private boost::noncopyable
 {
 
 public:

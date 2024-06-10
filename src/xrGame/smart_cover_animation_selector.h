@@ -24,7 +24,7 @@ namespace smart_cover {
 class action_base;
 class wait_after_exit;
 
-class animation_selector final: 
+class animation_selector : 
 	private boost::noncopyable
 {
 private:

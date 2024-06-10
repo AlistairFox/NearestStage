@@ -22,7 +22,7 @@ namespace smart_cover {
 class cover;
 class target_selector;
 
-class animation_planner final: 
+class animation_planner : 
 	public CActionPlannerScript<CAI_Stalker>,
 	private boost::noncopyable
 {

@@ -530,7 +530,6 @@ void CWeaponMagazined::ReloadMagazine()
 
 void CWeaponMagazined::OnStateSwitch	(u32 S)
 {
-	Msg("Weapon OnStateSwitch!");
 	inherited::OnStateSwitch(S);
 	CInventoryOwner* owner = smart_cast<CInventoryOwner*>(this->H_Parent());
 		switch (S)

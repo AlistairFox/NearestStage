@@ -16,7 +16,7 @@
 
 namespace smart_cover{
 
-class action final: private boost::noncopyable
+class action : private boost::noncopyable
 {
 private:
 	class animation_predicate {
