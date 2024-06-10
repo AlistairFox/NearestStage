@@ -1,7 +1,17 @@
-template <typename T, typename... Args>
-T* xr_new(Args&&... args) {
-	T* ptr = static_cast<T*>(Memory.mem_alloc(sizeof(T)));
-	return new (ptr) T(std::forward<Args>(args)...);
+#pragma once
+
+// new(0)
+template <class T>
+IC T* xr_new() {
+	T* ptr = (T*)Memory.mem_alloc(sizeof(T));
+	return new (ptr) T();
+}
+
+// new(...)
+template <class T, class ... Args>
+IC T* xr_new(const Args& ... args) {
+	T* ptr = (T*)Memory.mem_alloc(sizeof(T));
+	return new (ptr) T(args...);
 }
 
 template <bool _is_pm, typename T>
@@ -10,6 +20,7 @@ struct xr_special_free
 	IC void operator()(T*& ptr)
 	{
 		void* _real_ptr = dynamic_cast<void*>(ptr);
+
 		ptr->~T();
 		Memory.mem_free(_real_ptr);
 	}
