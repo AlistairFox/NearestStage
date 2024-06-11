@@ -169,7 +169,6 @@ public:
 		bool SetPossition = false;
 		Fvector3 pos;
 		Fvector3 angle;
-		float health = 1.f;
 	};
 
 	struct SPlayersOnDeathBuff
@@ -225,6 +224,7 @@ public:
 		PlayerStats Stats;
 		std::vector<SItem> Items;
 		string512 PlayerPath;
+		string128 PlayerName;
 		xr_vector<shared_str> InfoPortions;
 	};
 
@@ -299,15 +299,16 @@ public:
 
 	 u32 PlayerSaveTimer = 0;
 
-			void				FillPlayerBuffer(game_PlayerState* ps, string_path& filepath);
+			bool				RemovePlayerSave(game_PlayerState* ps);
+			void				FillPlayerBuffer(game_PlayerState* ps);
 
 #ifdef OLD_BOX_SAVING
 			void				BinnarSavePlayer(game_PlayerState* ps, string_path& filepath);
 #endif
 
-			bool				BinnarLoadPlayer(game_PlayerState* ps, string_path& filepath);
+			bool				BinnarLoadPlayer(game_PlayerState* ps);
 			bool				HasBinnarSaveFile(game_PlayerState* ps);
-			bool				load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos, Fvector& angle, float& health);
+			bool				load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos, Fvector& angle);
 virtual		void				assign_RP(CSE_Abstract* E, game_PlayerState* ps_who);
 	///////Binnar Player Save ////////
 

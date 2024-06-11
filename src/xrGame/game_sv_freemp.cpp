@@ -410,16 +410,7 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 	{
 		SpawnItemToActor(ps->GameID, "wpn_binoc");
 
-			string_path file_name_path;
-			string32 file_name;
-			xr_strcpy(file_name, ps->getName());
-			xr_strcat(file_name, ".binsave");
-			FS.update_path(file_name_path, "$mp_saves_players_bin$", file_name);
-			if (FS.exist(file_name_path))
-			{
-				Msg("read file path = %s", file_name);
-				BinnarLoadPlayer(ps, file_name_path);
-			}
+			BinnarLoadPlayer(ps);
 				
  		ps->setFlag(GAME_PLAYER_MP_SAVE_LOADED);
  	}
@@ -457,14 +448,12 @@ void game_sv_freemp::OnPlayerDisconnect(ClientID id_who, LPSTR Name, u16 GameID,
 	P.w_stringZ(Name);
 	u_EventSend(P);
 	//---------------------------------------------------
-
-	string_path file_name_path;
-	string32 file_name;
-	xr_strcpy(file_name, Name);
-	xr_strcat(file_name, ".binsave");
-	FS.update_path(file_name_path, "$mp_saves_players_bin$", file_name);
-	if (!FS.exist(file_name_path))
-		FillPlayerOnDisconnect(StaticID, file_name_path);
+	string_path PlayerSavePath;
+	string256 PlayerSaveDir;
+	sprintf(PlayerSaveDir, "%s\\%s_inventory.binsave", Name, Name);
+	FS.update_path(PlayerSavePath, "$mp_saves_players_bin$", PlayerSaveDir);
+	if (!FS.exist(PlayerSavePath))
+		FillPlayerOnDisconnect(StaticID, PlayerSavePath);
 
 	ClearPlayersOnDeathBuffer(StaticID);
 
@@ -555,24 +544,11 @@ void game_sv_freemp::Update()
 
 					if (!actor->g_Alive())
 					{
-						string_path file_name_path;
-						string32 file_name;
-						xr_strcpy(file_name, player.second->getName());
-						xr_strcat(file_name, ".binsave");
-						FS.update_path(file_name_path, "$mp_saves_players_bin$", file_name);
-						if (FS.exist(file_name_path))
-							FS.file_delete(file_name_path);
-
+						RemovePlayerSave(player.second);
 						continue;
 					}
 
-					string_path file_name_path;
-					string32 file_name;
-					xr_strcpy(file_name, player.second->getName());
-					xr_strcat(file_name, ".binsave");
-					FS.update_path(file_name_path, "$mp_saves_players_bin$", file_name);
-					//BinnarSavePlayer(player.second, file_name_path);
-					FillPlayerBuffer(player.second, file_name_path);
+					FillPlayerBuffer(player.second);
 				}
 			}
 		}

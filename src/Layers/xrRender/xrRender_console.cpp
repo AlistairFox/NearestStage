@@ -269,7 +269,7 @@ Fvector ps_r2_img_cg = { .0f, .0f, .0f }; // r2-only
 
 
 // Ascii1457's Screen Space Shaders
-Fvector3 ps_ssfx_shadow_cascades = { 20.f, 60.f, 300.f };
+Fvector3 ps_ssfx_shadow_cascades = { 20.f, 60.f, 160.f };
 Fvector4 ps_ssfx_grass_shadows = { 2.f, 1.f, 30.0f, .0f };
 Fvector4 ps_ssfx_grass_interactive = { 1.0f, 8.f, 200.0f, 1.0f };
 Fvector4 ps_ssfx_int_grass_params_1 = { 0.5f, 1.0f, 1.0f, 50.0f };

@@ -12,7 +12,7 @@
 #include "PDA.h"
 #include "ActorHelmet.h"
 
-void game_sv_freemp::FillPlayerBuffer(game_PlayerState* ps, string_path& filepath)
+void game_sv_freemp::FillPlayerBuffer(game_PlayerState* ps)
 {
 	CObject* obj = Level().Objects.net_Find(ps->GameID);
 	CActor* actor = smart_cast<CActor*>(obj);
@@ -122,7 +122,15 @@ void game_sv_freemp::FillPlayerBuffer(game_PlayerState* ps, string_path& filepat
 
 
 		PlayerStats stat;
-		xr_strcpy(pl->PlayerPath, filepath);
+
+		string_path file_name_path;
+		string128 file_name;
+		xr_strcpy(file_name, ps->getName());
+		xr_strcat(file_name, "\\");
+		FS.update_path(file_name_path, "$mp_saves_players_bin$", file_name);
+
+		xr_strcpy(pl->PlayerPath, file_name_path);
+		xr_strcpy(pl->PlayerName, ps->getName());
 		stat.money = ps->money_for_round;
 		stat.satiety = Players_condition[ps->GetStaticID()].satiety;
 		stat.thirst = Players_condition[ps->GetStaticID()].thirst;
@@ -136,7 +144,6 @@ void game_sv_freemp::FillPlayerBuffer(game_PlayerState* ps, string_path& filepat
 			stat.SetPossition = true;
 			stat.pos = actor_cse->o_Position;
 			stat.angle = actor_cse->o_Angle;
-			stat.health = actor_cse->get_health();
 		}
 		else
 			stat.SetPossition = false;; // cheking save position
@@ -185,7 +192,7 @@ void game_sv_freemp::FillPlayerBuffer(game_PlayerState* ps, string_path& filepat
 
 		}
 
-		pl->InfoPortions.swap(Player_portions[ps->GetStaticID()]);
+		pl->InfoPortions = Player_portions[ps->GetStaticID()];
 
 	}
 	
@@ -336,13 +343,19 @@ void game_sv_freemp::BinnarSavePlayer(game_PlayerState* ps, string_path& filepat
 }
 #endif
 
-bool game_sv_freemp::BinnarLoadPlayer(game_PlayerState* ps, string_path& filepath)
+bool game_sv_freemp::BinnarLoadPlayer(game_PlayerState* ps)
 {
-	if (FS.exist(filepath))
+	string_path PlayerSavePath;
+	string256 PlayerDir;
+	sprintf(PlayerDir, "%s\\%s_inventory.binsave", ps->getName(), ps->getName());
+	FS.update_path(PlayerSavePath, "$mp_saves_players_bin$", PlayerDir);
+	Msg("InvPath: %s", PlayerSavePath);
+	if (FS.exist(PlayerSavePath))
 	{
-		IReader* reader = FS.r_open(filepath);
+		Msg("read file path = %s", PlayerSavePath);
+		IReader* reader = FS.r_open(PlayerSavePath);
 
-		if(reader->open_chunk(ACTOR_MONEY))
+		if (reader->open_chunk(ACTOR_MONEY))
 			ps->money_for_round = reader->r_u32();// money
 
 		if (reader->open_chunk(ACTOR_STATS_CHUNK))
@@ -362,14 +375,6 @@ bool game_sv_freemp::BinnarLoadPlayer(game_PlayerState* ps, string_path& filepat
 		if (reader->open_chunk(ACTOR_TEAM))
 		{
 			u8 team = reader->r_u8();
-		}
-
-		if (reader->open_chunk(ACTOR_POS))
-		{
-			Fvector3 pos, dir;
-			reader->r_fvector3(pos);
-			reader->r_fvector3(dir);
-			reader->r_float();
 		}
 
 		if (reader->open_chunk(ACTOR_INV_ITEMS_CHUNK))
@@ -435,11 +440,22 @@ bool game_sv_freemp::BinnarLoadPlayer(game_PlayerState* ps, string_path& filepat
 					}
 				}
 
-					spawn_end(E, m_server->GetServerClient()->ID);
+				spawn_end(E, m_server->GetServerClient()->ID);
 			}
 
 		}
+	}
 
+	string_path PlayerDialogsPath;
+	string256 PlayerDirDialogs;
+	sprintf(PlayerDirDialogs, "%s\\%s_dialogs.binsave", ps->getName(), ps->getName());
+	FS.update_path(PlayerDialogsPath, "$mp_saves_players_bin$", PlayerDirDialogs);
+
+	Msg("DialogsPath: %s", PlayerDialogsPath);
+	if (FS.exist(PlayerDialogsPath))
+	{
+		Msg("read file path = %s", PlayerDialogsPath);
+		IReader* reader = FS.r_open(PlayerDialogsPath);
 		if (reader->open_chunk(INFO_PORTIONS_CHUNK))
 		{
 			u32 size = reader->r_u32();
@@ -459,9 +475,8 @@ bool game_sv_freemp::BinnarLoadPlayer(game_PlayerState* ps, string_path& filepat
 		}
 
 		reader->close();
-		return true;
 	}
-	return false;
+	return true;
 }
 
 bool game_sv_freemp::HasBinnarSaveFile(game_PlayerState* ps)
@@ -469,15 +484,14 @@ bool game_sv_freemp::HasBinnarSaveFile(game_PlayerState* ps)
 	if (ps->GameID == get_id(server().GetServerClient()->ID)->GameID)
 		return false;
 
-	string_path path;
-	string32 filename;
-	xr_strcpy(filename, ps->getName());
-	xr_strcat(filename, ".binsave");
-	FS.update_path(path, "$mp_saves_players_bin$", filename);
+	string_path PlayerSavePath;
+	string256 PlayerDir;
+	sprintf(PlayerDir, "%s\\%s_inventory.binsave", ps->getName(), ps->getName());
+	FS.update_path(PlayerSavePath, "$mp_saves_players_bin$", PlayerDir);
 	bool exist = false;
-	if (FS.exist(path))
+	if (FS.exist(PlayerSavePath))
 	{
-		IReader* reader = FS.r_open(path);
+		IReader* reader = FS.r_open(PlayerSavePath);
 
 		if (reader->open_chunk(ACTOR_TEAM))
 		{
@@ -491,17 +505,17 @@ bool game_sv_freemp::HasBinnarSaveFile(game_PlayerState* ps)
 	return exist;
 }
 
-bool game_sv_freemp::load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos, Fvector& angle, float& health)
+bool game_sv_freemp::load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos, Fvector& angle)
 {
-	string_path p;
-	string32 filename;
-	xr_strcpy(filename, ps->getName());
-	xr_strcat(filename, ".binsave");
-
-	FS.update_path(p, "$mp_saves_players_bin$", filename);
-	if (FS.exist(p))
+	string_path PlayerPosPath;
+	string256 PlayerDir;
+	sprintf(PlayerDir, "%s\\%s_position.binsave", ps->getName(), ps->getName());
+	FS.update_path(PlayerPosPath, "$mp_saves_players_bin$", PlayerDir);
+	Msg("PossPath: %s", PlayerPosPath);
+	if (FS.exist(PlayerPosPath))
 	{
-		IReader* reader = FS.r_open(p);
+		Msg("read player pos: %s", PlayerPosPath);
+		IReader* reader = FS.r_open(PlayerPosPath);
 
 		if (reader->open_chunk(ACTOR_POS))
 		{
@@ -511,7 +525,6 @@ bool game_sv_freemp::load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos,
 				Msg("Read player pos");
 				reader->r_fvector3(pos);
 				reader->r_fvector3(angle);
-				health = reader->r_float();
 				FS.r_close(reader);
 				return true;
 			}
@@ -584,14 +597,36 @@ void game_sv_freemp::assign_RP(CSE_Abstract* E, game_PlayerState* ps_who)
 {
 	Fvector pos, angle;
 	float health;
-	if (!ps_who->testFlag(GAME_PLAYER_MP_SAVE_LOADED) && load_position_RP_Binnar(ps_who, pos, angle, health))
+	if (!ps_who->testFlag(GAME_PLAYER_MP_SAVE_LOADED) && load_position_RP_Binnar(ps_who, pos, angle))
 	{
-		//E->o_Position.set(pos);
-		//E->o_Angle.set(angle);
 		E->position().set(pos);
 		E->angle().set(angle);
-		//E->cast_actor_mp()->set_health(health);
 	}
 	else
 		inherited::assign_RP(E, ps_who);
+}
+
+bool game_sv_freemp::RemovePlayerSave(game_PlayerState* ps)
+{
+	bool WillRemove = false;
+	string_path PlayerSavePath;
+	string256 PlayerSaveDir;
+	sprintf(PlayerSaveDir, "%s\\%s_inventory.binsave", ps->getName(), ps->getName());
+	FS.update_path(PlayerSavePath, "$mp_saves_players_bin$", PlayerSaveDir);
+	if (FS.exist(PlayerSavePath))
+	{
+		WillRemove = true;
+		FS.file_delete(PlayerSavePath);
+	}
+
+	string_path PlayerPosPath;
+	string256 PlayerPossDir;
+	sprintf(PlayerPossDir, "%s\\%s_position.binsave", ps->getName(), ps->getName());
+	FS.update_path(PlayerPosPath, "$mp_saves_players_bin$", PlayerPossDir);
+	if (FS.exist(PlayerPosPath))
+	{
+		FS.file_delete(PlayerPosPath);
+	}
+
+	return WillRemove;
 }

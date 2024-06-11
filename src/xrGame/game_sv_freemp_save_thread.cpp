@@ -66,7 +66,10 @@ void game_sv_freemp::SaveThreadWorker()
 
 		if (Players* player = task.players)
 		{
-			IWriter* writer = FS.w_open(player->PlayerPath);
+			std::string InvPath = player->PlayerPath;
+			InvPath += player->PlayerName;
+			InvPath += "_inventory.binsave";
+			IWriter* writer = FS.w_open(InvPath.c_str());
 			writer->open_chunk(ACTOR_MONEY);
 			writer->w_s32(player->Stats.money);
 			writer->close_chunk();
@@ -79,18 +82,6 @@ void game_sv_freemp::SaveThreadWorker()
 
 			writer->open_chunk(ACTOR_TEAM);
 			writer->w_u8(player->Stats.team);
-			writer->close_chunk();
-
-			writer->open_chunk(ACTOR_POS);
-			if (player->Stats.SetPossition)
-			{
-				writer->w_u8(1);
-				writer->w_fvector3(player->Stats.pos);
-				writer->w_fvector3(player->Stats.angle);
-				writer->w_float(player->Stats.health);
-			}
-			else
-				writer->w_u8(0);
 			writer->close_chunk();
 
 			writer->open_chunk(ACTOR_INV_ITEMS_CHUNK);
@@ -129,17 +120,36 @@ void game_sv_freemp::SaveThreadWorker()
 					writer->w_u8(0);
 			}
 			writer->close_chunk();
+			FS.w_close(writer);
 
-
+			std::string DialogsPath = player->PlayerPath;
+			DialogsPath += player->PlayerName;
+			DialogsPath += "_dialogs.binsave";
+			writer = FS.w_open(DialogsPath.c_str());
 			writer->open_chunk(INFO_PORTIONS_CHUNK);
 			writer->w_u32(player->InfoPortions.size());
 			for (const auto& Info : player->InfoPortions)
 			{
 				writer->w_stringZ(Info);
 			}
-
 			writer->close_chunk();
-			FS.w_close(writer);
+
+			std::string PossPath = player->PlayerPath;
+			PossPath += player->PlayerName;
+			PossPath += "_position.binsave";
+
+			writer = FS.w_open(PossPath.c_str());
+			writer->open_chunk(ACTOR_POS);
+			if (player->Stats.SetPossition)
+			{
+				writer->w_u8(1);
+				writer->w_fvector3(player->Stats.pos);
+				writer->w_fvector3(player->Stats.angle);
+			}
+			else
+				writer->w_u8(0);
+			writer->close_chunk();
+
 			xr_delete(player);
 		}
 
