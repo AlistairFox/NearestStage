@@ -22,7 +22,6 @@ Makefile
 *.la
 work
 SpeexDSP.spec
-config.h
 config.log
 config.status
 include/speex/speexdsp_config_types.h
