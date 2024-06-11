@@ -2530,20 +2530,17 @@
     <Filter Include="Chat">
       <UniqueIdentifier>{14d8731e-4dd7-4f88-9ad8-5bf0729b93ae}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\Server\Games\server\freemp\Save Bin">
-      <UniqueIdentifier>{34b3dc30-db1d-479d-99be-0c58f18081e0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Core\Server\Games\server\freemp\Dynamic Systems">
       <UniqueIdentifier>{32908ce2-feaf-41b9-8229-ec2a3226885e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\Server\Games\server\freemp\OnDeathSaveItems">
-      <UniqueIdentifier>{0871eead-a5d0-47eb-a291-f09a5ba5db46}</UniqueIdentifier>
     </Filter>
     <Filter Include="Walkie-Talkie">
       <UniqueIdentifier>{a751275d-04dd-43b3-b2d7-37c5af0ba0b3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Json">
       <UniqueIdentifier>{390afa74-ab83-4b8d-9325-5b993971aa58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Server\Games\server\freemp\ProgressSaver">
+      <UniqueIdentifier>{0525fa46-6b1e-4c0b-80c8-751784cd9a2a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -7473,6 +7470,9 @@
     <ClInclude Include="..\jsonxx\jsonxx.h">
       <Filter>Json</Filter>
     </ClInclude>
+    <ClInclude Include="server_progress_saver.h">
+      <Filter>Core\Server\Games\server\freemp\ProgressSaver</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -11168,26 +11168,14 @@
     <ClCompile Include="xrServer_process_event_chatpda.cpp">
       <Filter>Core\Server\ServerProcess</Filter>
     </ClCompile>
-    <ClCompile Include="game_sv_freemp_save_inv_boxes_bin.cpp">
-      <Filter>Core\Server\Games\server\freemp\Save Bin</Filter>
-    </ClCompile>
-    <ClCompile Include="game_sv_freemp_save_players_bin.cpp">
-      <Filter>Core\Server\Games\server\freemp\Save Bin</Filter>
-    </ClCompile>
     <ClCompile Include="game_sv_freemp_dynamic_inv_box_respawn.cpp">
       <Filter>Core\Server\Games\server\freemp\Dynamic Systems</Filter>
     </ClCompile>
     <ClCompile Include="game_sv_freemp_dynamic_music.cpp">
       <Filter>Core\Server\Games\server\freemp\Dynamic Systems</Filter>
     </ClCompile>
-    <ClCompile Include="game_sv_freemp_death_items_save.cpp">
-      <Filter>Core\Server\Games\server\freemp\OnDeathSaveItems</Filter>
-    </ClCompile>
     <ClCompile Include="game_sv_freemp_dynamic_weather.cpp">
       <Filter>Core\Server\Games\server\freemp\Dynamic Systems</Filter>
-    </ClCompile>
-    <ClCompile Include="game_sv_freemp_save_thread.cpp">
-      <Filter>Core\Server\Games\server\freemp\Save Bin</Filter>
     </ClCompile>
     <ClCompile Include="WalkieTalkie.cpp">
       <Filter>Walkie-Talkie</Filter>
@@ -11197,6 +11185,21 @@
     </ClCompile>
     <ClCompile Include="..\jsonxx\jsonxx.cc">
       <Filter>Json</Filter>
+    </ClCompile>
+    <ClCompile Include="server_progress_saver.cpp">
+      <Filter>Core\Server\Games\server\freemp\ProgressSaver</Filter>
+    </ClCompile>
+    <ClCompile Include="server_progress_saver_thread.cpp">
+      <Filter>Core\Server\Games\server\freemp\ProgressSaver</Filter>
+    </ClCompile>
+    <ClCompile Include="server_progress_saver_invboxes.cpp">
+      <Filter>Core\Server\Games\server\freemp\ProgressSaver</Filter>
+    </ClCompile>
+    <ClCompile Include="server_progress_saver_players.cpp">
+      <Filter>Core\Server\Games\server\freemp\ProgressSaver</Filter>
+    </ClCompile>
+    <ClCompile Include="server_progress_saver_ondeath_items.cpp">
+      <Filter>Core\Server\Games\server\freemp\ProgressSaver</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

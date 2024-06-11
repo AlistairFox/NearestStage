@@ -14,23 +14,13 @@ game_sv_freemp::game_sv_freemp()
 {
 	m_type = eGameIDFreeMp;
 
-	FS.update_path(curr_invbox_name, "$mp_check_saves_invbox$", "save_box_list.ltx");
-	curr_box_file = xr_new<CInifile>(curr_invbox_name, true);
-
 	FS.update_path(spawn_config, "$game_config$", "alife\\start_stuf.ltx");
 	spawn_file = xr_new<CInifile>(spawn_config, true, true);
 
 	DynamicBoxFileCreate();
 	DynamicMusicFileCreate();
 
-
-		box_thread = new std::thread([&]()
-		{
-			thread_name("Progress Saving Thread");
-			SaveThreadWorker();
-		});
-
-		box_thread->detach();
+	Saver = xr_new<CProgressSaver>(this);
 }
 
 game_sv_freemp::~game_sv_freemp()
@@ -42,8 +32,8 @@ game_sv_freemp::~game_sv_freemp()
 	xr_delete(spawn_explosive);
 	xr_delete(spawn_weapons);
 	xr_delete(Music);
-	xr_delete(curr_box_file);
 	xr_delete(spawn_file);
+	xr_delete(Saver);
 }
 
 
@@ -82,9 +72,7 @@ void game_sv_freemp::OnObjectsCreate(CSE_Abstract* E)
 		first_play = false;
 		need_stop_music = true;
 		lenght = 0;
-		Physics_objects data;
-		data.entity = E;
-		phy_objects_cse[E->ID] = data;
+		phy_objects_cse[E->ID] = E;
 	}
 }
 
@@ -199,7 +187,7 @@ void game_sv_freemp::OnPlayerConnectFinished(ClientID id_who)
 		xrCData->ps->setFlag(GAME_PLAYER_FLAG_SPECTATOR);
 		xrCData->ps->setFlag(GAME_PLAYER_FLAG_READY);
 		
-			if (HasBinnarSaveFile(xrCData->ps))
+			if (Saver && Saver->HasBinnarSaveFile(xrCData->ps))
 			{
 				xrCData->ps->resetFlag(GAME_PLAYER_MP_SAVE_LOADED);
 			}
@@ -401,8 +389,11 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 
 		if (ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
 		{
-			LoadPlayerPortions(ps);
-			LoadPlayersOnDeath(ps);
+			if (Saver)
+			{
+				Saver->LoadPlayerPortions(ps);
+				Saver->LoadPlayersOnDeath(ps);
+			}
 			xrCData->ps->money_for_round /= Random.randF(1.f, 1.2f);
 		}
 
@@ -410,7 +401,8 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 	{
 		SpawnItemToActor(ps->GameID, "wpn_binoc");
 
-			BinnarLoadPlayer(ps);
+		if(Saver)
+			Saver->BinnarLoadPlayer(ps);
 				
  		ps->setFlag(GAME_PLAYER_MP_SAVE_LOADED);
  	}
@@ -448,17 +440,19 @@ void game_sv_freemp::OnPlayerDisconnect(ClientID id_who, LPSTR Name, u16 GameID,
 	P.w_stringZ(Name);
 	u_EventSend(P);
 	//---------------------------------------------------
-	string_path PlayerSavePath;
-	string256 PlayerSaveDir;
-	sprintf(PlayerSaveDir, "%s\\%s_inventory.binsave", Name, Name);
-	FS.update_path(PlayerSavePath, "$mp_saves_players_bin$", PlayerSaveDir);
-	if (!FS.exist(PlayerSavePath))
-		FillPlayerOnDisconnect(StaticID, PlayerSavePath);
+	if (Saver)
+	{
+		string_path PlayerSavePath;
+		string256 PlayerSaveDir;
+		sprintf(PlayerSaveDir, "%s\\%s_inventory.binsave", Name, Name);
+		FS.update_path(PlayerSavePath, "$mp_saves_players_bin$", PlayerSaveDir);
+		if (!FS.exist(PlayerSavePath))
+			Saver->FillPlayerOnDisconnect(StaticID, PlayerSavePath);
 
-	ClearPlayersOnDeathBuffer(StaticID);
+		Saver->ClearPlayersOnDeathBuffer(StaticID);
 
-	Player_portions[StaticID].clear();
-	
+		Saver->Player_portions[StaticID].clear();
+	}
 
 //	AllowDeadBodyRemove			(id_who, GameID);
 	CObject* pObject = Level().Objects.net_Find(GameID);
@@ -481,6 +475,19 @@ void game_sv_freemp::OnPlayerKillPlayer(game_PlayerState * ps_killer, game_Playe
 		ps_killed->DeathTime = Device.dwTimeGlobal;
 	}
 	signal_Syncronize();
+}
+
+void game_sv_freemp::assign_RP(CSE_Abstract* E, game_PlayerState* ps_who)
+{
+	Fvector pos, angle;
+	float health;
+	if (Saver && !ps_who->testFlag(GAME_PLAYER_MP_SAVE_LOADED) && Saver->load_position_RP_Binnar(ps_who, pos, angle))
+	{
+		E->position().set(pos);
+		E->angle().set(angle);
+	}
+	else
+		inherited::assign_RP(E, ps_who);
 }
 
 void game_sv_freemp::OnEvent(NET_Packet &P, u16 type, u32 time, ClientID sender)
@@ -526,61 +533,8 @@ void game_sv_freemp::Update()
 	DynamicMusicUpdate();
 	DynamicBoxUpdate();
 
-
-		if (Level().game && PlayerSaveTimer <= Device.dwTimeGlobal)
-		{
-			PlayerSaveTimer = Device.dwTimeGlobal + (save_time * 1000);
-			for (const auto &player : Level().game->players)
-			{
-				if (player.second->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
-				{
-					if (player.first == server().GetServerClient()->ID)
-						continue;
-
-					CObject* obj = Level().Objects.net_Find(player.second->GameID);
-					CActor* actor = smart_cast<CActor*>(obj);
-					if (!actor)
-						continue;
-
-					if (!actor->g_Alive())
-					{
-						RemovePlayerSave(player.second);
-						continue;
-					}
-
-					FillPlayerBuffer(player.second);
-				}
-			}
-		}
-
-		FillServerEnvBuffer();
-
-		if (Level().game && InvBoxFillTimer <= Device.dwTimeGlobal)
-		{
-			InvBoxFillTimer = Device.dwTimeGlobal + (save_time2 * 1000);
-
-			for (const auto &entity : inventory_boxes_cse)
-			{
-				CSE_Abstract* abs = entity.second.entity;
-				CSE_ALifeInventoryBox* box = smart_cast<CSE_ALifeInventoryBox*>(abs);
-				if (box)
-				{
-						//check saving box or not
-						LPCSTR box_name = box->name_replace();
-						//
-						if (!entity.second.loaded)
-						{
-							inventory_boxes_cse[entity.first].loaded = true;
-							BinnarLoadInvBox(box);
-						}
-						else if (curr_box_file->line_exist("saving_boxes", box_name))
-						{
-							FillInvBoxBuffer(box);
-						}
-				}
-			}
-		}
-
+	if(Saver)
+		Saver->SavingUpdate();
 }
 
 BOOL game_sv_freemp::OnTouch(u16 eid_who, u16 eid_what, BOOL bForced)

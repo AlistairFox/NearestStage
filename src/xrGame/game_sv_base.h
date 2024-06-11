@@ -34,7 +34,6 @@ class	game_sv_GameState	: public game_GameState
 {
 	typedef game_GameState inherited;
 protected:
-	xrServer*						m_server;
 	
 	GameEventQueue*					m_event_queue;
 	item_respawn_manager			m_item_respawner;
@@ -58,6 +57,7 @@ protected:
 	MAP_ROTATION_LIST				m_pMapRotation_List;
 
 public:
+	xrServer* m_server;
 #define		TEAM_COUNT 32
 
 	BOOL							sv_force_sync;

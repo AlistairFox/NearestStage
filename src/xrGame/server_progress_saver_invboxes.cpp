@@ -1,12 +1,8 @@
 #include "stdafx.h"
-#include "game_sv_freemp.h"
-#include "Level.h"
-#include "Actor.h"
-#include "Inventory.h"
+#include "server_progress_saver.h"
 #include "Weapon.h"
-#include "xrServer_Objects_ALife.h"
 
-void game_sv_freemp::FillInvBoxBuffer(CSE_ALifeInventoryBox* box)
+void CProgressSaver::FillInvBoxBuffer(CSE_ALifeInventoryBox* box)
 {
 	InvBox* OutBox = xr_new<InvBox>();
 
@@ -62,58 +58,7 @@ void game_sv_freemp::FillInvBoxBuffer(CSE_ALifeInventoryBox* box)
 	csSaving.Leave();
 }
 
-#ifdef OLD_BOX_SAVING
-void game_sv_freemp::BinnarSaveInvBox(CSE_ALifeInventoryBox* box, string_path& filepath)
-{
-	IWriter* writer = FS.w_open(filepath);
-
-	writer->open_chunk(INVBOX_ITEMS_CHUNK);
-
-	writer->w_u16(box->children.size());
-
-	for (auto id : box->children)
-	{
-		CInventoryItem* item = smart_cast<CInventoryItem*>(Level().Objects.net_Find(id));
-		writer->w_stringZ(item->m_section_id.c_str());
-		writer->w_float(item->GetCondition());
-		if (item->cast_weapon_ammo())
-		{
-			CWeaponAmmo* ammo = smart_cast<CWeaponAmmo*>(item);
-			writer->w_u8(1);
-			writer->w_u16(ammo->m_boxCurr);
-		}
-		else
-			writer->w_u8(0);
-
-		if (item->cast_weapon())
-		{
-			writer->w_u8(1);
-			CWeapon* wpn = smart_cast<CWeapon*>(item);
-			writer->w_u16(u16(wpn->GetAmmoElapsed()));
-			writer->w_u8(wpn->m_ammoType);
-			writer->w_u8(wpn->GetAddonsState());
-			writer->w_u8(wpn->m_cur_scope);
-		}
-		else
-			writer->w_u8(0);
-
-		if (item->has_any_upgrades())
-		{
-			writer->w_u8(1);
-			string2048 upgrades;
-			item->get_upgrades(upgrades);
-			writer->w_stringZ(upgrades);
-		}
-		else
-			writer->w_u8(0);
-
-	}
-	writer->close_chunk();
-	FS.w_close(writer);
-}
-#endif // OLD_BOX_SAVING
-
-void game_sv_freemp::BinnarLoadInvBox(CSE_ALifeInventoryBox* box)
+void CProgressSaver::BinnarLoadInvBox(CSE_ALifeInventoryBox* box)
 {
 
 	string_path filepath;
@@ -139,7 +84,7 @@ void game_sv_freemp::BinnarLoadInvBox(CSE_ALifeInventoryBox* box)
 		{
 			shared_str name;
 			reader->r_stringZ(name);
-			CSE_Abstract* E = spawn_begin(name.c_str());
+			CSE_Abstract* E = Level().Server->game->spawn_begin(name.c_str());
 
 			E->ID_Parent = box->ID;
 			CSE_ALifeItem* item = smart_cast<CSE_ALifeItem*>(E);
@@ -180,8 +125,7 @@ void game_sv_freemp::BinnarLoadInvBox(CSE_ALifeInventoryBox* box)
 					item->m_upgrades.push_back(upgrade);
 				}
 			}
-
-			spawn_end(E, m_server->GetServerClient()->ID);
+			Level().Server->game->spawn_end(E, Level().Server->GetServerClient()->ID);
 		}
 	}
 	FS.r_close(reader);

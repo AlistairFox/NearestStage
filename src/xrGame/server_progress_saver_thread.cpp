@@ -1,7 +1,7 @@
 #include "StdAfx.h"
-#include "game_sv_freemp.h"
+#include "server_progress_saver.h"
 
-void game_sv_freemp::SaveThreadWorker()
+void  CProgressSaver::SaveThreadWorker()
 {
 	while (true)
 	{

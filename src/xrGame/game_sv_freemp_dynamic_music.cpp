@@ -33,8 +33,7 @@ void game_sv_freemp::DynamicMusicUpdate()
 
 		for (auto entity : phy_objects_cse)
 		{
-			CSE_Abstract* abs = entity.second.entity;
-			CSE_ALifeObjectPhysic* phy = smart_cast<CSE_ALifeObjectPhysic*>(abs);
+			CSE_ALifeObjectPhysic* phy = smart_cast<CSE_ALifeObjectPhysic*>(entity.second);
 			if (phy)
 			{
 				numb += 1;

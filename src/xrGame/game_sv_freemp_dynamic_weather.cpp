@@ -3,29 +3,6 @@
 #include <ui/UIInventoryUtilities.h>
 #include <Level.h>
 
-void game_sv_freemp::FillServerEnvBuffer()
-{
-	///////////////Server environment saving//////////////////////
-	if (Level().game && SaveWeatherTimer <= Device.dwTimeGlobal)
-	{
-		SaveWeatherTimer = Device.dwTimeGlobal + (save_time3 * 1000);
-		GlobalServerData* GSdata = xr_new<GlobalServerData>();
-
-		string_path save_game_time;
-		FS.update_path(save_game_time, "$global_server_data_bin$", "server_data.binsave");
-		xr_strcpy(GSdata->GSDPath, save_game_time);
-
-		xr_strcpy(GSdata->Time, InventoryUtilities::GetGameTimeAsString(InventoryUtilities::etpTimeToSeconds).c_str());
-		xr_strcpy(GSdata->Data, InventoryUtilities::GetDateAsString(GetGameTime(), InventoryUtilities::edpDateToNormal).c_str());
-		xr_strcpy(GSdata->Weather, g_pGamePersistent->Environment().CurrentWeatherName.c_str());
-
-		csSaving.Enter();
-		ThreadTasks.push_back({ nullptr, nullptr, nullptr, GSdata });
-		csSaving.Leave();
-	}
-	///////////////Server environment saving//////////////////////
-}
-
 void game_sv_freemp::DynamicWeatherUpdate()
 {
 	/// calculate dynamic weather

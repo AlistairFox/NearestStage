@@ -1,6 +1,5 @@
 ﻿#include "stdafx.h"
-#include "game_sv_freemp.h"
-#include "Level.h"
+#include "server_progress_saver.h"
 #include "Actor.h"
 #include "Inventory.h"
 #include "Weapon.h"
@@ -12,7 +11,7 @@
 #include "PDA.h"
 #include "ActorHelmet.h"
 
-void game_sv_freemp::FillPlayerBuffer(game_PlayerState* ps)
+void CProgressSaver::FillPlayerBuffer(game_PlayerState* ps)
 {
 	CObject* obj = Level().Objects.net_Find(ps->GameID);
 	CActor* actor = smart_cast<CActor*>(obj);
@@ -137,7 +136,7 @@ void game_sv_freemp::FillPlayerBuffer(game_PlayerState* ps)
 		stat.radiation = Players_condition[ps->GetStaticID()].radiation;
 		stat.team = ps->team;
 
-		CSE_ALifeCreatureActor* actor_cse = smart_cast<CSE_ALifeCreatureActor*>(server().ID_to_entity(ps->GameID));
+		CSE_ALifeCreatureActor* actor_cse = smart_cast<CSE_ALifeCreatureActor*>(Level().Server->ID_to_entity(ps->GameID));
 
 		if (actor_cse)
 		{
@@ -202,148 +201,7 @@ void game_sv_freemp::FillPlayerBuffer(game_PlayerState* ps)
 
 }
 
-#ifdef OLD_BOX_SAVING
-void game_sv_freemp::BinnarSavePlayer(game_PlayerState* ps, string_path& filepath)
-{
-	CObject* obj = Level().Objects.net_Find(ps->GameID);
-	CActor* actor = smart_cast<CActor*>(obj);
-	CInventoryOwner* pInvOwner = smart_cast<CInventoryOwner*>(obj);
-
-	IWriter* writer = FS.w_open(filepath);
-
-	if (actor && actor->g_Alive())
-	{
-		writer->open_chunk(ACTOR_MONEY);
-		writer->w_u32(ps->money_for_round); // Player Money
-		writer->close_chunk();
-
-		writer->open_chunk(ACTOR_STATS_CHUNK);
-		writer->w_float(Players_condition[ps->GetStaticID()].satiety);
-		writer->w_float(Players_condition[ps->GetStaticID()].thirst);
-		writer->w_float(Players_condition[ps->GetStaticID()].radiation);
-		writer->close_chunk();
-
-		writer->open_chunk(ACTOR_TEAM);
-		writer->w_u8(ps->team); // Player Team 
-		writer->close_chunk();
-
-		writer->open_chunk(ACTOR_POS);
-		CSE_ALifeCreatureActor* actor_cse = smart_cast<CSE_ALifeCreatureActor*>(server().ID_to_entity(ps->GameID));
-
-		if (actor_cse)
-		{
-			writer->w_u8(1); // checking save position
-			writer->w_fvector3(actor_cse->o_Position); // Player Position
-			writer->w_fvector3(actor_cse->o_Angle); // Player Direction
-			writer->w_float(actor_cse->get_health());
-		}
-		else
-			writer->w_u8(0); // cheking save position
-		writer->close_chunk();
-
-
-		writer->open_chunk(ACTOR_DEVICES_CHUNK);
-		CTorch* pTorch = smart_cast<CTorch*>(actor->inventory().ItemFromSlot(TORCH_SLOT));
-		//сохранение фонарика
-		if (pTorch)
-		{
-			writer->w_u8(1); // cheking torch
-			writer->w_stringZ(pTorch->m_section_id.c_str()); // torch section
-			writer->w_float(pTorch->GetCondition()); // torch condition
-		}
-		else
-			writer->w_u8(0); // cheking torch
-
-		CCustomDetector* detector = smart_cast<CCustomDetector*>(actor->inventory().ItemFromSlot(DETECTOR_SLOT));
-		//сохранение детектора
-		if (detector)
-		{
-			writer->w_u8(1); // cheking detector
-			writer->w_stringZ(detector->m_section_id.c_str()); // detector section
-			writer->w_float(detector->GetCondition()); // detector condition
-		}
-		else
-			writer->w_u8(0); // cheking torch
-
-
-		CDetectorAnomaly* pAnDet = smart_cast<CDetectorAnomaly*>(actor->inventory().ItemFromSlot(DOSIMETER_SLOT));
-		//сохранение детектора аномалий
-		if (pAnDet)
-		{
-			writer->w_u8(1); // check anom detector
-			writer->w_stringZ(pAnDet->m_section_id.c_str()); // anom detector section
-			writer->w_float(pAnDet->GetCondition()); // anom detector condition
-		}
-		else
-			writer->w_u8(0); // checking anom detector
-
-		CPda* pPda = smart_cast<CPda*>(actor->inventory().ItemFromSlot(PDA_SLOT));
-		//сохранения пда
-		if (pPda)
-		{
-			writer->w_u8(1); // check pda
-			writer->w_stringZ(pPda->m_section_id.c_str()); // pda section
-		}
-		else
-			writer->w_u8(0); // check pda
-
-		writer->close_chunk();
-
-
-		writer->open_chunk(ACTOR_INV_ITEMS_CHUNK);
-		TIItemContainer items;
-		actor->inventory().AddAvailableItems(items, false);
-		writer->w_u32(items.size()); // write item count
-
-		for (auto item : items)
-		{
-			if (!xr_strcmp("mp_players_rukzak", item->m_section_id.c_str()))
-				continue;
-
-			if (item->BaseSlot() == DOSIMETER_SLOT)
-				continue;
-
-			writer->w_stringZ(item->m_section_id.c_str()); // write item section
-			writer->w_u16(item->CurrValue()); // write item slot
-			writer->w_float(item->GetCondition()); // write item condition
-			if (item->cast_weapon_ammo())
-			{
-				writer->w_u8(1); // check wpn ammo
-				CWeaponAmmo* ammo = smart_cast<CWeaponAmmo*>(item);
-				writer->w_u16(ammo->m_boxCurr); // write ammo count in box
-			}
-			else
-				writer->w_u8(0); // check wpn ammo
-
-			if (item->cast_weapon())
-			{
-				writer->w_u8(1); // check weapon
-				CWeapon* wpn = smart_cast<CWeapon*>(item);
-				writer->w_u16(u16(wpn->GetAmmoElapsed())); // write ammo count in wpn
-				writer->w_u8(wpn->m_ammoType); // write ammo type in wpn
-				writer->w_u8(wpn->GetAddonsState()); // write addons
-				writer->w_u8(wpn->m_cur_scope); // write scope
-			}
-			else
-				writer->w_u8(0); // check weapon 
-
-			if (item->has_any_upgrades())
-			{
-				writer->w_u8(1); // check upgrades
-				string2048 upgrades;
-				item->get_upgrades(upgrades);
-				writer->w_stringZ(upgrades); // write upgrades
-			}
-			else
-				writer->w_u8(0); // check upgrades
-		}
-		writer->close_chunk();
-		FS.w_close(writer);
-	}
-}
-#endif
-
-bool game_sv_freemp::BinnarLoadPlayer(game_PlayerState* ps)
+bool CProgressSaver::BinnarLoadPlayer(game_PlayerState* ps)
 {
 	string_path PlayerSavePath;
 	string256 PlayerDir;
@@ -361,7 +219,7 @@ bool game_sv_freemp::BinnarLoadPlayer(game_PlayerState* ps)
 		if (reader->open_chunk(ACTOR_STATS_CHUNK))
 		{
 			NET_Packet P;
-			u_EventGen(P, GE_PLAYER_LOAD_CONDITIONS, ps->GameID);
+			Level().Server->game->u_EventGen(P, GE_PLAYER_LOAD_CONDITIONS, ps->GameID);
 			float satiety, thirst, radiation;
 			satiety = reader->r_float();
 			thirst = reader->r_float();
@@ -369,7 +227,7 @@ bool game_sv_freemp::BinnarLoadPlayer(game_PlayerState* ps)
 			P.w_float(satiety);
 			P.w_float(thirst);
 			P.w_float(radiation);
-			u_EventSend(P);
+			Level().Server->game->u_EventSend(P);
 		}
 
 		if (reader->open_chunk(ACTOR_TEAM))
@@ -392,7 +250,7 @@ bool game_sv_freemp::BinnarLoadPlayer(game_PlayerState* ps)
 				u16 slot = reader->r_u16();
 				float cond = reader->r_float();
 
-				CSE_Abstract* E = spawn_begin(itm_sect.c_str());
+				CSE_Abstract* E = Level().Server->game->spawn_begin(itm_sect.c_str());
 
 				E->ID_Parent = ps->GameID;
 
@@ -440,7 +298,7 @@ bool game_sv_freemp::BinnarLoadPlayer(game_PlayerState* ps)
 					}
 				}
 
-				spawn_end(E, m_server->GetServerClient()->ID);
+				Level().Server->game->spawn_end(E, Level().Server->GetServerClient()->ID);
 			}
 
 		}
@@ -468,10 +326,10 @@ bool game_sv_freemp::BinnarLoadPlayer(game_PlayerState* ps)
 			}
 
 			NET_Packet P;
-			u_EventGen(P, GE_GET_SAVE_PORTIONS, ps->GameID);
+			Level().Server->game->u_EventGen(P, GE_GET_SAVE_PORTIONS, ps->GameID);
 			save_data(Player_portions[ps->GetStaticID()], P);
 			P.w_u8(true);
-			u_EventSend(P);
+			Level().Server->game->u_EventSend(P);
 		}
 
 		reader->close();
@@ -479,9 +337,9 @@ bool game_sv_freemp::BinnarLoadPlayer(game_PlayerState* ps)
 	return true;
 }
 
-bool game_sv_freemp::HasBinnarSaveFile(game_PlayerState* ps)
+bool CProgressSaver::HasBinnarSaveFile(game_PlayerState* ps)
 {
-	if (ps->GameID == get_id(server().GetServerClient()->ID)->GameID)
+	if (ps->GameID == Level().Server->game->get_id(Level().Server->GetServerClient()->ID)->GameID)
 		return false;
 
 	string_path PlayerSavePath;
@@ -505,7 +363,7 @@ bool game_sv_freemp::HasBinnarSaveFile(game_PlayerState* ps)
 	return exist;
 }
 
-bool game_sv_freemp::load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos, Fvector& angle)
+bool CProgressSaver::load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos, Fvector& angle)
 {
 	string_path PlayerPosPath;
 	string256 PlayerDir;
@@ -537,7 +395,7 @@ bool game_sv_freemp::load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos,
 	return false;
 }
 
-void game_sv_freemp::SavePlayersConditions(float satiety, float thirst, float radiation, game_PlayerState* ps)
+void CProgressSaver::SavePlayersConditions(float satiety, float thirst, float radiation, game_PlayerState* ps)
 {
 	if (!ps)
 		return;
@@ -547,19 +405,19 @@ void game_sv_freemp::SavePlayersConditions(float satiety, float thirst, float ra
 	Players_condition[ps->GetStaticID()].radiation = radiation;
 }
 
-void game_sv_freemp::LoadPlayerPortions(game_PlayerState* ps)
+void CProgressSaver::LoadPlayerPortions(game_PlayerState* ps)
 {
 	NET_Packet P;
-	u_EventGen(P, GE_GET_SAVE_PORTIONS, ps->GameID);
+	Level().Server->game->u_EventGen(P, GE_GET_SAVE_PORTIONS, ps->GameID);
 	save_data(Player_portions[ps->GetStaticID()], P);
 	P.w_u8(false);
-	u_EventSend(P);
+	Level().Server->game->u_EventSend(P);
 }
 
 
-void game_sv_freemp::SavePlayerPortions(ClientID sender, shared_str info_id, bool add)
+void CProgressSaver::SavePlayerPortions(ClientID sender, shared_str info_id, bool add)
 {
-	game_PlayerState* ps = get_id(sender);
+	game_PlayerState* ps = Level().Server->game->get_id(sender);
 
 	if (ps)
 	{
@@ -593,20 +451,7 @@ void game_sv_freemp::SavePlayerPortions(ClientID sender, shared_str info_id, boo
 
 }
 
-void game_sv_freemp::assign_RP(CSE_Abstract* E, game_PlayerState* ps_who)
-{
-	Fvector pos, angle;
-	float health;
-	if (!ps_who->testFlag(GAME_PLAYER_MP_SAVE_LOADED) && load_position_RP_Binnar(ps_who, pos, angle))
-	{
-		E->position().set(pos);
-		E->angle().set(angle);
-	}
-	else
-		inherited::assign_RP(E, ps_who);
-}
-
-bool game_sv_freemp::RemovePlayerSave(game_PlayerState* ps)
+bool CProgressSaver::RemovePlayerSave(game_PlayerState* ps)
 {
 	bool WillRemove = false;
 	string_path PlayerSavePath;

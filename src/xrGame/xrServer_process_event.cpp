@@ -67,7 +67,8 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 		P.r_stringZ(info_id);		//номер полученной информации
 		P.r_u8(add_info);			//добавление или убирание информации
 
-		fmp->SavePlayerPortions(sender, info_id, add_info);
+		if (fmp->Saver)
+			fmp->Saver->SavePlayerPortions(sender, info_id, add_info);
 	}
 	case GE_WPN_STATE_CHANGE:
 	case GE_ZONE_STATE_CHANGE:
@@ -486,9 +487,8 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 	case GE_MONEY_ACTOR:
 	{
 		s32 money = P.r_s32();
-		game_sv_freemp* freemp = smart_cast<game_sv_freemp*>(game);
-		if (freemp)
-			freemp->AddMoneyToPlayer(game->get_id(sender), money);
+		if (fmp)
+			fmp->AddMoneyToPlayer(game->get_id(sender), money);
 	}break;
 
 	case GE_KEY_PRESSED:
@@ -564,7 +564,8 @@ void xrServer::Process_event	(NET_Packet& P, ClientID sender)
 		P.r_float(satiety);
 		P.r_float(radiation);
 		Msg("Import T: %f S: %f R: %f", thirst, satiety, radiation);
-		fmp->SavePlayersConditions(satiety, thirst, radiation, CL->ps);
+		if(fmp->Saver)
+			fmp->Saver->SavePlayersConditions(satiety, thirst, radiation, CL->ps);
 	}break;
 
 	case M_DEMO_REQUEST:
