@@ -262,7 +262,7 @@ void _initialize_cpu(void)
 	if (CPU::ID.hasFeature(CPUFeature::AVX))
 		xr_strcat(features, ", AVX");
 #ifdef __AVX__
-	else Debug.do_exit(NULL, "X-Ray x64 using AVX anyway!");
+	else Debug.fatal(__FILE__, __LINE__, __FUNCTION__, "X-Ray x64 using AVX anyway!");
 #endif
 
 	if (CPU::ID.hasFeature(CPUFeature::AVX2))
