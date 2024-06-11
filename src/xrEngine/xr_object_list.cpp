@@ -114,11 +114,11 @@ void	CObjectList::SingleUpdate	(CObject* O)
 		O->dwFrame_UpdateCL = Device.dwFrame;
 	}
 
-	VERIFY3(O->dbg_update_cl == Device.dwFrame, "Broken sequence of calls to 'UpdateCL'", *O->cName());
+	VERIFY3(O->dbg_update_cl == Device.dwFrame, "Broken sequence of calls to 'UpdateCL'", *O->cName().c_str());
 	if (O->H_Parent() && (O->H_Parent()->getDestroy() || O->H_Root()->getDestroy()))
 	{
 		// Push to destroy-queue if it isn't here already
-		Msg("! ERROR: incorrect destroy sequence for object[%d:%s], section[%s], parent[%d:%s]", O->ID(), O->cName(), O->cNameSect(), O->H_Parent()->ID(), *O->H_Parent()->cName());
+		Msg("! ERROR: incorrect destroy sequence for object[%d:%s], section[%s], parent[%d:%s]", O->ID(), O->cName().c_str(), O->cNameSect().c_str(), O->H_Parent()->ID(), *O->H_Parent()->cName().c_str());
 	}
 }
 

@@ -401,7 +401,7 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 
 		if (ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
 		{
-			LoadPlayerPortions(ps, false);
+			LoadPlayerPortions(ps);
 			LoadPlayersOnDeath(ps);
 			xrCData->ps->money_for_round /= Random.randF(1.f, 1.2f);
 		}
@@ -409,7 +409,6 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 	if (ps && !ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
 	{
 		SpawnItemToActor(ps->GameID, "wpn_binoc");
-		LoadPlayerPortions(ps, true);
 
 			string_path file_name_path;
 			string32 file_name;

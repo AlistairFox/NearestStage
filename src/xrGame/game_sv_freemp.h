@@ -76,11 +76,7 @@ public:
 
 	///////////Info portions saving ////////////////
 	 void					SavePlayerPortions(ClientID sender, shared_str info_id, bool add);
-	 void					LoadPlayerPortions(game_PlayerState* ps, bool first);
-	enum DialogsSavingChunks
-	{
-		INFO_PORTIONS_CHUNK = 0
-	};
+	 void					LoadPlayerPortions(game_PlayerState* ps);
 	xr_map<u16, xr_vector<shared_str>> Player_portions;
 	///////////Info portions saving\ ////////////////
 
@@ -139,25 +135,28 @@ public:
 		//Save Thread Task
 	xrCriticalSection csSaving;
 
-	struct InvBoxItem
+	//Сейву инфопоршней так же перенести в Players
+
+	struct SItem
 	{
-		string128 item_sect;
-		float item_cond;
-		bool weapon_ammo = false;
-		u16 m_boxCurr = 0;
-		bool weapon = false;
-		u8 ammoType;
-		u16 ammoElapse;
-		u8 WeaponAddonState;
-		u8 WeaponCurScope;
-		bool has_upg = false;
-		string2048 upgrades;
+		string128 ItemSect;
+		u16 ItemSlot;
+		float ItemCond;
+		bool IsWeaponAmmo = false;
+		u16 AmmoBoxCurr = 0;
+		bool IsWeapon = false;
+		u16 AmmoElapsed = 0;
+		u8 AmmoType = 0;
+		u8 AddonState = 0;
+		u8 CurrScope = 0;
+		bool HasUpgr = false;
+		string2048 Uphrades;
 	};
 
 	struct InvBox
 	{
 		string512 box_path;
-		std::vector<InvBoxItem> Items;
+		std::vector<SItem> Items;
 	};
 
 	struct PlayerStats
@@ -171,23 +170,6 @@ public:
 		Fvector3 pos;
 		Fvector3 angle;
 		float health = 1.f;
-	};
-
-	struct PlayerItem
-	{
-		string128 ItemSect;
-		u16 ItemSlot;
-
-		float ItemCond;
-		bool IsWeaponAmmo = false;
-		u16 AmmoBoxCurr = 0;
-		bool IsWeapon = false;
-		u16 AmmoElapsed = 0;
-		u8 AmmoType = 0;
-		u8 AddonState = 0;
-		u8 CurrScope = 0;
-		bool HasUpgr = false;
-		string2048 Uphrades;
 	};
 
 	struct SPlayersOnDeathBuff
@@ -241,8 +223,9 @@ public:
 	struct Players
 	{
 		PlayerStats Stats;
-		std::vector<PlayerItem> Items;
+		std::vector<SItem> Items;
 		string512 PlayerPath;
+		xr_vector<shared_str> InfoPortions;
 	};
 
 	struct OnDeathDisconnect
@@ -296,11 +279,12 @@ public:
 	enum ActorChunks
 	{
 		ACTOR_STATS_CHUNK = 0,
-		ACTOR_DEVICES_CHUNK = 1,
-		ACTOR_INV_ITEMS_CHUNK = 2,
-		ACTOR_POS = 3,
-		ACTOR_TEAM = 4,
-		ACTOR_MONEY = 5
+		ACTOR_DEVICES_CHUNK,
+		ACTOR_INV_ITEMS_CHUNK,
+		ACTOR_POS,
+		ACTOR_TEAM,
+		ACTOR_MONEY,
+		INFO_PORTIONS_CHUNK
 	};
 
 	struct Players_stats

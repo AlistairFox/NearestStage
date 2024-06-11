@@ -28,31 +28,31 @@ void game_sv_freemp::SaveThreadWorker()
 
 			for (const auto& id : OutBox->Items)
 			{
-				writer->w_stringZ(id.item_sect);
-				writer->w_float(id.item_cond);
-				if (id.weapon_ammo)
+				writer->w_stringZ(id.ItemSect);
+				writer->w_float(id.ItemCond);
+				if (id.IsWeaponAmmo)
 				{
 					writer->w_u8(1);
-					writer->w_u16(id.m_boxCurr);
+					writer->w_u16(id.AmmoBoxCurr);
 				}
 				else
 					writer->w_u8(0);
 
-				if (id.weapon)
+				if (id.IsWeapon)
 				{
 					writer->w_u8(1);
-					writer->w_u16(id.ammoElapse);
-					writer->w_u8(id.ammoType);
-					writer->w_u8(id.WeaponAddonState);
-					writer->w_u8(id.WeaponCurScope);
+					writer->w_u16(id.AmmoElapsed);
+					writer->w_u8(id.AmmoType);
+					writer->w_u8(id.AddonState);
+					writer->w_u8(id.CurrScope);
 				}
 				else
 					writer->w_u8(0);
 
-				if (id.has_upg)
+				if (id.HasUpgr)
 				{
 					writer->w_u8(1);
-					writer->w_stringZ(id.upgrades);
+					writer->w_stringZ(id.Uphrades);
 				}
 				else
 					writer->w_u8(0);
@@ -128,6 +128,16 @@ void game_sv_freemp::SaveThreadWorker()
 				else
 					writer->w_u8(0);
 			}
+			writer->close_chunk();
+
+
+			writer->open_chunk(INFO_PORTIONS_CHUNK);
+			writer->w_u32(player->InfoPortions.size());
+			for (const auto& Info : player->InfoPortions)
+			{
+				writer->w_stringZ(Info);
+			}
+
 			writer->close_chunk();
 			FS.w_close(writer);
 			xr_delete(player);

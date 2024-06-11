@@ -147,7 +147,7 @@ void game_sv_freemp::FillPlayerBuffer(game_PlayerState* ps, string_path& filepat
 
 		for (const auto itm : items)
 		{
-			PlayerItem pItem;
+			SItem pItem;
 
 			xr_strcpy(pItem.ItemSect, itm->m_section_id.c_str());
 			pItem.ItemSlot = itm->CurrValue();
@@ -184,6 +184,8 @@ void game_sv_freemp::FillPlayerBuffer(game_PlayerState* ps, string_path& filepat
 			pl->Items.push_back(pItem);
 
 		}
+
+		pl->InfoPortions.swap(Player_portions[ps->GetStaticID()]);
 
 	}
 	
@@ -438,6 +440,24 @@ bool game_sv_freemp::BinnarLoadPlayer(game_PlayerState* ps, string_path& filepat
 
 		}
 
+		if (reader->open_chunk(INFO_PORTIONS_CHUNK))
+		{
+			u32 size = reader->r_u32();
+
+			for (u32 i = 0; i != size; i++)
+			{
+				shared_str SingleInfo;
+				reader->r_stringZ(SingleInfo);
+				Player_portions[ps->GetStaticID()].push_back(SingleInfo);
+			}
+
+			NET_Packet P;
+			u_EventGen(P, GE_GET_SAVE_PORTIONS, ps->GameID);
+			save_data(Player_portions[ps->GetStaticID()], P);
+			P.w_u8(true);
+			u_EventSend(P);
+		}
+
 		reader->close();
 		return true;
 	}
@@ -514,52 +534,13 @@ void game_sv_freemp::SavePlayersConditions(float satiety, float thirst, float ra
 	Players_condition[ps->GetStaticID()].radiation = radiation;
 }
 
-void game_sv_freemp::LoadPlayerPortions(game_PlayerState* ps, bool first)
+void game_sv_freemp::LoadPlayerPortions(game_PlayerState* ps)
 {
-
-	if (!first)
-	{
-		NET_Packet P;
-		u_EventGen(P, GE_GET_SAVE_PORTIONS, ps->GameID);
-		save_data(Player_portions[ps->GetStaticID()], P);
-		P.w_u8(false);
-		u_EventSend(P);
-	}
-	else
-	{
-		string_path path;
-		string32 file_name;
-		xr_strcpy(file_name, ps->getName());
-		xr_strcat(file_name, ".binsave");
-		FS.update_path(path, "$mp_saves_info$", file_name);
-
-		if (FS.exist(path))
-		{
-			IReader* reader = FS.r_open(path);
-
-			if (reader->open_chunk(INFO_PORTIONS_CHUNK))
-			{
-				u32 count = reader->r_u32();
-
-
-				for (int i = 0; i < count; i++)
-				{
-					shared_str item;
-					reader->r_stringZ(item);
-					Player_portions[ps->GetStaticID()].push_back(item);
-				}
-
-				NET_Packet P;
-				u_EventGen(P, GE_GET_SAVE_PORTIONS, ps->GameID);
-				save_data(Player_portions[ps->GetStaticID()], P);
-				P.w_u8(true);
-				u_EventSend(P);
-
-			}
-
-			FS.r_close(reader);
-		}
-	}
+	NET_Packet P;
+	u_EventGen(P, GE_GET_SAVE_PORTIONS, ps->GameID);
+	save_data(Player_portions[ps->GetStaticID()], P);
+	P.w_u8(false);
+	u_EventSend(P);
 }
 
 
@@ -577,34 +558,23 @@ void game_sv_freemp::SavePlayerPortions(ClientID sender, shared_str info_id, boo
 		if (add)
 		{
 			if (it == Player_portions[ps->GetStaticID()].end())
+			{
+				Msg("Player: %s get portion: %s", ps->getName(), info_id.c_str());
 				Player_portions[ps->GetStaticID()].push_back(info_id);
+			}
 			else
 				return;
 		}
 		else
 		{
 			if (it != Player_portions[ps->GetStaticID()].end())
+			{
+				Msg("Player: %s lost portion: %s", ps->getName(), info_id.c_str());
 				Player_portions[ps->GetStaticID()].erase(it);
+			}
 			else
 				return;
 		}
-
-
-		string_path path;
-		string32 file_name;
-		xr_strcpy(file_name, ps->getName());
-		xr_strcat(file_name, ".binsave");
-		FS.update_path(path, "$mp_saves_info$", file_name);
-		IWriter* writer = FS.w_open(path);
-		writer->open_chunk(INFO_PORTIONS_CHUNK);
-		writer->w_u32(Player_portions[ps->GetStaticID()].size());
-		for (const auto& info : Player_portions[ps->GetStaticID()])
-		{
-			writer->w_stringZ(info);
-		}
-		writer->close_chunk();
-		FS.w_close(writer);
-		Msg("Sender: %s, portion: %s", ps->getName(), info_id.c_str());
 	}
 
 

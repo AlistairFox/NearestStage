@@ -19,40 +19,40 @@ void game_sv_freemp::FillInvBoxBuffer(CSE_ALifeInventoryBox* box)
 
 	for (const auto id : box->children)
 	{
-		InvBoxItem Sitem;
+		SItem Sitem;
 
 		CInventoryItem* item = smart_cast<CInventoryItem*>(Level().Objects.net_Find(id));
 
-		xr_strcpy(Sitem.item_sect, item->m_section_id.c_str());
-		Sitem.item_cond = item->GetCondition();
+		xr_strcpy(Sitem.ItemSect, item->m_section_id.c_str());
+		Sitem.ItemCond = item->GetCondition();
 		if (item->cast_weapon_ammo())
 		{
 			CWeaponAmmo* ammo = smart_cast<CWeaponAmmo*>(item);
-			Sitem.weapon_ammo = true;
-			Sitem.m_boxCurr = ammo->m_boxCurr;
+			Sitem.IsWeaponAmmo = true;
+			Sitem.AmmoBoxCurr = ammo->m_boxCurr;
 		}
 		else
-			Sitem.weapon_ammo = false;
+			Sitem.IsWeaponAmmo = false;
 
 		if (item->cast_weapon())
 		{
-			Sitem.weapon = true;
+			Sitem.IsWeapon = true;
 			CWeapon* wpn = smart_cast<CWeapon*>(item);
-			Sitem.ammoElapse = u16(wpn->GetAmmoElapsed());
-			Sitem.ammoType = wpn->m_ammoType;
-			Sitem.WeaponAddonState = wpn->GetAddonsState();
-			Sitem.WeaponCurScope = wpn->m_cur_scope;
+			Sitem.AmmoElapsed = u16(wpn->GetAmmoElapsed());
+			Sitem.AmmoType = wpn->m_ammoType;
+			Sitem.AddonState = wpn->GetAddonsState();
+			Sitem.CurrScope = wpn->m_cur_scope;
 		}
 		else
-			Sitem.weapon = false;
+			Sitem.IsWeapon = false;
 
 		if (item->has_any_upgrades())
 		{
-			Sitem.has_upg = true;
-			item->get_upgrades(Sitem.upgrades);
+			Sitem.HasUpgr = true;
+			item->get_upgrades(Sitem.Uphrades);
 		}
 		else
-			Sitem.has_upg = false;
+			Sitem.HasUpgr = false;
 
 		OutBox->Items.push_back(Sitem);
 	}
