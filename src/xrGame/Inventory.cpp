@@ -723,9 +723,17 @@ bool CInventory::Action(u16 cmd, u32 flags)
 				case kWPN_FIREMODE_NEXT:
 				case kWPN_FIREMODE_PREV:
 				case kWPN_ZOOM:
-				case kTORCH:
 				case kNIGHT_VISION:
 				{
+					SendActionEvent(cmd, flags);
+				}break;
+				case kTORCH:
+				{
+					CWeapon* Wpn = smart_cast<CWeapon*>(Actor()->inventory().ActiveItem());
+
+					if (Wpn && !(Wpn->GetState() == CWeapon::eIdle))
+						return;
+
 					SendActionEvent(cmd, flags);
 				}break;
 				}

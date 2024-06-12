@@ -15,7 +15,6 @@ void callbackAnim(CBlend* blend)
 	CActor* act = (CActor*)blend->CallbackParam;
 	if (act)
 	{
-		Msg("Callback");
 		act->CanChange = true;
 	}
 }

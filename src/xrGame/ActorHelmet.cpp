@@ -291,6 +291,15 @@ void CHelmet::AddBonesProtection(LPCSTR bones_section)
 
 void CHelmet::renderable_Render()
 {
+	if (H_Parent())
+	{
+		CActor* pA = smart_cast<CActor*>(H_Parent());
+		if (!pA)
+			return;
+
+		if (Level().CurrentControlEntity() == H_Parent() && (pA->MpAnimationMODE() || pA->MpWoundMODE()))
+			return;
+	}
 	if (!IsDynamicHeldAvaliable)
 		return;
 

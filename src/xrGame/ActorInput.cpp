@@ -213,6 +213,10 @@ void CActor::IR_OnKeyboardPress(int cmd)
 		}
 	case kTORCH:
 	{
+		CWeapon* Wpn = smart_cast<CWeapon*>(Actor()->inventory().ActiveItem());
+
+		if (Wpn && !(Wpn->GetState() == CWeapon::eIdle))
+			return;
 		PIItem det_active = inventory().ItemFromSlot(TORCH_SLOT);
 		if (det_active && !neet_switch_torch)
 		{
