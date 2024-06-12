@@ -1226,10 +1226,12 @@ void CActor::UpdateCL	()
 				StartWoundDeathTimer = true;
 				DeathTimerRender = 60;
 			}
+
 			if (!MpWoundMODE() && StartWoundDeathTimer)
 			{
 				StartWoundDeathTimer = false;
 			}
+
 			if (StartWoundDeathTimer)
 			{
 				if (DeathTimer <= Device.dwTimeGlobal)
@@ -1245,15 +1247,7 @@ void CActor::UpdateCL	()
 					}
 				}
 			}
-		}
-		else
-			StartWoundDeathTimer = false;
-	}
 
-	if(g_Alive() && Level().CurrentViewEntity() == this)
-	{
-		if (OnClient())
-		{
 			if (need_set_cond)
 			{
 				Msg("-- Set condition: S: %f, T: %f, R: %f", satiety, thirst, radiation);
@@ -1265,7 +1259,6 @@ void CActor::UpdateCL	()
 				thirst = 1.f;
 				radiation = 0.f;
 			}
-
 
 			if (ExportTimer <= Device.dwTimeGlobal)
 			{
@@ -1279,35 +1272,35 @@ void CActor::UpdateCL	()
 				u_EventSend(P);
 				Msg("-- Process import stats end");
 			}
-		}
 
-		if (MpLootMODE() && !ANIMSET)
-		{
-			SetAnim(30);
-			ANIMSET = true;
-		}
 
-		if (!MpLootMODE() && ANIMSET && !OutAnim)
-		{
-			FastExit();
-		}
-
-		if (GetfHealth() <= 0.2)
-		{
-			ANIM_WOUND = 1;
-			need_ex_wound = true;
-		}
-		else
-		{
-			if (ANIM_WOUND > 0 && need_ex_wound)
+			if (MpLootMODE() && !ANIMSET)
 			{
-				StartWoundExit();
-				need_ex_wound = false;
+				SetAnim(30);
+				ANIMSET = true;
 			}
-		}
 
-		if(CurrentGameUI() && NULL==CurrentGameUI()->TopInputReceiver())
-		{
+			if (!MpLootMODE() && ANIMSET && !OutAnim)
+			{
+				FastExit();
+			}
+
+			if (GetfHealth() <= 0.2)
+			{
+				ANIM_WOUND = 1;
+				need_ex_wound = true;
+			}
+			else
+			{
+				if (ANIM_WOUND > 0 && need_ex_wound)
+				{
+					StartWoundExit();
+					need_ex_wound = false;
+				}
+			}
+
+			if (CurrentGameUI() && NULL == CurrentGameUI()->TopInputReceiver())
+			{
 
 				int dik = get_action_dik(kUSE, 0);
 				if (dik && pInput->iGetAsyncKeyState(dik))
@@ -1317,7 +1310,10 @@ void CActor::UpdateCL	()
 				if (dik && pInput->iGetAsyncKeyState(dik))
 					m_bPickupMode = true;
 
+			}
 		}
+		else
+			StartWoundDeathTimer = false;
 	}
 
 	UpdateInventoryOwner			(Device.dwTimeDelta);
