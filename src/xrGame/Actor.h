@@ -117,8 +117,6 @@ protected:
 	void					SelectScriptWoundAnimation();
 	void					soundPlay();
 	void					StopAllSNDs();
-	void					StopAnims();
-	void					StartExit();
 	void					StopWoundAnims();
 	void					StartWoundExit();
 	void					FastExit();
@@ -148,8 +146,8 @@ public:
 	bool						MpSafeMODE() const;
 	bool						MpAnimationMODE() const;
 	bool						MpWoundMODE() const;
-	bool						MpLootMODE() const;
-
+	bool						MpLootMODE();
+	game_PlayerState*			GetLookPlayer();
 	int ANIM_SELECTED = 0;
 
 	float satiety;

@@ -115,21 +115,38 @@ void CActor::ReciveWoundAnimationPacket(NET_Packet& packet)
 	MotionID motion;
 	packet.r(&motion, sizeof(motion));
 
+	IKinematicsAnimated* k = smart_cast<IKinematicsAnimated*>(Visual());
 	if (motion.valid())
 	{
-		IKinematicsAnimated* k = smart_cast<IKinematicsAnimated*>(Visual());
-		k->LL_PlayCycle(
-			k->LL_GetMotionDef(motion)->bone_or_part,
-			motion,
-			TRUE,
-			k->LL_GetMotionDef(motion)->Accrue(),
-			k->LL_GetMotionDef(motion)->Falloff(),
-			k->LL_GetMotionDef(motion)->Speed(),
-			k->LL_GetMotionDef(motion)->StopAtEnd(),
-			callbackWoundAnim, this, 0
-		);
 
-		CanWoundChange = false;
+		auto defination = k->LL_GetMotionDef(motion);
+
+		if (!this->g_Alive())
+			Msg("!! def object is not alive!! [%s]", this->Name());
+
+		if (!defination)
+			Msg("!! defination not valid! [%d]", motion.idx);
+
+		if (defination && this->g_Alive())
+		{
+			if (defination->motion == 0 || defination->marks.size() > defination->marks.max_size())
+			{
+				Msg("Motions Marks Size: %ull, BonePart: %u, Motion: %u, Speed: %f", defination->marks.size(), defination->bone_or_part, defination->motion, defination->Speed());
+				return;
+			}
+			k->LL_PlayCycle(
+				k->LL_GetMotionDef(motion)->bone_or_part,
+				motion,
+				TRUE,
+				k->LL_GetMotionDef(motion)->Accrue(),
+				k->LL_GetMotionDef(motion)->Falloff(),
+				k->LL_GetMotionDef(motion)->Speed(),
+				k->LL_GetMotionDef(motion)->StopAtEnd(),
+				callbackWoundAnim, this, 0
+			);
+
+			CanWoundChange = false;
+		}
 	}
 
 }

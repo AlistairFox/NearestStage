@@ -306,17 +306,47 @@ bool CActor::MpSafeMODE() const
 	return (ps && ps->testFlag(GAME_PLAYER_MP_SAFE_MODE));
 }
 
-bool CActor::MpLootMODE() const
+bool CActor::MpLootMODE()
 {
 	if (!Actor())
 		return false;
 
 	if (!g_Alive())
 		return false;
+	if (Level().CurrentControlEntity())
+	{
+		game_PlayerState* ps = Game().GetPlayerByGameID(ID());
 
-	game_PlayerState* ps = Game().GetPlayerByGameID(ID());
+		return (ps && ps->testFlag(GAME_PLAYER_MP_LOOT_MODE));
+	}
+	else
+	{
+		game_PlayerState* ps = GetLookPlayer();
+		return (ps && ps->testFlag(GAME_PLAYER_MP_LOOT_MODE));
+	}
+}
 
-	return (ps && ps->testFlag(GAME_PLAYER_MP_LOOT_MODE));
+game_PlayerState* CActor::GetLookPlayer()
+{
+	CActor* pA = smart_cast<CActor*>(Actor()->PersonWeLookingAt());
+	if (!pA)
+		return 0;
+
+	LPCSTR name = pA->Name();
+	for (auto& player : Game().players)
+	{
+		game_PlayerState* ps = player.second;
+		if (ps->GameID == Game().local_player->GameID)
+		{
+			continue;
+		}
+		string128 player_name;
+		xr_strcpy(player_name, ps->getName());
+		if (xr_strcmp(player_name, name) == 0)
+		{
+			return player.second;
+		}
+	}
 }
 
 void CActor::reinit	()
