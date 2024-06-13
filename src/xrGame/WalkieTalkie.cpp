@@ -228,14 +228,16 @@ void CWalkieTalkie::OnStateSwitch(u32 S)
 		{
 			g_player_hud->attach_item(this);
 			PlayHUDMotion("anm_show", true, this, GetState());
-			m_sounds.PlaySound("sndShow", Fvector().set(0, 0, 0), this, true, false);
+			if(OnClient())
+				m_sounds.PlaySound("sndShow", Fvector().set(0, 0, 0), this, true, false);
 			SetPending(TRUE);
 			m_bRadioInHand = true;
 			SoundTimer = 0;
 		}break;
 		case eHiding:
 		{
-			m_sounds.PlaySound("sndHide", Fvector().set(0, 0, 0), this, true, false);
+			if (OnClient())
+				m_sounds.PlaySound("sndHide", Fvector().set(0, 0, 0), this, true, false);
 			PlayHUDMotion("anm_hide", true, this, GetState());
 			SetPending(TRUE);
 			TakeOff();

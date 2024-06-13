@@ -100,7 +100,8 @@ void CBackpack::OnStateSwitch(u32 S)
 		{
 			g_player_hud->attach_item(this);
 			PlayHUDMotion("anm_show", true, this, GetState());
-			m_sounds.PlaySound("sndShow", Fvector().set(0, 0, 0), this, true, false);
+			if (OnClient())
+				m_sounds.PlaySound("sndShow", Fvector().set(0, 0, 0), this, true, false);
 			Actor()->add_cam_effector("itemuse_anm_effects\\backpack_open.anm", 8555, false, "");
 			SetPending(TRUE);
 		}break;
@@ -110,7 +111,8 @@ void CBackpack::OnStateSwitch(u32 S)
 			{
 				CurrentGameUI()->HideActorMenu();
 			}
-			m_sounds.PlaySound("sndHide", Fvector().set(0, 0, 0), this, true, false);
+			if (OnClient())
+				m_sounds.PlaySound("sndHide", Fvector().set(0, 0, 0), this, true, false);
 			PlayHUDMotion("anm_hide", true, this, GetState());
 			Actor()->add_cam_effector("itemuse_anm_effects\\backpack_open.anm", 8555, false, "");
 			SetPending(TRUE);

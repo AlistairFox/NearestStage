@@ -962,11 +962,13 @@ void CSE_ALifeItemWalkieTalkie::STATE_Read		(NET_Packet	&tNetPacket, u16 size)
 {
 	if (m_wVersion > 20)
 		inherited::STATE_Read	(tNetPacket,size);
+	tNetPacket.r_u8(State);
 }
 
 void CSE_ALifeItemWalkieTalkie::STATE_Write		(NET_Packet	&tNetPacket)
 {
 	inherited::STATE_Write		(tNetPacket);
+	tNetPacket.w_u8(State);
 }
 
 void CSE_ALifeItemWalkieTalkie::UPDATE_Read		(NET_Packet	&tNetPacket)

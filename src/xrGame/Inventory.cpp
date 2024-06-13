@@ -732,7 +732,7 @@ bool CInventory::Action(u16 cmd, u32 flags)
 					CWeapon* Wpn = smart_cast<CWeapon*>(Actor()->inventory().ActiveItem());
 
 					if (Wpn && !(Wpn->GetState() == CWeapon::eIdle))
-						return;
+						return false;
 
 					SendActionEvent(cmd, flags);
 				}break;

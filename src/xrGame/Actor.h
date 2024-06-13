@@ -82,60 +82,45 @@ public:
 	virtual								~CActor				();
 	bool mp_actor = false;
 
-	//Script Animation
 protected:
-	int oldAnim = 0;
-	int InputAnim = 0;
-	int OutAnim = 0;
-	int MidAnim = 0;
+#pragma region Animation System
+			int					oldAnim = 0;
+			int					InputAnim = 0;
+			int					OutAnim = 0;
+			int					MidAnim = 0;
 
-	u32 selectedID = 0;
-	u32 sSndID = 0;
-	ref_sound selected;
+			u32					selectedID = 0;
+			u32					sSndID = 0;
+			ref_sound			selected;
 
-	bool start_sel = false;
-	bool InPlay = true;
-	bool OutPlay = true;
-	bool MidPlay = true;
-	bool NEED_EXIT = false;
+			bool				start_sel = false;
+			bool				InPlay = true;
+			bool				OutPlay = true;
+			bool				MidPlay = true;
+			bool				NEED_EXIT = false;
 
-	u32 selectedWoundID = 0;
-	int oldWoundAnim = 0;
-	int InputWoundAnim = 0;
-	int OutWoundAnim = 0;
-	int MidWoundAnim = 0;
-
-	bool start_wound_sel = false;
-	bool InWoundPlay = true;
-	bool OutWoundPlay = true;
-	bool MidWoundPlay = true;
-	bool NEED_WOUND_EXIT = false;
-
-	void					HealthActorInWound(CActor* p);
-
-	void					SelectScriptAnimation();
-	void					SelectScriptWoundAnimation();
-	void					soundPlay();
-	void					StopAllSNDs();
-	void					StopWoundAnims();
-	void					StartWoundExit();
-	void					FastExit();
-	void					ReciveSoundPlay(NET_Packet packet);
-	void					ReciveAnimationPacket(NET_Packet& packet);
-	void					ReciveWoundAnimationPacket(NET_Packet& packet);
-	void					ReciveActivateItem(NET_Packet& packet);
-	void					SendSoundPlay(u32 ID, bool Activate);
-	void					SendAnimationToServer(MotionID motion);
-	void					SendWoundAnimationToServer(MotionID motion);
-	void					SendActivateItem(shared_str item, bool activate);
-	void					script_anim(MotionID exit_animation, PlayCallback Callback, LPVOID CallbackParam);
-	void					script_wound_anim(MotionID exit_animation, PlayCallback Callback, LPVOID CallbackParam);
-
-	//Script Animation
-
-
-//Script Animation
-
+			void				SelectScriptAnimation();
+			void				SelectScriptWoundAnimation();
+			void				soundPlay();
+			void				StopAllSNDs();
+			void				StopWoundAnims();
+			void				StartWoundExit();
+			void				FastExit();
+			void				ReciveSoundPlay(NET_Packet packet);
+			void				ReciveAnimationPacket(NET_Packet& packet);
+			void				ReciveWoundAnimationPacket(NET_Packet& packet);
+			void				ReciveActivateItem(NET_Packet& packet);
+			void				SendSoundPlay(u32 ID, bool Activate);
+			void				SendAnimationToServer(MotionID motion);
+			void				SendWoundAnimationToServer(MotionID motion);
+			void				SendActivateItem(shared_str item, bool activate);
+			void				script_anim(MotionID exit_animation, PlayCallback Callback, LPVOID CallbackParam);
+			void				script_wound_anim(MotionID exit_animation, PlayCallback Callback, LPVOID CallbackParam);
+public:
+			int					ANIM_SELECTED = 0;
+			bool				CanChange = true;
+#pragma endregion
+protected:
 	mutable u32 OldDestroyTimer = 0;
 
 
@@ -148,72 +133,81 @@ public:
 	bool						MpWoundMODE() const;
 	bool						MpLootMODE();
 	game_PlayerState*			GetLookPlayer();
-	int ANIM_SELECTED = 0;
 
 	float satiety;
 	float thirst;
 	float radiation;
 	bool need_set_cond = false;
 
-	void					SetAnim(int ANIM);
-	bool					ANIMSET = false;
+#pragma region Hud Animations System
+#pragma todo("AlistairFox: Необходимо практически полностью переделать, сделать анимации eatable items на отдельном слоте")
+			u32				maskTimer = 0;
+			u32				oldmaskTimer = 0;
+			bool			need_clear_mask = false;
+			void			StartClearMask();
+			void			EndClearMask();
+			void			PlayAnmSound(shared_str sndname);
+			void			PlayPPEffect(LPCSTR pp_name);
+			ref_sound		snd;
+			void			EventHideState();
+			float			add_cam_effector(LPCSTR fn, int id, bool cyclic, LPCSTR cb_func);
+			void			TimeBlockAction(LPCSTR anim_sect);
+			void			TimeUnblockAction();
 
-	int ANIM_WOUND = 0;
-	bool need_ex_wound = false;
-	bool StartWoundDeathTimer = false;
-	u32 DeathTimer = 0;
-	u32 DeathTimerRender = 60;
-
-	/* hud anims system*/
-	u32 maskTimer = 0;
-	u32 oldmaskTimer = 0;
-	bool need_clear_mask = false;
-	void StartClearMask();
-	void EndClearMask();
-	void PlayAnmSound(shared_str sndname);
-	void PlayPPEffect(LPCSTR pp_name);
-	ref_sound snd;
-	void						EventHideState();
-	float add_cam_effector(LPCSTR fn, int id, bool cyclic, LPCSTR cb_func);
-	void						TimeBlockAction(LPCSTR anim_sect);
-	void						TimeUnblockAction();
-	float droplet_pwr = 0;
-	u32 DropletTimer = 0;
-	float DropletStep = 0.005f;
-	float DropletSpeed = 0.f;
-	bool actor_in_hideout = true;
-	u32 last_ray_pick_time = 0;
-	bool DontInv = false;
-
-	void StartTorchAnm();
-	void EndTorchAnm();
-	u32 TorchTimer = 0;
-	bool neet_switch_torch = false;
-	u32 ExportTimer = 0;
-	/* hud anims system end*/
+			bool			DontInv = false;
+			void			StartTorchAnm();
+			void			EndTorchAnm();
+			u32				TorchTimer = 0;
+			bool			neet_switch_torch = false;
+			u32				ExportTimer = 0;
+			u32				old_timer = 0;
+			bool			need_exit;
+#pragma endregion
 
 
-	int						GetInventoryCapacity() const { return m_iInventoryCapacity; }
-	int						GetInventoryFullness() const { return m_iInventoryFullness; }
-	int						MaxCarryInvCapacity() const;
-	void					ChangeInventoryFullness(int val);
+			int				GetInventoryCapacity() const { return m_iInventoryCapacity; }
+			int				GetInventoryFullness() const { return m_iInventoryFullness; }
+			int				MaxCarryInvCapacity() const;
+			void			ChangeInventoryFullness(int val);
 
-	void					RainDropsParamsUpdate();
-	Fvector3				RainDropsParams = {0,0,0};
+#pragma region Rain Drops Update
+			float			droplet_pwr = 0;
+			u32				DropletTimer = 0;
+			float			DropletStep = 0.005f;
+			float			DropletSpeed = 0.f;
+			bool			actor_in_hideout = true;
+			u32				last_ray_pick_time = 0;
+			void			RainDropsParamsUpdate();
+			Fvector3		RainDropsParams = {0,0,0};
+#pragma endregion
 
-	int						m_iInventoryCapacity;
-	int						m_iInventoryFullness;
-	int						m_iInventoryFullnessCtrl; // Для контроля эвента. Иначе эвент отправляется пачкой и дропает больше, чем нужно.
+			int				m_iInventoryCapacity;
+			int				m_iInventoryFullness;
+			int				m_iInventoryFullnessCtrl; // Для контроля эвента. Иначе эвент отправляется пачкой и дропает больше, чем нужно.
 
-	u32 old_timer = 0;
-	bool need_exit;
-	bool CanChange = true;
-	bool CanWoundChange = true;
+#pragma region Wound System
+			u32				selectedWoundID = 0;
+			int				oldWoundAnim = 0;
+			int				InputWoundAnim = 0;
+			int				OutWoundAnim = 0;
+			int				MidWoundAnim = 0;
 
-
-	bool old_block_state = false;
-
-	bool UseHelmet = false;
+			bool			start_wound_sel = false;
+			bool			InWoundPlay = true;
+			bool			OutWoundPlay = true;
+			bool			MidWoundPlay = true;
+			bool			NEED_WOUND_EXIT = false;
+			void			HealthActorInWound(CActor* p);
+			void			SetAnim(int ANIM);
+			bool			ANIMSET = false;
+			void			NeedKillPlayer();
+			int				ANIM_WOUND = 0;
+			bool			need_ex_wound = false;
+			bool			StartWoundDeathTimer = false;
+			u32				DeathTimerRender = 60;
+			bool			CanWoundChange = true;
+#pragma endregion
+			bool			UseHelmet = false;
 
 	virtual BOOL						AlwaysTheCrow				()						{ return TRUE; }
 

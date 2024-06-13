@@ -1227,24 +1227,17 @@ void CActor::UpdateCL	()
 				DeathTimerRender = 60;
 			}
 
-			if (!MpWoundMODE() && StartWoundDeathTimer)
-			{
+			if(!MpWoundMODE() && StartWoundDeathTimer)
 				StartWoundDeathTimer = false;
-			}
 
-			if (StartWoundDeathTimer)
+			if (StartWoundDeathTimer && (Device.dwTimeGlobal % 1000 == 0))
 			{
-				if (DeathTimer <= Device.dwTimeGlobal)
+				DeathTimerRender--;
+				if (DeathTimerRender < 1)
 				{
-					DeathTimer = Device.dwTimeGlobal + 1000;
-					DeathTimerRender--;
-
-					if (DeathTimerRender < 1)
-					{
-						StartWoundDeathTimer = false;
-						DeathTimerRender = 60;
-						Console->Execute("g_kill");
-					}
+					StartWoundDeathTimer = false;
+					DeathTimerRender = 60;
+					NeedKillPlayer();
 				}
 			}
 
@@ -1913,20 +1906,17 @@ void CActor::UpdateInventoryItems()
 #include "debug_renderer.h"
 void CActor::renderable_Render	()
 {
+	if (StartWoundDeathTimer && g_Alive())
+	{
+		UI().Font().pFontGraffiti32Russian->SetInterval(1.f, 0.5f);
+		UI().Font().pFontGraffiti32Russian->OutSetI(-0.01, -0.13);
+		UI().Font().pFontGraffiti32Russian->SetColor(D3DCOLOR_XRGB(255, 0, 0));
+		UI().Font().pFontGraffiti32Russian->OutNext("Вы умрете через: %d секунд", DeathTimerRender);;
+	}
+
 	VERIFY(_valid(XFORM()));
 	inherited::renderable_Render();
-		CInventoryOwner::renderable_Render();
-			
-		if (StartWoundDeathTimer && g_Alive())
-		{
-			UI().Font().pFontGraffiti32Russian->SetInterval(1.f, 0.5f);
-			UI().Font().pFontGraffiti32Russian->OutSetI(-0.01, -0.13);
-			UI().Font().pFontGraffiti32Russian->SetColor(D3DCOLOR_XRGB(255, 0, 0));
-			string128 str;
-			xr_sprintf(str, "Вы умрете через: %d секунд", DeathTimerRender);
-			UI().Font().pFontGraffiti32Russian->OutNext(str);
-		}
-
+	CInventoryOwner::renderable_Render();
 }
 
 BOOL CActor::renderable_ShadowGenerate	() 
@@ -2976,6 +2966,15 @@ void CActor::ChangeInventoryFullness(int val)
 	}
 	else
 		return;
+}
+
+void CActor::NeedKillPlayer()
+{
+	NET_Packet					P;
+	u_EventGen(P, GE_GAME_EVENT, ID());
+	P.w_u16(GAME_EVENT_PLAYER_KILL);
+	P.w_u16(ID());
+	u_EventSend(P);
 }
 
 void CActor::RainDropsParamsUpdate()
