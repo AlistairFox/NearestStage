@@ -10,6 +10,8 @@
 #include "alife_time_manager.h"
 #include "date_time.h"
 #include "../xrEngine/IGame_Persistent.h"
+#include "Level.h"
+#include "server_progress_saver.h"
 
 CALifeTimeManager::CALifeTimeManager	(LPCSTR section)
 {
@@ -23,32 +25,17 @@ CALifeTimeManager::~CALifeTimeManager	()
 void CALifeTimeManager::init			(LPCSTR section)
 {
 	u32							years,months,days,hours,minutes,seconds;
-
-		string_path save_game_time;
-		FS.update_path(save_game_time, "$global_server_data_bin$", "server_data.binsave");
-		if (FS.exist(save_game_time))
-		{
-			IReader* env_reader = FS.r_open(save_game_time);
-			if (env_reader->open_chunk(0))
-			{
-				Msg("TIME SET");
-				shared_str time;
-				shared_str data;
-				shared_str weather;
-				env_reader->r_stringZ(time);
-				env_reader->r_stringZ(data);
-				env_reader->r_stringZ(weather);
-				sscanf(time.c_str(), "%d:%d:%d", &hours, &minutes, &seconds);
-				sscanf(data.c_str(), "%d.%d.%d", &days, &months, &years);
-				g_pGamePersistent->Environment().SetWeather(weather.c_str());
-			}
-			FS.r_close(env_reader);
-		}
-		else
-		{
-			sscanf(pSettings->r_string(section, "start_time"), "%d:%d:%d", &hours, &minutes, &seconds);
-			sscanf(pSettings->r_string(section, "start_date"), "%d.%d.%d", &days, &months, &years);
-		}
+	
+	game_sv_freemp* fmp = smart_cast<game_sv_freemp*>(Level().Server->game);
+	if (OnServer && fmp && fmp->Saver && fmp->Saver->LoadServerEnvironment(hours, minutes, seconds, days, months, years))
+	{
+		Msg("-- Server Environment Save Loaded!");
+	}
+	else
+	{
+		sscanf(pSettings->r_string(section, "start_time"), "%d:%d:%d", &hours, &minutes, &seconds);
+		sscanf(pSettings->r_string(section, "start_date"), "%d.%d.%d", &days, &months, &years);
+	}
 
 	m_start_game_time			= generate_time(years,months,days,hours,minutes,seconds);
 	m_time_factor				= pSettings->r_float(section,"time_factor");

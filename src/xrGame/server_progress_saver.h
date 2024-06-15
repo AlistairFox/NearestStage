@@ -199,6 +199,8 @@ public:
 	};
 	void				FillServerEnvBuffer();
 	u32 SaveWeatherTimer = 0;
+	bool				LoadServerEnvironment(u32 &hours, u32&minutes,
+	u32&seconds, u32&days, u32&months, u32&years);
 #pragma endregion
 
 };

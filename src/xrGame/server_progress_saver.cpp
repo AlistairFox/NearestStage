@@ -45,6 +45,33 @@ void CProgressSaver::FillServerEnvBuffer()
 	///////////////Server environment saving//////////////////////
 }
 
+bool CProgressSaver::LoadServerEnvironment(u32& hours, u32& minutes, u32& seconds, u32& days, u32& months, u32& years)
+{
+	bool SaveLoad = false;
+	string_path save_game_time;
+	FS.update_path(save_game_time, "$global_server_data_bin$", "server_data.binsave");
+	if (FS.exist(save_game_time))
+	{
+		IReader* env_reader = FS.r_open(save_game_time);
+		if (env_reader->open_chunk(0))
+		{
+			Msg("TIME SET");
+			shared_str time;
+			shared_str data;
+			shared_str weather;
+			env_reader->r_stringZ(time);
+			env_reader->r_stringZ(data);
+			env_reader->r_stringZ(weather);
+			sscanf(time.c_str(), "%d:%d:%d", &hours, &minutes, &seconds);
+			sscanf(data.c_str(), "%d.%d.%d", &days, &months, &years);
+			g_pGamePersistent->Environment().SetWeather(weather.c_str());
+			SaveLoad = true;
+		}
+		FS.r_close(env_reader);
+	}
+	return SaveLoad;
+}
+
 void CProgressSaver::SavingUpdate()
 {
 	if (Level().game && PlayerSaveTimer <= Device.dwTimeGlobal)
