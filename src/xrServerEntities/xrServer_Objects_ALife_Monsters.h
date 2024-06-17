@@ -546,6 +546,8 @@ SERVER_ENTITY_DECLARE_BEGIN2(CSE_ALifeHumanStalker,CSE_ALifeHumanAbstract,CSE_PH
 	shared_str						m_start_dialog;
 
 	net_physics_state				physics_state;
+	bool ForceTalk = true;
+	bool ForceTrade = true;
 
 	float							f_head_dir_pitch = 0;
 	float							f_head_dir_yaw = 0;

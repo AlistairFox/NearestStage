@@ -307,7 +307,7 @@ function Cmeet_manager:update()
 	if self.use ~= use then
 		if use == "self" then
 			if not is_talking and device().precache_frame < 1 then
-				self.npc:enable_talk()
+				self.npc:enable_force_talk()
 				--printf("SET allow_break %s", tostring(self.allow_break))
 				self.npc:allow_break_talk_dialog(self.allow_break)
 				db.actor:run_talk_dialog(self.npc, not(self.allow_break))
@@ -355,9 +355,9 @@ function Cmeet_manager:update()
 		--printf("npc [%s] self %s *** %s", self.npc:name(), tostring(self.trade_enable), tostring(trade_enable))
 		if self.trade_enable ~= trade_enable then
 			if trade_enable == "true" then
-				self.npc:enable_trade()
+				self.npc:enable_force_trade()
 			else
-				self.npc:disable_trade()
+				self.npc:disable_force_trade()
 			end
 			self.trade_enable = trade_enable
 		end
@@ -645,9 +645,9 @@ function process_npc_usability(npc)
 		else
 			local wounded = db.storage[npc:id()].wounded
 			if wounded.enable_talk then
-				npc:enable_talk()
+				npc:enable_force_talk()
 			else
-				npc:disable_talk()
+				npc:disable_force_talk()
 			end
 		end
 		return
@@ -659,12 +659,12 @@ function process_npc_usability(npc)
 
 	if use == "true" then
 		if xr_corpse_detection.is_under_corpse_detection(npc) or xr_help_wounded.is_under_help_wounded(npc) then
-			npc:disable_talk()
+			npc:disable_force_talk()
 		else
-			npc:enable_talk()
+			npc:enable_force_talk()
 		end
 	elseif use == "false" then
-		npc:disable_talk()
+		npc:disable_force_talk()
 		if npc:is_talking() then
 			npc:stop_talk()
 		end

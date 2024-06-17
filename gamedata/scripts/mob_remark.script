@@ -10,7 +10,7 @@ function mob_remark:reset_scheme()
 
 	mob_state_mgr.set_state(self.object, db.actor, self.st.state)
 
-	self.object:disable_talk()
+	self.object:disable_force_talk()
 
 	xr_logic.mob_capture(self.object, not self.st.no_reset)
 
@@ -114,12 +114,12 @@ function mob_remark:update(delta)
 	     self.st.dialog_cond.condlist) ~= nil then
 		--printf("_bp: enable talk")
 	     	if not self.object:is_talk_enabled() then
-			self.object:enable_talk()
+			self.object:enable_force_talk()
 		end
 	else
 		--printf("_bp: disable talk")
 		if self.object:is_talk_enabled() then
-			self.object:disable_talk()
+			self.object:disable_force_talk()
 		end
 	end
 

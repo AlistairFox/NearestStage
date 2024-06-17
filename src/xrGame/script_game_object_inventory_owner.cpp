@@ -168,6 +168,34 @@ bool CScriptGameObject::IsTalkEnabled()
 	return pInventoryOwner->IsTalkEnabled();
 }
 
+void CScriptGameObject::EnableForceTalk()
+{
+	CInventoryOwner* pInventoryOwner = smart_cast<CInventoryOwner*>(&object());
+	if (!pInventoryOwner) return;
+	pInventoryOwner->EnableForceTalk();
+}
+
+void CScriptGameObject::DisableForceTalk()
+{
+	CInventoryOwner* pInventoryOwner = smart_cast<CInventoryOwner*>(&object());
+	if (!pInventoryOwner) return;
+	pInventoryOwner->DisableForceTalk();
+}
+
+void CScriptGameObject::EnableForceTrade()
+{
+	CInventoryOwner* pInventoryOwner = smart_cast<CInventoryOwner*>(&object());
+	if (!pInventoryOwner) return;
+	pInventoryOwner->EnableForceTrade();
+}
+
+void CScriptGameObject::DisableForceTrade()
+{
+	CInventoryOwner* pInventoryOwner = smart_cast<CInventoryOwner*>(&object());
+	if (!pInventoryOwner) return;
+	pInventoryOwner->DisableForceTrade();
+}
+
 void CScriptGameObject::EnableTrade			()
 {
 	CInventoryOwner* pInventoryOwner = smart_cast<CInventoryOwner*>(&object());

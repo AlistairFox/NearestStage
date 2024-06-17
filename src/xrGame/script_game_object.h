@@ -333,6 +333,11 @@ public:
 			void				DisableTalk			();
 			bool				IsTalkEnabled		();
 
+			void				EnableForceTalk();
+			void				DisableForceTalk();
+			void				EnableForceTrade();
+			void				DisableForceTrade();
+
 			void				EnableTrade			();	
 			void				DisableTrade		();
 			bool				IsTradeEnabled		();

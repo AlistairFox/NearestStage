@@ -2258,6 +2258,9 @@ void CSE_ALifeHumanStalker::UPDATE_Write	(NET_Packet &tNetPacket)
 		tNetPacket.w_u16(u_script_anm_idx);
 		tNetPacket.w_u8(u_script_anm_slot);
 	}
+
+	tNetPacket.w_u8(ForceTrade);
+	tNetPacket.w_u8(ForceTalk);
 }
 
 void CSE_ALifeHumanStalker::UPDATE_Read		(NET_Packet &tNetPacket)
@@ -2309,6 +2312,8 @@ void CSE_ALifeHumanStalker::UPDATE_Read		(NET_Packet &tNetPacket)
 		set_health(health);
 		o_model = o_torso.yaw;
 	}
+	ForceTrade = tNetPacket.r_u8();
+	ForceTalk = tNetPacket.r_u8();
 }
 
 void CSE_ALifeHumanStalker::load			(NET_Packet &tNetPacket)

@@ -62,7 +62,7 @@ end
 
 function cl_stalker_binder:update_usability()
 	local object = self.object
-
+	
 	if db.mp_actor ~= nil and object:relation(db.mp_actor) ~= game_object.enemy then
 		object:enable_talk()
 	else

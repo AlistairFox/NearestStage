@@ -129,6 +129,8 @@ void CAI_Stalker::net_Export(NET_Packet& P)
 		P.w_u16(m_animation_manager->script().animation().idx);
 		P.w_u8(m_animation_manager->script().animation().slot);
 	}
+	P.w_u8(m_bAllowForceTrade);
+	P.w_u8(m_bAllowForceTalk);
 }
 
 void CAI_Stalker::net_Import(NET_Packet& P)
@@ -287,6 +289,8 @@ void CAI_Stalker::net_Import(NET_Packet& P)
 		setVisible(TRUE);
 		setEnabled(TRUE);
 	}
+	m_bAllowForceTrade = P.r_u8();
+	m_bAllowForceTalk = P.r_u8();
 }
 
 void CAI_Stalker::postprocess_packet(stalker_interpolation::net_update_A &N_A)

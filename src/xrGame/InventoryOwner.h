@@ -83,11 +83,28 @@ public:
 	
 	virtual void EnableTalk		()		{m_bAllowTalk = true;}
 	virtual void DisableTalk	()		{m_bAllowTalk = false;}
-	virtual bool IsTalkEnabled	()		{ return m_bAllowTalk;}
+	virtual bool IsTalkEnabled	()
+	{
+		if (!m_bAllowForceTalk)
+			return false;
+		else
+			return m_bAllowTalk;
+	}
+
+	void EnableForceTalk() { m_bAllowForceTalk = true; }
+	void DisableForceTalk() { m_bAllowForceTalk = false; }
+	void EnableForceTrade() { m_bAllowForceTrade = true; }
+	void DisableForceTrade() { m_bAllowForceTrade = false; }
 
 	void EnableTrade			()		{m_bAllowTrade = true;}
 	void DisableTrade			()		{m_bAllowTrade = false;}
-	bool IsTradeEnabled			()		{ return m_bAllowTrade;}
+	bool IsTradeEnabled			()		
+	{
+		if (!m_bAllowForceTrade)
+			return false;
+		else
+			return m_bAllowTrade;
+	}
 
 	void EnableInvUpgrade		()		{m_bAllowInvUpgrade = true;}
 	void DisableInvUpgrade		()		{m_bAllowInvUpgrade = false;}
@@ -114,7 +131,9 @@ protected:
 	CInventoryOwner*	m_pTalkPartner;
 
 	bool				m_bAllowTalk;
+	bool				m_bAllowForceTalk = true;
 	bool				m_bAllowTrade;
+	bool				m_bAllowForceTrade = true;
 	bool				m_bAllowInvUpgrade;
 
 	u16					m_tmp_active_slot_num;

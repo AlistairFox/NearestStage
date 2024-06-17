@@ -95,7 +95,7 @@ CGameTask*	CGameTaskManager::GiveGameTaskToActor(CGameTask* t, u32 timeToComplet
 	}
 
 	m_flags.set						(eChanged, TRUE);
-
+	 
 	GetGameTasks().push_back		(SGameTaskKey(t->m_ID) );
 	GetGameTasks().back().game_task	= t;
 	t->m_ReceiveTime				= Level().GetGameTime();

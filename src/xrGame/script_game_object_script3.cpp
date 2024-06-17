@@ -153,6 +153,11 @@ class_<CScriptGameObject> script_register_game_object2(class_<CScriptGameObject>
 		.def("disable_talk",				&CScriptGameObject::DisableTalk)
 		.def("is_talk_enabled",				&CScriptGameObject::IsTalkEnabled)
 
+		.def("disable_force_trade", &CScriptGameObject::DisableForceTrade)
+		.def("disable_force_talk", &CScriptGameObject::DisableForceTalk)
+		.def("enable_force_trade", &CScriptGameObject::EnableForceTrade)
+		.def("enable_force_talk", &CScriptGameObject::EnableForceTalk)
+
 		.def("enable_trade",				&CScriptGameObject::EnableTrade)
 		.def("disable_trade",				&CScriptGameObject::DisableTrade)
 		.def("is_trade_enabled",			&CScriptGameObject::IsTradeEnabled)
