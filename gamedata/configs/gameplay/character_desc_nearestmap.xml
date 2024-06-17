@@ -84,6 +84,42 @@
 #include "gameplay\character_criticals_4.xml"
   </specific_character>
   
+    	<specific_character id="stalkers_bar_traveller" team_default = "1">
+		<name>stalkers_bar_traveller</name>
+		<icon>ui_inGame2_neutral_nauchniy</icon>
+		<map_icon x="1" y="0">
+		</map_icon>
+		<bio>Опытный сталкер. Детальная информация отсутствует.</bio>
+
+		<class>stalkers_bar_traveller</class>
+		<community>stalker</community>
+ <!-->		<mechanic_mode>1</mechanic_mode> <-->
+		<terrain_sect>stalker_terrain</terrain_sect>
+		<snd_config>characters_voice\human_03\stalker\</snd_config>
+
+		<rank>100</rank>
+		<money min="480000" max="480000" infinitive="1"/>
+		<reputation>0</reputation>
+
+		<visual>actors\stalker_soldier\stalker_soldier_4</visual>
+<supplies>
+		
+		[spawn] /n
+        wpn_ak104 \n
+        wpn_beretta \n
+        ammo_9x19_pbp = 1 \n
+        grenade_rgd5 = 1 \n
+		ammo_7.62x39_ap = 200 \n 
+
+#include "gameplay\character_items_3.xml"
+#include "gameplay\character_food.xml"
+#include "gameplay\character_drugs_4.xml"
+    </supplies>
+		<start_dialog>nmp_stalker_barmen_start</start_dialog>
+		<actor_dialog>actor_break_dialog</actor_dialog>
+#include "gameplay\character_criticals_4.xml"
+  </specific_character>
+  
   	<specific_character id="mechanic_stalker_base" team_default = "1">
 		<name>mechanic_stalker_base_name</name>
 		<icon>ui_inGame2_neutral_nauchniy</icon>

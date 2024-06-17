@@ -4,10 +4,14 @@ discovery_dependency =
 $spawn 			= "outfit\novice_outfit"
 $prefetch 		= 32
 cform           = skeleton
-visual          = dynamics\outfit\novice_outfit
+visual          = dynamics\weapons\wpn_eat\backpack\wpn_backpack_world
 actor_visual	= actors\stalker_hero\stalker_hero_novice_1.ogf
 player_hud_section	= actor_hud_01
+animation_slot = 7
+hud = backpack_hud
 
+snd_draw = interface\item_usage\backpack_open
+snd_holster = interface\item_usage\backpack_close
 ef_equipment_type	= 3
 inventory_capacity = 10
 upgr_icon_x			= 636
@@ -43,10 +47,16 @@ wound_protection					= 0.4
 hit_fraction_actor				= 0.0
 bones_koeff_protection  		= actor_armor_suit
 artefact_count          = 7
+attach_angle_offset		= -0.287979, 1.560923, 1.544060
+attach_position_offset	= 0.096910, -0.013594, 0.107925
+attach_bone_name		= bip01_r_hand
 
 upgrades                = up_gr_firstab_novice_outfit, up_gr_seconab_novice_outfit, up_gr_thirdab_novice_outfit
 installed_upgrades      =
 upgrade_scheme          = upgrade_scheme_novice_outfit
+
+toggle_offset_pos = 0,-0.06,-0.06
+toggle_offset_rot = -0.38,0,0
 
 [sect_backpack_immunities]
 burn_immunity						= 0.02			; коэффициенты иммунитета самого костюма
@@ -70,7 +80,32 @@ chemical_burn_immunity				= -0.01
 explosion_immunity					= -0.01
 fire_wound_immunity					= -0.0025
 
-;Òåñòîâûé ðþêçàê
+[backpack_hud]:hud_base
+attach_place_idx                         = 0
+hands_position_16x9                      = 0,0,0
+item_visual             	= dynamics\weapons\wpn_eat\backpack\wpn_backpack_act_hud_stalker.ogf
+
+anm_show                            = open_b_backpack, open_b_backpack_itm
+anm_hide                            = close_b_backpack, close_b_backpack_itm
+anm_idle                            = idle_b_backpack, idle_b_backpack_itm
+anm_idle_moving                     = idle_b_backpack, idle_b_backpack_itm
+anm_idle_moving_crouch              = idle_b_backpack, idle_b_backpack_itm
+anm_idle_sprint                     = idle_b_backpack, idle_b_backpack_itm
+
+
+anm_show_16x9                            = open_b_backpack, open_b_backpack_itm
+anm_hide_16x9                            = close_b_backpack, close_b_backpack_itm
+anm_idle_16x9                            = idle_b_backpack, idle_b_backpack_itm
+anm_idle_moving_16x9                     = idle_b_backpack, idle_b_backpack_itm
+anm_idle_moving_crouch_16x9              = idle_b_backpack, idle_b_backpack_itm
+anm_idle_sprint_16x9                     = idle_b_backpack, idle_b_backpack_itm
+
+
+hands_orientation_16x9                   = 0,0,0
+hands_orientation                = 0, 0, 0
+hands_position                   = 0,0,0
+item_orientation                 = 0, 0, 0
+item_position                    = 0, 0, 0
 
 [backpack_simple]:backpack_base
 class = E_BKPK
@@ -78,7 +113,6 @@ additional_inventory_weight = +10
 additional_inventory_weight2	= +10
 slot = 13
 
-visual          = dynamics\outfit\novice_outfit
 
 inv_name			= backpack_simple
 inv_name_short		= backpack_simple
@@ -97,8 +131,6 @@ class = E_BKPK
 additional_inventory_weight = +15
 additional_inventory_weight2	= +15
 slot = 13
-
-visual          = dynamics\outfit\novice_outfit
 inventory_capacity = 15
 inv_name			= backpack_advanced
 inv_name_short		= backpack_advanced
@@ -118,7 +150,6 @@ additional_inventory_weight = +30
 additional_inventory_weight2	= +30
 slot = 13
 inventory_capacity = 20
-visual          = dynamics\outfit\novice_outfit
 
 inv_name			= backpack_elite
 inv_name_short		= backpack_elite

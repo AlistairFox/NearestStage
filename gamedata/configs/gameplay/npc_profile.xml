@@ -242,6 +242,10 @@
 		<class>trader_scien</class>
 		</character>
 		
+		<character id="stalkers_bar_traveller">
+		<class>stalkers_bar_traveller</class>
+		</character>
+		
 	<!-- sim profiles -->
 	<!-- sim duty -->
 	<character id="sim_default_duty_0">
