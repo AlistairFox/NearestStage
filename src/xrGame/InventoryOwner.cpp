@@ -235,6 +235,8 @@ void CInventoryOwner::UpdateInventoryOwner(u32 deltaT)
 
 	if ( IsTalking() )
 	{
+		if (!m_bAllowForceTalk)
+			StopTalk();
 		//если наш собеседник перестал говорить с нами,
 		//то и нам нечего ждать.
 		if ( !m_pTalkPartner->IsTalking() )

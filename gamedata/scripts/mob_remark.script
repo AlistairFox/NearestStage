@@ -119,6 +119,7 @@ function mob_remark:update(delta)
 	else
 		--printf("_bp: disable talk")
 		if self.object:is_talk_enabled() then
+			server_msg("remark talk disable")
 			self.object:disable_force_talk()
 		end
 	end
