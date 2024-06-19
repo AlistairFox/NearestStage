@@ -2088,6 +2088,7 @@ public:
 					IWriter* writer = FS.w_open(JsonFilePath);
 					if (writer)
 					{
+						Msg("-- Complete!!! User Has Admin Rights!");
 						writer->w_string(JsonMain.json().c_str());
 						FS.w_close(writer);
 					}
@@ -2913,6 +2914,7 @@ public:
 				IWriter* writer = FS.w_open(JsonFilePath);
 				if (writer)
 				{
+					Msg("-- Complete!!! User has Register!");
 					writer->w_string(JsonMain.json().c_str());
 					FS.w_close(writer);
 				}

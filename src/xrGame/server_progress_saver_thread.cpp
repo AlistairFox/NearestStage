@@ -133,6 +133,7 @@ void  CProgressSaver::SaveThreadWorker()
 				writer->w_stringZ(Info);
 			}
 			writer->close_chunk();
+			FS.w_close(writer);
 
 			std::string PossPath = player->PlayerPath;
 			PossPath += player->PlayerName;
@@ -149,6 +150,7 @@ void  CProgressSaver::SaveThreadWorker()
 			else
 				writer->w_u8(0);
 			writer->close_chunk();
+			FS.w_close(writer);
 
 			xr_delete(player);
 		}
