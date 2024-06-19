@@ -543,7 +543,7 @@ reset_distance	= 30
 		st.far_victim		= xr_logic.parse_condlist(npc, section, "far_victim", 			"nil")
 
 		st.snd_on_use		= xr_logic.parse_condlist(npc, section, "snd_on_use", 			"nil")
-		st.use				= xr_logic.parse_condlist(npc, section, "use", 					"true")
+		st.use				= xr_logic.parse_condlist(npc, section, "use", 					"false")
 		st.meet_dialog		= xr_logic.parse_condlist(npc, section, "meet_dialog", 			"nil")
 		st.abuse			= xr_logic.parse_condlist(npc, section, "abuse", 				"false")
 		st.trade_enable		= xr_logic.parse_condlist(npc, section, "trade_enable", 		"false")

@@ -350,6 +350,9 @@ BOOL			CLevel::Connect2Server				(LPCSTR options)
 	m_bConnectResultReceived = false;
 	m_bConnectResult = true;
 
+#pragma region CRC CHECK FILES
+#pragma todo("AlistairFox: отключил до момента, пока не будет включена проверка геймдаты!!, слишком долго!")
+	/*
 	if(!psNET_direct_connect)
 	{
 		xr_auth_strings_t	tmp_ignore;
@@ -357,6 +360,8 @@ BOOL			CLevel::Connect2Server				(LPCSTR options)
 		fill_auth_check_params	(tmp_ignore, tmp_check);
 		FS.auth_generate		(tmp_ignore, tmp_check);
 	}
+	*/
+#pragma endregion
 
 	if (!Connect(options))
 	{
