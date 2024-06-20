@@ -46,6 +46,7 @@
 #define _realloc_dbg(p,s,x,f,l)  realloc(p,s)
 #endif
 #include <objbase.h>
+#define __MINGW32__
 #ifndef __MINGW32__
 #include <atlconv.h>
 #else

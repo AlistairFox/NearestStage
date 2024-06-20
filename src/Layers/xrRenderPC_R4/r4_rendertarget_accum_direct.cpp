@@ -188,8 +188,8 @@ void CRenderTarget::accum_direct		(u32 sub_phase)
 			Fmatrix			m_xform;
 			Fvector			direction	= fuckingsun->direction	;
 			float	w_dir				= g_pGamePersistent->Environment().CurrentEnv->wind_direction	;
-			float w_speed = g_pGamePersistent->Environment().CurrentEnv->wind_velocity * 0.001f;
-			clamp(w_speed, 0.1f, 1.0f);
+			float w_speed = g_pGamePersistent->Environment().CurrentEnv->wind_velocity * 0.1f;
+			clamp(w_speed, 0.1f, 10.0f);
 			Fvector			normal	;
 			normal.setHP(-w_dir, 0);
 			w_shift -= 0.005f * w_speed * Device.fTimeDelta;
@@ -462,8 +462,8 @@ void CRenderTarget::accum_direct_cascade	( u32 sub_phase, Fmatrix& xform, Fmatri
 			Fmatrix			m_xform;
 			Fvector			direction	= fuckingsun->direction	;
 			float	w_dir				= g_pGamePersistent->Environment().CurrentEnv->wind_direction	;
-			float w_speed = g_pGamePersistent->Environment().CurrentEnv->wind_velocity * 0.001f;
-			clamp(w_speed, 0.1f, 1.0f);
+			float w_speed = g_pGamePersistent->Environment().CurrentEnv->wind_velocity * 0.1f;
+			clamp(w_speed, 0.1f, 10.0f);
 			Fvector			normal	;
 			normal.setHP(-w_dir, 0);
 			w_shift -= 0.005f * w_speed * Device.fTimeDelta;

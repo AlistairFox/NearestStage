@@ -890,7 +890,7 @@ bool CInventory::Action(u16 cmd, u32 flags)
 					if (ActivateSlot != -1)
 						slot = ActivateSlot;
 					Msg("slot: %d", slot);
-					PIItem pItem = ItemFromSlot(slot);
+					PIItem pItem = ItemFromSlot(slot);  // надо исправить
 					// Pavel: достаем пушку только после того, как убрали детектор
 					if (pItem && pItem->BaseSlot() != INV_SLOT_2)
 					{
