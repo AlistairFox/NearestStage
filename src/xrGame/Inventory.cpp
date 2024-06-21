@@ -744,23 +744,68 @@ bool CInventory::Action(u16 cmd, u32 flags)
 			ActiveItem()->Action(cmd, flags)) 
 											return true;
 	bool b_send_event = false;
-	u16 ActivateSlot = -1;
+	u16 ActivateSlot = 0;
+	bool NeedActivateLocalSlot = false;
 	switch(cmd) 
 	{
 	case kWPN_1:
+	{
+		b_send_event = true;
+		if (flags & CMD_START)
+		{
+			ActivateSlot = KNIFE_SLOT;
+			NeedActivateLocalSlot = true;
+			ActiveWeapon(KNIFE_SLOT);
+		}
+	}break;
 	case kWPN_2:
+	{
+		b_send_event = true;
+		if (flags & CMD_START)
+		{
+			ActivateSlot = INV_SLOT_2;
+			NeedActivateLocalSlot = true;
+			ActiveWeapon(INV_SLOT_2);
+		}
+	}break;
 	case kWPN_3:
+	{
+		b_send_event = true;
+		if (flags & CMD_START)
+		{
+			ActivateSlot = INV_SLOT_3;
+			NeedActivateLocalSlot = true;
+			ActiveWeapon(INV_SLOT_3);
+		}
+	}break;
 	case kWPN_4:
+	{
+		b_send_event = true;
+		if (flags & CMD_START)
+		{
+			ActivateSlot = GRENADE_SLOT;
+			NeedActivateLocalSlot = true;
+			ActiveWeapon(GRENADE_SLOT);
+		}
+	}break;
 	case kWPN_5:
+	{
+		b_send_event = true;
+		if (flags & CMD_START)
+		{
+			ActivateSlot = BINOCULAR_SLOT;
+			NeedActivateLocalSlot = true;
+			ActiveWeapon(BINOCULAR_SLOT);
+		}
+	}break;
 	case kWPN_6:
 		{
 			b_send_event = true;
-			if (cmd == kWPN_6 && !CheckGameFlag(F_USE_BOLT)) return false;
-			
-			u16 slot = u16(cmd - kWPN_1 + 1);
 			if ( flags & CMD_START )
 			{
-				ActiveWeapon( slot );
+				ActivateSlot = BOLT_SLOT;
+				NeedActivateLocalSlot = true;
+				ActiveWeapon(BOLT_SLOT);
 			}
 		}break;
 	case kRadioItem:
@@ -773,11 +818,13 @@ bool CInventory::Action(u16 cmd, u32 flags)
 			{
 				Msg("Deactivate");
 				ActivateSlot = NO_ACTIVE_SLOT;
+				NeedActivateLocalSlot = true;
 				Activate(NO_ACTIVE_SLOT);
 			}
 			else
 			{
 				ActivateSlot = RADIO_SLOT;
+				NeedActivateLocalSlot = true;
 				Msg("Activate");
 				Activate(RADIO_SLOT);
 			}
@@ -795,11 +842,13 @@ bool CInventory::Action(u16 cmd, u32 flags)
 				if (GetActiveSlot() == BACKPACK_SLOT && ActiveItem())
 				{
 					ActivateSlot = NO_ACTIVE_SLOT;
+					NeedActivateLocalSlot = true;
 					Activate(NO_ACTIVE_SLOT);
 				}
 				else
 				{
 					ActivateSlot = BACKPACK_SLOT;
+					NeedActivateLocalSlot = true;
 					Activate(BACKPACK_SLOT);
 				}
 			}
@@ -830,11 +879,13 @@ bool CInventory::Action(u16 cmd, u32 flags)
 			if (GetActiveSlot() == PDA_SLOT && ActiveItem())
 			{
 				ActivateSlot = NO_ACTIVE_SLOT;
+				NeedActivateLocalSlot = true;
 				Activate(NO_ACTIVE_SLOT);
 			}
 			else
 			{
 				ActivateSlot = PDA_SLOT;
+				NeedActivateLocalSlot = true;
 				Activate(PDA_SLOT);
 			}
 		}
@@ -857,7 +908,6 @@ bool CInventory::Action(u16 cmd, u32 flags)
 
 	if (b_send_event && g_pGameLevel && OnClient() && pActor)
 	{
-		u16 slot = u16(cmd - kWPN_1 + 1);
 		// Pavel: для ножа и болта нам не нужны проверки
 		// Они нормально достаются / убираются с детектором в руках
 		if (flags & CMD_START && cmd != kWPN_1 && cmd != kWPN_6)
@@ -887,10 +937,8 @@ bool CInventory::Action(u16 cmd, u32 flags)
 				CCustomDetector *pDetector = smart_cast<CCustomDetector*>(pHudItem);
 				if (pDetector)
 				{
-					if (ActivateSlot != -1)
-						slot = ActivateSlot;
-					Msg("slot: %d", slot);
-					PIItem pItem = ItemFromSlot(slot);  // надо исправить
+					Msg("slot: %d", ActivateSlot);
+					CInventoryItem* pItem = smart_cast<CInventoryItem*>(ItemFromSlot(ActivateSlot));
 					// Pavel: достаем пушку только после того, как убрали детектор
 					if (pItem && pItem->BaseSlot() != INV_SLOT_2)
 					{

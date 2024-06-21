@@ -1278,12 +1278,12 @@ void CActor::UpdateCL	()
 				FastExit();
 			}
 
-			if (GetfHealth() <= 0.2)
+			if (GetfHealth() <= 0.3)
 			{
 				ANIM_WOUND = 1;
 				need_ex_wound = true;
 			}
-			else
+			else if(GetfHealth() <= 0.35)
 			{
 				if (ANIM_WOUND > 0 && need_ex_wound)
 				{

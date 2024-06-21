@@ -346,7 +346,7 @@ void CActor::OnEvent(NET_Packet& P, u16 type)
 
 	case GE_HEALTH_PLAYER:
 	{
-		SetfHealth(0.21);
+		SetfHealth(0.36);
 	}break;
 
 	case GE_ACTOR_ITEM_ACTIVATE:

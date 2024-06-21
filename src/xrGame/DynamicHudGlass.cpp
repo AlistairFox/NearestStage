@@ -65,7 +65,7 @@ namespace DynamicHudGlass
 			{
 				float condition = outfit->GetCondition();
 				bool OutfitHasGlass = outfit->m_b_HasGlass;
-				HudGlassElement = 0;
+				HudGlassElement = 1;
 
 				if (OutfitHasGlass)
 				{
