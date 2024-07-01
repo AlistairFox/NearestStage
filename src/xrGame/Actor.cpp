@@ -234,8 +234,6 @@ CActor::CActor() : CEntityAlive(),current_ik_cam_shift(0)
 	CurrentHeight = 0.f;
 
 
-	m_bEatAnimActive = false;
-
 	m_iInventoryCapacity = 50;
 	m_iInventoryFullness = 0;
 	m_iInventoryFullnessCtrl = 0;

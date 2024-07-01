@@ -34,25 +34,30 @@ void game_sv_freemp::DynamicWeatherUpdate()
 				{
 					if (random <= 0.25f && (xr_strcmp(curr_weather, "[main_cycle_multy]") == 0))
 					{
-						Msg("! !ERROR: overlap weather [main_cycle_multy]!");
+						if (af_debug_loggining)
+							Msg("! !ERROR: overlap weather [main_cycle_multy]!");
 						random = Random.randF(0.f, 1.f);
 					}
 					if (random <= 0.50f && (xr_strcmp(curr_weather, "[main_cycle_foggy_day]") == 0))
 					{
-						Msg("! !ERROR: overlap weather [main_cycle_foggy_day]!");
+						if (af_debug_loggining)
+							Msg("! !ERROR: overlap weather [main_cycle_foggy_day]!");
 						random = Random.randF(0.f, 1.f);
 					}
 					if (random <= 0.75f && (xr_strcmp(curr_weather, "[main_cycle_sunny_day]") == 0))
 					{
-						Msg("! !ERROR: overlap weather [main_cycle_sunny_day]!");
+						if (af_debug_loggining)
+							Msg("! !ERROR: overlap weather [main_cycle_sunny_day]!");
 						random = Random.randF(0.f, 1.f);
 					}
 					if (random > 0.75f && (xr_strcmp(curr_weather, "[main_cycle_thunder_year]") == 0))
 					{
-						Msg("! !ERROR: overlap weather [main_cycle_thunder_year]!");
+						if (af_debug_loggining)
+							Msg("! !ERROR: overlap weather [main_cycle_thunder_year]!");
 						random = Random.randF(0.f, 1.f);
 					}
-					Msg("Calculate next weather: %s, rand: %f", def.c_str(), random);
+					if (af_debug_loggining)
+						Msg("Calculate next weather: %s, rand: %f", def.c_str(), random);
 
 					if (random <= 0.25f && (xr_strcmp(curr_weather, "[main_cycle_multy]") != 0) && !changeweather)
 					{
@@ -93,7 +98,8 @@ void game_sv_freemp::DynamicWeatherUpdate()
 
 				if (changeweather)
 				{
-					Msg("- Calculate end");
+					if (af_debug_loggining)
+						Msg("- Calculate end");
 
 					NET_Packet P;
 					GenerateGameMessage(P);

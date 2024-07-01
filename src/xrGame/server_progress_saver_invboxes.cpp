@@ -73,7 +73,8 @@ void CProgressSaver::BinnarLoadInvBox(CSE_ALifeInventoryBox* box)
 	if (!FS.exist(filepath))
 		return;
 
-	Msg("%s", filepath);
+	if (af_debug_loggining)
+		Msg("%s", filepath);
 
 	IReader* reader = FS.r_open(filepath);
 	if (reader->open_chunk(INVBOX_ITEMS_CHUNK))

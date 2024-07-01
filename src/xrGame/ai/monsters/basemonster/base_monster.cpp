@@ -493,7 +493,7 @@ void CBaseMonster::shedule_Update(u32 dt)
 // Other functions
 //////////////////////////////////////////////////////////////////////
 
-
+#include "game_sv_mp.h"
 void CBaseMonster::Die(CObject* who)
 {
 	if (StateMan) StateMan->critical_finalize();
@@ -506,6 +506,22 @@ void CBaseMonster::Die(CObject* who)
 	if ( m_anti_aim )
 	{
 		m_anti_aim->on_monster_death ();
+	}
+
+	if (OnServer())
+	{
+		if (HasItem)
+		{
+			float						probability = Random.randF();
+			if ((probability <= SpawnPobability) && fsimilar(SpawnPobability, 1.f))
+			{
+				game_sv_mp* srv = smart_cast<game_sv_mp*>(Level().Server->game);
+				if (srv)
+				{
+					srv->SpawnItem(DropItemSect, ID());
+				}
+			}
+		}
 	}
 
 	inherited::Die(who);

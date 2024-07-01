@@ -152,6 +152,13 @@ void CBaseMonster::Load(LPCSTR section)
 	}
 
 	m_force_anti_aim						=	false;
+
+	if (pSettings->line_exist(section, "Spawn_Inventory_Item_Section"))
+	{
+		DropItemSect = pSettings->r_string(section, "Spawn_Inventory_Item_Section");
+		SpawnPobability = pSettings->r_float(section, "Spawn_Inventory_Item_Probability");
+		HasItem = true;
+	}
 }
 
 void CBaseMonster::PostLoad (LPCSTR section)

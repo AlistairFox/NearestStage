@@ -4,6 +4,8 @@
 #include "alife_spawn_registry.h"
 #include <Level.h>
 
+
+
 void game_sv_freemp::DynamicMusicUpdate()
 {
 	/// Calculate Sync Radio Music
@@ -42,7 +44,8 @@ void game_sv_freemp::DynamicMusicUpdate()
 					numb = 1;
 				need_next_snd = false;
 				lenght = 0;
-				Msg("%d", numb);
+				if (af_debug_loggining)
+					Msg("%d", numb);
 				MusicPlay(phy, i, numb);
 			}
 		}
@@ -85,8 +88,11 @@ void game_sv_freemp::MusicPlay(CSE_ALifeObjectPhysic* obj, int pass, int obj_num
 			Fvector pos = obj->Position();
 			NET_Packet P;
 
-			Msg("- Server: MusicStart: %s", music_name.c_str());
-			Msg("- object pos: %f, %f, %f", VPUSH(pos));
+			if (af_debug_loggining)
+			{
+				Msg("- Server: MusicStart: %s", music_name.c_str());
+				Msg("- object pos: %f, %f, %f", VPUSH(pos));
+			}
 			P.w_begin(M_MUSIC_UPDATE);
 			P.w_stringZ(music_name);
 			P.w_vec3(pos);
@@ -96,7 +102,10 @@ void game_sv_freemp::MusicPlay(CSE_ALifeObjectPhysic* obj, int pass, int obj_num
 			snd.create(music_name.c_str(), st_Music, sg_SourceType);
 			snd.play(NULL, sm_2D);
 			lenght = Device.dwTimeGlobal + (snd.get_length_sec() * 1000) + 10000;
-			Msg("lenght: %f", snd.get_length_sec());
+			if (af_debug_loggining)
+			{
+				Msg("lenght: %f", snd.get_length_sec());
+			}
 			snd.destroy();
 		}
 	}

@@ -170,9 +170,9 @@ static void	insert_item(CInifile::Sect *tgt, const CInifile::Item& I)
 	if (sect_it!=tgt->Data.end() && sect_it->first.equal(I.first))
 	{ 
 		sect_it->second	= I.second;
-//#ifdef DEBUG
-//		sect_it->comment= I.comment;
-//#endif
+
+		sect_it->comment= I.comment;
+
 	}else{
 		tgt->Data.insert	(sect_it,I);
 	}
@@ -213,9 +213,8 @@ void	CInifile::Load(IReader* F, LPCSTR path
 			comm = comm_1;
 		}
 
-#ifdef DEBUG
 		LPSTR comment	= 0;
-#endif
+
 		if (comm) 
 		{
 			//."bla-bla-bla;nah-nah-nah"
@@ -233,9 +232,9 @@ void	CInifile::Load(IReader* F, LPCSTR path
 			if(!in_quot)
 			{
 				*comm		= 0;
-#ifdef DEBUG
-			comment		= comm+1;
-#endif
+
+				comment		= comm+1;
+
 			}
 		}
 
@@ -355,9 +354,7 @@ void	CInifile::Load(IReader* F, LPCSTR path
 				Item		I;
 				I.first		= (name[0]?name:NULL);
 				I.second	= (str2[0]?str2:NULL);
-//#ifdef DEBUG
-//				I.comment	= m_flags.test(eReadOnly)?0:comment;
-//#endif
+				I.comment	= m_flags.test(eReadOnly)?0:comment;
 
 				if (m_flags.test(eReadOnly)) 
 				{
@@ -367,9 +364,7 @@ void	CInifile::Load(IReader* F, LPCSTR path
 					if	(
 							*I.first
 							|| *I.second 
-//#ifdef DEBUG
-//							|| *I.comment
-//#endif
+							|| *I.comment
 						)
 						insert_item	(Current,I);
 				}
@@ -409,7 +404,10 @@ void CInifile::save_as	(IWriter& writer, bool bcheck) const
 				{
                     _decorate	(val, *I.second);
                     // only name and value
-                    xr_sprintf	(temp, sizeof(temp), "%8s%-32s = %-32s"," ",I.first.c_str(),val);
+					if (I.comment != NULL)
+						xr_sprintf(temp, sizeof(temp), "%8s%-32s = %-32s ;%s", " ", I.first.c_str(), val, I.comment.c_str());
+					else
+						xr_sprintf(temp, sizeof(temp), "%8s%-32s = %-32s", " ", I.first.c_str(), val);
                 }else 
 				{
                     // only name
@@ -737,9 +735,7 @@ void CInifile::w_string( LPCSTR S, LPCSTR L, LPCSTR V, LPCSTR comment)
 	I.first			= (line[0]?line:0);
 	I.second		= (value[0]?value:0);
 
-//#ifdef DEBUG
-//	I.comment		= (comment?comment:0);
-//#endif
+	I.comment		= (comment?comment:0);
 	SectIt_	it		= std::lower_bound(data.Data.begin(),data.Data.end(),*I.first,item_pred);
 
     if (it != data.Data.end()) 

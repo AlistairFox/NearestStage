@@ -84,7 +84,8 @@ void game_sv_freemp::OnPlayerConnect(ClientID id_who)
 	xrClientData* xrCData = m_server->ID_to_client(id_who);
 	game_PlayerState*	ps_who = get_id(id_who);
 
-	Msg("Player: Name: %s, StaticID: %d", ps_who->getName(), ps_who->GetStaticID());
+	if (af_debug_loggining)
+		Msg("Player: Name: %s, StaticID: %d", ps_who->getName(), ps_who->GetStaticID());
 
 	if (!xrCData->flags.bReconnect)
 	{

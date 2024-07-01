@@ -906,7 +906,6 @@ private:
 		void					block_action(EGameActions cmd);
 		void					unblock_action(EGameActions cmd);
 		// Real Wolf. End. 14.10.2014
-		bool					m_bEatAnimActive;
 
 DECLARE_SCRIPT_REGISTER_FUNCTION
 };

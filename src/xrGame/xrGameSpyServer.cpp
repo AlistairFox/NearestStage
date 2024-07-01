@@ -248,18 +248,17 @@ void xrGameSpyServer::GetServerInfo( CServerInfo* si )
 	string256 res;
 	si->AddItem( "Game version", QR2()->GetGameVersion( res ), RGB(0,158,255) );
 	
-	xr_strcpy( res, "" );
-	if ( HasProtected() || (Password.size() > 0))
-	{
-		if ( HasProtected() )			xr_strcat( res, "protected  " );
-		if ( Password.size() > 0 )		xr_strcat( res, "password  " );
-	}
-	else
-	{
-		if ( xr_strlen( res ) == 0 )	xr_strcat( res, "free" );
-	}
-	si->AddItem( "Access to server", res, RGB(200,155,155) );
+	//xr_strcpy( res, "" );
+	//if ( HasProtected() || (Password.size() > 0))
+	//{
+	//	if ( HasProtected() )			xr_strcat( res, "protected  " );
+	//	if ( Password.size() > 0 )		xr_strcat( res, "password  " );
+	//}
+	//else
+	//{
+	//	if ( xr_strlen( res ) == 0 )	xr_strcat( res, "free" );
+	//}
+	si->AddItem("Access to server", "Private", RGB(200, 155, 155));
 
-	si->AddItem( "GameSpy port", itoa( iGameSpyBasePort, tmp, 10 ), RGB(200,5,155) );
 	inherited::GetServerInfo( si );
 }

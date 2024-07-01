@@ -322,18 +322,10 @@ void hud_item_measures::load(const shared_str& sect_name, IKinematics* K)
 	}
 
 
-	if (pSettings->line_exist(sect_name, "safemode_rot_enabled"))
-	{
-		strconcat(sizeof(val_name), val_name, "safemode_offset_pos", _prefix);
-		m_safemodeoffset[0] = pSettings->r_fvector3(sect_name, val_name);
-		strconcat(sizeof(val_name), val_name, "safemode_offset_rot", _prefix);
-		m_safemodeoffset[1] = pSettings->r_fvector3(sect_name, val_name);
-	}
-	else
-	{
-		m_safemodeoffset[0] = Fvector().set(0.f, 0.f, 0.f);
-		m_safemodeoffset[1] = Fvector().set(0.f, 0.f, 0.f);
-	}
+	strconcat(sizeof(val_name), val_name, "safemode_offset_pos", _prefix);
+	m_safemodeoffset[0] = READ_IF_EXISTS(pSettings, r_fvector3, sect_name, val_name, Fvector().set(0, 0, 0));
+	strconcat(sizeof(val_name), val_name, "safemode_offset_rot", _prefix);
+	m_safemodeoffset[1] = READ_IF_EXISTS(pSettings, r_fvector3, sect_name, val_name, Fvector().set(0, 0, 0));
 
 
 	R_ASSERT2(pSettings->line_exist(sect_name,"fire_point")==pSettings->line_exist(sect_name,"fire_bone"),		sect_name.c_str());

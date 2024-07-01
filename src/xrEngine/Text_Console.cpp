@@ -230,6 +230,12 @@ extern u32 zones;
 extern u32 camps;
 extern u32 physic_objects;
 extern u32 all_objects;
+extern u32 items;
+extern u32 boxes;
+extern u32 breakables;
+extern u32 lamps;
+extern BOOL		af_sv_collect_statistic;
+extern BOOL		af_sv_ofmode;
 
 void CTextConsole::DrawLog( HDC hDC, RECT* pRect )
 {
@@ -259,21 +265,21 @@ void CTextConsole::DrawLog( HDC hDC, RECT* pRect )
 
 	int xb = 25;
 	
-	SetTextColor( hDC, RGB(255, 255, 255) );
+	SetTextColor( hDC, RGB(255, 0, 255) );
 	TextOut( hDC, xb, Height-tm.tmHeight-1, buf, cur_len-1 );
 	buf[ cur0_len ] = 0;
 	
-	SetTextColor(hDC, RGB(0, 0, 0));
+	SetTextColor(hDC, RGB(255, 0, 255));
 	TextOut( hDC, xb, Height-tm.tmHeight-1, buf, cur0_len );
 
 
-	SetTextColor( hDC, RGB(255, 255, 255) );
+	SetTextColor( hDC, RGB(255, 0, 255) );
 	TextOut( hDC, 0, Height-tm.tmHeight-3, ioc_prompt, xr_strlen(ioc_prompt) ); // ">>> "
 
 	SetTextColor( hDC, (COLORREF)bgr2rgb(get_mark_color( mark11 )) );
 	TextOut( hDC, xb, Height-tm.tmHeight-3, s_edt, xr_strlen(s_edt) );
 
-	SetTextColor( hDC, RGB(205, 205, 225) );
+	SetTextColor( hDC, RGB(205, 0, 225) );
 	u32 log_line = LogFile->size()-1;
 	string16 q, q2;
 	itoa( log_line, q, 10 );
@@ -332,10 +338,6 @@ void CTextConsole::DrawLog( HDC hDC, RECT* pRect )
 			break;
 		}
 	}
-	string32 tmp;
-	sprintf(tmp, "FPS:%.0f", 1.f / Device.fTimeDelta);
-	SetTextColor(hDC, RGB(255,255,255));
-	TextOut(hDC, 10, ypos, tmp, xr_strlen(tmp));
 	
 	int FPS = int(1.0f / Device.fTimeDelta);
 	if (FPS_min > FPS)
@@ -343,39 +345,77 @@ void CTextConsole::DrawLog( HDC hDC, RECT* pRect )
 		FPS_min = FPS;
 	}
 
-	sprintf(tmp, "FPS_min:%d", FPS_min);
+	string32 tmp;
+	sprintf(tmp, "FPS:%.0f / FPS min:%d", 1.f / Device.fTimeDelta, FPS_min);
 	SetTextColor(hDC, RGB(255, 255, 255));
-	TextOut(hDC, 10, ypos+40, tmp, xr_strlen(tmp));
+	TextOut(hDC, 10, ypos, tmp, xr_strlen(tmp));
 
-	string128 temp;
-	sprintf(temp, "Stalkers Online: %d", stalkers);
-	SetTextColor(hDC, RGB(36, 167, 82));
-	TextOut(hDC, 400, 10, temp, xr_strlen(temp));
+	string128 ofmode;
+	strcpy(ofmode, af_sv_ofmode ? "Онлайн/Оффлайн режим включен." : "Онлайн/Оффлайн режим выключен!");
+	SetTextColor(hDC, af_sv_ofmode ? RGB(0, 255, 0) : RGB(255, 0, 0));
+	TextOut(hDC, 200, 230, ofmode, xr_strlen(ofmode));
 
-	sprintf(temp, "Monsters Online: %d", monsters);
-	SetTextColor(hDC, RGB(36, 167, 82));
-	TextOut(hDC, 400, 30, temp, xr_strlen(temp));
+	if (af_sv_collect_statistic)
+	{
+		string128 temp;
+		sprintf(temp, "Stalkers Online: %d", stalkers);
+		SetTextColor(hDC, RGB(36, 167, 82));
+		TextOut(hDC, 500, 10, temp, xr_strlen(temp));
 
-	sprintf(temp, "Zones Online: %d", zones);
-	SetTextColor(hDC, RGB(255, 128, 128));
-	TextOut(hDC, 400, 50, temp, xr_strlen(temp));
+		sprintf(temp, "Monsters Online: %d", monsters);
+		SetTextColor(hDC, RGB(36, 167, 82));
+		TextOut(hDC, 500, 30, temp, xr_strlen(temp));
 
-	sprintf(temp, "Camps Online: %d", camps);
-	SetTextColor(hDC, RGB(36, 36, 255));
-	TextOut(hDC, 400, 70, temp, xr_strlen(temp));
+		sprintf(temp, "Zones Online: %d", zones);
+		SetTextColor(hDC, RGB(255, 128, 128));
+		TextOut(hDC, 500, 50, temp, xr_strlen(temp));
 
-	sprintf(temp, "physics Online: %d", physic_objects);
-	SetTextColor(hDC, RGB(36, 36, 255));
-	TextOut(hDC, 400, 90, temp, xr_strlen(temp));
+		sprintf(temp, "Camps Online: %d", camps);
+		SetTextColor(hDC, RGB(36, 36, 255));
+		TextOut(hDC, 500, 70, temp, xr_strlen(temp));
 
-	sprintf(temp, "Offline Objects: %d", all_objects - (stalkers + monsters + zones + camps + physic_objects));
-	SetTextColor(hDC, RGB(100, 100, 150));
-	TextOut(hDC, 400, 110, temp, xr_strlen(temp));
+		sprintf(temp, "physics Online: %d", physic_objects);
+		SetTextColor(hDC, RGB(36, 36, 255));
+		TextOut(hDC, 500, 90, temp, xr_strlen(temp));
 
-	sprintf(temp, "All Objects: %d", all_objects);
+		sprintf(temp, "Inventory Items: %d", items);
+		SetTextColor(hDC, RGB(120, 0, 255));
+		TextOut(hDC, 500, 110, temp, xr_strlen(temp));
+
+		sprintf(temp, "Inventory Boxes: %d", boxes);
+		SetTextColor(hDC, RGB(0, 170, 255));
+		TextOut(hDC, 500, 130, temp, xr_strlen(temp));
+
+		sprintf(temp, "Breakable Objects: %d", breakables);
+		SetTextColor(hDC, RGB(255, 100, 0));
+		TextOut(hDC, 500, 150, temp, xr_strlen(temp));
+
+		sprintf(temp, "Hanging Lamps: %d", lamps);
+		SetTextColor(hDC, RGB(170, 170, 170));
+		TextOut(hDC, 500, 170, temp, xr_strlen(temp));
+
+		sprintf(temp, "No Collect Objects: %d", all_objects - (stalkers + monsters + zones + camps + physic_objects + items + boxes + breakables + lamps));
+		SetTextColor(hDC, RGB(100, 100, 150));
+		TextOut(hDC, 500, 190, temp, xr_strlen(temp));
+	
+		sprintf(temp, "All Objects: %d", all_objects);
+		SetTextColor(hDC, RGB(255, 0, 255));
+		TextOut(hDC, 500, 210, temp, xr_strlen(temp));
+	}
+	else
+	{
+		SetTextColor(hDC, RGB(255, 0, 0));
+		string128 statistic;
+		strcpy(statistic, "Статистика объектов не собирается!");
+		TextOut(hDC, 500, 10, statistic, xr_strlen(statistic));
+	}
+
+	SetTextColor(hDC, RGB(0, 255, 0));
+	string128 help;
+	strcpy(help, "Для дополнительной информации af_help");
+	TextOut(hDC, 500, 230, help, xr_strlen(help));
+
 	SetTextColor(hDC, RGB(255, 0, 255));
-	TextOut(hDC, 400, 130, temp, xr_strlen(temp));
-
 	string256 Limiter = "____________________________________________________________________________________________________________________";
 	TextOut(hDC, 0, y_top_max, Limiter, xr_strlen(Limiter));
 

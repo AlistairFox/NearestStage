@@ -207,10 +207,12 @@ bool CProgressSaver::BinnarLoadPlayer(game_PlayerState* ps)
 	string256 PlayerDir;
 	sprintf(PlayerDir, "%s\\%s_inventory.binsave", ps->getName(), ps->getName());
 	FS.update_path(PlayerSavePath, "$mp_saves_players_bin$", PlayerDir);
-	Msg("InvPath: %s", PlayerSavePath);
+	if (af_debug_loggining)
+		Msg("InvPath: %s", PlayerSavePath);
 	if (FS.exist(PlayerSavePath))
 	{
-		Msg("read file path = %s", PlayerSavePath);
+		if (af_debug_loggining)
+			Msg("read file path = %s", PlayerSavePath);
 		IReader* reader = FS.r_open(PlayerSavePath);
 
 		if (reader->open_chunk(ACTOR_MONEY))
@@ -309,10 +311,12 @@ bool CProgressSaver::BinnarLoadPlayer(game_PlayerState* ps)
 	sprintf(PlayerDirDialogs, "%s\\%s_dialogs.binsave", ps->getName(), ps->getName());
 	FS.update_path(PlayerDialogsPath, "$mp_saves_players_bin$", PlayerDirDialogs);
 
-	Msg("DialogsPath: %s", PlayerDialogsPath);
+	if (af_debug_loggining)
+		Msg("DialogsPath: %s", PlayerDialogsPath);
 	if (FS.exist(PlayerDialogsPath))
 	{
-		Msg("read file path = %s", PlayerDialogsPath);
+		if (af_debug_loggining)
+			Msg("read file path = %s", PlayerDialogsPath);
 		IReader* reader = FS.r_open(PlayerDialogsPath);
 		if (reader->open_chunk(INFO_PORTIONS_CHUNK))
 		{
@@ -355,7 +359,8 @@ bool CProgressSaver::HasBinnarSaveFile(game_PlayerState* ps)
 		{
 			exist = true;
 			u8 player_team = reader->r_u8();
-			Msg("%d", player_team);
+			if (af_debug_loggining)
+				Msg("%d", player_team);
 			ps->team = player_team;
 		}
 		FS.r_close(reader);
@@ -369,10 +374,12 @@ bool CProgressSaver::load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos,
 	string256 PlayerDir;
 	sprintf(PlayerDir, "%s\\%s_position.binsave", ps->getName(), ps->getName());
 	FS.update_path(PlayerPosPath, "$mp_saves_players_bin$", PlayerDir);
-	Msg("PossPath: %s", PlayerPosPath);
+	if (af_debug_loggining)
+		Msg("PossPath: %s", PlayerPosPath);
 	if (FS.exist(PlayerPosPath))
 	{
-		Msg("read player pos: %s", PlayerPosPath);
+		if (af_debug_loggining)
+			Msg("read player pos: %s", PlayerPosPath);
 		IReader* reader = FS.r_open(PlayerPosPath);
 
 		if (reader->open_chunk(ACTOR_POS))
@@ -380,7 +387,8 @@ bool CProgressSaver::load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos,
 			bool ActorPossitionCheck = reader->r_u8();
 			if (ActorPossitionCheck)
 			{
-				Msg("Read player pos");
+				if (af_debug_loggining)
+					Msg("Read player pos");
 				reader->r_fvector3(pos);
 				reader->r_fvector3(angle);
 				FS.r_close(reader);
@@ -430,7 +438,8 @@ void CProgressSaver::SavePlayerPortions(ClientID sender, shared_str info_id, boo
 		{
 			if (it == Player_portions[ps->GetStaticID()].end())
 			{
-				Msg("Player: %s get portion: %s", ps->getName(), info_id.c_str());
+				if (af_debug_loggining)
+					Msg("Player: %s get portion: %s", ps->getName(), info_id.c_str());
 				Player_portions[ps->GetStaticID()].push_back(info_id);
 			}
 			else
@@ -440,7 +449,8 @@ void CProgressSaver::SavePlayerPortions(ClientID sender, shared_str info_id, boo
 		{
 			if (it != Player_portions[ps->GetStaticID()].end())
 			{
-				Msg("Player: %s lost portion: %s", ps->getName(), info_id.c_str());
+				if (af_debug_loggining)
+					Msg("Player: %s lost portion: %s", ps->getName(), info_id.c_str());
 				Player_portions[ps->GetStaticID()].erase(it);
 			}
 			else

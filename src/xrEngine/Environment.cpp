@@ -279,14 +279,15 @@ float CEnvironment::NormalizeTime(float tm)
 	else if (tm>DAY_LENGTH)	return tm-DAY_LENGTH;
 	else					return tm;
 }
-
+extern BOOL		af_debug_loggining;
 void CEnvironment::SetWeather(shared_str name, bool forced)
 {
 //.	static BOOL bAlready = FALSE;
 //.	if(bAlready)	return;
 	if (name.size())	{
 #ifdef DEDICATED_SERVER
-	Msg("Weather Set: %s", name.c_str());
+	if (af_debug_loggining)
+		Msg("Weather Set: %s", name.c_str());
 #endif // DEDICATED_SERVER
 
 //.		bAlready = TRUE;

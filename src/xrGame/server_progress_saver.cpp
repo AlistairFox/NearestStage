@@ -5,8 +5,18 @@
 CProgressSaver::CProgressSaver(game_sv_freemp* Game)
 {
 	fmp = Game;
-	FS.update_path(curr_invbox_name, "$mp_check_saves_invbox$", "save_box_list.ltx");
-	curr_box_file = xr_new<CInifile>(curr_invbox_name, true);
+	string_path box_check_path;
+	FS.update_path(box_check_path, "$mp_saves_logins$", "saving_box_list.ltx");
+
+	bool Exist = FS.exist("$mp_saves_logins$", "saving_box_list.ltx") ? true : false;
+	BoxCheckFile = xr_new<CInifile>(box_check_path, Exist ? true : false, true);
+
+	if (!Exist)
+	{
+		BoxCheckFile->w_string("box_list", "example", "example", "это лишь пример записи!");
+		BoxCheckFile->save_as(box_check_path);
+	}
+
 	SaverThread = new std::thread([&]()
 		{
 			thread_name("Progress Saving Thread");
@@ -18,7 +28,7 @@ CProgressSaver::CProgressSaver(game_sv_freemp* Game)
 
 CProgressSaver::~CProgressSaver()
 {
-	xr_delete(curr_box_file);
+	xr_delete(BoxCheckFile);
 }
 
 
@@ -53,7 +63,7 @@ bool CProgressSaver::LoadServerEnvironment(u32& hours, u32& minutes, u32& second
 	if (FS.exist(save_game_time))
 	{
 		IReader* env_reader = FS.r_open(save_game_time);
-		if (env_reader->open_chunk(0))
+		if (env_reader->open_chunk(ENV_CHUNK))
 		{
 			Msg("TIME SET");
 			shared_str time;
@@ -112,15 +122,12 @@ void CProgressSaver::SavingUpdate()
 			CSE_ALifeInventoryBox* box = smart_cast<CSE_ALifeInventoryBox*>(abs);
 			if (box)
 			{
-				//check saving box or not
-				LPCSTR box_name = box->name_replace();
-				//
 				if (!entity.second.loaded)
 				{
 					fmp->inventory_boxes_cse[entity.first].loaded = true;
 					BinnarLoadInvBox(box);
 				}
-				else if (curr_box_file->line_exist("saving_boxes", box_name))
+				else if (BoxCheckFile->line_exist("box_list", box->name_replace()))
 				{
 					FillInvBoxBuffer(box);
 				}

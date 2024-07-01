@@ -15,13 +15,13 @@ public:
 	{
 		shared_str	first;
 		shared_str	second;
-//#ifdef DEBUG
-//		shared_str	comment;
-//#endif
+
+		shared_str	comment;
+
 		Item() : first(0), second(0)
-//#ifdef DEBUG
-//			, comment(0)
-//#endif
+
+			, comment(0)
+
 		{};
 	};
 	typedef xr_vector<Item>				Items;

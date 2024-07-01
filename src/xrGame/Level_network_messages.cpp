@@ -59,6 +59,7 @@ static bool SimmulateNetworkLag()
 }
 #endif
 
+extern BOOL		af_debug_loggining;
 void CLevel::ClientReceive()
 {
 	m_dwRPC = 0;
@@ -447,25 +448,29 @@ void CLevel::ClientReceive()
 
 			if (obj_num == 1)
 			{
-				Msg("- snd1 Started");
+				if(af_debug_loggining)
+					Msg("- snd1 Started");
 				snd1.create(name.c_str(), st_Music, sg_SourceType);
 				snd1.play_at_pos(NULL, pos);
 			}
 			else if (obj_num == 2)
 			{
-				Msg("- snd2 Started");
+				if (af_debug_loggining)
+					Msg("- snd2 Started");
 				snd2.create(name.c_str(), st_Music, sg_SourceType);
 				snd2.play_at_pos(NULL, pos);
 			}
 			else if (obj_num == 3)
 			{
-				Msg("- snd3 Started");
+				if (af_debug_loggining)
+					Msg("- snd3 Started");
 				snd3.create(name.c_str(), st_Music, sg_SourceType);
 				snd3.play_at_pos(NULL, pos);
 			}
 			else if (obj_num == 4)
 			{
-				Msg("- snd4 Started");
+				if (af_debug_loggining)
+					Msg("- snd4 Started");
 				snd4.create(name.c_str(), st_Music, sg_SourceType);
 				snd4.play_at_pos(NULL, pos);
 			}
@@ -479,19 +484,23 @@ void CLevel::ClientReceive()
 
 			snd1.stop();
 			snd1.destroy();
-			Msg("! snd1 destroed");
+			if (af_debug_loggining)
+				Msg("! snd1 destroed");
 
 			snd2.stop();
 			snd2.destroy();
-			Msg("! snd2 destroed");
+			if (af_debug_loggining)
+				Msg("! snd2 destroed");
 
 			snd3.stop();
 			snd3.destroy();
-			Msg("! snd3 destroed");
+			if (af_debug_loggining)
+				Msg("! snd3 destroed");
 
 			snd4.stop();
 			snd4.destroy();
-			Msg("! snd4 destroed");
+			if (af_debug_loggining)
+				Msg("! snd4 destroed");
 
 			IsMusicActive = false;
 
@@ -509,7 +518,8 @@ void CLevel::ClientReceive()
 		{
 			if (OnClient() && g_actor && g_actor->g_Alive())
 			{
-				Msg("snd!!");
+				if (af_debug_loggining)
+					Msg("snd!!");
 				shared_str snd;
 				P->r_stringZ(snd);
 				ref_sound rSnd;
@@ -522,7 +532,8 @@ void CLevel::ClientReceive()
 		{
 			if (OnClient() && g_actor && g_actor->g_Alive())
 			{
-				Msg("eff!");
+				if (af_debug_loggining)
+					Msg("eff!");
 				shared_str eff;
 				P->r_stringZ(eff);
 				CPostprocessAnimator* pp = xr_new<CPostprocessAnimator>(2006, false);

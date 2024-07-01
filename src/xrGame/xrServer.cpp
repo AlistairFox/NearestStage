@@ -1345,7 +1345,11 @@ extern u32 zones = 0;
 extern u32 camps = 0;
 extern u32 physic_objects = 0;
 extern u32 all_objects = 0;
-
+extern u32 items = 0;
+extern u32 boxes = 0;
+extern u32 breakables = 0;
+extern u32 lamps = 0;
+extern BOOL		af_sv_collect_statistic;
 void xrServer::GetServerInfo( CServerInfo* si )
 {
 	string32  tmp;
@@ -1420,35 +1424,77 @@ void xrServer::GetServerInfo( CServerInfo* si )
 	camps = 0;
 	physic_objects = 0;
 	all_objects = 0;
+	items = 0;
+	boxes = 0;
+	breakables = 0;
+	lamps = 0;
 
-	for (const auto &ent : entities)
+	if (af_sv_collect_statistic)
 	{
-		CSE_ALifeHumanStalker* stalker = smart_cast<CSE_ALifeHumanStalker*>(ent.second);
-		CSE_ALifeMonsterBase* monster = smart_cast<CSE_ALifeMonsterBase*>(ent.second);
-		CSE_ALifeAnomalousZone* zone = smart_cast<CSE_ALifeAnomalousZone*>(ent.second);
-		CSE_ALifeObjectPhysic* ph = smart_cast<CSE_ALifeObjectPhysic*>(ent.second);
-
-		all_objects++;
-
-		if (zone && zone->m_bOnline)
+	
+		all_objects = entities.size();
+		//all_objects = entities.size();
+		for (const auto& ent : entities)
 		{
-			zones++;
-			CZoneCampfire* camp = smart_cast<CZoneCampfire*>(Level().Objects.net_Find(zone->ID));
-			if (camp)
-				camps++;
+			CSE_ALifeHumanStalker* stalker = smart_cast<CSE_ALifeHumanStalker*>(ent.second);
+			CSE_ALifeMonsterBase* monster = smart_cast<CSE_ALifeMonsterBase*>(ent.second);
+			CSE_ALifeAnomalousZone* zone = smart_cast<CSE_ALifeAnomalousZone*>(ent.second);
+			CSE_ALifeObjectPhysic* ph = smart_cast<CSE_ALifeObjectPhysic*>(ent.second);
+			CSE_ALifeInventoryItem* item = smart_cast<CSE_ALifeInventoryItem*>(ent.second);
+			CSE_ALifeInventoryBox* box = smart_cast<CSE_ALifeInventoryBox*>(ent.second);
+			CSE_ALifeObjectBreakable* breakable = smart_cast<CSE_ALifeObjectBreakable*>(ent.second);
+			CSE_ALifeObjectHangingLamp* lamp = smart_cast<CSE_ALifeObjectHangingLamp*>(ent.second);
+	
+			if (zone && zone->m_bOnline)
+			{
+				zones++;
+				CZoneCampfire* camp = smart_cast<CZoneCampfire*>(Level().Objects.net_Find(zone->ID));
+				if (camp)
+				{
+					camps++;
+					continue;
+				}
+			}
+
+			if (stalker && stalker->m_bOnline)
+			{
+				stalkers++;
+				continue;
+			}
+
+			if (monster && monster->m_bOnline)
+			{
+				monsters++;
+				continue;
+			}
+
+			if (ph && ph->m_bOnline)
+			{
+				physic_objects++;
+				continue;
+			}
+
+			if (item)
+			{
+				items++;
+				continue;
+			}
+			if (box)
+			{
+				boxes++;
+				continue;
+			}
+			if (breakable)
+			{
+				breakables++;
+				continue;
+			}
+			if (lamp)
+			{
+				lamps++;
+				continue;
+			}
 		}
-
-		if (stalker && stalker->m_bOnline)
-			stalkers++;
-
-
-		if (monster && monster->m_bOnline)
-			monsters++;
-
-
-		if (ph && ph->m_bOnline)
-			physic_objects++;
-
 	}
 }
 

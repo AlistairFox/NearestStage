@@ -138,6 +138,9 @@ extern int		g_sv_server_goodwill = 0;
 BOOL Alife_Sheduler = FALSE;
 extern float lamp_bright = 1.f;
 extern BOOL off_global_shadowing = false;
+extern BOOL		af_sv_ofmode = TRUE;
+extern BOOL		af_sv_collect_statistic = FALSE;
+extern BOOL		af_debug_loggining = FALSE;
 
 class CCC_Restart : public IConsole_Command {
 public:
@@ -2929,6 +2932,223 @@ public:
 	}
 };
 
+class CCC_SetFakeNetworkSimulation : public IConsole_Command {
+public:
+	CCC_SetFakeNetworkSimulation(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = false; };
+
+	virtual void Execute(LPCSTR args)
+	{
+		if (!xr_strlen(args))
+			return;
+
+		u16 value = 0;
+		char temp_param[256];
+		bool WillSet = false;
+		if (sscanf_s(args, "%s %d", temp_param, sizeof(temp_param), &value) != 2)
+		{
+			Msg("!! command params: fake_network_simulation param value");
+			return;
+		}
+
+		std::string param = temp_param;
+		Msg("param: %s", param.c_str());
+
+		if (param == "pingdelay")
+		{
+			SteamNetworkingUtils()->SetGlobalConfigValueInt32(k_ESteamNetworkingConfig_FakePacketLag_Send, value);
+			SteamNetworkingUtils()->SetGlobalConfigValueInt32(k_ESteamNetworkingConfig_FakePacketLag_Recv, value);
+			Msg("-- Ping Delay Set!");
+			WillSet = true;
+		}
+		else if (param == "packetloss")
+		{
+			value = std::max(0, min(50, value));
+			SteamNetworkingUtils()->SetGlobalConfigValueFloat(k_ESteamNetworkingConfig_FakePacketLoss_Send, static_cast<float>(value));
+			SteamNetworkingUtils()->SetGlobalConfigValueFloat(k_ESteamNetworkingConfig_FakePacketLoss_Recv, static_cast<float>(value));
+			Msg("-- Packet Loss Set!");
+			WillSet = true;
+		}
+		else if (param == "packetdelaypercent")
+		{
+			value = std::max(0, min(50, value));
+			SteamNetworkingUtils()->SetGlobalConfigValueFloat(k_ESteamNetworkingConfig_FakePacketReorder_Send, static_cast<float>(value));
+			SteamNetworkingUtils()->SetGlobalConfigValueFloat(k_ESteamNetworkingConfig_FakePacketReorder_Recv, static_cast<float>(value));
+			WillSet = true;
+			Msg("-- Delay Packet percent Set!");
+		}
+
+		if (WillSet)
+		{
+			ESteamNetworkingConfigDataType dataType;
+			int Ping_resulte = 0;
+			size_t cbResult = sizeof(Ping_resulte);
+
+			SteamNetworkingUtils()->GetConfigValue(k_ESteamNetworkingConfig_FakePacketLag_Send,
+				k_ESteamNetworkingConfig_Global, 0, &dataType, &Ping_resulte, &cbResult);
+			Msg("-- Ping Delay: %d", Ping_resulte);
+
+			float PacketLoss = 0.f;
+			SteamNetworkingUtils()->GetConfigValue(k_ESteamNetworkingConfig_FakePacketLoss_Send,
+				k_ESteamNetworkingConfig_Global, 0, &dataType, &PacketLoss, &cbResult);
+			Msg("-- Packet Loss: %f", PacketLoss);
+			SteamNetworkingUtils()->GetConfigValue(k_ESteamNetworkingConfig_FakePacketReorder_Send,
+				k_ESteamNetworkingConfig_Global, 0, &dataType, &PacketLoss, &cbResult);
+			Msg("-- Pecket Percent: %f", PacketLoss);
+		}
+		else
+			Msg("!! ERROR: Value Doesn't Set!!");
+	}
+
+	virtual void	fill_tips(vecTips& tips, u32 mode)
+	{
+		tips.push_back("pingdelay");
+		tips.push_back("packetloss");
+		tips.push_back("packetdelaypercent");
+	}
+};
+
+class CCC_AFHelp : public IConsole_Command {
+public:
+	CCC_AFHelp(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = true; };
+
+	virtual void Execute(LPCSTR args)
+	{
+		std::string commands_accounts[] = 
+		{
+			"** Взаимодействие с аккаунтами:",
+			"-- af_sv_register_account",
+			"~~ Регистрация полученного регистрационного файла.",
+			"~~ Аргументы команды: [Ник игрока/Название регистрационного файла].",
+			"~~ Только серверное выполнение!",
+			"-- af_give_admin_rights",
+			"~~ Выдать/Забрать игроку админ права.",
+			"~~ Аргументы команды: [Ник игрока] [Уровень админки 0 - Нет Админки/ 1 - Обычный доступ/ 2 - Супер админ]",
+			"~~ Только серверное выполнение!",
+			"-- af_sv_changeteam",
+			"~~ Поменять группировку игроку",
+			"~~ Аргументы команды: [Ник игрока] [Индекс Группировки].",
+			"~~ Только серверное выполнение!"
+		};
+		
+		std::string commands_alife[] =
+		{
+			"** Взаимодействие с ALife:",
+			"-- af_g_alife_sheduler",
+			"~~ Включение/Выключение обновления оффлайн объектов.",
+			"~~ Аргументы команды: 0/1",
+			"~~ Только серверное выполнение!",
+			"-- af_sv_online_offline_mode",
+			"~~ Включение/Выключение Онлайн/Оффлайн режима.",
+			"~~ Аргументы команды: 0/1",
+			"~~ Только серверное выполнение!",
+			"-- sv_next_music",
+			"~~ Включить следующий трек на радио.",
+			"~~ Аргументы команды: 1",
+			"~~ Только серверное выполнение!",
+			"-- af_box_respawn_time",
+			"~~ Промежуток времени, через который произойдет проспавн лута в ящики.",
+			"~~ Аргументы команды: Время в секундах.",
+			"~~ Только серверное выполнение!"
+		};
+
+		std::string commands_progressaver[] =
+		{
+			"** Параметры прогресс сейвера:",
+			"-- af_filltime_player",
+			"~~ Промежуток времени, через который отправляется таск на сохранение игроков.",
+			"~~ Аргументы команды: Время в секундах.",
+			"~~ Только серверное выполнение!",
+			"-- af_filltime_inventory_box",
+			"~~ Промежуток времени, через который отправляется таск на сохранение ящиков.",
+			"~~ Аргументы команды: Время в секундах.",
+			"~~ Только серверное выполнение!",
+			"-- af_savetime_server_time",
+			"~~ Промежуток времени, через который отправляется таск на сохранение Environment сервера.",
+			"~~ Аргументы команды: Время в секундах.",
+			"~~ Только серверное выполнение!",
+			"-- af_thread_sleep_time",
+			"~~ Кол-во времени, которое поток сохранения прогресса находится в ожидании.",
+			"~~ Аргументы команды: Время в секундах.",
+			"~~ Только серверное выполнение!"
+		};
+
+		std::string commands_admins[] =
+		{
+			"** Администрирование:",
+			"-- af_sv_teleport_player",
+			"~~ Переместить игрока на координаты.",
+			"~~ Аргументы команды: [Ник игрока], [позиция x y z]",
+			"~~ Только серверное выполнение!",
+			"-- af_adm_teleport_me_to_player",
+			"~~ Переместить себя к игроку.",
+			"~~ Аргументы команды: [Ник игрока]",
+			"~~ Только клиентское выполнение!",
+			"-- af_adm_teleport_player_to_me",
+			"~~ Переместить игрока к себе.",
+			"~~ Аргументы команды: [Ник игрока]",
+			"~~ Только клиентское выполнение!",
+			"-- af_adm_teleport_player_on_view",
+			"~~ Переместить игрока на точку, куда мы смотрим.",
+			"~~ Аргументы команды: [Ник игрока]",
+			"~~ Только клиентское выполнение!",
+			"-- af_adm_teleport_player_on_view",
+			"~~ Переместить игрока на точку, куда мы смотрим.",
+			"~~ Аргументы команды: [Ник игрока]",
+			"~~ Только клиентское выполнение!",
+			"-- af_adm_wallhack",
+			"~~ Включить подсвечивание ников игроков.",
+			"~~ Аргументы команды: 0/1",
+			"~~ Только клиентское выполнение!"
+		};
+
+		std::string commands_debug[] =
+		{
+			"** Дебаг:",
+			"-- af_sv_collect_statistic",
+			"~~ Включает сбор серверной статистики.",
+			"~~ Аргументы команды: 0/1",
+			"~~ Только серверное выполнение!",
+			"-- af_network_simulation",
+			"~~ Настройка Симуляции пинга и потери пакетов",
+			"~~ Аргументы команды: Гибкая настройка",
+			"~~ Выполнение где угодно.",
+			"-- reload_system_ltx",
+			"~~ Перезагрузить pSettins",
+			"~~ Аргументы команды: none",
+			"~~ Выполнение где угодно.",
+			"-- af_debug_logger",
+			"~~ Включить логгирование отладочной информации.",
+			"~~ Аргументы команды: 0/1",
+			"~~ Выполнение где угодно."
+		};
+
+		std::string commands_render[] =
+		{
+			"** Рендер:",
+			"-- r__lamp_bright",
+			"~~ Регулирование яркости ламп.",
+			"~~ Аргументы команды: 0.5f, 10.0f",
+			"~~ Только клиентское выполнение!",
+			"-- r__off_shadowing",
+			"~~ Отключает затенение.",
+			"~~ Аргументы команды: 0/1",
+			"~~ Только клиентское выполнение."
+		};
+		for (std::string str : commands_accounts)
+			Msg(str.c_str());
+		for (std::string str : commands_alife)
+			Msg(str.c_str());
+		for (std::string str : commands_progressaver)
+			Msg(str.c_str());
+		for (std::string str : commands_alife)
+			Msg(str.c_str());
+		for (std::string str : commands_debug)
+			Msg(str.c_str());
+		for (std::string str : commands_render)
+			Msg(str.c_str());
+	}
+};
+
 class CCC_write_sect_items : public IConsole_Command
 {
 public:
@@ -3070,9 +3290,6 @@ public:
 
 };
 
-
-//extern float speed_ROCKET;
-int alife_on = 1;
 void register_mp_console_commands()
 {
 	//CMD4(CCC_Float, "rpg_speed", &speed_ROCKET, 0, 1000);
@@ -3099,27 +3316,31 @@ void register_mp_console_commands()
 		CMD1(CCC_OnlineAdminGive,		"af_give_admin_rights");
 		CMD1(CCC_AdmRegisterAccount,	"af_sv_register_account");
 		CMD1(CCC_OffCompToPlayer,		"off_player_pc");
-		CMD4(CCC_Integer,				"alife_switch", &alife_on, 0, 1);
 		CMD4(CCC_Integer,				"af_filltime_player", &save_time, 1, 1000000);
 		CMD4(CCC_Integer,				"af_filltime_inventory_box", &save_time2, 1, 1000000);
 		CMD4(CCC_Integer,				"af_savetime_server_time", &save_time3, 1, 10000000);
 		CMD4(CCC_Integer,				"af_box_respawn_time", &box_respawn_time, 1, 1000000000);
 		CMD4(CCC_Integer,				"af_thread_sleep_time", &save_time4, 1, 10000000);
+		CMD4(CCC_Integer,				"af_sv_online_offline_mode", &af_sv_ofmode, 0, 1);
+		CMD4(CCC_Integer, "af_sv_collect_statistic", &af_sv_collect_statistic, 0, 1);
 	}
-		CMD1(CCC_TeleportToPoss,		"af_sv_teleport_player");
+	CMD1(CCC_TeleportToPoss,		"af_sv_teleport_player");
 
-		CMD1(CCC_ChangeTeam,			"af_sv_changeteam");
-		CMD4(CCC_Integer,				"af_g_alife_sheduler", &Alife_Sheduler, FALSE, TRUE);
-
-		if (!g_dedicated_server)
-		{
-			CMD1(CCC_TeleportMeToPlayer, "af_adm_teleport_me_to_player");
-			CMD1(CCC_TeleportPlayerToMe, "af_adm_teleport_player_to_me");
-			CMD1(CCC_TeleportPlayerOnView, "af_adm_teleport_player_on_view");
-			CMD1(CCC_AdminWallHack, "af_adm_wallhack");
-			CMD4(CCC_Float, "r__lamp_bright", &lamp_bright, 0.5f, 10.0f);
-			CMD4(CCC_Integer, "r__off_shadowing", &off_global_shadowing, 0, 1);
-		}
+	CMD1(CCC_ChangeTeam,				"af_sv_changeteam");
+	CMD4(CCC_Integer,					"af_g_alife_sheduler", &Alife_Sheduler, FALSE, TRUE);
+	CMD1(CCC_SetFakeNetworkSimulation,	"af_network_simulation");
+	CMD4(CCC_Integer, "sv_next_music", &set_next_music, 0, 1);
+	CMD1(CCC_AFHelp, "af_help");
+	CMD4(CCC_Integer, "af_debug_logger", &af_debug_loggining, 0, 1);
+	if (!g_dedicated_server)
+	{
+		CMD1(CCC_TeleportMeToPlayer, "af_adm_teleport_me_to_player");
+		CMD1(CCC_TeleportPlayerToMe, "af_adm_teleport_player_to_me");
+		CMD1(CCC_TeleportPlayerOnView, "af_adm_teleport_player_on_view");
+		CMD1(CCC_AdminWallHack, "af_adm_wallhack");
+		CMD4(CCC_Float, "r__lamp_bright", &lamp_bright, 0.5f, 10.0f);
+		CMD4(CCC_Integer, "r__off_shadowing", &off_global_shadowing, 0, 1);
+	}
 
 
 
@@ -3137,7 +3358,6 @@ void register_mp_console_commands()
 	CMD4(CCC_Float,					"net_cl_interpolation",		&g_cl_lvInterp,				-1,1);
 	CMD4(CCC_Integer,				"net_cl_icurvetype",		&g_cl_InterpolationType,	0, 2)	;
 	CMD4(CCC_Integer,				"net_cl_icurvesize",		(int*)&g_cl_InterpolationMaxPoints,	0, 2000)	;
-	CMD4(CCC_Integer, "sv_next_music", &set_next_music, 0, 1);
 	
 	CMD1(CCC_Net_CL_Resync,			"net_cl_resync" );
 	CMD1(CCC_Net_CL_ClearStats,		"net_cl_clearstats" );

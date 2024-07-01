@@ -117,3 +117,4 @@ public:
 };
 extern int		box_respawn_time;
 extern BOOL		set_next_music;
+extern BOOL		af_debug_loggining;

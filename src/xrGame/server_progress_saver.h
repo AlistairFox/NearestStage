@@ -23,8 +23,7 @@ public:
 	u32 InvBoxSaveTimer = 0;
 	void				BinnarLoadInvBox(CSE_ALifeInventoryBox* box);
 	void				FillInvBoxBuffer(CSE_ALifeInventoryBox* box);
-	CInifile* curr_box_file;
-	string_path curr_invbox_name;
+	CInifile* BoxCheckFile;
 #pragma endregion
 	
 #pragma region Save Thread Tasks

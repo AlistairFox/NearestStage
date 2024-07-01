@@ -307,6 +307,9 @@ private:
 			void							CalculateInterpolationParams();
 			virtual void					make_Interpolation();
 // for interpolation
+			LPCSTR				DropItemSect;
+			bool				HasItem = false;
+			float				SpawnPobability = 0.f;
 
 protected:
 	void						ApplyAnimation(u16 motion_idx, u8 motion_slot, bool noLoop);

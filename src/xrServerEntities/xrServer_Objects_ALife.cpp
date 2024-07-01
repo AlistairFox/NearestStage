@@ -559,22 +559,22 @@ bool CSE_ALifeObject::used_ai_locations		() const
 #include "game_base_space.h"
 #include "../xrEngine/IGame_Persistent.h"
 
-extern int alife_on;
+extern BOOL		af_sv_ofmode;
 
 bool CSE_ALifeObject::can_switch_online		() const
 {
-	//if (g_pGamePersistent->GameType() == eGameIDSingle)
+	if (af_sv_ofmode)
 		return						(match_configuration() && !!m_flags.is(flSwitchOnline));
-	//else
-	//	return alife_on;
+	else
+		return true;
 }
 
 bool CSE_ALifeObject::can_switch_offline	() const
 {
-//	if (g_pGamePersistent->GameType() == eGameIDSingle)
+	if (af_sv_ofmode)
 		return						(!match_configuration() || !!m_flags.is(flSwitchOffline));
-	//else
-	//	return !alife_on;
+	else
+		return false;
 }
 
 bool CSE_ALifeObject::can_save				() const
@@ -1581,14 +1581,11 @@ bool CSE_ALifeObjectHangingLamp::validate			()
 bool CSE_ALifeObjectHangingLamp::match_configuration() const
 {
 	R_ASSERT3(flags.test(flR1) || flags.test(flR2),"no renderer type set for hanging-lamp ",name_replace());
-#ifdef XRGAME_EXPORTS
-	return						(
+	return
+		(
 		(flags.test(flR1) && (::Render->get_generation() == IRender_interface::GENERATION_R1)) ||
 		(flags.test(flR2) && (::Render->get_generation() == IRender_interface::GENERATION_R2))
 	);
-#else
-	return						(true);
-#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////
