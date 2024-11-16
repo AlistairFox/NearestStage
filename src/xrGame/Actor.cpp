@@ -2,7 +2,7 @@
 #include "Actor_Flags.h"
 #include "hudmanager.h"
 #ifdef DEBUG
-
+//
 #	include "PHDebug.h"
 #endif // DEBUG
 #include "alife_space.h"
