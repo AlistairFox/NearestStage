@@ -155,18 +155,48 @@ void CPHMovementControl::in_shedule_Update(u32 DT)
 				phcapture_destroy(m_capture);
 }
 
-void CPHMovementControl::Calculate(Fvector& vAccel,const Fvector& camDir,float /**ang_speed/**/,float jump,float /**dt/**/,bool /**bLight/**/)
+void CPHMovementControl::Calculate(Fvector& vAccel, const Fvector& camDir, float /**ang_speed/**/, float jump, float /**dt/**/, bool /**bLight/**/, bool bNoInterpolate) //--#SM+#--
 {
-	Fvector previous_position;previous_position.set(vPosition);
-	m_character->IPosition(vPosition);
-	if(bExernalImpulse)
+	Fvector previous_position;
+	previous_position.set(vPosition);
+
+
+	Fvector pos;
+	if (bNoInterpolate) //--#SM+#--
 	{
-		
+		m_character->GetPosition(pos);
+	}
+	else
+	{
+		m_character->IPosition(pos);
+	}
+	vPosition = pos;
+	// Se7Kills TODO FIX FOR TELEPORT TO 0 0 0 POS AND CHECK VALID POS
+	/*
+	if (valid_pos(pos) && previous_position.distance_to(pos) < 4.0f)
+	{
+		vPosition = pos;
+	}
+	else
+	{
+		Fvector cur_vel;
+		m_character->GetVelocity(cur_vel);
+		Msg("Try to Move To Pos[%f][%f][%f] from [%f][%f][%f], VELOCITY: [%f], PHVEL[%f]", VPUSH(pos), VPUSH(vPosition), vAccel.magnitude(), cur_vel.magnitude());
+
+		SetPosition(previous_position);
+		SetVelocity(0, 0, 0);
+		pObject->XFORM().c = previous_position;
+	}
+
+	*/
+	if (bExernalImpulse)
+	{
+
 		vAccel.add(vExternalImpulse);
 		m_character->ApplyForce(vExternalImpulse);
-		vExternalImpulse.set(0.f,0.f,0.f);
-		
-		bExernalImpulse=false;
+		vExternalImpulse.set(0.f, 0.f, 0.f);
+
+		bExernalImpulse = false;
 	}
 	//vAccel.y=jump;
 	float mAccel=vAccel.magnitude();
@@ -174,42 +204,17 @@ void CPHMovementControl::Calculate(Fvector& vAccel,const Fvector& camDir,float /
 	m_character->SetMaximumVelocity(mAccel/10.f);
 	//if(!fis_zero(mAccel))vAccel.mul(1.f/mAccel);
 	m_character->SetAcceleration(vAccel);
-	if(!fis_zero(jump)) m_character->Jump(vAccel);
-	
-	m_character->GetSavedVelocity(vVelocity); 
-	fActualVelocity=vVelocity.magnitude();
+	if (!fis_zero(jump)) m_character->Jump(vAccel);
+
+	m_character->GetSavedVelocity(vVelocity);
+	fActualVelocity = vVelocity.magnitude();
 	//Msg("saved avel %f", fActualVelocity);
-	gcontact_Was=m_character->ContactWas();
+	gcontact_Was = m_character->ContactWas();
+	UpdateCollisionDamage();
 
-//////
-
-	UpdateCollisionDamage( );
-
-/*
-	u16 mat_injurios = m_character->InjuriousMaterialIDX();
-
-	if(m_character->LastMaterialIDX()!=GAMEMTL_NONE_IDX)
-	{
-		const SGameMtl *last_material=GMLib.GetMaterialByIdx(m_character->LastMaterialIDX());
-		if( last_material->Flags.test(SGameMtl::flInjurious) )
-			mat_injurios = m_character->LastMaterialIDX();
-	}
-
-	if( mat_injurios!=GAMEMTL_NONE_IDX)
-	{
-		if( fis_zero(gcontact_HealthLost) )
-				m_character->SetHitType( DefineCollisionHitType( mat_injurios ) );
-		gcontact_HealthLost+=Device.fTimeDelta*GMLib.GetMaterialByIdx( mat_injurios )->fInjuriousSpeed;
-	}
-
-*/
-	//IPhysicsShellHolder * O=di->DamageObject();
-	//SCollisionHitCallback* cc= O ? O->get_collision_hit_callback() : NULL;
-	ICollisionDamageInfo	*cdi=CollisionDamageInfo();
-	if(cdi->HitCallback())
-			cdi->HitCallback()->call((m_character->PhysicsRefObject()),fMinCrashSpeed,fMaxCrashSpeed,fContactSpeed,gcontact_HealthLost,CollisionDamageInfo());
-		
-////////
+	ICollisionDamageInfo* cdi = CollisionDamageInfo();
+	if (cdi->HitCallback())
+		cdi->HitCallback()->call((m_character->PhysicsRefObject()), fMinCrashSpeed, fMaxCrashSpeed, fContactSpeed, gcontact_HealthLost, CollisionDamageInfo());
 
 	TraceBorder(previous_position);
 	CheckEnvironment(vPosition);
@@ -1385,7 +1390,7 @@ void	CPHMovementControl::				UpdateObjectBox(CPHCharacter *ach)
 	Fvector2 plane_k;plane_k.set(pObject->XFORM().k.x,pObject->XFORM().k.z);
 	float R=_abs(poses_dir.dotproduct(plane_i)*cbox.x)+_abs(poses_dir.dotproduct(plane_k)*cbox.z);
 	R*=poses_dir.dotproduct(plane_cam); //(poses_dir.x*plane_cam.x+poses_dir.y*plane_cam.z);
-	Calculate(Fvector().set(0,0,0),Fvector().set(1,0,0),0,0,0,0);
+	Calculate(Fvector().set(0, 0, 0), Fvector().set(1, 0, 0), 0, 0, 0, 0, false);
 	m_character->SetObjectRadius(R);
 	ach->ChooseRestrictionType(rtStalker,1.f,m_character);
 	m_character->UpdateRestrictionType(ach);
@@ -1773,7 +1778,7 @@ IPhysicsShellHolder* CPHMovementControl::PhysicsRefObject			()
 
 void	CPHMovementControl::			actor_calculate			(Fvector& vAccel,const Fvector& camDir, float ang_speed, float jump, float dt, bool bLight)
 {
-	Calculate(  vAccel,camDir, ang_speed, jump, dt, bLight );
+	Calculate(vAccel, camDir, ang_speed, jump, dt, bLight, false);
 }
 
 void			CPHMovementControl::BlockDamageSet		( u64 steps_num )

@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+п»ї#include "StdAfx.h"
 #include "Actor_Flags.h"
 #include "hudmanager.h"
 #ifdef DEBUG
@@ -146,7 +146,7 @@ CActor::CActor() : CEntityAlive(),current_ik_cam_shift(0)
 	fCurAVelocity			= 0.0f;
 	fFPCamYawMagnitude = 0.0f; //--#SM+#--
 	fFPCamPitchMagnitude = 0.0f; //--#SM+#--
-	// эффекторы
+	// СЌС„С„РµРєС‚РѕСЂС‹
 	pCamBobbing				= 0;
 	mp_actor = false;
 
@@ -183,7 +183,7 @@ CActor::CActor() : CEntityAlive(),current_ik_cam_shift(0)
 	Device.seqRender.Add	(this,REG_PRIORITY_LOW);
 #endif
 
-	//разрешить использование пояса в inventory
+	//СЂР°Р·СЂРµС€РёС‚СЊ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ РїРѕСЏСЃР° РІ inventory
 	inventory().SetBeltUseful(true);
 
 	m_pPersonWeLookingAt	= NULL;
@@ -527,7 +527,7 @@ if(!g_dedicated_server)
 	// sheduler
 	shedule.t_min				= shedule.t_max = 1;
 
-	// настройки дисперсии стрельбы
+	// РЅР°СЃС‚СЂРѕР№РєРё РґРёСЃРїРµСЂСЃРёРё СЃС‚СЂРµР»СЊР±С‹
 	m_fDispBase					= pSettings->r_float		(section,"disp_base"		 );
 	m_fDispBase					= deg2rad(m_fDispBase);
 
@@ -641,12 +641,12 @@ void	CActor::Hit(SHit* pHDS)
 			if (Device.dwFrame != last_hit_frame &&
 				HDS.bone() != BI_NONE)
 			{		
-				// вычислить позицию и направленность партикла
+				// РІС‹С‡РёСЃР»РёС‚СЊ РїРѕР·РёС†РёСЋ Рё РЅР°РїСЂР°РІР»РµРЅРЅРѕСЃС‚СЊ РїР°СЂС‚РёРєР»Р°
 				Fmatrix pos; 
 
 				CParticlesPlayer::MakeXFORM(this,HDS.bone(),HDS.dir,HDS.p_in_bone_space,pos);
 
-				// установить particles
+				// СѓСЃС‚Р°РЅРѕРІРёС‚СЊ particles
 				CParticlesObject* ps = NULL;
 
 				if (eacFirstEye == cam_active && this == Level().CurrentEntity())
@@ -1044,7 +1044,7 @@ void CActor::Die	(CObject* who)
 		};
 
 
-		///!!! чистка пояса
+		///!!! С‡РёСЃС‚РєР° РїРѕСЏСЃР°
 		TIItemContainer &l_blist = inventory().m_belt;
 		while (!l_blist.empty())	
 			inventory().Ruck(l_blist.front());
@@ -1111,7 +1111,30 @@ void CActor::g_Physics			(Fvector& _accel, float jump, float dt)
 	{
 		if(mstate_real&mcClimb&&!cameras[eacFirstEye]->bClampYaw)
 				accel.set(0.f,0.f,0.f);
-		character_physics_support()->movement()->Calculate			(accel,cameras[cam_active]->vDirection,0,jump,dt,false);
+		//--#SM+# Begin--
+		bool bNoInterpolate = false;
+		if (Level().CurrentControlEntity() == this)
+		{
+			CWeapon* pWeapon = smart_cast<CWeapon*>(inventory().ActiveItem());
+			if (pWeapon != nullptr)
+			{
+				//--> пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+				bNoInterpolate = pWeapon->IsZoomed();
+			}
+		}
+
+		Fvector prePos, postPos;
+		character_physics_support()->movement()->GetPosition(prePos);
+		character_physics_support()->movement()->Calculate(accel, cameras[cam_active]->vDirection, 0, jump, dt, false, bNoInterpolate);
+		character_physics_support()->movement()->GetPosition(postPos);
+
+		if (prePos.distance_to(postPos) > 4.0f)
+		{
+			character_physics_support()->movement()->SetVelocity(0, 0, 0);
+			character_physics_support()->movement()->SetPosition(prePos);
+		}
+		//--#SM+# End--
+
 		bool new_border_state=character_physics_support()->movement()->isOutBorder();
 		if(m_bOutBorder!=new_border_state && Level().CurrentControlEntity() == this)
 		{
@@ -1449,7 +1472,7 @@ void CActor::UpdateCL	()
 		g_player_hud->update(trans);
 	}
 
-	//if (cam_Active() != cam_FirstEye() && (!MpAnimationMODE()) && (!MpWoundMODE())) //разблокировать все камеры
+	//if (cam_Active() != cam_FirstEye() && (!MpAnimationMODE()) && (!MpWoundMODE())) //СЂР°Р·Р±Р»РѕРєРёСЂРѕРІР°С‚СЊ РІСЃРµ РєР°РјРµСЂС‹
 		//cam_Set(eacFirstEye);
 
 	m_bPickupMode=false;
@@ -1678,7 +1701,7 @@ void CActor::shedule_Update	(u32 DT)
 
 	inherited::shedule_Update	(DT);
 
-	//эффектор включаемый при ходьбе
+	//СЌС„С„РµРєС‚РѕСЂ РІРєР»СЋС‡Р°РµРјС‹Р№ РїСЂРё С…РѕРґСЊР±Рµ
 	if (!pCamBobbing)
 	{
 		pCamBobbing = xr_new<CEffectorBobbing>	();
@@ -1686,7 +1709,7 @@ void CActor::shedule_Update	(u32 DT)
 	}
 	pCamBobbing->SetState						(mstate_real, conditions().IsLimping(), IsZoomAimingMode());
 
-	//звук тяжелого дыхания при уталости и хромании
+	//Р·РІСѓРє С‚СЏР¶РµР»РѕРіРѕ РґС‹С…Р°РЅРёСЏ РїСЂРё СѓС‚Р°Р»РѕСЃС‚Рё Рё С…СЂРѕРјР°РЅРёРё
 	if(this==Level().CurrentControlEntity() && !g_dedicated_server )
 	{
 		if((conditions().IsLimping() || MpWoundMODE()) && g_Alive() && !psActorFlags.test(AF_GODMODE_RT) && !MpGodMode()){
@@ -1746,7 +1769,7 @@ void CActor::shedule_Update	(u32 DT)
 			m_DangerSnd.stop();
 	}
 
-	//если в режиме HUD, то сама модель актера не рисуется
+	//РµСЃР»Рё РІ СЂРµР¶РёРјРµ HUD, С‚Рѕ СЃР°РјР° РјРѕРґРµР»СЊ Р°РєС‚РµСЂР° РЅРµ СЂРёСЃСѓРµС‚СЃСЏ
 	if(!character_physics_support()->IsRemoved())
 		setVisible				(!HUDview	());
 
@@ -1761,7 +1784,7 @@ void CActor::shedule_Update	(u32 DT)
 
 
 
-	//что актер видит перед собой
+	//С‡С‚Рѕ Р°РєС‚РµСЂ РІРёРґРёС‚ РїРµСЂРµРґ СЃРѕР±РѕР№
 	collide::rq_result& RQ				= HUD().GetCurrentRayQuery();
 
 	if(!input_external_handler_installed() && RQ.O && RQ.O->getVisible() &&  RQ.range<2.0f) 
@@ -1857,7 +1880,7 @@ void CActor::shedule_Update	(u32 DT)
 
 //	UpdateSleep									();
 
-	//для свойст артефактов, находящихся на поясе
+	//РґР»СЏ СЃРІРѕР№СЃС‚ Р°СЂС‚РµС„Р°РєС‚РѕРІ, РЅР°С…РѕРґСЏС‰РёС…СЃСЏ РЅР° РїРѕСЏСЃРµ
 	UpdateArtefactsOnBeltAndOutfit				();
 	m_pPhysics_support->in_shedule_Update		(DT);
 	Check_for_AutoPickUp						();
@@ -1909,7 +1932,7 @@ void CActor::renderable_Render	()
 		UI().Font().pFontGraffiti32Russian->SetInterval(1.f, 0.5f);
 		UI().Font().pFontGraffiti32Russian->OutSetI(-0.01, -0.13);
 		UI().Font().pFontGraffiti32Russian->SetColor(D3DCOLOR_XRGB(255, 0, 0));
-		UI().Font().pFontGraffiti32Russian->OutNext("Вы умрете через: %d секунд", DeathTimerRender);;
+		UI().Font().pFontGraffiti32Russian->OutNext("Р’С‹ СѓРјСЂРµС‚Рµ С‡РµСЂРµР·: %d СЃРµРєСѓРЅРґ", DeathTimerRender);;
 	}
 
 	VERIFY(_valid(XFORM()));
@@ -2226,9 +2249,9 @@ void CActor::OnItemDrop(CInventoryItem *inventory_item, bool just_before_destroy
 			weapon->EnableActorNVisnAfterZoom();
 	}
 
-	// Pavel: при продаже в МП граната удаляется у игрока
-	// И после этого нельзя достать новую
-	// Поэтому закомментировал проверку на just_before_destroy
+	// Pavel: РїСЂРё РїСЂРѕРґР°Р¶Рµ РІ РњРџ РіСЂР°РЅР°С‚Р° СѓРґР°Р»СЏРµС‚СЃСЏ Сѓ РёРіСЂРѕРєР°
+	// Р РїРѕСЃР»Рµ СЌС‚РѕРіРѕ РЅРµР»СЊР·СЏ РґРѕСЃС‚Р°С‚СЊ РЅРѕРІСѓСЋ
+	// РџРѕСЌС‚РѕРјСѓ Р·Р°РєРѕРјРјРµРЅС‚РёСЂРѕРІР°Р» РїСЂРѕРІРµСЂРєСѓ РЅР° just_before_destroy
 	if(		/*!just_before_destroy && */
 			inventory_item &&
 			inventory_item->BaseSlot()==GRENADE_SLOT && 
@@ -2432,13 +2455,13 @@ bool CActor::can_attach			(const CInventoryItem *inventory_item) const
 		}
 	}
 
-	//можно ли присоединять объекты такого типа
+	//РјРѕР¶РЅРѕ Р»Рё РїСЂРёСЃРѕРµРґРёРЅСЏС‚СЊ РѕР±СЉРµРєС‚С‹ С‚Р°РєРѕРіРѕ С‚РёРїР°
 	if (m_attach_item_sections.end() == std::find(m_attach_item_sections.begin(), m_attach_item_sections.end(), inventory_item->object().cNameSect()))
 	{
 		return false;
 	}
 
-	//если уже есть присоединненый объет такого типа 
+	//РµСЃР»Рё СѓР¶Рµ РµСЃС‚СЊ РїСЂРёСЃРѕРµРґРёРЅРЅРµРЅС‹Р№ РѕР±СЉРµС‚ С‚Р°РєРѕРіРѕ С‚РёРїР° 
 	if (attached(inventory_item->object().cNameSect()))
 	{
 		return false;
@@ -2980,7 +3003,7 @@ void CActor::RainDropsParamsUpdate()
 	bool IsHelm = DynamicHudGlass::GetHudGlassEnabled();
 	if (IsHelm)
 	{
-		if (Device.dwTimeGlobal > (last_ray_pick_time + 2000)) { //Апдейт рейтрейса - раз в секунду. Чаще апдейтить нет смысла.
+		if (Device.dwTimeGlobal > (last_ray_pick_time + 2000)) { //РђРїРґРµР№С‚ СЂРµР№С‚СЂРµР№СЃР° - СЂР°Р· РІ СЃРµРєСѓРЅРґСѓ. Р§Р°С‰Рµ Р°РїРґРµР№С‚РёС‚СЊ РЅРµС‚ СЃРјС‹СЃР»Р°.
 			last_ray_pick_time = Device.dwTimeGlobal;
 
 			collide::rq_result RQ;
@@ -3018,7 +3041,7 @@ void CActor::RainDropsParamsUpdate()
 	RainDropsParams = Fvector().set(droplet_pwr, 0.f, DropletSpeed);
 }
 
-//Максимальная вместительность инвентаря
+//РњР°РєСЃРёРјР°Р»СЊРЅР°СЏ РІРјРµСЃС‚РёС‚РµР»СЊРЅРѕСЃС‚СЊ РёРЅРІРµРЅС‚Р°СЂСЏ
 int CActor::MaxCarryInvCapacity() const
 {
 	int res = m_iInventoryCapacity;
