@@ -1,15 +1,5 @@
 ﻿#include "stdafx.h"
 #include "server_progress_saver.h"
-#include "Actor.h"
-#include "Inventory.h"
-#include "Weapon.h"
-#include "CustomDetector.h"
-#include "xrServer_Objects_ALife.h"
-#include "CustomOutfit.h"
-#include "Torch.h"
-#include "AnomalyDetector.h"
-#include "PDA.h"
-#include "ActorHelmet.h"
 
 void CProgressSaver::FillPlayerBuffer(game_PlayerState* ps)
 {
@@ -153,42 +143,8 @@ void CProgressSaver::FillPlayerBuffer(game_PlayerState* ps)
 
 		for (const auto itm : items)
 		{
-			SItem pItem;
-
-			xr_strcpy(pItem.ItemSect, itm->m_section_id.c_str());
-			pItem.ItemSlot = itm->CurrValue();
-			pItem.ItemCond = itm->GetCondition();
-			if (itm->cast_weapon_ammo())
-			{
-				pItem.IsWeaponAmmo = true;
-				CWeaponAmmo* ammo = smart_cast<CWeaponAmmo*>(itm);
-				pItem.AmmoBoxCurr = ammo->m_boxCurr;
-			}
-			else
-				pItem.IsWeaponAmmo = false;
-
-			if (itm->cast_weapon())
-			{
-				pItem.IsWeapon = true;
-				CWeapon* wpn = smart_cast<CWeapon*>(itm);
-				pItem.AmmoElapsed = wpn->GetAmmoElapsed();
-				pItem.AmmoType = wpn->m_ammoType;
-				pItem.AddonState = wpn->GetAddonsState();
-				pItem.CurrScope = wpn->m_cur_scope;
-			}
-			else
-				pItem.IsWeapon = false;
-
-			if (itm->has_any_upgrades())
-			{
-				pItem.HasUpgr = true;
-				itm->get_upgrades(pItem.Uphrades);
-			}
-			else
-				pItem.HasUpgr = false;
-
+			SItem pItem(itm);
 			pl->Items.push_back(pItem);
-
 		}
 
 		pl->InfoPortions = Player_portions[ps->GetStaticID()];
@@ -252,6 +208,9 @@ bool CProgressSaver::BinnarLoadPlayer(game_PlayerState* ps)
 				u16 slot = reader->r_u16();
 				float cond = reader->r_float();
 
+				u32 ItemType = reader->r_u32();
+
+
 				CSE_Abstract* E = Level().Server->game->spawn_begin(itm_sect.c_str());
 
 				E->ID_Parent = ps->GameID;
@@ -260,17 +219,14 @@ bool CProgressSaver::BinnarLoadPlayer(game_PlayerState* ps)
 				item->m_fCondition = cond;
 				item->slot = slot;
 
-				bool CheckAmmo = reader->r_u8();
-				if (CheckAmmo)
+				if (ItemType == SItem::ItemTypes::WeaponAmmo)
 				{
 					CSE_ALifeItemAmmo* ammo = smart_cast<CSE_ALifeItemAmmo*>(item);
 					u16 ammo_cnt = reader->r_u16();
 					ammo->a_elapsed = ammo_cnt;
 				}
 
-				bool CheckWpn = reader->r_u8();
-
-				if (CheckWpn)
+				if (ItemType == SItem::ItemTypes::Weapon)
 				{
 					CSE_ALifeItemWeapon* wpn = smart_cast<CSE_ALifeItemWeapon*>(item);
 

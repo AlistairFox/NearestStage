@@ -26,8 +26,7 @@ void CALifeTimeManager::init			(LPCSTR section)
 {
 	u32							years,months,days,hours,minutes,seconds;
 	
-	game_sv_freemp* fmp = smart_cast<game_sv_freemp*>(Level().Server->game);
-	if (OnServer && fmp && fmp->Saver && fmp->Saver->LoadServerEnvironment(hours, minutes, seconds, days, months, years))
+	if (OnServer && CProgressSaver::Get() && CProgressSaver::Get()->LoadServerEnvironment(hours, minutes, seconds, days, months, years))
 	{
 		Msg("-- Server Environment Save Loaded!");
 	}

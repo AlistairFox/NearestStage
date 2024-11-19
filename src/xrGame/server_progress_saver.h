@@ -1,9 +1,16 @@
 #pragma once
 #include "game_sv_freemp.h"
 #include "Level.h"
+#include "Weapon.h"
 #include "Actor.h"
 #include "Inventory.h"
+#include "CustomDetector.h"
 #include "xrServer_Objects_ALife.h"
+#include "CustomOutfit.h"
+#include "Torch.h"
+#include "AnomalyDetector.h"
+#include "PDA.h"
+#include "ActorHelmet.h"
 
 class game_sv_freemp;
 class CProgressSaver
@@ -11,32 +18,88 @@ class CProgressSaver
 public:
 	CProgressSaver(game_sv_freemp* Game);
 	~CProgressSaver();
-	game_sv_freemp* fmp;
-	void				SavingUpdate();
 
-#pragma region Inventory Boxes Saving
+	static CProgressSaver* Get() { return m_Instance; }
+
 	enum InvBoxChunks
 	{
 		INVBOX_ITEMS_CHUNK = 0
 	};
-	u32 InvBoxFillTimer = 0;
-	u32 InvBoxSaveTimer = 0;
 	void				BinnarLoadInvBox(CSE_ALifeInventoryBox* box);
 	void				FillInvBoxBuffer(CSE_ALifeInventoryBox* box);
-	CInifile* BoxCheckFile;
-#pragma endregion
-	
-#pragma region Save Thread Tasks
-		std::thread* SaverThread;
-		xrCriticalSection csSaving;
+
 		struct SItem
 		{
+
+			SItem(CInventoryItem* itm)
+			{
+				xr_strcpy(ItemSect, itm->m_section_id.c_str());
+				ItemSlot = itm->CurrValue();
+				ItemCond = itm->GetCondition();
+				if (itm->cast_weapon_ammo())
+				{
+					ItemType = WeaponAmmo;
+					CWeaponAmmo* ammo = smart_cast<CWeaponAmmo*>(itm);
+					AmmoBoxCurr = ammo->m_boxCurr;
+				}
+
+				if (itm->cast_weapon())
+				{
+					ItemType = Weapon;
+					CWeapon* wpn = smart_cast<CWeapon*>(itm);
+					AmmoElapsed = wpn->GetAmmoElapsed();
+					AmmoType = wpn->m_ammoType;
+					AddonState = wpn->GetAddonsState();
+					CurrScope = wpn->m_cur_scope;
+				}
+
+				if (itm->has_any_upgrades())
+				{
+					HasUpgr = true;
+					itm->get_upgrades(Uphrades);
+				}
+			}
+
+			void OutputItem(IWriter* writer)
+			{
+				writer->w_stringZ(ItemSect);
+				writer->w_u16(ItemSlot);
+				writer->w_float(ItemCond);
+
+				writer->w_u32(ItemType);
+
+				if (ItemType == WeaponAmmo)
+					writer->w_u16(AmmoBoxCurr);
+	
+				if (ItemType == Weapon)
+				{
+					writer->w_u16(AmmoElapsed);
+					writer->w_u8(AmmoType);
+					writer->w_u8(AddonState);
+					writer->w_u8(CurrScope);
+				}
+
+				if (HasUpgr)
+				{
+					writer->w_u8(1);
+					writer->w_stringZ(Uphrades);
+				}
+				else
+					writer->w_u8(0);
+			}
+
+			enum ItemTypes
+			{
+				InventoryItem = 0,
+				WeaponAmmo,
+				Weapon
+			};
+
+			u32 ItemType = 0;
 			string128 ItemSect;
 			u16 ItemSlot;
 			float ItemCond;
-			bool IsWeaponAmmo = false;
 			u16 AmmoBoxCurr = 0;
-			bool IsWeapon = false;
 			u16 AmmoElapsed = 0;
 			u8 AmmoType = 0;
 			u8 AddonState = 0;
@@ -142,11 +205,6 @@ public:
 			GlobalServerData* ServerData;
 		};
 
-		std::vector<SThreadTask>  ThreadTasks;
-		void				SaveThreadWorker();
-#pragma endregion
-
-#pragma region Player Saving
 	enum ActorChunks
 	{
 		ACTOR_STATS_CHUNK = 0,
@@ -166,7 +224,6 @@ public:
 	};
 	xr_map<u16, Players_stats> Players_condition;
 
-	u32 PlayerSaveTimer = 0;
 
 	void				SavePlayersConditions(float satiety, float thirst, float radiation, game_PlayerState* ps);
 	bool				RemovePlayerSave(game_PlayerState* ps);
@@ -175,34 +232,71 @@ public:
 	bool				HasBinnarSaveFile(game_PlayerState* ps);
 	bool				load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos, Fvector& angle);
 
-#pragma region OnDeath Items Saving
+
 	void				LoadPlayersOnDeath(game_PlayerState* ps);
 	void				FillPlayerOnDisconnect(u16 StaticID, string_path path);
 	void				ClearPlayersOnDeathBuffer(u16 StaticID);
 
 	std::map<u16, SPlayersOnDeathBuff> MPlayersOnDeath;
-#pragma endregion
 
-#pragma region Players Tasks
 	void				SavePlayerPortions(ClientID sender, shared_str info_id, bool add);
 	void				LoadPlayerPortions(game_PlayerState* ps);
 	xr_map<u16, xr_vector<shared_str>> Player_portions;
-#pragma endregion
 
-#pragma endregion
 
-#pragma region Server Environment
 	enum EnvSavingChunks
 	{
 		ENV_CHUNK = 0
 	};
 	void				FillServerEnvBuffer();
-	u32 SaveWeatherTimer = 0;
 	bool				LoadServerEnvironment(u32 &hours, u32&minutes,
 	u32&seconds, u32&days, u32&months, u32&years);
-#pragma endregion
 
+
+
+	enum ThreadState
+	{
+		ThreadStop = 0,
+		ThreadStarting,
+		ThreadWait,
+		ThreadSavePlayer,
+		ThreadSaveInvBox,
+		ThreadSaveEnvData,
+		ThreadSaveOnDeath
+	};
+
+	void				SetThreadState(ThreadState state) { m_iThreadState = state; }
+	void				ThreadStarter();
+	void				ThreadWorker();
+
+	bool				SaveStageManager();
+	void				SaveManagerUpdate();
+
+
+	bool				PlayerSaveStage(SThreadTask* task);
+	bool				InvBoxSaveStage(SThreadTask* task);
+	bool				GSDSaveStage(SThreadTask* task);
+	bool				OnDeathSaveStage(SThreadTask* task);
+
+private:
+	game_sv_freemp*				fmp;
+	static CProgressSaver*		m_Instance;
+	bool						NeedStopThread =	false;
+	u32							m_iThreadState = 0;
+	std::thread*				SaverThread;
+	xrCriticalSection			csSaving;
+	std::vector<SThreadTask>	ThreadTasks;
+	CInifile*					BoxCheckFile = nullptr;
+
+
+	u32 SaveWeatherTimer = 0;
+	u32 InvBoxFillTimer = 0;
+	u32 InvBoxSaveTimer = 0;
+	u32 PlayerSaveTimer = 0;
 };
+
+CProgressSaver* CProgressSaver::m_Instance = NULL;
+
 extern int save_time;
 extern int save_time2;
 extern int save_time3;

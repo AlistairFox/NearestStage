@@ -2,9 +2,15 @@
 #include "server_progress_saver.h"
 #include <ui/UIInventoryUtilities.h>
 
-CProgressSaver::CProgressSaver(game_sv_freemp* Game)
+CProgressSaver::CProgressSaver(game_sv_freemp* Game) : fmp(Game)
 {
-	fmp = Game;
+	if (m_Instance)
+		Debug.fatal(DEBUG_INFO, "Progress Saver Already Create!");
+
+	m_Instance = this;
+
+	SetThreadState(ThreadStop);
+
 	string_path box_check_path;
 	FS.update_path(box_check_path, "$mp_saves_logins$", "saving_box_list.ltx");
 
@@ -17,13 +23,7 @@ CProgressSaver::CProgressSaver(game_sv_freemp* Game)
 		BoxCheckFile->save_as(box_check_path);
 	}
 
-	SaverThread = new std::thread([&]()
-		{
-			thread_name("Progress Saving Thread");
-			SaveThreadWorker();
-		});
-
-	SaverThread->detach();
+	ThreadStarter();
 }
 
 CProgressSaver::~CProgressSaver()
@@ -82,7 +82,7 @@ bool CProgressSaver::LoadServerEnvironment(u32& hours, u32& minutes, u32& second
 	return SaveLoad;
 }
 
-void CProgressSaver::SavingUpdate()
+void CProgressSaver::SaveManagerUpdate()
 {
 	if (Level().game && PlayerSaveTimer <= Device.dwTimeGlobal)
 	{
@@ -135,3 +135,38 @@ void CProgressSaver::SavingUpdate()
 		}
 	}
 }
+
+void CProgressSaver::ThreadStarter()
+{
+	SetThreadState(ThreadStarting);
+	Msg("$$ Saver Thread Was Started!");
+	SaverThread = new std::thread([&]()
+		{
+			thread_name("Progress Saver Thread");
+			ThreadWorker();
+		});
+
+
+	Msg("$$ Saver Thread Was Detach!");
+	SaverThread->detach();
+}
+
+void CProgressSaver::ThreadWorker()
+{
+
+	while (SaveStageManager())
+	{
+
+		if (NeedStopThread)
+		{
+			NeedStopThread = false;
+			break;
+		}
+		
+	}
+
+	SetThreadState(ThreadStop);
+	Msg("!! Saver Thread Will Destroyed!");
+}
+
+

@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "server_progress_saver.h"
-#include "Weapon.h"
 
 void CProgressSaver::FillInvBoxBuffer(CSE_ALifeInventoryBox* box)
 {
@@ -15,40 +14,8 @@ void CProgressSaver::FillInvBoxBuffer(CSE_ALifeInventoryBox* box)
 
 	for (const auto id : box->children)
 	{
-		SItem Sitem;
-
 		CInventoryItem* item = smart_cast<CInventoryItem*>(Level().Objects.net_Find(id));
-
-		xr_strcpy(Sitem.ItemSect, item->m_section_id.c_str());
-		Sitem.ItemCond = item->GetCondition();
-		if (item->cast_weapon_ammo())
-		{
-			CWeaponAmmo* ammo = smart_cast<CWeaponAmmo*>(item);
-			Sitem.IsWeaponAmmo = true;
-			Sitem.AmmoBoxCurr = ammo->m_boxCurr;
-		}
-		else
-			Sitem.IsWeaponAmmo = false;
-
-		if (item->cast_weapon())
-		{
-			Sitem.IsWeapon = true;
-			CWeapon* wpn = smart_cast<CWeapon*>(item);
-			Sitem.AmmoElapsed = u16(wpn->GetAmmoElapsed());
-			Sitem.AmmoType = wpn->m_ammoType;
-			Sitem.AddonState = wpn->GetAddonsState();
-			Sitem.CurrScope = wpn->m_cur_scope;
-		}
-		else
-			Sitem.IsWeapon = false;
-
-		if (item->has_any_upgrades())
-		{
-			Sitem.HasUpgr = true;
-			item->get_upgrades(Sitem.Uphrades);
-		}
-		else
-			Sitem.HasUpgr = false;
+		SItem Sitem(item);
 
 		OutBox->Items.push_back(Sitem);
 	}
@@ -91,17 +58,15 @@ void CProgressSaver::BinnarLoadInvBox(CSE_ALifeInventoryBox* box)
 			CSE_ALifeItem* item = smart_cast<CSE_ALifeItem*>(E);
 			item->m_fCondition = reader->r_float();
 
-			bool isWeaponAmmo = reader->r_u8();
+			u32 ItemType = reader->r_u32();
 
-			if (isWeaponAmmo)
+			if (ItemType == SItem::ItemTypes::WeaponAmmo)
 			{
 				CSE_ALifeItemAmmo* ammo = smart_cast<CSE_ALifeItemAmmo*>(item);
 				ammo->a_elapsed = reader->r_u16();
 			}
 
-			bool isWeapon = reader->r_u8();
-
-			if (isWeapon)
+			if (ItemType == SItem::ItemTypes::Weapon)
 			{
 				CSE_ALifeItemWeapon* wpn = smart_cast<CSE_ALifeItemWeapon*>(item);
 				wpn->a_elapsed = reader->r_u16();

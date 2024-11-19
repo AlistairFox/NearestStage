@@ -1,9 +1,5 @@
 #include "StdAfx.h"
 #include "server_progress_saver.h"
-#include "CustomDetector.h"
-#include "CustomOutfit.h"
-#include "ActorHelmet.h"
-#include "Weapon.h"
 
 
 

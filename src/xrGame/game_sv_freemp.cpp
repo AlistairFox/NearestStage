@@ -535,7 +535,7 @@ void game_sv_freemp::Update()
 	DynamicBoxUpdate();
 
 	if(Saver)
-		Saver->SavingUpdate();
+		Saver->SaveManagerUpdate();
 }
 
 BOOL game_sv_freemp::OnTouch(u16 eid_who, u16 eid_what, BOOL bForced)
