@@ -237,6 +237,15 @@ extern u32 lamps;
 extern BOOL		af_sv_collect_statistic;
 extern BOOL		af_sv_ofmode;
 
+extern u32 SMT = 0;
+extern u32 TWT = 0;
+extern LPCSTR ThreadStateStr = "wait thread Initialize";
+
+extern int save_time;
+extern int save_time2;
+extern int save_time3;
+extern int save_time4;
+
 void CTextConsole::DrawLog( HDC hDC, RECT* pRect )
 {
 	TEXTMETRIC tm;
@@ -401,6 +410,34 @@ void CTextConsole::DrawLog( HDC hDC, RECT* pRect )
 		sprintf(temp, "All Objects: %d", all_objects);
 		SetTextColor(hDC, RGB(255, 0, 255));
 		TextOut(hDC, 500, 210, temp, xr_strlen(temp));
+
+
+		string128 ThreadStatistic;
+		SetTextColor(hDC, RGB(120, 0, 255));
+		sprintf(ThreadStatistic, "SaveManagerDelay = %u", SMT);
+		TextOut(hDC, 650, 10, ThreadStatistic, xr_strlen(ThreadStatistic));
+
+		sprintf(ThreadStatistic, "SaveThreadWorkerDelay = %u", TWT);
+		TextOut(hDC, 650, 30, ThreadStatistic, xr_strlen(ThreadStatistic));
+
+		sprintf(ThreadStatistic, "SaveThreadState = %s", ThreadStateStr);
+		TextOut(hDC, 650, 50, ThreadStatistic, xr_strlen(ThreadStatistic));
+
+		strcpy(ThreadStatistic, "ProgressSaverParams:");
+		TextOut(hDC, 650, 70, ThreadStatistic, xr_strlen(ThreadStatistic));
+
+		sprintf(ThreadStatistic, "FilltimePlayers = %u", save_time);
+		TextOut(hDC, 650, 90, ThreadStatistic, xr_strlen(ThreadStatistic));
+
+		sprintf(ThreadStatistic, "FilltimeInvBox = %u", save_time2);
+		TextOut(hDC, 650, 110, ThreadStatistic, xr_strlen(ThreadStatistic));
+
+
+		sprintf(ThreadStatistic, "GSDataTime = %u", save_time3);
+		TextOut(hDC, 650, 130, ThreadStatistic, xr_strlen(ThreadStatistic));
+
+		sprintf(ThreadStatistic, "ThreadSleepTime = %u", save_time4);
+		TextOut(hDC, 650, 150, ThreadStatistic, xr_strlen(ThreadStatistic));
 	}
 	else
 	{
@@ -409,6 +446,7 @@ void CTextConsole::DrawLog( HDC hDC, RECT* pRect )
 		strcpy(statistic, "Статистика объектов не собирается!");
 		TextOut(hDC, 500, 10, statistic, xr_strlen(statistic));
 	}
+
 
 	SetTextColor(hDC, RGB(0, 255, 0));
 	string128 help;

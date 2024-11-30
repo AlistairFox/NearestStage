@@ -5,11 +5,12 @@ void CProgressSaver::FillPlayerBuffer(game_PlayerState* ps)
 {
 	CObject* obj = Level().Objects.net_Find(ps->GameID);
 	CActor* actor = smart_cast<CActor*>(obj);
-	CInventoryOwner* pInvOwner = smart_cast<CInventoryOwner*>(obj);
-	Players* pl = xr_new<Players>();
 
 	if (actor && actor->g_Alive())
 	{
+		Players* pl = xr_new<Players>(ps);
+
+
 		if (MPlayersOnDeath.find(ps->GetStaticID()) != MPlayersOnDeath.end())
 			MPlayersOnDeath.erase(ps->GetStaticID());
 
@@ -110,34 +111,6 @@ void CProgressSaver::FillPlayerBuffer(game_PlayerState* ps)
 		MPlayersOnDeath[ps->GetStaticID()] = buff;
 
 
-		PlayerStats stat;
-
-		string_path file_name_path;
-		string128 file_name;
-		xr_strcpy(file_name, ps->getName());
-		xr_strcat(file_name, "\\");
-		FS.update_path(file_name_path, "$mp_saves_players_bin$", file_name);
-
-		xr_strcpy(pl->PlayerPath, file_name_path);
-		xr_strcpy(pl->PlayerName, ps->getName());
-		stat.money = ps->money_for_round;
-		stat.satiety = Players_condition[ps->GetStaticID()].satiety;
-		stat.thirst = Players_condition[ps->GetStaticID()].thirst;
-		stat.radiation = Players_condition[ps->GetStaticID()].radiation;
-		stat.team = ps->team;
-
-		CSE_ALifeCreatureActor* actor_cse = smart_cast<CSE_ALifeCreatureActor*>(Level().Server->ID_to_entity(ps->GameID));
-
-		if (actor_cse)
-		{
-			stat.SetPossition = true;
-			stat.pos = actor_cse->o_Position;
-			stat.angle = actor_cse->o_Angle;
-		}
-		else
-			stat.SetPossition = false;; // cheking save position
-		pl->Stats = stat;
-
 		TIItemContainer items;
 		actor->inventory().AddSaveAvailableItems(items);
 
@@ -147,13 +120,11 @@ void CProgressSaver::FillPlayerBuffer(game_PlayerState* ps)
 			pl->Items.push_back(pItem);
 		}
 
-		pl->InfoPortions = Player_portions[ps->GetStaticID()];
 
+		csSaving.Enter();
+		ThreadTasks.push_back({ nullptr, pl, nullptr, nullptr });
+		csSaving.Leave();
 	}
-	
-	csSaving.Enter();
-	ThreadTasks.push_back({ nullptr, pl, nullptr, nullptr });
-	csSaving.Leave();
 
 }
 

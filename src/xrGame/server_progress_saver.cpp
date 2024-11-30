@@ -2,6 +2,7 @@
 #include "server_progress_saver.h"
 #include <ui/UIInventoryUtilities.h>
 
+CProgressSaver* CProgressSaver::m_Instance = NULL;
 CProgressSaver::CProgressSaver(game_sv_freemp* Game) : fmp(Game)
 {
 	if (m_Instance)
@@ -84,6 +85,8 @@ bool CProgressSaver::LoadServerEnvironment(u32& hours, u32& minutes, u32& second
 
 void CProgressSaver::SaveManagerUpdate()
 {
+	SaveManagerTimer.Start();
+
 	if (Level().game && PlayerSaveTimer <= Device.dwTimeGlobal)
 	{
 		PlayerSaveTimer = Device.dwTimeGlobal + (save_time * 1000);
@@ -134,6 +137,8 @@ void CProgressSaver::SaveManagerUpdate()
 			}
 		}
 	}
+
+	SMT = SaveManagerTimer.GetElapsed_ticks();
 }
 
 void CProgressSaver::ThreadStarter()
@@ -169,4 +174,53 @@ void CProgressSaver::ThreadWorker()
 	Msg("!! Saver Thread Will Destroyed!");
 }
 
+void CProgressSaver::StopSaveThread()
+{
+	if (m_iThreadState == ThreadStop)
+	{
 
+		Msg("!! Thread Already Stop!!");
+		return;
+	}
+
+	while (ThreadIsWorking())
+	{
+		if (m_iThreadState != ThreadWait)
+		{
+			Msg("!! Waiting Thread Timeout!");
+			Sleep(10);
+			continue;
+		}
+		else
+		{
+			NeedStopThread = true;
+			Msg("-- Starting Thread Destroy Process!");
+			break;
+		}
+	}
+
+
+}
+
+LPCSTR CProgressSaver::GetThreadStateAsString()
+{
+	switch (m_iThreadState)
+	{
+	case ThreadStop:
+		return "ThreadStop";
+	case ThreadStarting:
+		return "ThreadStarting";
+	case ThreadWait:
+		return "ThreadWait";
+	case ThreadSavePlayer:
+		return "ThreadSavePlayer";
+	case ThreadSaveInvBox:
+		return "ThreadSaveInvBox";
+	case ThreadSaveEnvData:
+		return "ThreadSaveEnvData";
+	case ThreadSaveOnDeath:
+		return "ThreadSaveOnDeath";
+	default:
+		return "unknown error";
+	}
+}

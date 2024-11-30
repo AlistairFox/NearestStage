@@ -3290,6 +3290,24 @@ public:
 
 };
 
+
+class CCC_ReloadSaveThreadState : public IConsole_Command {
+public:
+	CCC_ReloadSaveThreadState(LPCSTR N) : IConsole_Command(N) { bEmptyArgsHandled = true; }
+
+
+	virtual void Execute(LPCSTR arg)
+	{
+
+		if (CProgressSaver::Get()->GetThreadState() != CProgressSaver::Get()->ThreadStop)
+			CProgressSaver::Get()->StopSaveThread();
+		else
+			CProgressSaver::Get()->ThreadStarter();
+
+	}
+
+};
+
 void register_mp_console_commands()
 {
 	//CMD4(CCC_Float, "rpg_speed", &speed_ROCKET, 0, 1000);
@@ -3323,6 +3341,7 @@ void register_mp_console_commands()
 		CMD4(CCC_Integer,				"af_thread_sleep_time", &save_time4, 1, 10000000);
 		CMD4(CCC_Integer,				"af_sv_online_offline_mode", &af_sv_ofmode, 0, 1);
 		CMD4(CCC_Integer, "af_sv_collect_statistic", &af_sv_collect_statistic, 0, 1);
+		CMD1(CCC_ReloadSaveThreadState, "af_reload_save_thread_state");
 	}
 	CMD1(CCC_TeleportToPoss,		"af_sv_teleport_player");
 
