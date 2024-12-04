@@ -85,8 +85,6 @@ bool CProgressSaver::LoadServerEnvironment(u32& hours, u32& minutes, u32& second
 
 void CProgressSaver::SaveManagerUpdate()
 {
-	SaveManagerTimer.Start();
-
 	if (Level().game && PlayerSaveTimer <= Device.dwTimeGlobal)
 	{
 		PlayerSaveTimer = Device.dwTimeGlobal + (save_time * 1000);
@@ -137,8 +135,6 @@ void CProgressSaver::SaveManagerUpdate()
 			}
 		}
 	}
-
-	SMT = SaveManagerTimer.GetElapsed_ticks();
 }
 
 void CProgressSaver::ThreadStarter()

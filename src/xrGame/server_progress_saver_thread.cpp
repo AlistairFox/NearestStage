@@ -12,8 +12,6 @@ bool CProgressSaver::SaveStageManager()
 		return true;
 	}
 
-	ThreadWorkerTimer.Start();
-
 	SThreadTask task = ThreadTasks.back();
 	ThreadTasks.pop_back();
 	csSaving.Leave();
@@ -26,8 +24,6 @@ bool CProgressSaver::SaveStageManager()
 		return false;
 	if (!OnDeathSaveStage(&task))
 		return false;
-
-	TWT = ThreadWorkerTimer.GetElapsed_ticks();
 
 	return true;
 }

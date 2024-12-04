@@ -12,8 +12,6 @@
 #include "PDA.h"
 #include "ActorHelmet.h"
 
-
-extern LPCSTR ThreadStateStr;
 class game_sv_freemp;
 class CProgressSaver
 {
@@ -405,7 +403,7 @@ public:
 	void				StopSaveThread();
 	bool				ThreadIsWorking() const { return m_iThreadState != (ThreadStop || ThreadStarting); }
 
-	void				SetThreadState(ThreadState state) { m_iThreadState = state; ThreadStateStr = GetThreadStateAsString(); }
+	void				SetThreadState(ThreadState state) { m_iThreadState = state;}
 	u32					GetThreadState() const { return m_iThreadState; }
 	LPCSTR				GetThreadStateAsString();
 
@@ -423,13 +421,8 @@ private:
 	u32							InvBoxFillTimer = 0;
 	u32							InvBoxSaveTimer = 0;
 	u32							PlayerSaveTimer = 0;
-
-	CTimer						SaveManagerTimer;
-	CTimer						ThreadWorkerTimer;
 };
 
-extern u32 SMT;
-extern u32 TWT;
 extern int save_time;
 extern int save_time2;
 extern int save_time3;
