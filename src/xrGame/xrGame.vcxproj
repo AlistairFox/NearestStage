@@ -319,6 +319,7 @@
     <ClInclude Include="Actor.h" />
     <ClInclude Include="ActorAnimation.h" />
     <ClInclude Include="ActorCondition.h" />
+    <ClInclude Include="ActorDeathTimer.h" />
     <ClInclude Include="ActorEffector.h" />
     <ClInclude Include="ActorHelmet.h" />
     <ClInclude Include="actor_anim_defs.h" />
@@ -2145,6 +2146,7 @@
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(IntDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
       <PrecompiledHeaderOutputFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
     </ClCompile>
+    <ClCompile Include="ActorDeathTimer.cpp" />
     <ClCompile Include="ActorEffector.cpp" />
     <ClCompile Include="ActorEffector_script.cpp">
       <PrecompiledHeaderFile Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">StdAfx.h</PrecompiledHeaderFile>

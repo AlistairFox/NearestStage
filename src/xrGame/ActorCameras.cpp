@@ -378,7 +378,7 @@ void CActor::cam_Update(float dt, float fFOV)
 						float yaw = (-XFORM().k.getH());
 						float& cam_yaw = C->yaw;
 						float delta_yaw = angle_difference_signed(yaw, cam_yaw);
-
+						
 						if (-cam_limit<delta_yaw && cam_limit>delta_yaw)
 						{
 							yaw = cam_yaw + delta_yaw;

@@ -19,6 +19,7 @@
 #include "script_export_space.h"
 #include "xr_level_controller.h"
 #include "ActorCondition.h"
+#include "ActorDeathTimer.h"
 
 using namespace ACTOR_DEFS;
 
@@ -61,6 +62,7 @@ class CActorMemory;
 class CActorStatisticMgr;
 
 class CLocationManager;
+class CDeathTimer;
 
 class	CActor: 
 	public CEntityAlive, 
@@ -203,9 +205,9 @@ public:
 			void			NeedKillPlayer();
 			int				ANIM_WOUND = 0;
 			bool			need_ex_wound = false;
-			bool			StartWoundDeathTimer = false;
-			u32				DeathTimerRender = 60;
 			bool			CanWoundChange = true;
+
+			CDeathTimer* deathTimer = nullptr;
 #pragma endregion
 			bool			UseHelmet = false;
 

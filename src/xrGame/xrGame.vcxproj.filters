@@ -7473,6 +7473,7 @@
     <ClInclude Include="server_progress_saver.h">
       <Filter>Core\Server\Games\server\freemp\ProgressSaver</Filter>
     </ClInclude>
+    <ClInclude Include="ActorDeathTimer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="damage_manager.cpp">
@@ -11201,6 +11202,7 @@
     <ClCompile Include="server_progress_saver_ondeath_items.cpp">
       <Filter>Core\Server\Games\server\freemp\ProgressSaver</Filter>
     </ClCompile>
+    <ClCompile Include="ActorDeathTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="ai\monsters\chimera\chimera_attack_state.h">

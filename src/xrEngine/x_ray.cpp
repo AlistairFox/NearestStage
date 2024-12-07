@@ -781,12 +781,7 @@ int APIENTRY WinMain_impl(HINSTANCE hInstance,
 	}
 #endif
 #else // DEDICATED_SERVER
-	LPCSTR						huita = "-fucknikitakalinovsky5785412386westdfa23";
-	if (strstr(lpCmdLine, huita)) {
 		g_dedicated_server = true;
-	}
-	else
-		g_dedicated_server = false;
 #endif // DEDICATED_SERVER
 
 	// SetThreadAffinityMask		(GetCurrentThread(),1);

@@ -91,6 +91,7 @@
 #include "Inventory.h"
 #include "ai/stalker/ai_stalker.h"
 
+
 const u32		patch_frames	= 50;
 const float		respawn_delay	= 1.f;
 const float		respawn_auto	= 7.f;
@@ -237,6 +238,7 @@ CActor::CActor() : CEntityAlive(),current_ik_cam_shift(0)
 	m_iInventoryCapacity = 50;
 	m_iInventoryFullness = 0;
 	m_iInventoryFullnessCtrl = 0;
+	deathTimer = xr_new<CDeathTimer>(this);
 }
 
 
@@ -245,6 +247,7 @@ CActor::~CActor()
 	xr_delete				(m_location_manager);
 	xr_delete				(m_memory);
 	xr_delete				(game_news_registry);
+	xr_delete				(deathTimer);
 #ifdef DEBUG
 	Device.seqRender.Remove(this);
 #endif
@@ -1235,6 +1238,7 @@ void CActor::UpdateCL	()
 	EndClearMask();
 	TimeUnblockAction();
 	EndTorchAnm();
+	deathTimer->UpdateTimer();
 
 	if (Level().CurrentControlEntity() == this && OnClient())
 	{
@@ -1242,25 +1246,10 @@ void CActor::UpdateCL	()
 
 		if (g_Alive())
 		{
-			if (MpWoundMODE() && !StartWoundDeathTimer)
-			{
-				StartWoundDeathTimer = true;
-				DeathTimerRender = 60;
-			}
-
-			if(!MpWoundMODE() && StartWoundDeathTimer)
-				StartWoundDeathTimer = false;
-
-			if (StartWoundDeathTimer && (Device.dwTimeGlobal % 1000 == 0))
-			{
-				DeathTimerRender--;
-				if (DeathTimerRender < 1)
-				{
-					StartWoundDeathTimer = false;
-					DeathTimerRender = 60;
-					NeedKillPlayer();
-				}
-			}
+			if (MpWoundMODE())
+				deathTimer->StartTimer();
+			else
+				deathTimer->StopTimer();
 
 			if (need_set_cond)
 			{
@@ -1304,7 +1293,7 @@ void CActor::UpdateCL	()
 				ANIM_WOUND = 1;
 				need_ex_wound = true;
 			}
-			else if(GetfHealth() <= 0.35)
+			else if (GetfHealth() <= 0.35)
 			{
 				if (ANIM_WOUND > 0 && need_ex_wound)
 				{
@@ -1327,7 +1316,7 @@ void CActor::UpdateCL	()
 			}
 		}
 		else
-			StartWoundDeathTimer = false;
+			deathTimer->StopTimer();
 	}
 
 	UpdateInventoryOwner			(Device.dwTimeDelta);
@@ -1927,14 +1916,8 @@ void CActor::UpdateInventoryItems()
 #include "debug_renderer.h"
 void CActor::renderable_Render	()
 {
-	if (StartWoundDeathTimer && g_Alive())
-	{
-		UI().Font().pFontGraffiti32Russian->SetInterval(1.f, 0.5f);
-		UI().Font().pFontGraffiti32Russian->OutSetI(-0.01, -0.13);
-		UI().Font().pFontGraffiti32Russian->SetColor(D3DCOLOR_XRGB(255, 0, 0));
-		UI().Font().pFontGraffiti32Russian->OutNext("Вы умрете через: %d секунд", DeathTimerRender);;
-	}
 
+	deathTimer->Renderable();
 	VERIFY(_valid(XFORM()));
 	inherited::renderable_Render();
 	CInventoryOwner::renderable_Render();
