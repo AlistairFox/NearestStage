@@ -26,7 +26,7 @@ void CALifeTimeManager::init			(LPCSTR section)
 {
 	u32							years,months,days,hours,minutes,seconds;
 	
-	if (OnServer && CProgressSaver::Get() && CProgressSaver::Get()->LoadServerEnvironment(hours, minutes, seconds, days, months, years))
+	if (OnServer() && CProgressSaver::Get() && CProgressSaver::Get()->LoadServerEnvironment(hours, minutes, seconds, days, months, years))
 	{
 		Msg("-- Server Environment Save Loaded!");
 	}

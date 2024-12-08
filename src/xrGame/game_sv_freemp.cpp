@@ -387,26 +387,8 @@ void game_sv_freemp::RespawnPlayer(ClientID id_who, bool NoSpectator)
 	}
 
 	if (Game().Type() == eGameIDFreeMp)
-
-		if (ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
-		{
-			if (Saver)
-			{
-				Saver->LoadPlayerPortions(ps);
-				Saver->LoadPlayersOnDeath(ps);
-			}
-			xrCData->ps->money_for_round /= Random.randF(1.f, 1.2f);
-		}
-
-	if (ps && !ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
-	{
-		SpawnItemToActor(ps->GameID, "wpn_binoc");
-
 		if(Saver)
-			Saver->BinnarLoadPlayer(ps);
-				
- 		ps->setFlag(GAME_PLAYER_MP_SAVE_LOADED);
- 	}
+			Saver->OnPlayerRespawn(ps);
 }
 
 void game_sv_freemp::OnPlayerReady(ClientID id_who)
@@ -443,16 +425,7 @@ void game_sv_freemp::OnPlayerDisconnect(ClientID id_who, LPSTR Name, u16 GameID,
 	//---------------------------------------------------
 	if (Saver)
 	{
-		string_path PlayerSavePath;
-		string256 PlayerSaveDir;
-		sprintf(PlayerSaveDir, "%s\\%s_inventory.binsave", Name, Name);
-		FS.update_path(PlayerSavePath, "$mp_saves_players_bin$", PlayerSaveDir);
-		if (!FS.exist(PlayerSavePath))
-			Saver->FillPlayerOnDisconnect(StaticID, PlayerSavePath);
-
-		Saver->ClearPlayersOnDeathBuffer(StaticID);
-
-		Saver->Player_portions[StaticID].clear();
+		Saver->OnPlayerDisconnect(Name, StaticID);
 	}
 
 //	AllowDeadBodyRemove			(id_who, GameID);

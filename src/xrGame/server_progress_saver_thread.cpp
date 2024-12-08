@@ -24,6 +24,8 @@ bool CProgressSaver::SaveStageManager()
 		return false;
 	if (!OnDeathSaveStage(&task))
 		return false;
+	if (!FractionUpgradeSaveStage(&task))
+		return false;
 
 	return true;
 }
@@ -224,5 +226,53 @@ bool CProgressSaver::OnDeathSaveStage(SThreadTask* task)
 
 	}
 
+	return true;
+}
+
+bool CProgressSaver::FractionUpgradeSaveStage(SThreadTask* task)
+{
+#ifdef FRACTIONUPGRADE_SAVING
+	if (FractionUpgradeTask* MUpgrade = task->FractUpgr)
+	{
+		SetThreadState(ThreadSaveFractionUpgr);
+		CInifile* file = xr_new<CInifile>(MUpgrade->team_path, false, false);
+
+		if (!file)
+			return false;
+
+		for (const auto& team : MUpgrade->MFractUpgradeTask)
+		{
+			char TeamSect[64];
+			sprintf(TeamSect, "team_%d", team.first);
+			file->w_float(TeamSect, "current_exp", team.second.m_iCurrentExp, "текущий опыт");
+			file->w_u8(TeamSect, "upgrade_points", team.second.m_iUpgradePoints, "кол-во очков прокачки");
+			file->w_u16(TeamSect, "current_level", team.second.m_iCurrentLevel, "текущий уровень");
+
+			file->w_u32(TeamSect, "money_in_bank", team.second.MoneyInBank, "деньги в банке");
+			file->w_u8(TeamSect, "money_level", team.second.m_iCurrMoneyLevel, "Уровень заработка");
+			file->w_u8(TeamSect, "money_count_level", team.second.m_iCurrMoneyCountLevel, "Уровень кол-ва заработка");
+
+			file->w_u8(TeamSect, "invbox_capacity_level", team.second.m_iCurrInvBoxCapacityLevel, "Уровень вместимости ящика");
+			file->w_u8(TeamSect, "inv_box_level", team.second.m_iCurrInvBoxLevel, "Уровень ящика");
+
+			file->w_u8(TeamSect, "exp_level", team.second.m_iCurrExpLevel, "Уровень бонуса опыта");
+
+			file->w_u8(TeamSect, "bank_level", team.second.m_iCurrBankLevel, "Уровень банка");
+
+			file->w_u8(TeamSect, "box_provide_level", team.second.m_iCurrBoxProvideLevel, "Уровень получаеммой провизии");
+			file->w_u8(TeamSect, "expadd_level", team.second.m_iCurrExpUpgrLevel, "Уровень способов получения опыта");
+
+			file->w_u8(TeamSect, "expselling_level", team.second.m_iCurrExpSellingLevel, "Уровень получения опыта при продаже предметов");
+
+			file->w_u8(TeamSect, "terr1_level", team.second.m_iCurrTerr1Level, "Уровень территории 1");
+			file->w_u8(TeamSect, "terr2_level", team.second.m_iCurrTerr2Level, "Уровень территории 2");
+			file->w_u8(TeamSect, "terr3_level", team.second.m_iCurrTerr3Level, "Уровень территории 3");
+		}
+
+		file->save_as(MUpgrade->team_path);
+		xr_delete(file);
+		xr_delete(MUpgrade);
+	}
+#endif
 	return true;
 }

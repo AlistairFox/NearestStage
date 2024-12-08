@@ -10,7 +10,7 @@ void CProgressSaver::FillPlayerBuffer(game_PlayerState* ps)
 	{
 		Players* pl = xr_new<Players>(ps);
 
-
+#ifdef	PLAYERONDEATH_SAVING
 		if (MPlayersOnDeath.find(ps->GetStaticID()) != MPlayersOnDeath.end())
 			MPlayersOnDeath.erase(ps->GetStaticID());
 
@@ -109,6 +109,7 @@ void CProgressSaver::FillPlayerBuffer(game_PlayerState* ps)
 			buff.weapon2 = false;
 
 		MPlayersOnDeath[ps->GetStaticID()] = buff;
+#endif
 
 
 		TIItemContainer items;
@@ -135,16 +136,17 @@ bool CProgressSaver::BinnarLoadPlayer(game_PlayerState* ps)
 	sprintf(PlayerDir, "%s\\%s_inventory.binsave", ps->getName(), ps->getName());
 	FS.update_path(PlayerSavePath, "$mp_saves_players_bin$", PlayerDir);
 	if (af_debug_loggining)
-		Msg("InvPath: %s", PlayerSavePath);
+		Msg("AFPROGRESSAVER: InvPath: %s", PlayerSavePath);
 	if (FS.exist(PlayerSavePath))
 	{
 		if (af_debug_loggining)
-			Msg("read file path = %s", PlayerSavePath);
+			Msg("AFPROGRESSAVER: read file path = %s", PlayerSavePath);
 		IReader* reader = FS.r_open(PlayerSavePath);
 
 		if (reader->open_chunk(ACTOR_MONEY))
 			ps->money_for_round = reader->r_u32();// money
 
+#ifdef PLAYER_STATS_SAVING
 		if (reader->open_chunk(ACTOR_STATS_CHUNK))
 		{
 			NET_Packet P;
@@ -158,6 +160,7 @@ bool CProgressSaver::BinnarLoadPlayer(game_PlayerState* ps)
 			P.w_float(radiation);
 			Level().Server->game->u_EventSend(P);
 		}
+#endif
 
 		if (reader->open_chunk(ACTOR_TEAM))
 		{
@@ -231,19 +234,21 @@ bool CProgressSaver::BinnarLoadPlayer(game_PlayerState* ps)
 			}
 
 		}
+		reader->close();
 	}
 
+#ifdef INFO_PORTIONS_SAVING
 	string_path PlayerDialogsPath;
 	string256 PlayerDirDialogs;
 	sprintf(PlayerDirDialogs, "%s\\%s_dialogs.binsave", ps->getName(), ps->getName());
 	FS.update_path(PlayerDialogsPath, "$mp_saves_players_bin$", PlayerDirDialogs);
 
 	if (af_debug_loggining)
-		Msg("DialogsPath: %s", PlayerDialogsPath);
+		Msg("AFPROGRESSAVER: DialogsPath: %s", PlayerDialogsPath);
 	if (FS.exist(PlayerDialogsPath))
 	{
 		if (af_debug_loggining)
-			Msg("read file path = %s", PlayerDialogsPath);
+			Msg("AFPROGRESSAVER: read file path = %s", PlayerDialogsPath);
 		IReader* reader = FS.r_open(PlayerDialogsPath);
 		if (reader->open_chunk(INFO_PORTIONS_CHUNK))
 		{
@@ -265,6 +270,7 @@ bool CProgressSaver::BinnarLoadPlayer(game_PlayerState* ps)
 
 		reader->close();
 	}
+#endif
 	return true;
 }
 
@@ -287,7 +293,7 @@ bool CProgressSaver::HasBinnarSaveFile(game_PlayerState* ps)
 			exist = true;
 			u8 player_team = reader->r_u8();
 			if (af_debug_loggining)
-				Msg("%d", player_team);
+				Msg("AFPROGRESSAVER: %d", player_team);
 			ps->team = player_team;
 		}
 		FS.r_close(reader);
@@ -302,11 +308,11 @@ bool CProgressSaver::load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos,
 	sprintf(PlayerDir, "%s\\%s_position.binsave", ps->getName(), ps->getName());
 	FS.update_path(PlayerPosPath, "$mp_saves_players_bin$", PlayerDir);
 	if (af_debug_loggining)
-		Msg("PossPath: %s", PlayerPosPath);
+		Msg("AFPROGRESSAVER: PossPath: %s", PlayerPosPath);
 	if (FS.exist(PlayerPosPath))
 	{
 		if (af_debug_loggining)
-			Msg("read player pos: %s", PlayerPosPath);
+			Msg("AFPROGRESSAVER: read player pos: %s", PlayerPosPath);
 		IReader* reader = FS.r_open(PlayerPosPath);
 
 		if (reader->open_chunk(ACTOR_POS))
@@ -315,7 +321,7 @@ bool CProgressSaver::load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos,
 			if (ActorPossitionCheck)
 			{
 				if (af_debug_loggining)
-					Msg("Read player pos");
+					Msg("AFPROGRESSAVER: Read player pos");
 				reader->r_fvector3(pos);
 				reader->r_fvector3(angle);
 				FS.r_close(reader);
@@ -332,26 +338,31 @@ bool CProgressSaver::load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos,
 
 void CProgressSaver::SavePlayersConditions(float satiety, float thirst, float radiation, game_PlayerState* ps)
 {
+#ifdef PLAYER_STATS_SAVING
 	if (!ps)
 		return;
 
 	Players_condition[ps->GetStaticID()].satiety = satiety;
 	Players_condition[ps->GetStaticID()].thirst = thirst;
 	Players_condition[ps->GetStaticID()].radiation = radiation;
+#endif
 }
 
 void CProgressSaver::LoadPlayerPortions(game_PlayerState* ps)
 {
+#ifdef INFO_PORTIONS_SAVING
 	NET_Packet P;
 	Level().Server->game->u_EventGen(P, GE_GET_SAVE_PORTIONS, ps->GameID);
 	save_data(Player_portions[ps->GetStaticID()], P);
 	P.w_u8(false);
 	Level().Server->game->u_EventSend(P);
+#endif // INFO_PORTIONS_SAVING
 }
 
 
 void CProgressSaver::SavePlayerPortions(ClientID sender, shared_str info_id, bool add)
 {
+#ifdef INFO_PORTIONS_SAVING
 	game_PlayerState* ps = Level().Server->game->get_id(sender);
 
 	if (ps)
@@ -366,7 +377,7 @@ void CProgressSaver::SavePlayerPortions(ClientID sender, shared_str info_id, boo
 			if (it == Player_portions[ps->GetStaticID()].end())
 			{
 				if (af_debug_loggining)
-					Msg("Player: %s get portion: %s", ps->getName(), info_id.c_str());
+					Msg("AFPROGRESSAVER: Player: %s get portion: %s", ps->getName(), info_id.c_str());
 				Player_portions[ps->GetStaticID()].push_back(info_id);
 			}
 			else
@@ -377,7 +388,7 @@ void CProgressSaver::SavePlayerPortions(ClientID sender, shared_str info_id, boo
 			if (it != Player_portions[ps->GetStaticID()].end())
 			{
 				if (af_debug_loggining)
-					Msg("Player: %s lost portion: %s", ps->getName(), info_id.c_str());
+					Msg("AFPROGRESSAVER: Player: %s lost portion: %s", ps->getName(), info_id.c_str());
 				Player_portions[ps->GetStaticID()].erase(it);
 			}
 			else
@@ -385,7 +396,7 @@ void CProgressSaver::SavePlayerPortions(ClientID sender, shared_str info_id, boo
 		}
 	}
 
-
+#endif
 }
 
 bool CProgressSaver::RemovePlayerSave(game_PlayerState* ps)
@@ -411,4 +422,40 @@ bool CProgressSaver::RemovePlayerSave(game_PlayerState* ps)
 	}
 
 	return WillRemove;
+}
+
+void CProgressSaver::OnPlayerRespawn(game_PlayerState* ps)
+{
+	if (ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
+	{
+		LoadPlayerPortions(ps);
+		LoadPlayersOnDeath(ps);
+		
+		ps->money_for_round /= Random.randF(1.f, 1.2f);
+	}
+
+	if (ps && !ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
+	{
+		fmp->SpawnItemToActor(ps->GameID, "wpn_binoc");
+
+		BinnarLoadPlayer(ps);
+
+		ps->setFlag(GAME_PLAYER_MP_SAVE_LOADED);
+	}
+}
+
+void CProgressSaver::OnPlayerDisconnect(LPSTR Name, u16 StaticID)
+{
+	string_path PlayerSavePath;
+	string256 PlayerSaveDir;
+	sprintf(PlayerSaveDir, "%s\\%s_inventory.binsave", Name, Name);
+	FS.update_path(PlayerSavePath, "$mp_saves_players_bin$", PlayerSaveDir);
+	if (!FS.exist(PlayerSavePath))
+		FillPlayerOnDisconnect(StaticID, PlayerSavePath);
+
+	ClearPlayersOnDeathBuffer(StaticID);
+
+#ifdef INFO_PORTIONS_SAVING
+	Player_portions[StaticID].clear();
+#endif
 }

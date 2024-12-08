@@ -12,6 +12,13 @@
 #include "PDA.h"
 #include "ActorHelmet.h"
 
+#define INFO_PORTIONS_SAVING
+#define CHECK_BOX_FILE
+#define PLAYER_STATS_SAVING
+#define SERVER_ENV_SAVING
+#define PLAYERONDEATH_SAVING
+//#define FRACTIONUPGRADE_SAVING
+
 class game_sv_freemp;
 class CProgressSaver
 {
@@ -113,9 +120,11 @@ public:
 		PlayerStats(game_PlayerState* ps)
 		{
 			money = ps->money_for_round;
+#ifdef PLAYER_STATS_SAVING
 			satiety = CProgressSaver::Get()->Players_condition[ps->GetStaticID()].satiety;
 			thirst = CProgressSaver::Get()->Players_condition[ps->GetStaticID()].thirst;
 			radiation = CProgressSaver::Get()->Players_condition[ps->GetStaticID()].radiation;
+#endif
 			team = ps->team;
 
 			CSE_ALifeCreatureActor* actor_cse = smart_cast<CSE_ALifeCreatureActor*>(Level().Server->ID_to_entity(ps->GameID));
@@ -145,11 +154,14 @@ public:
 			writer->w_s32(money);
 			writer->close_chunk();
 
+#ifdef PLAYER_STATS_SAVING
 			writer->open_chunk(ACTOR_STATS_CHUNK);
 			writer->w_float(satiety);
 			writer->w_float(thirst);
 			writer->w_float(radiation);
 			writer->close_chunk();
+#endif 
+
 
 			writer->open_chunk(ACTOR_TEAM);
 			writer->w_u8(team);
@@ -240,7 +252,9 @@ public:
 			xr_strcpy(PlayerPath, file_name_path);
 			xr_strcpy(PlayerName, ps->getName());
 
+#ifdef INFO_PORTIONS_SAVING
 			InfoPortions = CProgressSaver::Get()->Player_portions[ps->GetStaticID()];
+#endif
 		}
 
 
@@ -259,6 +273,7 @@ public:
 			writer->close_chunk();
 			FS.w_close(writer);
 
+#ifdef INFO_PORTIONS_SAVING
 			std::string DialogsPath = PlayerPath;
 			DialogsPath += PlayerName;
 			DialogsPath += "_dialogs.binsave";
@@ -271,6 +286,7 @@ public:
 			}
 			writer->close_chunk();
 			FS.w_close(writer);
+#endif
 
 			std::string PossPath = PlayerPath;
 			PossPath += PlayerName;
@@ -296,6 +312,14 @@ public:
 		string512 GSDPath;
 	};
 
+	struct FractionUpgradeTask
+	{
+		string_path team_path;
+#ifdef FRACTIONUPGRADE_SAVING
+		std::map<u8, CServerCommunityUpgrade::Upgrades> MFractUpgradeTask;
+#endif
+	};
+
 	struct Players_stats
 	{
 		float satiety = 1.f;
@@ -309,6 +333,7 @@ public:
 		Players* players;
 		OnDeathDisconnect* DisconnectBuf;
 		GlobalServerData* ServerData;
+		FractionUpgradeTask* FractUpgr;
 	};
 #pragma endregion
 
@@ -360,6 +385,10 @@ public:
 
 	void				SavePlayerPortions(ClientID sender, shared_str info_id, bool add);
 	void				LoadPlayerPortions(game_PlayerState* ps);
+
+
+	void				OnPlayerRespawn(game_PlayerState* ps);
+	void				OnPlayerDisconnect(LPSTR Name, u16 StaticID);
 #pragma endregion
 
 
@@ -375,6 +404,12 @@ public:
 	void				FillInvBoxBuffer(CSE_ALifeInventoryBox* box);
 #pragma endregion
 
+#pragma region FractionUpgrade Methods
+#ifdef FRACTIONUPGRADE_SAVING
+	void				FillFractionUpgrades(std::map<u8, CServerCommunityUpgrade::Upgrades> MUpgrade);
+#endif
+#pragma endregion
+
 
 	enum ThreadState
 	{
@@ -384,7 +419,8 @@ public:
 		ThreadSavePlayer,
 		ThreadSaveInvBox,
 		ThreadSaveEnvData,
-		ThreadSaveOnDeath
+		ThreadSaveOnDeath,
+		ThreadSaveFractionUpgr
 	};
 
 	void				ThreadStarter();
@@ -398,6 +434,7 @@ public:
 	bool				InvBoxSaveStage(SThreadTask* task);
 	bool				GSDSaveStage(SThreadTask* task);
 	bool				OnDeathSaveStage(SThreadTask* task);
+	bool				FractionUpgradeSaveStage(SThreadTask* task);
 
 
 	void				StopSaveThread();

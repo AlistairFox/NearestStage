@@ -6,15 +6,33 @@ CProgressSaver* CProgressSaver::m_Instance = NULL;
 CProgressSaver::CProgressSaver(game_sv_freemp* Game) : fmp(Game)
 {
 	if (m_Instance)
-		Debug.fatal(DEBUG_INFO, "Progress Saver Already Create!");
+		Debug.fatal(DEBUG_INFO, "AFPROGRESSAVER: Progress Saver Already Create!");
 
 	m_Instance = this;
 
+#ifndef INFO_PORTIONS_SAVING
+	Msg("!!AFPROGRESSAVER: InfoPortions Saving DISABLED!!");
+#endif
+#ifndef CHECK_BOX_FILE
+	Msg("!!AFPROGRESSAVER: PreCheck Box file DISABLED!!");
+#endif
+#ifndef PLAYER_STATS_SAVING
+	Msg("!!AFPROGRESSAVER: Player Stats Saving DISABLED!!");
+#endif
+#ifndef SERVER_ENV_SAVING
+	Msg("!!AFPROGRESSAVER: Server Environment Saving DISABLED!!");
+#endif
+#ifndef PLAYERONDEATH_SAVING
+	Msg("!!AFPROGRESSAVER: PlayerOnDeath Saving DISABLED!!");
+#endif
+#ifndef FRACTIONUPGRADE_SAVING
+	Msg("!!AFPROGRESSAVER: FractionUpgrade Saveing DISABLED!!");
+#endif
 	SetThreadState(ThreadStop);
 
+#ifdef CHECK_BOX_FILE
 	string_path box_check_path;
 	FS.update_path(box_check_path, "$mp_saves_logins$", "saving_box_list.ltx");
-
 	bool Exist = FS.exist("$mp_saves_logins$", "saving_box_list.ltx") ? true : false;
 	BoxCheckFile = xr_new<CInifile>(box_check_path, Exist ? true : false, true);
 
@@ -23,18 +41,36 @@ CProgressSaver::CProgressSaver(game_sv_freemp* Game) : fmp(Game)
 		BoxCheckFile->w_string("box_list", "example", "example", "это лишь пример записи!");
 		BoxCheckFile->save_as(box_check_path);
 	}
+#endif // CHECK_BOX_FILE
 
 	ThreadStarter();
 }
 
 CProgressSaver::~CProgressSaver()
 {
+#ifdef CHECK_BOX_FILE
 	xr_delete(BoxCheckFile);
+#endif
 }
 
+#ifdef FRACTIONUPGRADE_SAVING
+void CProgressSaver::FillFractionUpgrades(std::map<u8, CServerCommunityUpgrade::Upgrades> MUpgrade)
+{
+
+	FractionUpgradeTask* task = xr_new<FractionUpgradeTask>();
+
+	FS.update_path(task->team_path, "$mp_saves$", "team_upgrades.ltx");
+	task->MFractUpgradeTask = MUpgrade;
+
+	csSaving.Enter();
+	ThreadTasks.push_back({ nullptr, nullptr, nullptr, nullptr, task });
+	csSaving.Leave();
+}
+#endif
 
 void CProgressSaver::FillServerEnvBuffer()
 {
+#ifdef SERVER_ENV_SAVING
 	///////////////Server environment saving//////////////////////
 	if (Level().game && SaveWeatherTimer <= Device.dwTimeGlobal)
 	{
@@ -54,11 +90,13 @@ void CProgressSaver::FillServerEnvBuffer()
 		csSaving.Leave();
 	}
 	///////////////Server environment saving//////////////////////
+#endif // SERVER_ENV_SAVING
 }
 
 bool CProgressSaver::LoadServerEnvironment(u32& hours, u32& minutes, u32& seconds, u32& days, u32& months, u32& years)
 {
 	bool SaveLoad = false;
+#ifdef SERVER_ENV_SAVING
 	string_path save_game_time;
 	FS.update_path(save_game_time, "$global_server_data_bin$", "server_data.binsave");
 	if (FS.exist(save_game_time))
@@ -66,7 +104,7 @@ bool CProgressSaver::LoadServerEnvironment(u32& hours, u32& minutes, u32& second
 		IReader* env_reader = FS.r_open(save_game_time);
 		if (env_reader->open_chunk(ENV_CHUNK))
 		{
-			Msg("TIME SET");
+			Msg("AFPROGRESSAVER: TIME SET");
 			shared_str time;
 			shared_str data;
 			shared_str weather;
@@ -80,11 +118,16 @@ bool CProgressSaver::LoadServerEnvironment(u32& hours, u32& minutes, u32& second
 		}
 		FS.r_close(env_reader);
 	}
+#endif
 	return SaveLoad;
 }
 
 void CProgressSaver::SaveManagerUpdate()
 {
+	if (!ThreadIsWorking())
+		return;
+
+
 	if (Level().game && PlayerSaveTimer <= Device.dwTimeGlobal)
 	{
 		PlayerSaveTimer = Device.dwTimeGlobal + (save_time * 1000);
@@ -128,7 +171,11 @@ void CProgressSaver::SaveManagerUpdate()
 					fmp->inventory_boxes_cse[entity.first].loaded = true;
 					BinnarLoadInvBox(box);
 				}
+#ifdef CHECK_BOX_FILE
 				else if (BoxCheckFile->line_exist("box_list", box->name_replace()))
+#else
+				else
+#endif
 				{
 					FillInvBoxBuffer(box);
 				}
@@ -140,7 +187,7 @@ void CProgressSaver::SaveManagerUpdate()
 void CProgressSaver::ThreadStarter()
 {
 	SetThreadState(ThreadStarting);
-	Msg("$$ Saver Thread Was Started!");
+	Msg("$$AFPROGRESSAVER: Saver Thread Was Started!");
 	SaverThread = new std::thread([&]()
 		{
 			thread_name("Progress Saver Thread");
@@ -148,26 +195,51 @@ void CProgressSaver::ThreadStarter()
 		});
 
 
-	Msg("$$ Saver Thread Was Detach!");
+	Msg("$$AFPROGRESSAVER: Saver Thread Was Detach!");
 	SaverThread->detach();
 }
 
 void CProgressSaver::ThreadWorker()
 {
 
-	while (SaveStageManager())
+	while (true)
 	{
+		try
+		{
+			if (!SaveStageManager())
+			{
+				Msg("!!AFPROGRESSAVER: ERROR: SaveStageManager!");
+				break;
+			}
+		}
+		catch (...) // Перехватываем все исключения
+		{
+			Msg("! AFPROGRESSAVER: !!!CRITICAL ERROR!!! Stopping Save Thread");
+			break;
+		}
 
 		if (NeedStopThread)
 		{
 			NeedStopThread = false;
 			break;
 		}
-		
 	}
 
+	csSaving.Enter();
+
+	for (auto task : ThreadTasks)
+	{
+		xr_delete(task.box);
+		xr_delete(task.DisconnectBuf);
+		xr_delete(task.players);
+		xr_delete(task.ServerData);
+	}
+	ThreadTasks.clear();
+	Msg("!!AFPROGRESSAVER: ThreadTasks Clear!");
+	csSaving.Leave();
+
 	SetThreadState(ThreadStop);
-	Msg("!! Saver Thread Will Destroyed!");
+	Msg("!!AFPROGRESSAVER: Saver Thread Will Destroyed! Need Reload SaveThread!");
 }
 
 void CProgressSaver::StopSaveThread()
@@ -175,7 +247,7 @@ void CProgressSaver::StopSaveThread()
 	if (m_iThreadState == ThreadStop)
 	{
 
-		Msg("!! Thread Already Stop!!");
+		Msg("!!AFPROGRESSAVER: Thread Already Stop!!");
 		return;
 	}
 
@@ -183,14 +255,14 @@ void CProgressSaver::StopSaveThread()
 	{
 		if (m_iThreadState != ThreadWait)
 		{
-			Msg("!! Waiting Thread Timeout!");
+			Msg("!!AFPROGRESSAVER: Waiting Thread Timeout!");
 			Sleep(10);
 			continue;
 		}
 		else
 		{
 			NeedStopThread = true;
-			Msg("-- Starting Thread Destroy Process!");
+			Msg("--AFPROGRESSAVER: Starting Thread Destroy Process!");
 			break;
 		}
 	}
@@ -216,6 +288,8 @@ LPCSTR CProgressSaver::GetThreadStateAsString()
 		return "ThreadSaveEnvData";
 	case ThreadSaveOnDeath:
 		return "ThreadSaveOnDeath";
+	case ThreadSaveFractionUpgr:
+		return "ThreadSaveFractionUpgr";
 	default:
 		return "unknown error";
 	}

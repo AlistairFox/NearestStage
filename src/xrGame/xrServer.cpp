@@ -1350,6 +1350,7 @@ extern u32 boxes = 0;
 extern u32 breakables = 0;
 extern u32 lamps = 0;
 extern BOOL		af_sv_collect_statistic;
+#include "server_progress_saver.h"
 void xrServer::GetServerInfo( CServerInfo* si )
 {
 	string32  tmp;
@@ -1416,6 +1417,11 @@ void xrServer::GetServerInfo( CServerInfo* si )
 			
 		}
 		si->AddItem( "Game time", tmp256, RGB(205,228,178) );
+
+
+		string128 threadstate;
+		sprintf(threadstate, "SaverThreadState: %s", CProgressSaver::Get()->GetThreadStateAsString());
+		si->AddItem("TH", threadstate, RGB(120, 0, 255));
 	}
 
 	stalkers = 0;

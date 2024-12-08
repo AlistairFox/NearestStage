@@ -5,6 +5,7 @@
 
 void CProgressSaver::LoadPlayersOnDeath(game_PlayerState* ps)
 {
+#ifdef	PLAYERONDEATH_SAVING
 	if (MPlayersOnDeath.find(ps->GetStaticID()) != MPlayersOnDeath.end())
 	{
 		if (MPlayersOnDeath[ps->GetStaticID()].Outfit)
@@ -12,7 +13,7 @@ void CProgressSaver::LoadPlayersOnDeath(game_PlayerState* ps)
 			LPCSTR sect = MPlayersOnDeath[ps->GetStaticID()].OutfitName;
 			float cond = MPlayersOnDeath[ps->GetStaticID()].OutfitCond;
 
-			Msg("%s Load OnDeath Outfit: %s, cond: %f", ps->getName(), sect, cond);
+			Msg("AFPROGRESSAVER: %s Load OnDeath Outfit: %s, cond: %f", ps->getName(), sect, cond);
 			cond /= Random.randF(1.1, 2);
 
 			CSE_Abstract* E = Level().Server->game->spawn_begin(sect);
@@ -44,7 +45,7 @@ void CProgressSaver::LoadPlayersOnDeath(game_PlayerState* ps)
 			LPCSTR sect = MPlayersOnDeath[ps->GetStaticID()].HelmetName;
 			float cond = MPlayersOnDeath[ps->GetStaticID()].HelmetCond;
 
-			Msg("%s Load OnDeath Helmet: %s, cond: %f", ps->getName(), sect, cond);
+			Msg("AFPROGRESSAVER: %s Load OnDeath Helmet: %s, cond: %f", ps->getName(), sect, cond);
 			cond /= Random.randF(1.1, 2);
 
 			CSE_Abstract* E = Level().Server->game->spawn_begin(sect);
@@ -74,7 +75,7 @@ void CProgressSaver::LoadPlayersOnDeath(game_PlayerState* ps)
 		{
 			LPCSTR sect = MPlayersOnDeath[ps->GetStaticID()].DetectorName;
 			float cond = MPlayersOnDeath[ps->GetStaticID()].DetectorCond;
-			Msg("%s Load OnDeath Detector: %s", ps->getName(), sect);
+			Msg("AFPROGRESSAVER: %s Load OnDeath Detector: %s", ps->getName(), sect);
 
 			cond /= Random.randF(1.1, 2);
 
@@ -95,7 +96,7 @@ void CProgressSaver::LoadPlayersOnDeath(game_PlayerState* ps)
 			float cond = MPlayersOnDeath[ps->GetStaticID()].Weapon1Cond;
 			u8 AddonState = MPlayersOnDeath[ps->GetStaticID()].Weapon1AddonState;
 			u8 CurrScope = MPlayersOnDeath[ps->GetStaticID()].Weapon1CurScope;
-			Msg("%s Load OnDeath Weapon: %s, cond: %f", ps->getName(), sect, cond);
+			Msg("AFPROGRESSAVER: %s Load OnDeath Weapon: %s, cond: %f", ps->getName(), sect, cond);
 
 
 			cond /= Random.randF(1.1, 2);
@@ -129,7 +130,7 @@ void CProgressSaver::LoadPlayersOnDeath(game_PlayerState* ps)
 			float cond = MPlayersOnDeath[ps->GetStaticID()].Weapon2Cond;
 			u8 AddonState = MPlayersOnDeath[ps->GetStaticID()].Weapon2AddonState;
 			u8 CurrScope = MPlayersOnDeath[ps->GetStaticID()].Weapon2CurScope;
-			Msg("%s Load OnDeath Weapon: %s, cond: %f", ps->getName(), sect, cond);
+			Msg("AFPROGRESSAVER: %s Load OnDeath Weapon: %s, cond: %f", ps->getName(), sect, cond);
 
 
 			cond /= Random.randF(1.1, 2);
@@ -156,16 +157,20 @@ void CProgressSaver::LoadPlayersOnDeath(game_PlayerState* ps)
 			Level().Server->game->spawn_end(E, fmp->m_server->GetServerClient()->ID);
 		}
 	}
+#endif
 }
 
 void CProgressSaver::ClearPlayersOnDeathBuffer(u16 StaticID)
 {
+#ifdef	PLAYERONDEATH_SAVING
 	if (MPlayersOnDeath.find(StaticID) != MPlayersOnDeath.end())
 		MPlayersOnDeath.erase(StaticID);
+#endif
 }
 
 void CProgressSaver::FillPlayerOnDisconnect(u16 StaticID, string_path path)
 {
+#ifdef	PLAYERONDEATH_SAVING
 	if (MPlayersOnDeath.find(StaticID) == MPlayersOnDeath.end())
 		return;
 
@@ -177,4 +182,5 @@ void CProgressSaver::FillPlayerOnDisconnect(u16 StaticID, string_path path)
 	csSaving.Enter();
 	ThreadTasks.push_back({ nullptr, nullptr, dis, nullptr });
 	csSaving.Leave();
+#endif
 }
