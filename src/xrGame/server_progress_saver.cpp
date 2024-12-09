@@ -26,7 +26,7 @@ CProgressSaver::CProgressSaver(game_sv_freemp* Game) : fmp(Game)
 	Msg("!!AFPROGRESSAVER: PlayerOnDeath Saving DISABLED!!");
 #endif
 #ifndef FRACTIONUPGRADE_SAVING
-	Msg("!!AFPROGRESSAVER: FractionUpgrade Saveing DISABLED!!");
+	Msg("!!AFPROGRESSAVER: FractionUpgrade Saving DISABLED!!");
 #endif
 	SetThreadState(ThreadStop);
 
@@ -93,7 +93,7 @@ void CProgressSaver::FillServerEnvBuffer()
 #endif // SERVER_ENV_SAVING
 }
 
-bool CProgressSaver::LoadServerEnvironment(u32& hours, u32& minutes, u32& seconds, u32& days, u32& months, u32& years)
+void CProgressSaver::LoadServerEnvironment(u32& hours, u32& minutes, u32& seconds, u32& days, u32& months, u32& years, LPCSTR section)
 {
 	bool SaveLoad = false;
 #ifdef SERVER_ENV_SAVING
@@ -104,7 +104,7 @@ bool CProgressSaver::LoadServerEnvironment(u32& hours, u32& minutes, u32& second
 		IReader* env_reader = FS.r_open(save_game_time);
 		if (env_reader->open_chunk(ENV_CHUNK))
 		{
-			Msg("AFPROGRESSAVER: TIME SET");
+			Msg("--AFPROGRESSAVER: Server Environment Save Loaded!");
 			shared_str time;
 			shared_str data;
 			shared_str weather;
@@ -119,7 +119,12 @@ bool CProgressSaver::LoadServerEnvironment(u32& hours, u32& minutes, u32& second
 		FS.r_close(env_reader);
 	}
 #endif
-	return SaveLoad;
+	if (!SaveLoad)
+	{
+		Msg("!! AFPROGRESSAVER: Can't Find Server Environment Save File!");
+		sscanf(pSettings->r_string(section, "start_time"), "%d:%d:%d", &hours, &minutes, &seconds);
+		sscanf(pSettings->r_string(section, "start_date"), "%d.%d.%d", &days, &months, &years);
+	}
 }
 
 void CProgressSaver::SaveManagerUpdate()
@@ -212,7 +217,7 @@ void CProgressSaver::ThreadWorker()
 				break;
 			}
 		}
-		catch (...) // Перехватываем все исключения
+		catch (...)
 		{
 			Msg("! AFPROGRESSAVER: !!!CRITICAL ERROR!!! Stopping Save Thread");
 			break;
@@ -293,4 +298,11 @@ LPCSTR CProgressSaver::GetThreadStateAsString()
 	default:
 		return "unknown error";
 	}
+}
+
+void CProgressSaver::AddConsoleDebugInfo(CServerInfo* si)
+{
+	string128 threadstate;
+	sprintf(threadstate, "SaverThreadState: %s", GetThreadStateAsString());
+	si->AddItem("AFPROGRESSAVER:", threadstate, RGB(120, 0, 255));
 }

@@ -1544,41 +1544,6 @@ void  CInventory::AddAvailableItemsCheck(TIItemContainer& items_container, bool 
 	}
 }
 
-void CInventory::AddSaveAvailableItems(TIItemContainer& items_container) const
-{
-	for (TIItemContainer::const_iterator it = m_ruck.begin(); m_ruck.end() != it; ++it)
-	{
-		PIItem pIItem = *it;
-		items_container.push_back(pIItem);
-	}
-
-	if (m_bBeltUseful)
-	{
-		for (TIItemContainer::const_iterator it = m_belt.begin(); m_belt.end() != it; ++it)
-		{
-			PIItem pIItem = *it;
-			items_container.push_back(pIItem);
-		}
-	}
-
-	if (m_bSlotsUseful)
-	{
-		u16 I = FirstSlot();
-		u16 E = LastSlot();
-		for (; I <= E; ++I)
-		{
-			if (I == BOLT_SLOT)
-				continue;
-			PIItem item = ItemFromSlot(I);
-			if(item)
-			{
-				items_container.push_back(item);
-			}
-		}
-	}
-}
-
-
 void  CInventory::AddAvailableItems(TIItemContainer& items_container, bool for_trade) const
 {
 	//Msg("ADD ITEM AVALIABLE");

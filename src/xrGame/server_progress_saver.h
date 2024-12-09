@@ -18,7 +18,7 @@
 #define SERVER_ENV_SAVING
 #define PLAYERONDEATH_SAVING
 //#define FRACTIONUPGRADE_SAVING
-
+//#define LOGINSYSTEM_WRITER
 class game_sv_freemp;
 class CProgressSaver
 {
@@ -389,13 +389,14 @@ public:
 
 	void				OnPlayerRespawn(game_PlayerState* ps);
 	void				OnPlayerDisconnect(LPSTR Name, u16 StaticID);
+	void				AddSaveAvailableItems(CActor* actor, TIItemContainer& items_container) const;
 #pragma endregion
 
 
 #pragma region GSData Methods
 	void				FillServerEnvBuffer();
-	bool				LoadServerEnvironment(u32& hours, u32& minutes,
-		u32& seconds, u32& days, u32& months, u32& years);
+	void				LoadServerEnvironment(u32& hours, u32& minutes,
+		u32& seconds, u32& days, u32& months, u32& years, LPCSTR section);
 #pragma endregion
 
 
@@ -443,6 +444,8 @@ public:
 	void				SetThreadState(ThreadState state) { m_iThreadState = state;}
 	u32					GetThreadState() const { return m_iThreadState; }
 	LPCSTR				GetThreadStateAsString();
+
+	void				AddConsoleDebugInfo(CServerInfo* si);
 
 private:
 	game_sv_freemp*				fmp;

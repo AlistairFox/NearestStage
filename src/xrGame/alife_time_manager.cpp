@@ -24,17 +24,9 @@ CALifeTimeManager::~CALifeTimeManager	()
 
 void CALifeTimeManager::init			(LPCSTR section)
 {
-	u32							years,months,days,hours,minutes,seconds;
+	u32							years{}, months{}, days{}, hours{}, minutes{}, seconds{};
 	
-	if (OnServer() && CProgressSaver::Get() && CProgressSaver::Get()->LoadServerEnvironment(hours, minutes, seconds, days, months, years))
-	{
-		Msg("-- Server Environment Save Loaded!");
-	}
-	else
-	{
-		sscanf(pSettings->r_string(section, "start_time"), "%d:%d:%d", &hours, &minutes, &seconds);
-		sscanf(pSettings->r_string(section, "start_date"), "%d.%d.%d", &days, &months, &years);
-	}
+	CProgressSaver::Get()->LoadServerEnvironment(hours, minutes, seconds, days, months, years, section);
 
 	m_start_game_time			= generate_time(years,months,days,hours,minutes,seconds);
 	m_time_factor				= pSettings->r_float(section,"time_factor");

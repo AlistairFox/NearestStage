@@ -113,7 +113,7 @@ void CProgressSaver::FillPlayerBuffer(game_PlayerState* ps)
 
 
 		TIItemContainer items;
-		actor->inventory().AddSaveAvailableItems(items);
+		AddSaveAvailableItems(actor, items);
 
 		for (const auto itm : items)
 		{
@@ -426,6 +426,10 @@ bool CProgressSaver::RemovePlayerSave(game_PlayerState* ps)
 
 void CProgressSaver::OnPlayerRespawn(game_PlayerState* ps)
 {
+	if (!ps)
+		return;
+
+
 	if (ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
 	{
 		LoadPlayerPortions(ps);
@@ -433,8 +437,7 @@ void CProgressSaver::OnPlayerRespawn(game_PlayerState* ps)
 		
 		ps->money_for_round /= Random.randF(1.f, 1.2f);
 	}
-
-	if (ps && !ps->testFlag(GAME_PLAYER_MP_SAVE_LOADED))
+	else
 	{
 		fmp->SpawnItemToActor(ps->GameID, "wpn_binoc");
 
@@ -458,4 +461,33 @@ void CProgressSaver::OnPlayerDisconnect(LPSTR Name, u16 StaticID)
 #ifdef INFO_PORTIONS_SAVING
 	Player_portions[StaticID].clear();
 #endif
+}
+
+void CProgressSaver::AddSaveAvailableItems(CActor* actor, TIItemContainer& items_container) const
+{
+	for (TIItemContainer::const_iterator it = actor->inventory().m_ruck.begin(); actor->inventory().m_ruck.end() != it; ++it)
+	{
+		PIItem pIItem = *it;
+		items_container.push_back(pIItem);
+	}
+
+
+	for (TIItemContainer::const_iterator it = actor->inventory().m_belt.begin(); actor->inventory().m_belt.end() != it; ++it)
+	{
+		PIItem pIItem = *it;
+		items_container.push_back(pIItem);
+	}
+
+	u16 I = actor->inventory().FirstSlot();
+	u16 E = actor->inventory().LastSlot();
+	for (; I <= E; ++I)
+	{
+		if (I == BOLT_SLOT)
+			continue;
+		PIItem item = actor->inventory().ItemFromSlot(I);
+		if (item)
+		{
+			items_container.push_back(item);
+		}
+	}
 }

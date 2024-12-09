@@ -1419,9 +1419,7 @@ void xrServer::GetServerInfo( CServerInfo* si )
 		si->AddItem( "Game time", tmp256, RGB(205,228,178) );
 
 
-		string128 threadstate;
-		sprintf(threadstate, "SaverThreadState: %s", CProgressSaver::Get()->GetThreadStateAsString());
-		si->AddItem("TH", threadstate, RGB(120, 0, 255));
+		CProgressSaver::Get()->AddConsoleDebugInfo(si);
 	}
 
 	stalkers = 0;
