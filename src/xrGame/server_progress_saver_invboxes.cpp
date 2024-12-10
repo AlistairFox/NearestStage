@@ -12,12 +12,31 @@ void CProgressSaver::FillInvBoxBuffer(CSE_ALifeInventoryBox* box)
 	FS.update_path(path_name, "$mp_saves_invbox_bin$", invbox_name);
 	xr_strcpy(OutBox->box_path, path_name);
 
-	for (const auto id : box->children)
-	{
-		CInventoryItem* item = smart_cast<CInventoryItem*>(Level().Objects.net_Find(id));
-		SItem Sitem(item);
+#ifdef PRIVATE_INVBOX_SAVING
+	CInventoryBox* PrivateBox = smart_cast<CInventoryBox*>(Level().Objects.net_Find(box->ID));
 
-		OutBox->Items.push_back(Sitem);
+	if (PrivateBox->IsPrivateBox)
+	{
+		OutBox->BoxType = InvBox::BoxTypes::INVBOX_PRIVATE;
+		for (const auto& BoxItemsList : PrivateBox->private_items)
+		{
+			CInventoryItem* item = smart_cast<CInventoryItem*>(Level().Objects.net_Find(BoxItemsList.first));
+			SItem Sitem(item);
+			PrivateBoxItem privateItem(Sitem, BoxItemsList.second);
+			OutBox->PrivateItems.push_back(privateItem);
+		}
+	}
+	else
+#endif
+	{
+		OutBox->BoxType = InvBox::BoxTypes::INVBOX_PUBLIC;
+		for (const auto id : box->children)
+		{
+			CInventoryItem* item = smart_cast<CInventoryItem*>(Level().Objects.net_Find(id));
+			SItem Sitem(item);
+
+			OutBox->Items.push_back(Sitem);
+		}
 	}
 
 	csSaving.Enter();
@@ -46,12 +65,22 @@ void CProgressSaver::BinnarLoadInvBox(CSE_ALifeInventoryBox* box)
 	IReader* reader = FS.r_open(filepath);
 	if (reader->open_chunk(INVBOX_ITEMS_CHUNK))
 	{
-		u16 item_count = reader->r_u16();
-
-		for (u16 id = 0; id != item_count; id++)
+		u8 BoxType = reader->r_u8();
+		u16 item_count = reader->r_u32();
+		for (u32 id = 0; id != item_count; id++)
 		{
+			u16 OwnerId = 0;
+			if (BoxType == InvBox::BoxTypes::INVBOX_PRIVATE)
+				OwnerId = reader->r_u16();
+
 			shared_str name;
 			reader->r_stringZ(name);
+
+			if (!pSettings->section_exist(name))
+				break;
+
+
+			reader->r_u16();
 			CSE_Abstract* E = Level().Server->game->spawn_begin(name.c_str());
 
 			E->ID_Parent = box->ID;
@@ -91,7 +120,14 @@ void CProgressSaver::BinnarLoadInvBox(CSE_ALifeInventoryBox* box)
 					item->m_upgrades.push_back(upgrade);
 				}
 			}
-			Level().Server->game->spawn_end(E, Level().Server->GetServerClient()->ID);
+			CSE_Abstract* FinalItem = fmp->spawn_end(E, fmp->m_server->GetServerClient()->ID);
+#ifdef PRIVATE_INVBOX_SAVING
+			if (BoxType == InvBox::BoxTypes::INVBOX_PRIVATE)
+			{
+				CInventoryBox* PrivateBox = smart_cast<CInventoryBox*>(Level().Objects.net_Find(box->ID));
+				PrivateBox->private_items[FinalItem->ID] = OwnerId;
+			}
+#endif // PRIVATE_INVBOX_SAVING
 		}
 	}
 	FS.r_close(reader);

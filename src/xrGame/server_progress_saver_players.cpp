@@ -406,22 +406,28 @@ bool CProgressSaver::RemovePlayerSave(game_PlayerState* ps)
 	string256 PlayerSaveDir;
 	sprintf(PlayerSaveDir, "%s\\%s_inventory.binsave", ps->getName(), ps->getName());
 	FS.update_path(PlayerSavePath, "$mp_saves_players_bin$", PlayerSaveDir);
-	if (FS.exist(PlayerSavePath))
-	{
-		WillRemove = true;
-		FS.file_delete(PlayerSavePath);
-	}
+	FillRemoveFilesList(PlayerSavePath);
 
 	string_path PlayerPosPath;
 	string256 PlayerPossDir;
 	sprintf(PlayerPossDir, "%s\\%s_position.binsave", ps->getName(), ps->getName());
 	FS.update_path(PlayerPosPath, "$mp_saves_players_bin$", PlayerPossDir);
-	if (FS.exist(PlayerPosPath))
-	{
-		FS.file_delete(PlayerPosPath);
-	}
+	FillRemoveFilesList(PlayerPosPath);
 
 	return WillRemove;
+}
+
+void CProgressSaver::FillRemoveFilesList(string_path path)
+{
+	if (!FS.exist(path))
+		return;
+
+	FileToDelete* ftd = xr_new<FileToDelete>();
+	strcpy(ftd->PPath,path);
+
+	csSaving.Enter();
+	ThreadTasks.push_back({ nullptr, nullptr, nullptr, nullptr, nullptr, ftd });
+	csSaving.Leave();
 }
 
 void CProgressSaver::OnPlayerRespawn(game_PlayerState* ps)

@@ -11,6 +11,7 @@
 #include "AnomalyDetector.h"
 #include "PDA.h"
 #include "ActorHelmet.h"
+#include "InventoryBox.h"
 
 #define INFO_PORTIONS_SAVING
 #define CHECK_BOX_FILE
@@ -19,6 +20,7 @@
 #define PLAYERONDEATH_SAVING
 //#define FRACTIONUPGRADE_SAVING
 //#define LOGINSYSTEM_WRITER
+//#define PRIVATE_INVBOX_SAVING
 class game_sv_freemp;
 class CProgressSaver
 {
@@ -109,10 +111,52 @@ public:
 		string2048 Uphrades;
 	};
 
+	struct PrivateBoxItem
+	{
+		PrivateBoxItem(SItem itm, u16 oid) : Item(itm), OwnerId(oid) {}
+		void OutputItems(IWriter* writer)
+		{
+			writer->w_u16(OwnerId);
+			Item.OutputItem(writer);
+		}
+		SItem Item;
+		u16 OwnerId = 0;
+	};
+
 	struct InvBox
 	{
 		string512 box_path;
+
+		u8 BoxType = 0;
+		enum BoxTypes
+		{
+			INVBOX_PUBLIC = 0,
+			INVBOX_PRIVATE
+		};
+		std::vector<PrivateBoxItem> PrivateItems;
 		std::vector<SItem> Items;
+
+		void OutputItems(IWriter* writer)
+		{
+			writer->w_u8(BoxType);
+			if (BoxType == INVBOX_PRIVATE)
+			{
+				writer->w_u32(PrivateItems.size());
+				for (auto& id : PrivateItems)
+				{
+					id.OutputItems(writer);
+				}
+			}
+			else if (BoxType == INVBOX_PUBLIC)
+			{
+				writer->w_u32(Items.size());
+
+				for (auto& id : Items)
+				{
+					id.OutputItem(writer);
+				}
+			}
+		}
 	};
 
 	struct PlayerStats
@@ -327,6 +371,12 @@ public:
 		float radiation = 0.f;
 	};
 
+	struct FileToDelete
+	{
+		string_path PPath;
+
+	};
+
 	struct SThreadTask
 	{
 		InvBox* box;
@@ -334,6 +384,7 @@ public:
 		OnDeathDisconnect* DisconnectBuf;
 		GlobalServerData* ServerData;
 		FractionUpgradeTask* FractUpgr;
+		FileToDelete* FDelete;
 	};
 #pragma endregion
 
@@ -390,6 +441,7 @@ public:
 	void				OnPlayerRespawn(game_PlayerState* ps);
 	void				OnPlayerDisconnect(LPSTR Name, u16 StaticID);
 	void				AddSaveAvailableItems(CActor* actor, TIItemContainer& items_container) const;
+	void				FillRemoveFilesList(string_path path);
 #pragma endregion
 
 
@@ -421,7 +473,8 @@ public:
 		ThreadSaveInvBox,
 		ThreadSaveEnvData,
 		ThreadSaveOnDeath,
-		ThreadSaveFractionUpgr
+		ThreadSaveFractionUpgr,
+		ThreadRemoveFiles
 	};
 
 	void				ThreadStarter();
@@ -436,6 +489,7 @@ public:
 	bool				GSDSaveStage(SThreadTask* task);
 	bool				OnDeathSaveStage(SThreadTask* task);
 	bool				FractionUpgradeSaveStage(SThreadTask* task);
+	bool				RemoveFileStage(SThreadTask* task);
 
 
 	void				StopSaveThread();

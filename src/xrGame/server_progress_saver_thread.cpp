@@ -26,6 +26,8 @@ bool CProgressSaver::SaveStageManager()
 		return false;
 	if (!FractionUpgradeSaveStage(&task))
 		return false;
+	if (!RemoveFileStage(&task))
+		return false;
 
 	return true;
 }
@@ -56,6 +58,7 @@ bool CProgressSaver::InvBoxSaveStage(SThreadTask* task)
 {
 	if (InvBox* OutBox = task->box)
 	{
+
 		SetThreadState(ThreadSaveInvBox);
 		IWriter* writer = FS.w_open(OutBox->box_path);
 
@@ -64,12 +67,8 @@ bool CProgressSaver::InvBoxSaveStage(SThreadTask* task)
 
 		writer->open_chunk(INVBOX_ITEMS_CHUNK);
 
-		writer->w_u16(OutBox->Items.size());
+		OutBox->OutputItems(writer);
 
-		for (auto& id : OutBox->Items)
-		{
-			id.OutputItem(writer);
-		}
 		writer->close_chunk();
 		FS.w_close(writer);
 		xr_delete(OutBox);
@@ -141,8 +140,8 @@ bool CProgressSaver::OnDeathSaveStage(SThreadTask* task)
 			writer->w_stringZ(dis->Items.DetectorName);
 			writer->w_u16(dis->Items.DetectorSlot);
 			writer->w_float(dis->Items.DetectorCond);
-			writer->w_u8(0);
-			writer->w_u8(0);
+
+			writer->w_u32(SItem::ItemTypes::InventoryItem);
 			writer->w_u8(0);
 		}
 
@@ -151,7 +150,7 @@ bool CProgressSaver::OnDeathSaveStage(SThreadTask* task)
 			writer->w_stringZ(dis->Items.OutfitName);
 			writer->w_u16(dis->Items.OutfitSlot);
 			writer->w_float(dis->Items.OutfitCond);
-			writer->w_u8(0);
+			writer->w_u32(SItem::ItemTypes::InventoryItem);
 			writer->w_u8(0);
 			if (dis->Items.OutfUpg)
 			{
@@ -167,7 +166,7 @@ bool CProgressSaver::OnDeathSaveStage(SThreadTask* task)
 			writer->w_stringZ(dis->Items.HelmetName);
 			writer->w_u16(dis->Items.OutfitSlot);
 			writer->w_float(dis->Items.HelmetCond);
-			writer->w_u8(0);
+			writer->w_u32(SItem::ItemTypes::InventoryItem);
 			writer->w_u8(0);
 			if (dis->Items.HelmUpg)
 			{
@@ -183,8 +182,7 @@ bool CProgressSaver::OnDeathSaveStage(SThreadTask* task)
 			writer->w_stringZ(dis->Items.Weapon1Sect);
 			writer->w_u16(dis->Items.Weapon1Slot);
 			writer->w_float(dis->Items.Weapon1Cond);
-			writer->w_u8(0);
-			writer->w_u8(1);
+			writer->w_u32(SItem::ItemTypes::Weapon);
 			writer->w_u16(0);
 			writer->w_u8(0);
 			writer->w_u8(dis->Items.Weapon1AddonState);
@@ -204,8 +202,7 @@ bool CProgressSaver::OnDeathSaveStage(SThreadTask* task)
 			writer->w_stringZ(dis->Items.Weapon2Sect);
 			writer->w_u16(dis->Items.Weapon2Slot);
 			writer->w_float(dis->Items.Weapon2Cond);
-			writer->w_u8(0);
-			writer->w_u8(1);
+			writer->w_u32(SItem::ItemTypes::Weapon);
 			writer->w_u16(0);
 			writer->w_u8(0);
 			writer->w_u8(dis->Items.Weapon2AddonState);
@@ -274,5 +271,18 @@ bool CProgressSaver::FractionUpgradeSaveStage(SThreadTask* task)
 		xr_delete(MUpgrade);
 	}
 #endif
+	return true;
+}
+
+bool CProgressSaver::RemoveFileStage(SThreadTask* task)
+{
+	if (FileToDelete* fd = task->FDelete)
+	{
+		SetThreadState(ThreadRemoveFiles);
+
+		FS.file_delete(fd->PPath);
+
+		xr_delete(fd);
+	}
 	return true;
 }

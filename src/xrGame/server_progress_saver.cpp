@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "server_progress_saver.h"
 #include <ui/UIInventoryUtilities.h>
+#include <DbgHelp.h>
 
 CProgressSaver* CProgressSaver::m_Instance = NULL;
 CProgressSaver::CProgressSaver(game_sv_freemp* Game) : fmp(Game)
@@ -28,6 +29,14 @@ CProgressSaver::CProgressSaver(game_sv_freemp* Game) : fmp(Game)
 #ifndef FRACTIONUPGRADE_SAVING
 	Msg("!!AFPROGRESSAVER: FractionUpgrade Saving DISABLED!!");
 #endif
+#ifndef PRIVATE_INVBOX_SAVING
+	Msg("!!AFPROGRESSAVER: PrivateInvBox Saving DISABLED!!");
+#endif // !PRIVATE_INVBOX_SAVING
+#ifndef LOGINSYSTEM_WRITER
+	Msg("!!AFPROGRESSAVER: LoginSystem Writer DISABLED!!");
+#endif
+
+
 	SetThreadState(ThreadStop);
 
 #ifdef CHECK_BOX_FILE
