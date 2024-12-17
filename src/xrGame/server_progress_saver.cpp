@@ -63,13 +63,12 @@ CProgressSaver::~CProgressSaver()
 }
 
 #ifdef FRACTIONUPGRADE_SAVING
-void CProgressSaver::FillFractionUpgrades(std::map<u8, CServerCommunityUpgrade::Upgrades> MUpgrade)
+void CProgressSaver::FillFractionUpgrades()
 {
-
 	FractionUpgradeTask* task = xr_new<FractionUpgradeTask>();
 
-	FS.update_path(task->team_path, "$mp_saves$", "team_upgrades.ltx");
-	task->MFractUpgradeTask = MUpgrade;
+	FS.update_path(task->team_path, "$fraction_upgrade$", "team_upgrades.ltx");
+	task->MFractUpgradeTask = CServerCommunityUpgrade::Get()->MUpgrades;
 
 	csSaving.Enter();
 	ThreadTasks.push_back({ nullptr, nullptr, nullptr, nullptr, task });
@@ -196,6 +195,14 @@ void CProgressSaver::SaveManagerUpdate()
 			}
 		}
 	}
+
+#ifdef FRACTIONUPGRADE_SAVING
+	if (Level().game && FractionUpgradeFillTimer <= Device.dwTimeGlobal)
+	{
+		FractionUpgradeFillTimer = Device.dwTimeGlobal + (save_time5 * 1000);
+		FillFractionUpgrades();
+	}
+#endif
 }
 
 void CProgressSaver::ThreadStarter()

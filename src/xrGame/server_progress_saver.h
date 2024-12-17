@@ -459,7 +459,7 @@ public:
 
 #pragma region FractionUpgrade Methods
 #ifdef FRACTIONUPGRADE_SAVING
-	void				FillFractionUpgrades(std::map<u8, CServerCommunityUpgrade::Upgrades> MUpgrade);
+	void				FillFractionUpgrades();
 #endif
 #pragma endregion
 
@@ -493,7 +493,7 @@ public:
 
 
 	void				StopSaveThread();
-	bool				ThreadIsWorking() const { return m_iThreadState != (ThreadStop || ThreadStarting); }
+	bool				ThreadIsWorking() const { return m_iThreadState != ThreadStop && m_iThreadState != ThreadStarting; }
 
 	void				SetThreadState(ThreadState state) { m_iThreadState = state;}
 	u32					GetThreadState() const { return m_iThreadState; }
@@ -515,9 +515,16 @@ private:
 	u32							InvBoxFillTimer = 0;
 	u32							InvBoxSaveTimer = 0;
 	u32							PlayerSaveTimer = 0;
+#ifdef FRACTIONUPGRADE_SAVING
+	u32							FractionUpgradeFillTimer = 0;
+#endif
 };
 
 extern int save_time;
 extern int save_time2;
 extern int save_time3;
 extern int save_time4;
+
+#ifdef FRACTIONUPGRADE_SAVING
+extern int save_time5;
+#endif // FRACTIONUPGRADE_SAVING
