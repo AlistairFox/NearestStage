@@ -168,15 +168,15 @@ void CHW::CreateDevice(HWND m_hWnd, bool move_window)
 	sd.OutputWindow = m_hWnd;
 	sd.Windowed = bWindowed;
 
-	if (bWindowed)
-	{
-		sd.BufferDesc.RefreshRate.Numerator = Device.GetMonitorRefresh();
-		sd.BufferDesc.RefreshRate.Denominator = 1;
-	}
-	else
-	{
+	//if (bWindowed)
+	//{
+	//	sd.BufferDesc.RefreshRate.Numerator = Device.GetMonitorRefresh();
+	//	sd.BufferDesc.RefreshRate.Denominator = 1;
+	//}
+	//else
+	//{
 		sd.BufferDesc.RefreshRate = selectRefresh(sd.BufferDesc.Width, sd.BufferDesc.Height, sd.BufferDesc.Format);
-	}
+	//}
 
 	//	Additional set up
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -328,12 +328,12 @@ void CHW::Reset(HWND hwnd)
 
 	selectResolution(desc.Width, desc.Height, bWindowed);
 
-	if (bWindowed)
-	{
-		desc.RefreshRate.Numerator = Device.GetMonitorRefresh();
-		desc.RefreshRate.Denominator = 1;
-	}
-	else
+	//if (bWindowed)
+	//{
+	//	desc.RefreshRate.Numerator = Device.GetMonitorRefresh();
+	//	desc.RefreshRate.Denominator = 1;
+	//}
+	//else
 		desc.RefreshRate = selectRefresh(desc.Width, desc.Height, desc.Format);
 
 	CHK_DX(m_pSwapChain->ResizeTarget(&desc));
@@ -528,38 +528,31 @@ void CHW::updateWindowProps(HWND m_hWnd)
 	// Set window properties depending on what mode were in.
 	if (bWindowed) {
 		if (m_move_window) {
-			dwWindowStyle = WS_BORDER | WS_VISIBLE;
-			if (!strstr(Core.Params, "-no_dialog_header"))
-				dwWindowStyle |= WS_DLGFRAME | WS_SYSMENU | WS_MINIMIZEBOX;
+			dwWindowStyle = WS_POPUP | WS_VISIBLE; 
+
+			DWORD dwExStyle = WS_EX_LAYERED;
+
 			SetWindowLong(m_hWnd, GWL_STYLE, dwWindowStyle);
-			// When moving from fullscreen to windowed mode, it is important to
-			// adjust the window size after recreating the device rather than
-			// beforehand to ensure that you get the window size you want.  For
-			// example, when switching from 640x480 fullscreen to windowed with
-			// a 1000x600 window on a 1024x768 desktop, it is impossible to set
-			// the window size to 1000x600 until after the display mode has
-			// changed to 1024x768, because windows cannot be larger than the
-			// desktop.
+			SetWindowLong(m_hWnd, GWL_EXSTYLE, dwExStyle);
 
-			RECT			m_rcWindowBounds;
-			RECT				DesktopRect;
+			RECT DesktopRect;
+			SystemParametersInfo(SPI_GETWORKAREA, 0, &DesktopRect, 0);
 
-			GetClientRect(GetDesktopWindow(), &DesktopRect);
+			RECT WindowRect;
+			SetRect(&WindowRect,
+				DesktopRect.left,
+				DesktopRect.top,
+				DesktopRect.right,
+				DesktopRect.bottom);
 
-			SetRect(&m_rcWindowBounds,
-				(DesktopRect.right - m_ChainDesc.BufferDesc.Width) / 2,
-				(DesktopRect.bottom - m_ChainDesc.BufferDesc.Height) / 2,
-				(DesktopRect.right + m_ChainDesc.BufferDesc.Width) / 2,
-				(DesktopRect.bottom + m_ChainDesc.BufferDesc.Height) / 2);
-
-			AdjustWindowRect(&m_rcWindowBounds, dwWindowStyle, FALSE);
+			AdjustWindowRect(&WindowRect, dwWindowStyle, FALSE);
 
 			SetWindowPos(m_hWnd,
 				HWND_NOTOPMOST,
-				m_rcWindowBounds.left,
-				m_rcWindowBounds.top,
-				(m_rcWindowBounds.right - m_rcWindowBounds.left),
-				(m_rcWindowBounds.bottom - m_rcWindowBounds.top),
+				WindowRect.left,
+				WindowRect.top,
+				(WindowRect.right - WindowRect.left),
+				(WindowRect.bottom - WindowRect.top),
 				SWP_SHOWWINDOW | SWP_NOCOPYBITS | SWP_DRAWFRAME);
 		}
 	}
