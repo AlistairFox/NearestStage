@@ -71,7 +71,7 @@ void CProgressSaver::FillFractionUpgrades()
 	task->MFractUpgradeTask = CServerCommunityUpgrade::Get()->MUpgrades;
 
 	csSaving.Enter();
-	ThreadTasks.push_back({ nullptr, nullptr, nullptr, nullptr, task });
+	ThreadTasks.push_back(SThreadTask(task));
 	csSaving.Leave();
 }
 #endif
@@ -94,7 +94,7 @@ void CProgressSaver::FillServerEnvBuffer()
 		xr_strcpy(GSdata->Weather, g_pGamePersistent->Environment().CurrentWeatherName.c_str());
 
 		csSaving.Enter();
-		ThreadTasks.push_back({ nullptr, nullptr, nullptr, GSdata });
+		ThreadTasks.push_back(SThreadTask(GSdata));
 		csSaving.Leave();
 	}
 	///////////////Server environment saving//////////////////////

@@ -99,16 +99,16 @@ public:
 		};
 
 		u32 ItemType = 0;
-		string128 ItemSect;
-		u16 ItemSlot;
-		float ItemCond;
+		string128 ItemSect{};
+		u16 ItemSlot = 0;
+		float ItemCond = 1.f;
 		u16 AmmoBoxCurr = 0;
 		u16 AmmoElapsed = 0;
 		u8 AmmoType = 0;
 		u8 AddonState = 0;
 		u8 CurrScope = 0;
 		bool HasUpgr = false;
-		string2048 Uphrades;
+		string2048 Uphrades{};
 	};
 
 	struct PrivateBoxItem
@@ -125,7 +125,7 @@ public:
 
 	struct InvBox
 	{
-		string512 box_path;
+		string512 box_path{};
 
 		u8 BoxType = 0;
 		enum BoxTypes
@@ -182,14 +182,14 @@ public:
 			else
 				SetPossition = false;; // cheking save position
 		}
-		s32 money;
+		s32 money = 0;
 		float satiety = 1.f;
 		float thirst = 1.f;
 		float radiation = 1.f;
 		u8 team = 8;
 		bool SetPossition = false;
-		Fvector3 pos;
-		Fvector3 angle;
+		Fvector3 pos{};
+		Fvector3 angle{};
 
 
 		void StatsOutput(IWriter* writer)
@@ -234,45 +234,45 @@ public:
 		u8 Team = 8;
 		//Outfit
 		bool Outfit = false;
-		LPCSTR OutfitName;
-		float OutfitCond;
+		LPCSTR OutfitName{};
+		float OutfitCond = 1.f;
 		bool OutfUpg = false;
-		string2048 OutfitUpgrades;
-		u16 OutfitSlot;
+		string2048 OutfitUpgrades{};
+		u16 OutfitSlot = 0;
 
 		//Helm
 		bool helm = false;
-		LPCSTR HelmetName;
-		float HelmetCond;
+		LPCSTR HelmetName{};
+		float HelmetCond = 1.f;
 		bool HelmUpg = false;
-		string2048 HelmetUpgrades;
-		u16 HelmSlot;
+		string2048 HelmetUpgrades{};
+		u16 HelmSlot = 0;
 
 		//Detector
 		bool detector = false;
-		LPCSTR DetectorName;
-		float DetectorCond;
-		u16 DetectorSlot;
+		LPCSTR DetectorName{};
+		float DetectorCond{};
+		u16 DetectorSlot = 0;
 
 		//Weapon1
 		bool weapon1 = false;
-		LPCSTR Weapon1Sect;
-		float Weapon1Cond;
+		LPCSTR Weapon1Sect{};
+		float Weapon1Cond = 1.f;
 		bool weapon1Upgr = false;
-		string2048 Weapon1Upgrades;
-		u8 Weapon1AddonState;
-		u8 Weapon1CurScope;
-		u16 Weapon1Slot;
+		string2048 Weapon1Upgrades{};
+		u8 Weapon1AddonState = 0;
+		u8 Weapon1CurScope = 0; 
+		u16 Weapon1Slot = 0;
 
 		//Weapon2
 		bool weapon2 = false;
-		LPCSTR Weapon2Sect;
-		float Weapon2Cond;
+		LPCSTR Weapon2Sect{};
+		float Weapon2Cond = 1.f;
 		bool weapon2Upgr = false;
-		string2048 Weapon2Upgrades;
-		u8 Weapon2AddonState;
-		u8 Weapon2CurScope;
-		u16 Weapon2Slot;
+		string2048 Weapon2Upgrades{};
+		u8 Weapon2AddonState = 0;
+		u8 Weapon2CurScope = 0;
+		u16 Weapon2Slot = 0;
 
 	};
 
@@ -281,8 +281,8 @@ public:
 
 		PlayerStats Stats;
 		std::vector<SItem> Items;
-		string512 PlayerPath;
-		string128 PlayerName;
+		string512 PlayerPath{};
+		string128 PlayerName{};
 		xr_vector<shared_str> InfoPortions;
 
 		Players(game_PlayerState* ps) : Stats(ps)
@@ -345,20 +345,20 @@ public:
 	struct OnDeathDisconnect
 	{
 		SPlayersOnDeathBuff Items;
-		string512 PlayerPath;
+		string512 PlayerPath{};
 	};
 
 	struct GlobalServerData
 	{
-		string128 Time;
-		string128 Data;
-		string128 Weather;
-		string512 GSDPath;
+		string128 Time{};
+		string128 Data{};
+		string128 Weather{};
+		string512 GSDPath{};
 	};
 
 	struct FractionUpgradeTask
 	{
-		string_path team_path;
+		string_path team_path{};
 #ifdef FRACTIONUPGRADE_SAVING
 		std::map<u8, CServerCommunityUpgrade::Upgrades> MFractUpgradeTask;
 #endif
@@ -373,18 +373,30 @@ public:
 
 	struct FileToDelete
 	{
-		string_path PPath;
+		string_path PPath{};
 
 	};
 
 	struct SThreadTask
 	{
-		InvBox* box;
-		Players* players;
-		OnDeathDisconnect* DisconnectBuf;
-		GlobalServerData* ServerData;
-		FractionUpgradeTask* FractUpgr;
-		FileToDelete* FDelete;
+		SThreadTask(InvBox* tBox) : box(tBox) {}
+
+		SThreadTask(Players* tPlayer) : players(tPlayer) {}
+
+		SThreadTask(OnDeathDisconnect* tOnDis) : DisconnectBuf(tOnDis) {}
+
+		SThreadTask(GlobalServerData* tGSD) : ServerData(tGSD) {}
+
+		SThreadTask(FractionUpgradeTask* tFU) : FractUpgr(tFU) {}
+
+		SThreadTask(FileToDelete* tFTD) : FDelete(tFTD) {}
+
+		InvBox* box = nullptr;
+		Players* players = nullptr;
+		OnDeathDisconnect* DisconnectBuf = nullptr;
+		GlobalServerData* ServerData = nullptr;
+		FractionUpgradeTask* FractUpgr = nullptr;
+		FileToDelete* FDelete = nullptr;
 	};
 #pragma endregion
 

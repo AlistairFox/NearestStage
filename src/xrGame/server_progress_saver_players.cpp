@@ -123,7 +123,7 @@ void CProgressSaver::FillPlayerBuffer(game_PlayerState* ps)
 
 
 		csSaving.Enter();
-		ThreadTasks.push_back({ nullptr, pl, nullptr, nullptr });
+		ThreadTasks.push_back(SThreadTask(pl));
 		csSaving.Leave();
 	}
 
@@ -426,7 +426,7 @@ void CProgressSaver::FillRemoveFilesList(string_path path)
 	strcpy(ftd->PPath,path);
 
 	csSaving.Enter();
-	ThreadTasks.push_back({ nullptr, nullptr, nullptr, nullptr, nullptr, ftd });
+	ThreadTasks.push_back(SThreadTask(ftd));
 	csSaving.Leave();
 }
 

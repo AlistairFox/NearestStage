@@ -180,7 +180,7 @@ void CProgressSaver::FillPlayerOnDisconnect(u16 StaticID, string_path path)
 	dis->Items = MPlayersOnDeath[StaticID];
 
 	csSaving.Enter();
-	ThreadTasks.push_back({ nullptr, nullptr, dis, nullptr });
+	ThreadTasks.push_back(SThreadTask(dis));
 	csSaving.Leave();
 #endif
 }

@@ -40,7 +40,7 @@ void CProgressSaver::FillInvBoxBuffer(CSE_ALifeInventoryBox* box)
 	}
 
 	csSaving.Enter();
-	ThreadTasks.push_back({ OutBox, nullptr, nullptr, nullptr });
+	ThreadTasks.push_back(SThreadTask(OutBox));
 	csSaving.Leave();
 }
 
