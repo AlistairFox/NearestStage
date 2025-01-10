@@ -312,9 +312,7 @@ function se_lamp:keep_saved_data_anyway()
 	return true
 end
 function se_lamp:can_switch_online()
-	if(self.secret_item) then
-		return false
-	end
+
 	return cse_alife_object_hanging_lamp.can_switch_online(self)
 end
 

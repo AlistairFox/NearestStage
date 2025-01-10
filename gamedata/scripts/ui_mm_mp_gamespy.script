@@ -364,7 +364,6 @@ function gamespy_page:OnLoginResultOk()
         self:HideDialog()
         self.owner:ShowDialog(true)
         self.owner:Show(true)
-        self.owner:OnButton_multiplayer_clicked()
     end
 end
 

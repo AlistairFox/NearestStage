@@ -786,20 +786,7 @@ void game_sv_mp::OnPlayerDisconnect		(ClientID id_who, LPSTR Name, u16 GameID, u
 	P.w_stringZ					(Name);
 	u_EventSend					(P);
 	//---------------------------------------------------
-
-//	AllowDeadBodyRemove			(id_who, GameID);
-	CObject* pObject = Level().Objects.net_Find(GameID);
-	CActorMP* pActor = smart_cast <CActorMP*>(pObject);
 	KillPlayer(id_who, GameID);
-	
-//	if (pActor->AlreadyDie())
-//		pActor->DestroyObject();
-
-	
-	CSE_Abstract* pSObject = get_entity_from_eid(GameID);
-	
-
-
 	inherited::OnPlayerDisconnect (id_who, Name, GameID, StaticID);
 }
 

@@ -69,7 +69,6 @@ function main_menu:InitCallBacks()
 	self:AddCallback("btn_net_game",	ui_events.BUTTON_CLICKED,				self.OnButton_network_game_clicked,	self)
 	self:AddCallback("btn_internet",	ui_events.BUTTON_CLICKED,				self.OnButton_internet_clicked,		self)
 	self:AddCallback("btn_localnet",	ui_events.BUTTON_CLICKED,				self.OnButton_localnet_clicked,		self)
-	self:AddCallback("btn_multiplayer", ui_events.BUTTON_CLICKED,				self.OnButton_multiplayer_clicked,	self)
 	self:AddCallback("btn_logout",		ui_events.BUTTON_CLICKED,				self.OnButton_logout_clicked,		self)
 	
 	-- quit
@@ -267,28 +266,6 @@ local console			= get_console()
 console:execute			("check_for_updates 0")
 end
 
-function main_menu:OnButton_multiplayer_clicked()
-	-- assert(self.gs_profile)
-
-	if not(self.mp_dlg) then
-        self.mp_dlg = ui_mp_main.mp_main(self.gs_profile:online())
-        self.mp_dlg.owner = self
-		self.mp_dlg:OnRadio_NetChanged()
-		if (self.mp_dlg.online) then
-			self.mp_dlg.dlg_profile:InitBestScores()
-			self.mp_dlg.dlg_profile:FillRewardsTable()
-		end
-    end
-    self.mp_dlg:UpdateControls()
-    self.mp_dlg:ShowDialog(true)
-
-    self:HideDialog()
-	self:Show(false)
-
-	local console			= get_console()
-	console:execute			("check_for_updates 0")
-end
-
 function main_menu:OnButton_logout_clicked()
 	-- assert(self.gs_profile)
 	self.shniaga:ShowPage(CUIMMShniaga.epi_new_network_game) --fake
@@ -331,9 +308,6 @@ function main_menu:OnButton_localnet_clicked()
 end
 
 function main_menu:Dispatch(cmd, param)  --virtual function
-	if cmd == 2 then
-		self:OnButton_multiplayer_clicked()
-	end
 	return true
 end
 
