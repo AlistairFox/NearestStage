@@ -21,6 +21,18 @@
 //#define FRACTIONUPGRADE_SAVING
 //#define LOGINSYSTEM_WRITER
 //#define PRIVATE_INVBOX_SAVING
+
+
+
+
+#define STATS_STR_FORMAT "_statsdata.binsave"
+#define POSITION_STR_FORMAT "_position.binsave"
+#define TEAMDATA_STR_FORMAT "_teamdata.binsave"
+#define DIALOGS_STR_FORMAT "_dialogs.binsave"
+#define INVENTORY_STR_FORMAT "_inventory.binsave"
+
+#define PLAYERSAVE_DIRECTORY "$mp_saves_players_bin$"
+
 class game_sv_freemp;
 class CProgressSaver
 {
@@ -207,9 +219,7 @@ public:
 #endif 
 
 
-			writer->open_chunk(ACTOR_TEAM);
-			writer->w_u8(team);
-			writer->close_chunk();
+			FS.w_close(writer);
 		}
 
 		void StatsOutputPossition(IWriter* writer)
@@ -223,6 +233,14 @@ public:
 			}
 			else
 				writer->w_u8(0);
+			writer->close_chunk();
+			FS.w_close(writer);
+		}
+
+		void StatsOutputPlayerTeam(IWriter* writer)
+		{
+			writer->open_chunk(ACTOR_TEAM);
+			writer->w_u8(team);
 			writer->close_chunk();
 			FS.w_close(writer);
 		}
@@ -291,7 +309,7 @@ public:
 			string128 file_name;
 			xr_strcpy(file_name, ps->getName());
 			xr_strcat(file_name, "\\");
-			FS.update_path(file_name_path, "$mp_saves_players_bin$", file_name);
+			FS.update_path(file_name_path, PLAYERSAVE_DIRECTORY, file_name);
 
 			xr_strcpy(PlayerPath, file_name_path);
 			xr_strcpy(PlayerName, ps->getName());
@@ -307,20 +325,22 @@ public:
 
 			Stats.StatsOutput(writer);
 
-			writer->open_chunk(ACTOR_INV_ITEMS_CHUNK);
-			writer->w_u32(Items.size());
+			std::string PossPath = PlayerPath;
+			PossPath += PlayerName;
+			PossPath += POSITION_STR_FORMAT;
+			writer = FS.w_open(PossPath.c_str());
+			Stats.StatsOutputPossition(writer);
 
-			for (auto& item : Items)
-			{
-				item.OutputItem(writer);
-			}
-			writer->close_chunk();
-			FS.w_close(writer);
+			std::string TeamPath = PlayerPath;
+			TeamPath += PlayerName;
+			TeamPath += TEAMDATA_STR_FORMAT;
+			writer = FS.w_open(TeamPath.c_str());
+			Stats.StatsOutputPlayerTeam(writer);
 
 #ifdef INFO_PORTIONS_SAVING
 			std::string DialogsPath = PlayerPath;
 			DialogsPath += PlayerName;
-			DialogsPath += "_dialogs.binsave";
+			DialogsPath += DIALOGS_STR_FORMAT;
 			writer = FS.w_open(DialogsPath.c_str());
 			writer->open_chunk(INFO_PORTIONS_CHUNK);
 			writer->w_u32(InfoPortions.size());
@@ -332,13 +352,20 @@ public:
 			FS.w_close(writer);
 #endif
 
-			std::string PossPath = PlayerPath;
-			PossPath += PlayerName;
-			PossPath += "_position.binsave";
+			std::string PlayerInvPath = PlayerPath;
+			PlayerInvPath += PlayerName;
+			PlayerInvPath += INVENTORY_STR_FORMAT;
+			writer = FS.w_open(PlayerInvPath.c_str());
 
-			writer = FS.w_open(PossPath.c_str());
+			writer->open_chunk(ACTOR_INV_ITEMS_CHUNK);
+			writer->w_u32(Items.size());
 
-			Stats.StatsOutputPossition(writer);
+			for (auto& item : Items)
+			{
+				item.OutputItem(writer);
+			}
+			writer->close_chunk();
+			FS.w_close(writer);
 		}
 	};
 
@@ -346,6 +373,8 @@ public:
 	{
 		SPlayersOnDeathBuff Items;
 		string512 PlayerPath{};
+
+		string128 PlayerName{};
 	};
 
 	struct GlobalServerData
@@ -437,12 +466,16 @@ public:
 	bool				RemovePlayerSave(game_PlayerState* ps);
 	void				FillPlayerBuffer(game_PlayerState* ps);
 	bool				BinnarLoadPlayer(game_PlayerState* ps);
+	bool				LoadPlayerStats(IReader* reader, game_PlayerState* ps);
+	bool				LoadPlayerInventory(IReader* reader, game_PlayerState* ps);
+	bool				LoadPlayerDialogs(IReader* reader, game_PlayerState* ps);
+
 	bool				HasBinnarSaveFile(game_PlayerState* ps);
 	bool				load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos, Fvector& angle);
 
 
 	void				LoadPlayersOnDeath(game_PlayerState* ps);
-	void				FillPlayerOnDisconnect(u16 StaticID, string_path path);
+	void				FillPlayerOnDisconnect(u16 StaticID, string_path path, LPSTR Name);
 	void				ClearPlayersOnDeathBuffer(u16 StaticID);
 
 

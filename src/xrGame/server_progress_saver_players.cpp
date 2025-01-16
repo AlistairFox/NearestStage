@@ -131,146 +131,172 @@ void CProgressSaver::FillPlayerBuffer(game_PlayerState* ps)
 
 bool CProgressSaver::BinnarLoadPlayer(game_PlayerState* ps)
 {
-	string_path PlayerSavePath;
-	string256 PlayerDir;
-	sprintf(PlayerDir, "%s\\%s_inventory.binsave", ps->getName(), ps->getName());
-	FS.update_path(PlayerSavePath, "$mp_saves_players_bin$", PlayerDir);
-	if (af_debug_loggining)
-		Msg("AFPROGRESSAVER: InvPath: %s", PlayerSavePath);
-	if (FS.exist(PlayerSavePath))
+	string256 PlayerRootDir;
+	sprintf(PlayerRootDir, "%s\\%s", ps->getName(), ps->getName());
+
+	string_path PlayerStatsDir;
+	string256 PlayerStatsFile;
+	strcpy(PlayerStatsFile, PlayerRootDir);
+	strcat(PlayerStatsFile, STATS_STR_FORMAT);
+	FS.update_path(PlayerStatsDir, PLAYERSAVE_DIRECTORY, PlayerStatsFile);
+	if (FS.exist(PlayerStatsDir))
 	{
 		if (af_debug_loggining)
-			Msg("AFPROGRESSAVER: read file path = %s", PlayerSavePath);
-		IReader* reader = FS.r_open(PlayerSavePath);
+			Msg("AFPROGRESSAVER: Opening player stats file: %s", PlayerStatsDir);
 
-		if (reader->open_chunk(ACTOR_MONEY))
-			ps->money_for_round = reader->r_u32();// money
+		IReader* reader = FS.r_open(PlayerStatsDir);
+		LoadPlayerStats(reader, ps);
+		FS.r_close(reader);
+	}
 
-#ifdef PLAYER_STATS_SAVING
-		if (reader->open_chunk(ACTOR_STATS_CHUNK))
-		{
-			NET_Packet P;
-			Level().Server->game->u_EventGen(P, GE_PLAYER_LOAD_CONDITIONS, ps->GameID);
-			float satiety, thirst, radiation;
-			satiety = reader->r_float();
-			thirst = reader->r_float();
-			radiation = reader->r_float();
-			P.w_float(satiety);
-			P.w_float(thirst);
-			P.w_float(radiation);
-			Level().Server->game->u_EventSend(P);
-		}
-#endif
+	string_path PlayerInventoryDir;
+	string256 PlayerInventoryFile;
+	strcpy(PlayerInventoryFile, PlayerRootDir);
+	strcat(PlayerInventoryFile, INVENTORY_STR_FORMAT);
+	FS.update_path(PlayerInventoryDir, PLAYERSAVE_DIRECTORY, PlayerInventoryFile);
+	if (FS.exist(PlayerInventoryDir))
+	{
+		if (af_debug_loggining)
+			Msg("AFPROGRESSAVER: Opening player inventory file: %s", PlayerInventoryDir);
 
-		if (reader->open_chunk(ACTOR_TEAM))
-		{
-			u8 team = reader->r_u8();
-		}
-
-		if (reader->open_chunk(ACTOR_INV_ITEMS_CHUNK))
-		{
-			shared_str itm_sect;
-			u32 count = reader->r_u32();
-
-			for (u32 i = 0; i != count; i++)
-			{
-				reader->r_stringZ(itm_sect);
-
-				if (itm_sect.size() < 2)
-					break;
-
-				u16 slot = reader->r_u16();
-				float cond = reader->r_float();
-
-				u32 ItemType = reader->r_u32();
-
-
-				CSE_Abstract* E = Level().Server->game->spawn_begin(itm_sect.c_str());
-
-				E->ID_Parent = ps->GameID;
-
-				CSE_ALifeItem* item = smart_cast<CSE_ALifeItem*>(E);
-				item->m_fCondition = cond;
-				item->slot = slot;
-
-				if (ItemType == SItem::ItemTypes::WeaponAmmo)
-				{
-					CSE_ALifeItemAmmo* ammo = smart_cast<CSE_ALifeItemAmmo*>(item);
-					u16 ammo_cnt = reader->r_u16();
-					ammo->a_elapsed = ammo_cnt;
-				}
-
-				if (ItemType == SItem::ItemTypes::Weapon)
-				{
-					CSE_ALifeItemWeapon* wpn = smart_cast<CSE_ALifeItemWeapon*>(item);
-
-					u16 ammo_count = reader->r_u16();
-					u8 ammo_type = reader->r_u8();
-					u8 addon_state = reader->r_u8();
-					u8 cur_scope = reader->r_u8();
-					wpn->a_elapsed = ammo_count;
-					wpn->ammo_type = ammo_type;
-					wpn->m_addon_flags.flags = addon_state;
-					wpn->m_cur_scope = cur_scope;
-				}
-
-				bool CheckUpgrades = reader->r_u8();
-
-				if (CheckUpgrades)
-				{
-					shared_str upgrades;
-					reader->r_stringZ(upgrades);
-					u32 upgrCount = _GetItemCount(upgrades.c_str(), ',');
-
-					for (u32 id = 0; id != upgrCount; id++)
-					{
-						string64 upgrade;
-						_GetItem(upgrades.c_str(), id, upgrade, ',');
-						item->add_upgrade(upgrade);
-					}
-				}
-
-				Level().Server->game->spawn_end(E, Level().Server->GetServerClient()->ID);
-			}
-
-		}
-		reader->close();
+		IReader* reader = FS.r_open(PlayerInventoryDir);
+		LoadPlayerInventory(reader, ps);
+		FS.r_close(reader);
 	}
 
 #ifdef INFO_PORTIONS_SAVING
-	string_path PlayerDialogsPath;
-	string256 PlayerDirDialogs;
-	sprintf(PlayerDirDialogs, "%s\\%s_dialogs.binsave", ps->getName(), ps->getName());
-	FS.update_path(PlayerDialogsPath, "$mp_saves_players_bin$", PlayerDirDialogs);
-
-	if (af_debug_loggining)
-		Msg("AFPROGRESSAVER: DialogsPath: %s", PlayerDialogsPath);
-	if (FS.exist(PlayerDialogsPath))
+	string_path PlayerDialogsDir;
+	string256 PlayerDialogsFile;
+	strcpy(PlayerDialogsFile, PlayerRootDir);
+	strcat(PlayerDialogsFile, DIALOGS_STR_FORMAT);
+	FS.update_path(PlayerDialogsDir, PLAYERSAVE_DIRECTORY, PlayerDialogsFile);
+	if (FS.exist(PlayerDialogsDir))
 	{
 		if (af_debug_loggining)
-			Msg("AFPROGRESSAVER: read file path = %s", PlayerDialogsPath);
-		IReader* reader = FS.r_open(PlayerDialogsPath);
-		if (reader->open_chunk(INFO_PORTIONS_CHUNK))
-		{
-			u32 size = reader->r_u32();
-
-			for (u32 i = 0; i != size; i++)
-			{
-				shared_str SingleInfo;
-				reader->r_stringZ(SingleInfo);
-				Player_portions[ps->GetStaticID()].push_back(SingleInfo);
-			}
-
-			NET_Packet P;
-			Level().Server->game->u_EventGen(P, GE_GET_SAVE_PORTIONS, ps->GameID);
-			save_data(Player_portions[ps->GetStaticID()], P);
-			P.w_u8(true);
-			Level().Server->game->u_EventSend(P);
-		}
-
-		reader->close();
+			Msg("AFPROGRESSAVER: Opening player dialogs file: %s", PlayerDialogsDir);
+		IReader* reader = FS.r_open(PlayerDialogsDir);
+		LoadPlayerDialogs(reader, ps);
+		FS.r_close(reader);
 	}
 #endif
+	return true;
+}
+
+bool CProgressSaver::LoadPlayerStats(IReader* reader, game_PlayerState* ps)
+{
+	if (reader->open_chunk(ACTOR_MONEY))
+		ps->money_for_round = reader->r_u32();// money
+
+#ifdef PLAYER_STATS_SAVING
+	if (reader->open_chunk(ACTOR_STATS_CHUNK))
+	{
+		NET_Packet P;
+		Level().Server->game->u_EventGen(P, GE_PLAYER_LOAD_CONDITIONS, ps->GameID);
+		float satiety, thirst, radiation;
+		satiety = reader->r_float();
+		thirst = reader->r_float();
+		radiation = reader->r_float();
+		P.w_float(satiety);
+		P.w_float(thirst);
+		P.w_float(radiation);
+		Level().Server->game->u_EventSend(P);
+	}
+#endif
+
+	return true;
+}
+
+bool CProgressSaver::LoadPlayerInventory(IReader* reader, game_PlayerState* ps)
+{
+	if (reader->open_chunk(ACTOR_INV_ITEMS_CHUNK))
+	{
+		shared_str itm_sect;
+		u32 count = reader->r_u32();
+
+		for (u32 i = 0; i != count; i++)
+		{
+			reader->r_stringZ(itm_sect);
+
+			if (itm_sect.size() < 2)
+				break;
+
+			u16 slot = reader->r_u16();
+			float cond = reader->r_float();
+
+			u32 ItemType = reader->r_u32();
+
+
+			CSE_Abstract* E = Level().Server->game->spawn_begin(itm_sect.c_str());
+
+			E->ID_Parent = ps->GameID;
+
+			CSE_ALifeItem* item = smart_cast<CSE_ALifeItem*>(E);
+			item->m_fCondition = cond;
+			item->slot = slot;
+
+			if (ItemType == SItem::ItemTypes::WeaponAmmo)
+			{
+				CSE_ALifeItemAmmo* ammo = smart_cast<CSE_ALifeItemAmmo*>(item);
+				u16 ammo_cnt = reader->r_u16();
+				ammo->a_elapsed = ammo_cnt;
+			}
+
+			if (ItemType == SItem::ItemTypes::Weapon)
+			{
+				CSE_ALifeItemWeapon* wpn = smart_cast<CSE_ALifeItemWeapon*>(item);
+
+				u16 ammo_count = reader->r_u16();
+				u8 ammo_type = reader->r_u8();
+				u8 addon_state = reader->r_u8();
+				u8 cur_scope = reader->r_u8();
+				wpn->a_elapsed = ammo_count;
+				wpn->ammo_type = ammo_type;
+				wpn->m_addon_flags.flags = addon_state;
+				wpn->m_cur_scope = cur_scope;
+			}
+
+			bool CheckUpgrades = reader->r_u8();
+
+			if (CheckUpgrades)
+			{
+				shared_str upgrades;
+				reader->r_stringZ(upgrades);
+				u32 upgrCount = _GetItemCount(upgrades.c_str(), ',');
+
+				for (u32 id = 0; id != upgrCount; id++)
+				{
+					string64 upgrade;
+					_GetItem(upgrades.c_str(), id, upgrade, ',');
+					item->add_upgrade(upgrade);
+				}
+			}
+
+			Level().Server->game->spawn_end(E, Level().Server->GetServerClient()->ID);
+		}
+	}
+
+	return true;
+}
+
+bool CProgressSaver::LoadPlayerDialogs(IReader* reader, game_PlayerState* ps)
+{
+	if (reader->open_chunk(INFO_PORTIONS_CHUNK))
+	{
+		u32 size = reader->r_u32();
+
+		for (u32 i = 0; i != size; i++)
+		{
+			shared_str SingleInfo;
+			reader->r_stringZ(SingleInfo);
+			Player_portions[ps->GetStaticID()].push_back(SingleInfo);
+		}
+
+		NET_Packet P;
+		Level().Server->game->u_EventGen(P, GE_GET_SAVE_PORTIONS, ps->GameID);
+		save_data(Player_portions[ps->GetStaticID()], P);
+		P.w_u8(true);
+		Level().Server->game->u_EventSend(P);
+	}
 	return true;
 }
 
@@ -279,21 +305,27 @@ bool CProgressSaver::HasBinnarSaveFile(game_PlayerState* ps)
 	if (ps->GameID == Level().Server->game->get_id(Level().Server->GetServerClient()->ID)->GameID)
 		return false;
 
-	string_path PlayerSavePath;
-	string256 PlayerDir;
-	sprintf(PlayerDir, "%s\\%s_inventory.binsave", ps->getName(), ps->getName());
-	FS.update_path(PlayerSavePath, "$mp_saves_players_bin$", PlayerDir);
+
+	string256 PlayerRootDir;
+	sprintf(PlayerRootDir, "%s\\%s", ps->getName(), ps->getName());
+
+
+	string_path PlayerTeamDir;
+	string256 PlayerTeamFile;
+	strcpy(PlayerTeamFile, PlayerRootDir);
+	strcat(PlayerTeamFile, TEAMDATA_STR_FORMAT);
+	FS.update_path(PlayerTeamDir, PLAYERSAVE_DIRECTORY, PlayerTeamFile);
 	bool exist = false;
-	if (FS.exist(PlayerSavePath))
+	if (FS.exist(PlayerTeamDir))
 	{
-		IReader* reader = FS.r_open(PlayerSavePath);
+		IReader* reader = FS.r_open(PlayerTeamDir);
 
 		if (reader->open_chunk(ACTOR_TEAM))
 		{
 			exist = true;
 			u8 player_team = reader->r_u8();
 			if (af_debug_loggining)
-				Msg("AFPROGRESSAVER: %d", player_team);
+				Msg("AFPROGRESSAVER: Set PlayerTeam %d", player_team);
 			ps->team = player_team;
 		}
 		FS.r_close(reader);
@@ -305,14 +337,14 @@ bool CProgressSaver::load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos,
 {
 	string_path PlayerPosPath;
 	string256 PlayerDir;
-	sprintf(PlayerDir, "%s\\%s_position.binsave", ps->getName(), ps->getName());
-	FS.update_path(PlayerPosPath, "$mp_saves_players_bin$", PlayerDir);
-	if (af_debug_loggining)
-		Msg("AFPROGRESSAVER: PossPath: %s", PlayerPosPath);
+	sprintf(PlayerDir, "%s\\%s%s", ps->getName(), ps->getName(), POSITION_STR_FORMAT);
+	FS.update_path(PlayerPosPath, PLAYERSAVE_DIRECTORY, PlayerDir);
+
 	if (FS.exist(PlayerPosPath))
 	{
 		if (af_debug_loggining)
-			Msg("AFPROGRESSAVER: read player pos: %s", PlayerPosPath);
+			Msg("AFPROGRESSAVER: Opening player position file: %s", PlayerPosPath);
+
 		IReader* reader = FS.r_open(PlayerPosPath);
 
 		if (reader->open_chunk(ACTOR_POS))
@@ -321,7 +353,8 @@ bool CProgressSaver::load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos,
 			if (ActorPossitionCheck)
 			{
 				if (af_debug_loggining)
-					Msg("AFPROGRESSAVER: Read player pos");
+					Msg("AFPROGRESSAVER: Set Player Position!");
+
 				reader->r_fvector3(pos);
 				reader->r_fvector3(angle);
 				FS.r_close(reader);
@@ -404,14 +437,14 @@ bool CProgressSaver::RemovePlayerSave(game_PlayerState* ps)
 	bool WillRemove = false;
 	string_path PlayerSavePath;
 	string256 PlayerSaveDir;
-	sprintf(PlayerSaveDir, "%s\\%s_inventory.binsave", ps->getName(), ps->getName());
-	FS.update_path(PlayerSavePath, "$mp_saves_players_bin$", PlayerSaveDir);
+	sprintf(PlayerSaveDir, "%s\\%s%s", ps->getName(), ps->getName(), INVENTORY_STR_FORMAT);
+	FS.update_path(PlayerSavePath, PLAYERSAVE_DIRECTORY, PlayerSaveDir);
 	FillRemoveFilesList(PlayerSavePath);
 
 	string_path PlayerPosPath;
 	string256 PlayerPossDir;
-	sprintf(PlayerPossDir, "%s\\%s_position.binsave", ps->getName(), ps->getName());
-	FS.update_path(PlayerPosPath, "$mp_saves_players_bin$", PlayerPossDir);
+	sprintf(PlayerPossDir, "%s\\%s%s", ps->getName(), ps->getName(),POSITION_STR_FORMAT);
+	FS.update_path(PlayerPosPath, PLAYERSAVE_DIRECTORY, PlayerPossDir);
 	FillRemoveFilesList(PlayerPosPath);
 
 	return WillRemove;
@@ -421,6 +454,10 @@ void CProgressSaver::FillRemoveFilesList(string_path path)
 {
 	if (!FS.exist(path))
 		return;
+
+	if (af_debug_loggining)
+		Msg("AFPROGRESSAVER: File Add to Remove Task: %s", path);
+
 
 	FileToDelete* ftd = xr_new<FileToDelete>();
 	strcpy(ftd->PPath,path);
@@ -457,10 +494,10 @@ void CProgressSaver::OnPlayerDisconnect(LPSTR Name, u16 StaticID)
 {
 	string_path PlayerSavePath;
 	string256 PlayerSaveDir;
-	sprintf(PlayerSaveDir, "%s\\%s_inventory.binsave", Name, Name);
-	FS.update_path(PlayerSavePath, "$mp_saves_players_bin$", PlayerSaveDir);
+	sprintf(PlayerSaveDir, "%s\\%s%s", Name, Name, INVENTORY_STR_FORMAT);
+	FS.update_path(PlayerSavePath, PLAYERSAVE_DIRECTORY, PlayerSaveDir);
 	if (!FS.exist(PlayerSavePath))
-		FillPlayerOnDisconnect(StaticID, PlayerSavePath);
+		FillPlayerOnDisconnect(StaticID, PlayerSavePath, Name);
 
 	ClearPlayersOnDeathBuffer(StaticID);
 

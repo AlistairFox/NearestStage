@@ -168,7 +168,7 @@ void CProgressSaver::ClearPlayersOnDeathBuffer(u16 StaticID)
 #endif
 }
 
-void CProgressSaver::FillPlayerOnDisconnect(u16 StaticID, string_path path)
+void CProgressSaver::FillPlayerOnDisconnect(u16 StaticID, string_path path, LPSTR Name)
 {
 #ifdef	PLAYERONDEATH_SAVING
 	if (MPlayersOnDeath.find(StaticID) == MPlayersOnDeath.end())
@@ -177,6 +177,7 @@ void CProgressSaver::FillPlayerOnDisconnect(u16 StaticID, string_path path)
 	OnDeathDisconnect* dis = xr_new<OnDeathDisconnect>();
 
 	xr_strcpy(dis->PlayerPath, path);
+	xr_strcpy(dis->PlayerName, Name);
 	dis->Items = MPlayersOnDeath[StaticID];
 
 	csSaving.Enter();

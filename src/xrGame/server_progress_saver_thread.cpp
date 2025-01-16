@@ -37,11 +37,11 @@ bool CProgressSaver::PlayerSaveStage(SThreadTask* task)
 	if (Players* player = task->players)
 	{
 		SetThreadState(ThreadSavePlayer);
-		std::string InvPath = player->PlayerPath;
-		InvPath += player->PlayerName;
-		InvPath += "_inventory.binsave";
+		std::string PlayerStatsPath = player->PlayerPath;
+		PlayerStatsPath += player->PlayerName;
+		PlayerStatsPath += STATS_STR_FORMAT;
 
-		IWriter* writer = FS.w_open(InvPath.c_str());
+		IWriter* writer = FS.w_open(PlayerStatsPath.c_str());
 
 		if (!writer)
 			return false;
@@ -105,21 +105,10 @@ bool CProgressSaver::OnDeathSaveStage(SThreadTask* task)
 	if (OnDeathDisconnect* dis = task->DisconnectBuf)
 	{
 		SetThreadState(ThreadSaveOnDeath);
+
 		IWriter* writer = FS.w_open(dis->PlayerPath);
 		if (!writer)
 			return false;
-
-		writer->open_chunk(ACTOR_MONEY);
-		writer->w_s32(dis->Items.PlayerMoney);
-		writer->close_chunk();
-
-		writer->open_chunk(ACTOR_TEAM);
-		writer->w_u8(dis->Items.Team);
-		writer->close_chunk();
-
-		writer->open_chunk(ACTOR_POS);
-		writer->w_u8(0);
-		writer->close_chunk();
 
 		writer->open_chunk(ACTOR_INV_ITEMS_CHUNK);
 		u32 i = 0;
