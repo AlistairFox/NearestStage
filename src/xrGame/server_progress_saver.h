@@ -25,13 +25,13 @@
 
 
 
-#define STATS_STR_FORMAT "_statsdata.binsave"
-#define POSITION_STR_FORMAT "_position.binsave"
-#define TEAMDATA_STR_FORMAT "_teamdata.binsave"
-#define DIALOGS_STR_FORMAT "_dialogs.binsave"
-#define INVENTORY_STR_FORMAT "_inventory.binsave"
+constexpr auto STATS_STR_FORMAT = "_statsdata.binsave";
+constexpr auto POSITION_STR_FORMAT = "_position.binsave";
+constexpr auto TEAMDATA_STR_FORMAT = "_teamdata.binsave";
+constexpr auto DIALOGS_STR_FORMAT = "_dialogs.binsave";
+constexpr auto INVENTORY_STR_FORMAT = "_inventory.binsave";
 
-#define PLAYERSAVE_DIRECTORY "$mp_saves_players_bin$"
+constexpr auto PLAYERSAVE_DIRECTORY = "$mp_saves_players_bin$";
 
 class game_sv_freemp;
 class CProgressSaver
@@ -75,7 +75,7 @@ public:
 			}
 		}
 
-		void OutputItem(IWriter* writer)
+		void OutputItem(IWriter* writer) const
 		{
 			writer->w_stringZ(ItemSect);
 			writer->w_u16(ItemSlot);
@@ -126,7 +126,7 @@ public:
 	struct PrivateBoxItem
 	{
 		PrivateBoxItem(SItem itm, u16 oid) : Item(itm), OwnerId(oid) {}
-		void OutputItems(IWriter* writer)
+		void OutputItems(IWriter* writer) const
 		{
 			writer->w_u16(OwnerId);
 			Item.OutputItem(writer);
@@ -204,7 +204,7 @@ public:
 		Fvector3 angle{};
 
 
-		void StatsOutput(IWriter* writer)
+		void StatsOutput(IWriter* writer) const
 		{
 			writer->open_chunk(ACTOR_MONEY);
 			writer->w_s32(money);
@@ -222,7 +222,7 @@ public:
 			FS.w_close(writer);
 		}
 
-		void StatsOutputPossition(IWriter* writer)
+		void StatsOutputPossition(IWriter* writer) const
 		{
 			writer->open_chunk(ACTOR_POS);
 			if (SetPossition)
@@ -237,7 +237,7 @@ public:
 			FS.w_close(writer);
 		}
 
-		void StatsOutputPlayerTeam(IWriter* writer)
+		void StatsOutputPlayerTeam(IWriter* writer) const
 		{
 			writer->open_chunk(ACTOR_TEAM);
 			writer->w_u8(team);

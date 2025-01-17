@@ -115,7 +115,7 @@ bool CProgressSaver::OnDeathSaveStage(SThreadTask* task)
 
 		writer->w_u32(itemscount);
 
-		for (auto TItem : dis->Items.OnDeathItems)
+		for (auto& TItem : dis->Items.OnDeathItems)
 		{
 			TItem.OutputItem(writer);
 		}
