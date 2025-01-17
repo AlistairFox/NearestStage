@@ -16,97 +16,41 @@ void CProgressSaver::FillPlayerBuffer(game_PlayerState* ps)
 
 		SPlayersOnDeathBuff buff;
 
-		buff.PlayerMoney = ps->money_for_round;
-		buff.Team = ps->team;
-
 		CCustomOutfit* pOutfit = smart_cast<CCustomOutfit*>(actor->inventory().ItemFromSlot(OUTFIT_SLOT));
 		if (pOutfit)
 		{
-			buff.Outfit = true;
-			buff.OutfitName = pOutfit->m_section_id.c_str();
-			buff.OutfitCond = pOutfit->GetCondition();
-			buff.OutfitSlot = pOutfit->CurrValue();
-			if (pOutfit->has_any_upgrades())
-			{
-				buff.OutfUpg = true;
-				pOutfit->get_upgrades(buff.OutfitUpgrades);
-			}
-			else
-				buff.OutfUpg = false;
+			SItem Item(pOutfit);
+			buff.OnDeathItems.push_back(Item);
 		}
-		else
-			buff.Outfit = false;
 
 		CHelmet* pHelm = smart_cast<CHelmet*>(actor->inventory().ItemFromSlot(HELMET_SLOT));
 		if (pHelm)
 		{
-			buff.helm = true;
-			buff.HelmetName = pHelm->m_section_id.c_str();
-			buff.HelmetCond = pHelm->GetCondition();
-			buff.HelmSlot = pHelm->CurrValue();
-			if (pHelm->has_any_upgrades())
-			{
-				buff.HelmUpg = true;
-				pHelm->get_upgrades(buff.HelmetUpgrades);
-			}
-			else
-				buff.HelmUpg = false;
+			SItem Item(pHelm);
+			buff.OnDeathItems.push_back(Item);
 		}
-		else
-			buff.helm = false;
 
 		CCustomDetector* pDet = smart_cast<CCustomDetector*>(actor->inventory().ItemFromSlot(DETECTOR_SLOT));
 		if (pDet)
 		{
-			buff.detector = true;
-			buff.DetectorName = pDet->m_section_id.c_str();
-			buff.DetectorCond = pDet->GetCondition();
-			buff.DetectorSlot = pDet->CurrValue();
+			SItem Item(pDet);
+			buff.OnDeathItems.push_back(Item);
 		}
-		else
-			buff.detector = false;
 
 		CWeapon* pWpn1 = smart_cast<CWeapon*>(actor->inventory().ItemFromSlot(INV_SLOT_2));
 		if (pWpn1)
 		{
-			buff.weapon1 = true;
-			buff.Weapon1Sect = pWpn1->m_section_id.c_str();
-			buff.Weapon1Cond = pWpn1->GetCondition();
-			buff.Weapon1CurScope = pWpn1->m_cur_scope;
-			buff.Weapon1AddonState = pWpn1->GetAddonsState();
-			buff.Weapon1Slot = pWpn1->CurrValue();
-
-			if (pWpn1->has_any_upgrades())
-			{
-				buff.weapon1Upgr = true;
-				pWpn1->get_upgrades(buff.Weapon1Upgrades);
-			}
-			else
-				buff.weapon1Upgr = false;
+			SItem Item(pWpn1);
+			buff.OnDeathItems.push_back(Item);
 		}
-		else
-			buff.weapon1 = false;
 
 		CWeapon* pWpn2 = smart_cast<CWeapon*>(actor->inventory().ItemFromSlot(INV_SLOT_3));
 		if (pWpn2)
 		{
-			buff.weapon2 = true;
-			buff.Weapon2Sect = pWpn2->m_section_id.c_str();
-			buff.Weapon2Cond = pWpn2->GetCondition();
-			buff.Weapon2CurScope = pWpn2->m_cur_scope;
-			buff.Weapon2AddonState = pWpn2->GetAddonsState();
-			buff.Weapon2Slot = pWpn2->CurrValue();
-
-			if (pWpn2->has_any_upgrades())
-			{
-				buff.weapon2Upgr = true;
-				pWpn2->get_upgrades(buff.Weapon2Upgrades);
-			}
-			else
-				buff.weapon2Upgr = false;
+			SItem Item(pWpn2);
+			buff.OnDeathItems.push_back(Item);
 		}
-		else
-			buff.weapon2 = false;
+
 
 		MPlayersOnDeath[ps->GetStaticID()] = buff;
 #endif
@@ -298,6 +242,11 @@ bool CProgressSaver::LoadPlayerDialogs(IReader* reader, game_PlayerState* ps)
 		Level().Server->game->u_EventSend(P);
 	}
 	return true;
+}
+
+void CProgressSaver::OnPlayerDeath(game_PlayerState* ps)
+{
+	RemovePlayerSave(ps);
 }
 
 bool CProgressSaver::HasBinnarSaveFile(game_PlayerState* ps)

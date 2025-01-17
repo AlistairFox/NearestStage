@@ -474,6 +474,9 @@ void game_sv_freemp::OnEvent(NET_Packet &P, u16 type, u32 time, ClientID sender)
 			xrClientData *l_pC = (xrClientData*)get_client(ID);
 			if (!l_pC) break;
 			KillPlayer(l_pC->ID, l_pC->ps->GameID);
+
+			if (Saver)
+				Saver->OnPlayerDeath(l_pC->ps);
 		}
 		break;
 	case GAME_EVENT_MP_TRADE:
@@ -527,6 +530,20 @@ BOOL game_sv_freemp::OnTouch(u16 eid_who, u16 eid_what, BOOL bForced)
 void game_sv_freemp::on_death(CSE_Abstract* e_dest, CSE_Abstract* e_src)
 {
 	inherited::on_death(e_dest, e_src);
+
+	if (Saver)
+	{
+		CSE_ActorMP* pA = smart_cast<CSE_ActorMP*>(e_dest);
+		if (pA)
+		{
+			game_PlayerState* ps = smart_cast<game_PlayerState*>(Level().game->GetPlayerByGameID(pA->ID));
+			if (ps)
+			{
+				Saver->OnPlayerDeath(ps);
+			}
+		}
+	}
+
 
 	if (!ai().get_alife())
 		return;

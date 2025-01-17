@@ -111,99 +111,13 @@ bool CProgressSaver::OnDeathSaveStage(SThreadTask* task)
 			return false;
 
 		writer->open_chunk(ACTOR_INV_ITEMS_CHUNK);
-		u32 i = 0;
-		if (dis->Items.detector)
-			i++;
-		if (dis->Items.Outfit)
-			i++;
-		if (dis->Items.helm)
-			i++;
-		if (dis->Items.weapon1)
-			i++;
-		if (dis->Items.weapon2)
-			i++;
-		writer->w_u32(i);
+		u32 itemscount = dis->Items.OnDeathItems.size();
 
-		if (dis->Items.detector)
+		writer->w_u32(itemscount);
+
+		for (auto TItem : dis->Items.OnDeathItems)
 		{
-			writer->w_stringZ(dis->Items.DetectorName);
-			writer->w_u16(dis->Items.DetectorSlot);
-			writer->w_float(dis->Items.DetectorCond);
-
-			writer->w_u32(SItem::ItemTypes::InventoryItem);
-			writer->w_u8(0);
-		}
-
-		if (dis->Items.Outfit)
-		{
-			writer->w_stringZ(dis->Items.OutfitName);
-			writer->w_u16(dis->Items.OutfitSlot);
-			writer->w_float(dis->Items.OutfitCond);
-			writer->w_u32(SItem::ItemTypes::InventoryItem);
-			writer->w_u8(0);
-			if (dis->Items.OutfUpg)
-			{
-				writer->w_u8(1);
-				writer->w_stringZ(dis->Items.OutfitUpgrades);
-			}
-			else
-				writer->w_u8(0);
-		}
-
-		if (dis->Items.helm)
-		{
-			writer->w_stringZ(dis->Items.HelmetName);
-			writer->w_u16(dis->Items.OutfitSlot);
-			writer->w_float(dis->Items.HelmetCond);
-			writer->w_u32(SItem::ItemTypes::InventoryItem);
-			writer->w_u8(0);
-			if (dis->Items.HelmUpg)
-			{
-				writer->w_u8(1);
-				writer->w_stringZ(dis->Items.HelmetUpgrades);
-			}
-			else
-				writer->w_u8(0);
-		}
-
-		if (dis->Items.weapon1)
-		{
-			writer->w_stringZ(dis->Items.Weapon1Sect);
-			writer->w_u16(dis->Items.Weapon1Slot);
-			writer->w_float(dis->Items.Weapon1Cond);
-			writer->w_u32(SItem::ItemTypes::Weapon);
-			writer->w_u16(0);
-			writer->w_u8(0);
-			writer->w_u8(dis->Items.Weapon1AddonState);
-			writer->w_u8(dis->Items.Weapon1CurScope);
-			if (dis->Items.weapon1Upgr)
-			{
-				writer->w_u8(1);
-				writer->w_stringZ(dis->Items.Weapon1Upgrades);
-			}
-			else
-				writer->w_u8(0);
-
-		}
-
-		if (dis->Items.weapon2)
-		{
-			writer->w_stringZ(dis->Items.Weapon2Sect);
-			writer->w_u16(dis->Items.Weapon2Slot);
-			writer->w_float(dis->Items.Weapon2Cond);
-			writer->w_u32(SItem::ItemTypes::Weapon);
-			writer->w_u16(0);
-			writer->w_u8(0);
-			writer->w_u8(dis->Items.Weapon2AddonState);
-			writer->w_u8(dis->Items.Weapon2CurScope);
-			if (dis->Items.weapon2Upgr)
-			{
-				writer->w_u8(1);
-				writer->w_stringZ(dis->Items.Weapon2Upgrades);
-			}
-			else
-				writer->w_u8(0);
-
+			TItem.OutputItem(writer);
 		}
 
 		writer->close_chunk();

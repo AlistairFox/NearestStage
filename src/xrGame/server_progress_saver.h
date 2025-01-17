@@ -248,50 +248,7 @@ public:
 
 	struct SPlayersOnDeathBuff
 	{
-		s32 PlayerMoney = 0;
-		u8 Team = 8;
-		//Outfit
-		bool Outfit = false;
-		LPCSTR OutfitName{};
-		float OutfitCond = 1.f;
-		bool OutfUpg = false;
-		string2048 OutfitUpgrades{};
-		u16 OutfitSlot = 0;
-
-		//Helm
-		bool helm = false;
-		LPCSTR HelmetName{};
-		float HelmetCond = 1.f;
-		bool HelmUpg = false;
-		string2048 HelmetUpgrades{};
-		u16 HelmSlot = 0;
-
-		//Detector
-		bool detector = false;
-		LPCSTR DetectorName{};
-		float DetectorCond{};
-		u16 DetectorSlot = 0;
-
-		//Weapon1
-		bool weapon1 = false;
-		LPCSTR Weapon1Sect{};
-		float Weapon1Cond = 1.f;
-		bool weapon1Upgr = false;
-		string2048 Weapon1Upgrades{};
-		u8 Weapon1AddonState = 0;
-		u8 Weapon1CurScope = 0; 
-		u16 Weapon1Slot = 0;
-
-		//Weapon2
-		bool weapon2 = false;
-		LPCSTR Weapon2Sect{};
-		float Weapon2Cond = 1.f;
-		bool weapon2Upgr = false;
-		string2048 Weapon2Upgrades{};
-		u8 Weapon2AddonState = 0;
-		u8 Weapon2CurScope = 0;
-		u16 Weapon2Slot = 0;
-
+		std::vector<SItem> OnDeathItems;
 	};
 
 	struct Players
@@ -469,6 +426,8 @@ public:
 	bool				LoadPlayerStats(IReader* reader, game_PlayerState* ps);
 	bool				LoadPlayerInventory(IReader* reader, game_PlayerState* ps);
 	bool				LoadPlayerDialogs(IReader* reader, game_PlayerState* ps);
+
+	void				OnPlayerDeath(game_PlayerState* ps);
 
 	bool				HasBinnarSaveFile(game_PlayerState* ps);
 	bool				load_position_RP_Binnar(game_PlayerState* ps, Fvector& pos, Fvector& angle);

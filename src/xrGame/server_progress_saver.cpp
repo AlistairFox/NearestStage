@@ -157,10 +157,7 @@ void CProgressSaver::SaveManagerUpdate()
 					continue;
 
 				if (!actor->g_Alive())
-				{
-					RemovePlayerSave(player.second);
 					continue;
-				}
 
 				FillPlayerBuffer(player.second);
 			}

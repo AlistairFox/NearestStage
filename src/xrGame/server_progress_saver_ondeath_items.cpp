@@ -8,10 +8,10 @@ void CProgressSaver::LoadPlayersOnDeath(game_PlayerState* ps)
 #ifdef	PLAYERONDEATH_SAVING
 	if (MPlayersOnDeath.find(ps->GetStaticID()) != MPlayersOnDeath.end())
 	{
-		if (MPlayersOnDeath[ps->GetStaticID()].Outfit)
+		for (auto& TItem : MPlayersOnDeath[ps->GetStaticID()].OnDeathItems)
 		{
-			LPCSTR sect = MPlayersOnDeath[ps->GetStaticID()].OutfitName;
-			float cond = MPlayersOnDeath[ps->GetStaticID()].OutfitCond;
+			LPCSTR sect = TItem.ItemSect;
+			float cond = TItem.ItemCond;
 
 			Msg("AFPROGRESSAVER: %s Load OnDeath Outfit: %s, cond: %f", ps->getName(), sect, cond);
 			cond /= Random.randF(1.1, 2);
@@ -22,139 +22,31 @@ void CProgressSaver::LoadPlayersOnDeath(game_PlayerState* ps)
 			{
 				item->m_fCondition = cond;
 				item->ID_Parent = ps->GameID;
-				item->slot = MPlayersOnDeath[ps->GetStaticID()].OutfitSlot;
+				item->slot = TItem.ItemSlot;
+				if (TItem.ItemType == SItem::ItemTypes::Weapon)
+				{
+					u8 AddonState = TItem.AddonState;
+					u8 CurrScope = TItem.CurrScope;
+					CSE_ALifeItemWeapon* wpn = smart_cast<CSE_ALifeItemWeapon*>(item);
+					wpn->m_addon_flags.flags = AddonState;
+					wpn->m_cur_scope = CurrScope;
+				}
 
-				if (MPlayersOnDeath[ps->GetStaticID()].OutfUpg)
+
+				if (TItem.HasUpgr)
 				{
 
-					const u32 itemscount = _GetItemCount(MPlayersOnDeath[ps->GetStaticID()].OutfitUpgrades);
+					const u32 itemscount = _GetItemCount(TItem.Uphrades);
 
 					for (u32 id = 0; id != itemscount; id++)
 					{
 						string64 upgrade;
-						_GetItem(MPlayersOnDeath[ps->GetStaticID()].OutfitUpgrades, id, upgrade, ',');
+						_GetItem(TItem.Uphrades, id, upgrade, ',');
 						item->add_upgrade(upgrade);
 					}
 				}
 			}
 			Level().Server->game->spawn_end(item, Level().Server->game->m_server->GetServerClient()->ID);
-		}
-
-		if (MPlayersOnDeath[ps->GetStaticID()].helm)
-		{
-			LPCSTR sect = MPlayersOnDeath[ps->GetStaticID()].HelmetName;
-			float cond = MPlayersOnDeath[ps->GetStaticID()].HelmetCond;
-
-			Msg("AFPROGRESSAVER: %s Load OnDeath Helmet: %s, cond: %f", ps->getName(), sect, cond);
-			cond /= Random.randF(1.1, 2);
-
-			CSE_Abstract* E = Level().Server->game->spawn_begin(sect);
-			CSE_ALifeItem* item = smart_cast<CSE_ALifeItem*>(E);
-			if (item)
-			{
-				item->m_fCondition = cond;
-				item->ID_Parent = ps->GameID;
-				item->slot = MPlayersOnDeath[ps->GetStaticID()].HelmSlot;
-
-				if (MPlayersOnDeath[ps->GetStaticID()].HelmUpg)
-				{
-					const u32 itemscount = _GetItemCount(MPlayersOnDeath[ps->GetStaticID()].HelmetUpgrades);
-
-					for (u32 id = 0; id != itemscount; id++)
-					{
-						string64 upgrade;
-						_GetItem(MPlayersOnDeath[ps->GetStaticID()].HelmetUpgrades, id, upgrade, ',');
-						item->add_upgrade(upgrade);
-					}
-				}
-			}
-			Level().Server->game->spawn_end(item, Level().Server->game->m_server->GetServerClient()->ID);
-		}
-
-		if (MPlayersOnDeath[ps->GetStaticID()].detector)
-		{
-			LPCSTR sect = MPlayersOnDeath[ps->GetStaticID()].DetectorName;
-			float cond = MPlayersOnDeath[ps->GetStaticID()].DetectorCond;
-			Msg("AFPROGRESSAVER: %s Load OnDeath Detector: %s", ps->getName(), sect);
-
-			cond /= Random.randF(1.1, 2);
-
-			CSE_Abstract* E = Level().Server->game->spawn_begin(sect);
-			CSE_ALifeItem* item = smart_cast<CSE_ALifeItem*>(E);
-			item->slot = MPlayersOnDeath[ps->GetStaticID()].DetectorSlot;
-			if (item)
-			{
-				item->ID_Parent = ps->GameID;
-				item->m_fCondition = cond;
-			}
-			Level().Server->game->spawn_end(item, Level().Server->game->m_server->GetServerClient()->ID);
-		}
-
-		if (MPlayersOnDeath[ps->GetStaticID()].weapon1)
-		{
-			LPCSTR sect = MPlayersOnDeath[ps->GetStaticID()].Weapon1Sect;
-			float cond = MPlayersOnDeath[ps->GetStaticID()].Weapon1Cond;
-			u8 AddonState = MPlayersOnDeath[ps->GetStaticID()].Weapon1AddonState;
-			u8 CurrScope = MPlayersOnDeath[ps->GetStaticID()].Weapon1CurScope;
-			Msg("AFPROGRESSAVER: %s Load OnDeath Weapon: %s, cond: %f", ps->getName(), sect, cond);
-
-
-			cond /= Random.randF(1.1, 2);
-			CSE_Abstract* E = Level().Server->game->spawn_begin(sect);
-			E->ID_Parent = ps->GameID;
-			CSE_ALifeItem* item = smart_cast<CSE_ALifeItem*>(E);
-			item->m_fCondition = cond;
-			item->slot = MPlayersOnDeath[ps->GetStaticID()].Weapon1Slot;
-			CSE_ALifeItemWeapon* wpn = smart_cast<CSE_ALifeItemWeapon*>(item);
-			wpn->m_addon_flags.flags = AddonState;
-			wpn->m_cur_scope = CurrScope;
-
-
-			if (MPlayersOnDeath[ps->GetStaticID()].weapon1Upgr)
-			{
-				const u32 upgrCount = _GetItemCount(MPlayersOnDeath[ps->GetStaticID()].Weapon1Upgrades, ',');
-
-				for (u32 id = 0; id != upgrCount; id++)
-				{
-					string64 upgrade;
-					_GetItem(MPlayersOnDeath[ps->GetStaticID()].Weapon1Upgrades, id, upgrade, ',');
-					item->add_upgrade(upgrade);
-				}
-			}
-			Level().Server->game->spawn_end(E, Level().Server->game->m_server->GetServerClient()->ID);
-		}
-
-		if (MPlayersOnDeath[ps->GetStaticID()].weapon2)
-		{
-			LPCSTR sect = MPlayersOnDeath[ps->GetStaticID()].Weapon2Sect;
-			float cond = MPlayersOnDeath[ps->GetStaticID()].Weapon2Cond;
-			u8 AddonState = MPlayersOnDeath[ps->GetStaticID()].Weapon2AddonState;
-			u8 CurrScope = MPlayersOnDeath[ps->GetStaticID()].Weapon2CurScope;
-			Msg("AFPROGRESSAVER: %s Load OnDeath Weapon: %s, cond: %f", ps->getName(), sect, cond);
-
-
-			cond /= Random.randF(1.1, 2);
-			CSE_Abstract* E = Level().Server->game->spawn_begin(sect);
-			E->ID_Parent = ps->GameID;
-			CSE_ALifeItem* item = smart_cast<CSE_ALifeItem*>(E);
-			item->m_fCondition = cond;
-			item->slot = MPlayersOnDeath[ps->GetStaticID()].Weapon2Slot;
-			CSE_ALifeItemWeapon* wpn = smart_cast<CSE_ALifeItemWeapon*>(item);
-			wpn->m_addon_flags.flags = AddonState;
-			wpn->m_cur_scope = CurrScope;
-
-			if (MPlayersOnDeath[ps->GetStaticID()].weapon2Upgr)
-			{
-				const u32 upgrCount = _GetItemCount(MPlayersOnDeath[ps->GetStaticID()].Weapon2Upgrades, ',');
-
-				for (u32 id = 0; id != upgrCount; id++)
-				{
-					string64 upgrade;
-					_GetItem(MPlayersOnDeath[ps->GetStaticID()].Weapon2Upgrades, id, upgrade, ',');
-					item->add_upgrade(upgrade);
-				}
-			}
-			Level().Server->game->spawn_end(E, fmp->m_server->GetServerClient()->ID);
 		}
 	}
 #endif
